@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>阳光房解决方案 - 打造您的理想户外空间</title>
+    <meta name="description" content="专业阳光房设计与建造服务，提供高品质铝合金框架、钢化玻璃和智能遮阳系统，打造舒适美观的户外生活空间。">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #f59e0b;
+            --accent: #10b981;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gradient-primary: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            --gradient-warm: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            --gradient-nature: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --shadow-elegant: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-glow: 0 0 30px rgba(37, 99, 235, 0.3);
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.9) 0%, rgba(29, 78, 216, 0.9) 100%), 
+                        url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            color: white;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition-smooth);
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: var(--shadow-elegant);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .btn-secondary {
+            background: var(--gradient-warm);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-outline:hover {
+            background: white;
+            color: var(--primary);
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow-elegant);
+            transition: var(--transition-smooth);
+            height: 100%;
+            border: 1px solid #e2e8f0;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            height: 300px;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition-smooth);
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .testimonial-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow-elegant);
+            margin: 1rem;
+            position: relative;
+        }
+
+        .testimonial-card::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            font-size: 5rem;
+            color: var(--primary);
+            opacity: 0.2;
+            font-family: serif;
+        }
+
+        .stats-card {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 16px;
+            box-shadow: var(--shadow-elegant);
+            transition: var(--transition-smooth);
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stats-number {
+            font-size: 3rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-link {
+            position: relative;
+            padding: 0.5rem 1rem;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition-smooth);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--secondary);
+            transition: var(--transition-smooth);
+            transform: translateX(-50%);
+        }
+
+        .nav-link:hover::after {
+            width: 80%;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #64748b;
+            margin-bottom: 3rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .floating-element {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(37, 99, 235, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .contact-form {
+            background: white;
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow-elegant);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+            transition: var(--transition-smooth);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .checkbox-container input {
+            margin-right: 0.75rem;
+            width: 18px;
+            height: 18px;
+        }
+
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .btn {
+                padding: 0.8rem 2rem;
+                font-size: 1rem;
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-slide-up {
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="fixed w-full bg-white shadow-lg z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center">
+                    <div class="text-2xl font-bold text-primary">
+                        <i class="fas fa-sun text-yellow-500 mr-2"></i>阳光房专家
+                    </div>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#home" class="nav-link">首页</a>
+                    <a href="#features" class="nav-link">产品特色</a>
+                    <a href="#gallery" class="nav-link">案例展示</a>
+                    <a href="#testimonials" class="nav-link">客户评价</a>
+                    <a href="#contact" class="nav-link">联系我们</a>
+                </div>
+                <div class="md:hidden">
+                    <button id="menu-toggle" class="text-gray-600 hover:text-primary">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- 移动端菜单 -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="#home" class="block px-3 py-2 text-gray-600 hover:text-primary">首页</a>
+                <a href="#features" class="block px-3 py-2 text-gray-600 hover:text-primary">产品特色</a>
+                <a href="#gallery" class="block px-3 py-2 text-gray-600 hover:text-primary">案例展示</a>
+                <a href="#testimonials" class="block px-3 py-2 text-gray-600 hover:text-primary">客户评价</a>
+                <a href="#contact" class="block px-3 py-2 text-gray-600 hover:text-primary">联系我们</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 英雄区域 -->
+    <section id="home" class="hero-section">
+        <div class="hero-content animate-fade-in">
+            <h1 class="text-5xl md:text-6xl font-bold mb-6">
+                打造您的理想<br>
+                <span class="text-yellow-300">户外生活空间</span>
+            </h1>
+            <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
+                专业阳光房设计与建造服务，融合现代美学与实用功能，让您的家延伸到自然中
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="#contact" class="btn btn-primary">
+                    <i class="fas fa-calendar-check mr-2"></i>免费咨询
+                </a>
+                <a href="#gallery" class="btn btn-outline">
+                    <i class="fas fa-images mr-2"></i>查看案例
+                </a>
+            </div>
+        </div>
+        
+        <!-- 浮动装饰元素 -->
+        <div class="floating-element" style="width: 80px; height: 80px; top: 20%; left: 10%;"></div>
+        <div class="floating-element" style="width: 60px; height: 60px; top: 60%; right: 15%; animation-delay: 2s;"></div>
+        <div class="floating-element" style="width: 40px; height: 40px; bottom: 20%; left: 20%; animation-delay: 4s;"></div>
+    </section>
+
+    <!-- 统计数据 -->
+    <section class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="stats-card animate-slide-up">
+                    <div class="stats-number">500+</div>
+                    <div class="text-gray-600 font-medium">成功案例</div>
+                </div>
+                <div class="stats-card animate-slide-up" style="animation-delay: 0.2s;">
+                    <div class="stats-number">98%</div>
+                    <div class="text-gray-600 font-medium">客户满意度</div>
+                </div>
+                <div class="stats-card animate-slide-up" style="animation-delay: 0.4s;">
+                    <div class="stats-number">10+</div>
+                    <div class="text-gray-600 font-medium">年行业经验</div>
+                </div>
+                <div class="stats-card animate-slide-up" style="animation-delay: 0.6s;">
+                    <div class="stats-number">24/7</div>
+                    <div class="text-gray-600 font-medium">专业服务</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 产品特色 -->
+    <section id="features" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="section-title">为什么选择我们的阳光房</h2>
+            <p class="section-subtitle">
+                我们提供全方位的阳光房解决方案，从设计到安装，每一个细节都精益求精
+            </p>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-16">
+                <div class="feature-card animate-slide-up">
+                    <div class="feature-icon bg-gradient-primary">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-center mb-4">高品质材料</h3>
+                    <p class="text-gray-600 text-center">
+                        采用优质铝合金框架和钢化玻璃，确保结构稳固耐用，抗风压性能优异
+                    </p>
+                </div>
+                
+                <div class="feature-card animate-slide-up" style="animation-delay: 0.2s;">
+                    <div class="feature-icon bg-gradient-warm">
+                        <i class="fas fa-temperature-high"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-center mb-4">智能温控</h3>
+                    <p class="text-gray-600 text-center">
+                        配备智能遮阳系统和通风设计，四季皆宜，冬暖夏凉，节能环保
+                    </p>
+                </div>
+                
+                <div class="feature-card animate-slide-up" style="animation-delay: 0.4s;">
+                    <div class="feature-icon bg-gradient-nature">
+                        <i class="fas fa-ruler-combined"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-center mb-4">定制设计</h3>
+                    <p class="text-gray-600 text-center">
+                        根据您的空间和需求量身定制，多种风格可选，完美融入您的家居环境
+                    </p>
+                </div>
+                
+                <div class="feature-card animate-slide-up" style="animation-delay: 0.6s;">
+                    <div class="feature-icon bg-gradient-primary">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-center mb-4">专业安装</h3>
+                    <p class="text-gray-600 text-center">
+                        经验丰富的安装团队，标准化施工流程，确保工程质量，终身维护保障
+                    </p>
+                </div>
+                
+                <div class="feature-card animate-slide-up" style="animation-delay: 0.8s;">
+                    <div class="feature-icon bg-gradient-warm">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-center mb-4">安全保障</h3>
+                    <p class="text-gray-600 text-center">
+                        通过多项安全认证，防紫外线、防雨水渗透，为您提供安全舒适的使用体验
+                    </p>
+                </div>
+                
+                <div class="feature-card animate-slide-up" style="animation-delay: 1s;">
+                    <div class="feature-icon bg-gradient-nature">
+                        <i class="fas fa-piggy-bank"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-center mb-4">性价比高</h3>
+                    <p class="text-gray-600 text-center">
+                        合理的价格定位，优质的售后服务，让您的投资物超所值，提升房产价值
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 案例展示 -->
+    <section id="gallery" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="section-title">精品案例展示</h2>
+            <p class="section-subtitle">
+                看看我们为客户打造的美丽阳光房，每一个都是独特的艺术品
+            </p>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-16">
+                <div class="gallery-item animate-slide-up">
+                    <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="现代简约风格阳光房">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-6">
+                        <div>
+                            <h3 class="text-white text-xl font-bold">现代简约风格</h3>
+                            <p class="text-gray-200">12㎡ · 铝合金框架</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="gallery-item animate-slide-up" style="animation-delay: 0.2s;">
+                    <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="欧式古典风格阳光房">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-6">
+                        <div>
+                            <h3 class="text-white text-xl font-bold">欧式古典风格</h3>
+                            <p class="text-gray-200">18㎡ · 实木装饰</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="gallery-item animate-slide-up" style="animation-delay: 0.4s;">
+                    <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="田园休闲风格阳光房">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-6">
+                        <div>
+                            <h3 class="text-white text-xl font-bold">田园休闲风格</h3>
+                            <p class="text-gray-200">15㎡ · 自然采光</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="gallery-item animate-slide-up" style="animation-delay: 0.6s;">
+                    <img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="现代工业风格阳光房">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-6">
+                        <div>
+                            <h3 class="text-white text-xl font-bold">现代工业风格</h3>
+                            <p class="text-gray-200">20㎡ · 钢结构设计</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="gallery-item animate-slide-up" style="animation-delay: 0.8s;">
+                    <img src="https://images.unsplash.com/photo-1600585154042-00f86f804c53?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="地中海风格阳光房">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-6">
+                        <div>
+                            <h3 class="text-white text-xl font-bold">地中海风格</h3>
+                            <p class="text-gray-200">16㎡ · 蓝白配色</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="gallery-item animate-slide-up" style="animation-delay: 1s;">
+                    <img src="https://images.unsplash.com/photo-1600585153791-6c6b0c4b3b1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="日式禅意风格阳光房">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-6">
+                        <div>
+                            <h3 class="text-white text-xl font-bold">日式禅意风格</h3>
+                            <p class="text-gray-200">14㎡ · 极简设计</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <a href="#contact" class="btn btn-secondary">
+                    <i class="fas fa-images mr-2"></i>查看更多案例
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 客户评价 -->
+    <section id="testimonials" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="section-title">客户真实评价</h2>
+            <p class="section-subtitle">
+                听听我们的客户怎么说，真实的反馈是我们前进的动力
+            </p>
+            
+            <div class="grid md:grid-cols-3 gap-8 mt-16">
+                <div class="testimonial-card animate-slide-up">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center text-white font-bold mr-4">
+                            张
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg">张先生</h4>
+                            <div class="text-yellow-500">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">
+                        "非常满意这次的阳光房安装服务！从设计到施工都非常专业，质量超出预期。现在每天在阳光房里喝茶看书，感觉生活品质提升了很多。强烈推荐！"
+                    </p>
+                </div>
+                
+                <div class="testimonial-card animate-slide-up" style="animation-delay: 0.2s;">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-gradient-warm rounded-full flex items-center justify-center text-white font-bold mr-4">
+                            李
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg">李女士</h4>
+                            <div class="text-yellow-500">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">
+                        "设计师很专业，根据我家的户型给出了很好的建议。施工团队也很负责，工期准时，现场清理得很干净。阳光房的效果比效果图还要好！"
+                    </p>
+                </div>
+                
+                <div class="testimonial-card animate-slide-up" style="animation-delay: 0.4s;">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-gradient-nature rounded-full flex items-center justify-center text-white font-bold mr-4">
+                            王
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg">王先生</h4>
+                            <div class="text-yellow-500">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">
+                        "性价比很高的一次投资！阳光房不仅美观实用，还增加了房屋的使用面积。售后服务也很到位，有问题随时都能得到解决。"
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 联系我们 -->
+    <section id="contact" class="py-20 bg-gradient-primary text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="animate-slide-up">
+                    <h2 class="text-4xl font-bold mb-6">立即预约免费咨询</h2>
+                    <p class="text-xl mb-8 text-blue-100">
+                        我们的专业团队将为您提供一对一的定制化服务，帮您打造理想的阳光房
+                    </p>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <i class="fas fa-phone-alt text-yellow-300 text-xl mr-4"></i>
+                            <span class="text-lg">400-888-9999</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-envelope text-yellow-300 text-xl mr-4"></i>
+                            <span class="text-lg">info@sunroom.com</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-map-marker-alt text-yellow-300 text-xl mr-4"></i>
+                            <span class="text-lg">北京市朝阳区阳光大厦18楼</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-clock text-yellow-300 text-xl mr-4"></i>
+                            <span class="text-lg">周一至周日 9:00-18:00</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="animate-slide-up" style="animation-delay: 0.3s;">
+                    <div class="contact-form">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">填写咨询表单</h3>
+                        <form id="contactForm">
+                            <input type="text" placeholder="您的姓名 *" class="form-input" required>
+                            <input type="tel" placeholder="联系电话 *" class="form-input" required>
+                            <input type="email" placeholder="电子邮箱" class="form-input">
+                            <input type="text" placeholder="房屋地址" class="form-input">
+                            <select class="form-input">
+                                <option value="">阳光房类型</option>
+                                <option value="modern">现代简约</option>
+                                <option value="european">欧式古典</option>
+                                <option value="country">田园休闲</option>
+                                <option value="industrial">现代工业</option>
+                                <option value="mediterranean">地中海风格</option>
+                                <option value="japanese">日式禅意</option>
+                            </select>
+                            <textarea placeholder="具体需求和要求" class="form-input" rows="4"></textarea>
+                            
+                            <div class="checkbox-container">
+                                <input type="checkbox" id="privacy" required>
+                                <label for="privacy" class="text-gray-600">
+                                    我同意隐私政策并授权接收相关资讯
+                                </label>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary w-full">
+                                <i class="fas fa-paper-plane mr-2"></i>提交咨询
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="text-2xl font-bold mb-4">
+                        <i class="fas fa-sun text-yellow-500 mr-2"></i>阳光房专家
+                    </div>
+                    <p class="text-gray-400 mb-4">
+                        专业阳光房设计与建造服务商，致力于为客户打造理想的户外生活空间。
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-weixin text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-weibo text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-tiktok text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">产品服务</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">现代简约阳光房</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">欧式古典阳光房</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">田园休闲阳光房</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">定制化设计</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">支持服务</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">安装服务</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">售后服务</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">保养指南</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">常见问题</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">联系我们</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt mt-1 mr-3 text-yellow-500"></i>
+                            <span>北京市朝阳区阳光大厦18楼</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-phone-alt mr-3 text-yellow-500"></i>
+                            <span>400-888-9999</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope mr-3 text-yellow-500"></i>
+                            <span>info@sunroom.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 阳光房专家. 保留所有权利. | 京ICP备12345678号</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 移动端菜单切换
+        document.getElementById('menu-toggle').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // 表单提交处理
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('感谢您的咨询！我们的专业顾问将在24小时内与您联系。');
+            this.reset();
+        });
+
+        // 滚动时导航栏效果
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 100) {
+                nav.classList.add('bg-white', 'shadow-lg');
+                nav.classList.remove('bg-transparent');
+            } else {
+                nav.classList.remove('bg-white', 'shadow-lg');
+                nav.classList.add('bg-transparent');
+            }
+        });
+
+        // 动画效果 - 当元素进入视窗时触发动画
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in');
+                }
+            });
+        }, observerOptions);
+
+        // 观察需要动画的元素
+        document.querySelectorAll('.feature-card, .gallery-item, .testimonial-card, .stats-card').forEach(el => {
+            observer.observe(el);
+        });
+
+        // 自动轮播统计数据
+        let statCount = 0;
+        const statElements = document.querySelectorAll('.stats-number');
+        
+        function animateStats() {
+            if (statCount < 100) {
+                statCount += 2;
+                statElements[0].textContent = statCount + '+';
+                statElements[2].textContent = Math.floor(statCount/10) + '+';
+                setTimeout(animateStats, 50);
+            }
+        }
+
+        // 页面加载完成后开始动画
+        window.addEventListener('load', function() {
+            setTimeout(animateStats, 1000);
+        });
+    </script>
+</body>
+</html>
