@@ -66,6 +66,265 @@
             0%, 100% { transform: translateY(0px); }
             50% { transform: translateY(-10px); }
         }
+
+        /* Chatbot Styles */
+        .chatbot-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9999;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .chatbot-toggle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(14, 165, 233, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .chatbot-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(14, 165, 233, 0.5);
+        }
+
+        .chatbot-toggle i {
+            font-size: 24px;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .chatbot-toggle.active i.fa-comments { display: none; }
+        .chatbot-toggle.active i.fa-times { display: block; }
+        .chatbot-toggle i.fa-times { display: none; }
+
+        .chatbot-window {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 380px;
+            max-width: calc(100vw - 48px);
+            height: 520px;
+            max-height: calc(100vh - 120px);
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            animation: chatWindowSlideUp 0.3s ease-out;
+        }
+
+        .chatbot-window.active { display: flex; }
+
+        @keyframes chatWindowSlideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chatbot-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chatbot-avatar {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chatbot-avatar i { font-size: 20px; }
+        .chatbot-info h4 { font-size: 16px; font-weight: 600; margin: 0; }
+        .chatbot-info p { font-size: 12px; margin: 0; opacity: 0.8; }
+        .chatbot-status { display: flex; align-items: center; gap: 6px; }
+
+        .chatbot-status-dot {
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .chatbot-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            background: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .chat-message {
+            display: flex;
+            gap: 8px;
+            max-width: 85%;
+            animation: messageSlide 0.3s ease-out;
+        }
+
+        @keyframes messageSlide {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chat-message.bot { align-self: flex-start; }
+        .chat-message.user { align-self: flex-end; flex-direction: row-reverse; }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .chat-message.bot .message-avatar { background: var(--gradient-primary); color: white; }
+        .chat-message.user .message-avatar { background: #e2e8f0; color: #64748b; }
+
+        .message-content {
+            padding: 12px 16px;
+            border-radius: 16px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .chat-message.bot .message-content {
+            background: white;
+            color: #1e293b;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .chat-message.user .message-content {
+            background: var(--gradient-primary);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .quick-replies {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .quick-reply-btn {
+            padding: 8px 14px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            font-size: 13px;
+            color: var(--primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quick-reply-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .chatbot-input {
+            padding: 16px;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .chatbot-input input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 24px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .chatbot-input input:focus { border-color: var(--primary); }
+
+        .chatbot-input button {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .chatbot-input button:hover { transform: scale(1.05); }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 12px 16px;
+            background: white;
+            border-radius: 16px;
+            border-bottom-left-radius: 4px;
+            width: fit-content;
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: #94a3b8;
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-4px); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @media (max-width: 480px) {
+            .chatbot-window {
+                width: calc(100vw - 32px);
+                height: calc(100vh - 100px);
+                bottom: 70px;
+                right: -8px;
+            }
+            .chatbot-toggle { width: 54px; height: 54px; }
+        }
     </style>
 </head>
 <body class="font-sans">
@@ -433,6 +692,35 @@
 
     <!-- Footer -->
     <footer class="bg-gray-800 text-white py-12">
+
+    <!-- Chatbot Widget -->
+    <div class="chatbot-container" id="chatbot">
+        <div class="chatbot-window" id="chatWindow">
+            <div class="chatbot-header">
+                <div class="chatbot-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="chatbot-info">
+                    <h4>阳光房智能助手</h4>
+                    <div class="chatbot-status">
+                        <span class="chatbot-status-dot"></span>
+                        <p>在线服务中</p>
+                    </div>
+                </div>
+            </div>
+            <div class="chatbot-messages" id="chatMessages"></div>
+            <div class="chatbot-input">
+                <input type="text" id="chatInput" placeholder="输入您的问题..." autocomplete="off">
+                <button id="sendBtn" onclick="sendMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+        <button class="chatbot-toggle" id="chatToggle" onclick="toggleChat()">
+            <i class="fas fa-comments"></i>
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
@@ -535,6 +823,148 @@
             el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
             observer.observe(el);
         });
+
+        // ==================== Chatbot Functionality ====================
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const chatToggle = document.getElementById('chatToggle');
+        const chatWindow = document.getElementById('chatWindow');
+
+        const botResponses = {
+            '价格': '我们的阳光房价格根据面积、材料和设计复杂度而定，一般在 800-2000元/㎡ 之间。建议您预约免费上门测量，我们会根据您的实际需求提供详细报价。',
+            '材料': '我们主要使用以下高品质材料：\n• 框架：断桥铝合金/钢结构\n• 玻璃：双层中空钢化玻璃\n• 顶棚：钢化夹胶玻璃/德高瓦\n所有材料均通过国家质量认证。',
+            '工期': '阳光房的建造周期一般为：\n• 小型(10-15㎡)：7-10天\n• 中型(15-25㎡)：10-15天\n• 大型(25㎡以上)：15-20天\n具体工期会在签约时确认。',
+            '保修': '我们提供完善的售后服务：\n• 整体结构：5年质保\n• 玻璃配件：2年质保\n• 终身维护服务\n• 24小时售后响应',
+            '流程': '我们的服务流程如下：\n1️⃣ 免费咨询与需求沟通\n2️⃣ 上门测量与方案设计\n3️⃣ 3D效果图确认\n4️⃣ 签订合同与付款\n5️⃣ 材料生产与施工\n6️⃣ 验收与售后服务',
+            '预约': '您可以通过以下方式预约免费咨询：\n📞 电话：400-888-9999\n📱 微信：sunroom2024\n📧 邮箱：info@sunroom.com\n或直接在网站填写咨询表单，我们会在24小时内联系您！',
+            '地址': '我们的公司地址：\n📍 北京市朝阳区建设路123号\n\n营业时间：周一至周日 9:00-18:00\n欢迎您预约参观我们的展厅！',
+            '案例': '我们已完成500+阳光房项目，涵盖各种风格：\n• 现代简约风格\n• 欧式古典风格\n• 田园休闲风格\n• 日式禅意风格\n\n您可以点击网站的"案例展示"查看更多作品，或预约参观实地案例。',
+            'default': '感谢您的咨询！您的问题我已记录，我们的专业顾问会尽快为您解答。\n\n您也可以直接拨打我们的服务热线：400-888-9999，获得即时帮助。'
+        };
+
+        const quickReplies = [
+            { text: '了解价格', keyword: '价格' },
+            { text: '查看材料', keyword: '材料' },
+            { text: '施工工期', keyword: '工期' },
+            { text: '售后保修', keyword: '保修' },
+            { text: '预约咨询', keyword: '预约' }
+        ];
+
+        function initChatbot() {
+            setTimeout(() => {
+                addBotMessage('您好！👋 欢迎来到阳光房专家！\n\n我是您的智能客服助手，可以为您解答关于阳光房的各种问题。', true);
+            }, 500);
+        }
+
+        function toggleChat() {
+            chatWindow.classList.toggle('active');
+            chatToggle.classList.toggle('active');
+            if (chatWindow.classList.contains('active') && chatMessages.children.length === 0) {
+                initChatbot();
+            }
+            if (chatWindow.classList.contains('active')) {
+                setTimeout(() => chatInput.focus(), 300);
+            }
+        }
+
+        function addBotMessage(text, showQuickReplies = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-message bot';
+            messageDiv.innerHTML = `
+                <div class="message-avatar"><i class="fas fa-robot"></i></div>
+                <div class="message-content">${text.replace(/\n/g, '<br>')}</div>
+            `;
+            chatMessages.appendChild(messageDiv);
+            if (showQuickReplies) {
+                const quickReplyDiv = document.createElement('div');
+                quickReplyDiv.className = 'quick-replies';
+                quickReplyDiv.innerHTML = quickReplies.map(reply => 
+                    `<button class="quick-reply-btn" onclick="handleQuickReply('${reply.keyword}')">${reply.text}</button>`
+                ).join('');
+                chatMessages.appendChild(quickReplyDiv);
+            }
+            scrollToBottom();
+        }
+
+        function addUserMessage(text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-message user';
+            messageDiv.innerHTML = `
+                <div class="message-avatar"><i class="fas fa-user"></i></div>
+                <div class="message-content">${text}</div>
+            `;
+            chatMessages.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        function showTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'chat-message bot';
+            typingDiv.id = 'typingIndicator';
+            typingDiv.innerHTML = `
+                <div class="message-avatar"><i class="fas fa-robot"></i></div>
+                <div class="typing-indicator"><span></span><span></span><span></span></div>
+            `;
+            chatMessages.appendChild(typingDiv);
+            scrollToBottom();
+        }
+
+        function removeTypingIndicator() {
+            const typing = document.getElementById('typingIndicator');
+            if (typing) typing.remove();
+        }
+
+        function getBotResponse(userInput) {
+            const input = userInput.toLowerCase();
+            if (input.includes('价格') || input.includes('多少钱') || input.includes('费用') || input.includes('报价')) return botResponses['价格'];
+            if (input.includes('材料') || input.includes('材质') || input.includes('玻璃') || input.includes('铝合金')) return botResponses['材料'];
+            if (input.includes('工期') || input.includes('多久') || input.includes('时间') || input.includes('多长')) return botResponses['工期'];
+            if (input.includes('保修') || input.includes('售后') || input.includes('质保') || input.includes('维修')) return botResponses['保修'];
+            if (input.includes('流程') || input.includes('步骤') || input.includes('怎么做') || input.includes('如何')) return botResponses['流程'];
+            if (input.includes('预约') || input.includes('咨询') || input.includes('联系') || input.includes('电话')) return botResponses['预约'];
+            if (input.includes('地址') || input.includes('在哪') || input.includes('位置') || input.includes('展厅')) return botResponses['地址'];
+            if (input.includes('案例') || input.includes('作品') || input.includes('效果') || input.includes('图片')) return botResponses['案例'];
+            if (input.includes('你好') || input.includes('您好') || input.includes('hi') || input.includes('hello')) return '您好！很高兴为您服务！请问有什么可以帮助您的吗？';
+            if (input.includes('谢谢') || input.includes('感谢') || input.includes('thanks')) return '不客气！很高兴能帮到您！如果还有其他问题，随时可以问我。😊';
+            return botResponses['default'];
+        }
+
+        function sendMessage() {
+            const message = chatInput.value.trim();
+            if (!message) return;
+            addUserMessage(message);
+            chatInput.value = '';
+            document.querySelectorAll('.quick-replies').forEach(el => el.remove());
+            showTypingIndicator();
+            setTimeout(() => {
+                removeTypingIndicator();
+                addBotMessage(getBotResponse(message));
+            }, 1000 + Math.random() * 500);
+        }
+
+        function handleQuickReply(keyword) {
+            document.querySelectorAll('.quick-replies').forEach(el => el.remove());
+            addUserMessage(quickReplies.find(r => r.keyword === keyword).text);
+            showTypingIndicator();
+            setTimeout(() => {
+                removeTypingIndicator();
+                addBotMessage(botResponses[keyword]);
+            }, 800);
+        }
+
+        function scrollToBottom() {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        chatInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        setTimeout(() => {
+            if (!chatWindow.classList.contains('active')) {
+                chatToggle.style.animation = 'bounce 0.5s ease 3';
+            }
+        }, 5000);
     </script>
 </body>
 </html>
