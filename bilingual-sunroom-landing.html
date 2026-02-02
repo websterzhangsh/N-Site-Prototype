@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>阳光房解决方案 - 打造您的理想户外空间</title>
+    <meta name="description" content="专业阳光房设计与建造服务，提供高品质铝合金框架、钢化玻璃和智能遮阳系统，打造舒适美观的户外生活空间。">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #f59e0b;
+            --accent: #10b981;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gradient-primary: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            --gradient-warm: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            --gradient-nature: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --shadow-elegant: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-glow: 0 0 30px rgba(37, 99, 235, 0.3);
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.9) 0%, rgba(29, 78, 216, 0.9) 100%), 
+                        url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            color: white;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition-smooth);
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: var(--shadow-elegant);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .btn-secondary {
+            background: var(--gradient-warm);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-outline:hover {
+            background: white;
+            color: var(--primary);
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow-elegant);
+            transition: var(--transition-smooth);
+            height: 100%;
+            border: 1px solid #e2e8f0;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            height: 300px;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition-smooth);
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .testimonial-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow-elegant);
+            margin: 1rem;
+            position: relative;
+        }
+
+        .testimonial-card::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            font-size: 5rem;
+            color: var(--primary);
+            opacity: 0.2;
+            font-family: serif;
+        }
+
+        .stats-card {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 16px;
+            box-shadow: var(--shadow-elegant);
+            transition: var(--transition-smooth);
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stats-number {
+            font-size: 3rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-link {
+            position: relative;
+            padding: 0.5rem 1rem;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition-smooth);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--secondary);
+            transition: var(--transition-smooth);
+            transform: translateX(-50%);
+        }
+
+        .nav-link:hover::after {
+            width: 80%;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #64748b;
+            margin-bottom: 3rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .floating-element {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(37, 99, 235, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .contact-form {
+            background: white;
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow-elegant);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+            transition: var(--transition-smooth);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .checkbox-container input {
+            margin-right: 0.75rem;
+            width: 18px;
+            height: 18px;
+        }
+
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .btn {
+                padding: 0.8rem 2rem;
+                font-size: 1rem;
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-slide-up {
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Language Toggle Styles */
+        .language-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .language-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin: 0 2px;
+        }
+
+        .language-btn.active {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .language-btn:hover:not(.active) {
+            background: #f1f5f9;
+        }
+
+        /* Chatbot Styles */
+        .chatbot-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9999;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .chatbot-toggle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-smooth);
+        }
+
+        .chatbot-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(37, 99, 235, 0.5);
+        }
+
+        .chatbot-toggle i {
+            font-size: 24px;
+            color: white;
+            transition: var(--transition-smooth);
+        }
+
+        .chatbot-toggle.active i.fa-comments {
+            display: none;
+        }
+
+        .chatbot-toggle.active i.fa-times {
+            display: block;
+        }
+
+        .chatbot-toggle i.fa-times {
+            display: none;
+        }
+
+        .chatbot-window {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 380px;
+            max-width: calc(100vw - 48px);
+            height: 520px;
+            max-height: calc(100vh - 120px);
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            animation: chatWindowSlideUp 0.3s ease-out;
+        }
+
+        .chatbot-window.active {
+            display: flex;
+        }
+
+        @keyframes chatWindowSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chatbot-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chatbot-avatar {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chatbot-avatar i {
+            font-size: 20px;
+        }
+
+        .chatbot-info h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .chatbot-info p {
+            font-size: 12px;
+            margin: 0;
+            opacity: 0.8;
+        }
+
+        .chatbot-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .chatbot-status-dot {
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .chatbot-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            background: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .chat-message {
+            display: flex;
+            gap: 8px;
+            max-width: 85%;
+            animation: messageSlide 0.3s ease-out;
+        }
+
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chat-message.bot {
+            align-self: flex-start;
+        }
+
+        .chat-message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .chat-message.bot .message-avatar {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .chat-message.user .message-avatar {
+            background: #e2e8f0;
+            color: #64748b;
+        }
+
+        .message-content {
+            padding: 12px 16px;
+            border-radius: 16px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .chat-message.bot .message-content {
+            background: white;
+            color: #1e293b;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .chat-message.user .message-content {
+            background: var(--gradient-primary);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .quick-replies {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .quick-reply-btn {
+            padding: 8px 14px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            font-size: 13px;
+            color: var(--primary);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .quick-reply-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .chatbot-input {
+            padding: 16px;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .chatbot-input input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 24px;
+            font-size: 14px;
+            outline: none;
+            transition: var(--transition-smooth);
+            background: white;
+            color: #1e293b;
+        }
+
+        .chatbot-input input::placeholder {
+            color: #94a3b8;
+        }
+
+        .chatbot-input input:focus {
+            border-color: var(--primary);
+        }
+
+        .chatbot-input button {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-smooth);
+        }
+
+        .chatbot-input button:hover {
+            transform: scale(1.05);
+        }
+
+        .chatbot-input button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 12px 16px;
+            background: white;
+            border-radius: 16px;
+            border-bottom-left-radius: 4px;
+            width: fit-content;
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: #94a3b8;
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-4px); }
+        }
+
+        @media (max-width: 480px) {
+            .chatbot-window {
+                width: calc(100vw - 32px);
+                height: calc(100vh - 100px);
+                bottom: 70px;
+                right: -8px;
+            }
+
+            .chatbot-toggle {
+                width: 54px;
+                height: 54px;
+            }
+            
+            .language-toggle {
+                top: 10px;
+                right: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Toggle -->
+    <div class="language-toggle">
+        <button class="language-btn active" onclick="switchLanguage('zh')" data-lang="zh">中文</button>
+        <button class="language-btn" onclick="switchLanguage('en')" data-lang="en">English</button>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full bg-white shadow-lg z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center">
+                    <div class="text-2xl font-bold text-primary">
+                        <i class="fas fa-sun text-yellow-500 mr-2"></i><span class="lang-text" data-zh="阳光房专家" data-en="Sunroom Expert">阳光房专家</span>
+                    </div>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#home" class="nav-link"><span class="lang-text" data-zh="首页" data-en="Home">首页</span></a>
+                    <a href="#features" class="nav-link"><span class="lang-text" data-zh="产品特色" data-en="Features">产品特色</span></a>
+                    <a href="#gallery" class="nav-link"><span class="lang-text" data-zh="案例展示" data-en="Gallery">案例展示</span></a>
+                    <a href="#testimonials" class="nav-link"><span class="lang-text" data-zh="客户评价" data-en="Testimonials">客户评价</span></a>
+                    <a href="#contact" class="nav-link"><span class="lang-text" data-zh="联系我们" data-en="Contact">联系我们</span></a>
+                </div>
+                <div class="md:hidden">
+                    <button id="menu-toggle" class="text-gray-600 hover:text-primary">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="#home" class="block px-3 py-2 text-gray-600 hover:text-primary"><span class="lang-text" data-zh="首页" data-en="Home">首页</span></a>
+                <a href="#features" class="block px-3 py-2 text-gray-600 hover:text-primary"><span class="lang-text" data-zh="产品特色" data-en="Features">产品特色</span></a>
+                <a href="#gallery" class="block px-3 py-2 text-gray-600 hover:text-primary"><span class="lang-text" data-zh="案例展示" data-en="Gallery">案例展示</span></a>
+                <a href="#testimonials" class="block px-3 py-2 text-gray-600 hover:text-primary"><span class="lang-text" data-zh="客户评价" data-en="Testimonials">客户评价</span></a>
+                <a href="#contact" class="block px-3 py-2 text-gray-600 hover:text-primary"><span class="lang-text" data-zh="联系我们" data-en="Contact">联系我们</span></a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-section">
+        <div class="hero-content animate-fade-in">
+            <h1 class="text-5xl md:text-6xl font-bold mb-6">
+                <span class="lang-text" data-zh="打造您的理想" data-en="Create Your Ideal">打造您的理想</span><br>
+                <span class="text-yellow-300"><span class="lang-text" data-zh="户外生活空间" data-en="Outdoor Living Space">户外生活空间</span></span>
+            </h1>
+            <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
+                <span class="lang-text" data-zh="专业阳光房设计与建造服务，融合现代美学与实用功能，让您的家延伸到自然中" data-en="Professional sunroom design and construction services, integrating modern aesthetics with practical functionality to connect your home with nature">专业阳光房设计与建造服务，融合现代美学与实用功能，让您的家延伸到自然中</span>
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="#contact" class="btn btn-primary">
+                    <i class="fas fa-calendar-check mr-2"></i><span class="lang-text" data-zh="免费咨询" data-en="Free Consultation">免费咨询</span>
+                </a>
+                <a href="#gallery" class="btn btn-outline">
+                    <i class="fas fa-images mr-2"></i><span class="lang-text" data-zh="查看案例" data-en="View Cases">查看案例</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Floating elements -->
+        <div class="floating-element" style="width: 80px; height: 80px; top: 20%; left: 10%;"></div>
+        <div class="floating-element" style="width: 60px; height: 60px; top: 60%; right: 15%; animation-delay: 2s;"></div>
+        <div class="floating-element" style="width: 40px; height: 40px; bottom: 20%; left: 20%; animation-delay: 4s;"></div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="stats-card animate-slide-up">
+                    <div class="stats-number">500+</div>
+                    <div class="text-gray-600 font-medium"><span class="lang-text" data-zh="成功案例" data-en="Successful Cases">成功案例</span></div>
+                </div>
+                <div class="stats-card animate-slide-up" style="animation-delay: 0.2s;">
+                    <div class="stats-number">98%</div>
+                    <div class="text-gray-600 font-medium"><span class="lang-text" data-zh="客户满意度" data-en="Customer Satisfaction">客户满意度</span></div>
+                </div>
+                <div class="stats-card animate-slide-up" style="animation-delay: 0.4s;">
+                    <div class="stats-number">10+</div>
+                    <div class="text-gray-600 font-medium"><span class="lang-text" data-zh="年行业经验" data-en="Years of Experience">年行业经验</span></div>
+                </div>
+                <div class="stats-card animate-slide-up" style="animation-delay: 0.6s;">
+                    <div class="stats-number">24/7</div>
+                    <div class="text-gray-600 font-medium"><span class="lang-text" data-zh="专业服务" data-en="Professional Service">专业服务</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="section-title"><span class="lang-text" data-zh="为什么选择我们的阳光房" data-en="Why Choose Our Sunrooms">为什么选择我们的阳光房</span></h2>
+            <p class="section-subtitle">
+                <span class="lang-text" data-zh="我们提供全方位的阳光房解决方案，从设计到安装，每一个细节都精益求精" data-en="We provide comprehensive sunroom solutions, from design to installation, perfecting every detail">我们提供全方位的阳光房解决方案，从设计到安装，每一个细节都精益求精</span>
+            </p>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-16">
+                <div class="feature-card animate-slide-up">
+                    <div class="feature-icon bg-gradient-primary">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-center mb-4"><span class="lang-text" data-zh="高品质材料" data-en="High-Quality Materials">高品质材料</span></h3>
+                    <p class="text-gray-600 text-center">
+                        <span class="lang-text" data-zh="采用优质铝合金框架和钢化玻璃，确保结构稳固耐用，抗风压性能优异" data-en="Using premium aluminum alloy frames and tempered glass to ensure structural stability, durability, and excellent wind pressure resistance">采用优质铝合金框架和钢化玻璃，确保结构稳固耐用，抗风压性能优异</span>
+                    </p>
+                </div>
+                
+                <div class="feature-card animate-slide-up" style="animation-delay: 0.2s;">
+                    <div class="feature-icon bg-gradient-warm">
+                        <i class="fas fa-temperature-high"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-center mb-4"><span class="lang-text" data-zh="智能温控" data-en="Smart Temperature Control">智能温控</span></h3>
+                    <p class="text-gray-600 text-center">
+                        <span class="lang-text" data-zh="配备智能遮阳系统和通风设计，四季皆宜，冬暖夏凉，节能环保" data-en="Equipped with smart shading systems and ventilation design, suitable for all seasons, warm in winter and cool in summer, energy-efficient">配备智能遮阳系统和通风设计，四季皆宜，冬暖夏凉，节能环保</span>
+                    </p>
+                </div>
+                
+                <div class="feature-card animate-slide-up" style="animation-delay: 0.4s;">
+                    <div class="feature-icon bg-gradient-nature">
+                        <i class="fas fa-ruler-combined"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-center mb-4"><span class="lang-text" data-zh="定制设计" data-en="Custom Design">定制设计</span></h3>
+                    <p class="text-gray-600 text-center">
+                        <span class="lang-text" data-zh="根据您的空间和需求量身定制，多种风格可选，完美融入您的家居环境" data-en="Customized according to your space and needs, multiple styles available, perfectly integrated into your living environment">根据您的空间和需求量身定制，多种风格可选，完美融入您的家居环境</span>
+                    </p>
+                </div>
+                
+                <div class="feature-card animate-slide-up" style="animation-delay: 0.6s;">
+                    <div class="feature-icon bg-gradient-primary">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-center mb-4"><span class="lang-text" data-zh="专业安装" data-en="Professional Installation">专业安装</span></h3>
+                    <p class="text-gray-600 text-center">
+                        <span class="lang-text" data-zh="经验丰富的安装团队，标准化施工流程，确保工程质量，终身维护保障" data-en="Experienced installation team, standardized construction process, ensuring project quality, lifetime maintenance guarantee">经验丰富的安装团队，标准化施工流程，确保工程质量，终身维护保障</span>
+                    </p>
+                </div>
+                
+                <div class="feature-card animate-slide-up" style="animation-delay: 0.8s;">
+                    <div class="feature-icon bg-gradient-warm">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-center mb-4"><span class="lang-text" data-zh="安全保障" data-en="Safety Guarantee">安全保障</span></h3>
+                    <p class="text-gray-600 text-center">
+                        <span class="lang-text" data-zh="通过多项安全认证，防紫外线、防雨水渗透，为您提供安全舒适的使用体验" data-en="Passed multiple safety certifications, UV protection, waterproof, providing you with a safe and comfortable experience">通过多项安全认证，防紫外线、防雨水渗透，为您提供安全舒适的使用体验</span>
+                    </p>
+                </div>
+                
+                <div class="feature-card animate-slide-up" style="animation-delay: 1s;">
+                    <div class="feature-icon bg-gradient-nature">
+                        <i class="fas fa-piggy-bank"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-center mb-4"><span class="lang-text" data-zh="性价比高" data-en="Great Value">性价比高</span></h3>
+                    <p class="text-gray-600 text-center">
+                        <span class="lang-text" data-zh="合理的价格定位，优质的售后服务，让您的投资物超所值，提升房产价值" data-en="Reasonable pricing, quality after-sales service, making your investment worth more than its cost, enhancing property value">合理的价格定位，优质的售后服务，让您的投资物超所值，提升房产价值</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="section-title"><span class="lang-text" data-zh="精品案例展示" data-en="Premium Case Showcase">精品案例展示</span></h2>
+            <p class="section-subtitle">
+                <span class="lang-text" data-zh="看看我们为客户打造的美丽阳光房，每一个都是独特的艺术品" data-en="See the beautiful sunrooms we've created for our clients, each one is a unique artwork">看看我们为客户打造的美丽阳光房，每一个都是独特的艺术品</span>
+            </p>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-16">
+                <div class="gallery-item animate-slide-up">
+                    <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Modern Minimalist Style Sunroom">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-6">
+                        <div>
+                            <h3 class="text-white text-xl font-bold"><span class="lang-text" data-zh="现代简约风格" data-en="Modern Minimalist Style">现代简约风格</span></h3>
+                            <p class="text-gray-200"><span class="lang-text" data-zh="12㎡ · 铝合金框架" data-en="12㎡ · Aluminum Alloy Frame">12㎡ · 铝合金框架</span></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="gallery-item animate-slide-up" style="animation-delay: 0.2s;">
+                    <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="European Classical Style Sunroom">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-6">
+                        <div>
+                            <h3 class="text-white text-xl font-bold"><span class="lang-text" data-zh="欧式古典风格" data-en="European Classical Style">欧式古典风格</span></h3>
+                            <p class="text-gray-200"><span class="lang-text" data-zh="18㎡ · 实木装饰" data-en="18㎡ · Solid Wood Decoration">18㎡ · 实木装饰</span></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="gallery-item animate-slide-up" style="animation-delay: 0.4s;">
+                    <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Rustic Leisure Style Sunroom">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-6">
+                        <div>
+                            <h3 class="text-white text-xl font-bold"><span class="lang-text" data-zh="田园休闲风格" data-en="Rustic Leisure Style">田园休闲风格</span></h3>
+                            <p class="text-gray-200"><span class="lang-text" data-zh="15㎡ · 自然采光" data-en="15㎡ · Natural Lighting">15㎡ · 自然采光</span></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="gallery-item animate-slide-up" style="animation-delay: 0.6s;">
+                    <img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Modern Industrial Style Sunroom">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-6">
+                        <div>
+                            <h3 class="text-white text-xl font-bold"><span class="lang-text" data-zh="现代工业风格" data-en="Modern Industrial Style">现代工业风格</span></h3>
+                            <p class="text-gray-200"><span class="lang-text" data-zh="20㎡ · 钢结构设计" data-en="20㎡ · Steel Structure Design">20㎡ · 钢结构设计</span></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="gallery-item animate-slide-up" style="animation-delay: 0.8s;">
+                    <img src="https://images.unsplash.com/photo-1600585154042-00f86f804c53?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Mediterranean Style Sunroom">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-6">
+                        <div>
+                            <h3 class="text-white text-xl font-bold"><span class="lang-text" data-zh="地中海风格" data-en="Mediterranean Style">地中海风格</span></h3>
+                            <p class="text-gray-200"><span class="lang-text" data-zh="16㎡ · 蓝白配色" data-en="16㎡ · Blue and White Colors">16㎡ · 蓝白配色</span></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="gallery-item animate-slide-up" style="animation-delay: 1s;">
+                    <img src="https://images.unsplash.com/photo-1600585153791-6c6b0c4b3b1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Japanese Zen Style Sunroom">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-6">
+                        <div>
+                            <h3 class="text-white text-xl font-bold"><span class="lang-text" data-zh="日式禅意风格" data-en="Japanese Zen Style">日式禅意风格</span></h3>
+                            <p class="text-gray-200"><span class="lang-text" data-zh="14㎡ · 极简设计" data-en="14㎡ · Minimalist Design">14㎡ · 极简设计</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <a href="#contact" class="btn btn-secondary">
+                    <i class="fas fa-images mr-2"></i><span class="lang-text" data-zh="查看更多案例" data-en="View More Cases">查看更多案例</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="section-title"><span class="lang-text" data-zh="客户真实评价" data-en="Customer Reviews">客户真实评价</span></h2>
+            <p class="section-subtitle">
+                <span class="lang-text" data-zh="听听我们的客户怎么说，真实的反馈是我们前进的动力" data-en="Listen to what our customers say, genuine feedback is our driving force">听听我们的客户怎么说，真实的反馈是我们前进的动力</span>
+            </p>
+            
+            <div class="grid md:grid-cols-3 gap-8 mt-16">
+                <div class="testimonial-card animate-slide-up">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center text-white font-bold mr-4">
+                            张
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg">张先生</h4>
+                            <div class="text-yellow-500">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">
+                        <span class="lang-text" data-zh="非常满意这次的阳光房安装服务！从设计到施工都非常专业，质量超出预期。现在每天在阳光房里喝茶看书，感觉生活品质提升了很多。强烈推荐！" data-en="Very satisfied with this sunroom installation service! Very professional from design to construction, quality exceeded expectations. Now I drink tea and read books in the sunroom every day, feeling that my quality of life has improved greatly. Highly recommended!">非常满意这次的阳光房安装服务！从设计到施工都非常专业，质量超出预期。现在每天在阳光房里喝茶看书，感觉生活品质提升了很多。强烈推荐！</span>
+                    </p>
+                </div>
+                
+                <div class="testimonial-card animate-slide-up" style="animation-delay: 0.2s;">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-gradient-warm rounded-full flex items-center justify-center text-white font-bold mr-4">
+                            李
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg">李女士</h4>
+                            <div class="text-yellow-500">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">
+                        <span class="lang-text" data-zh="设计师很专业，根据我家的户型给出了很好的建议。施工团队也很负责，工期准时，现场清理得很干净。阳光房的效果比效果图还要好！" data-en="The designer is very professional, gave great suggestions based on my house layout. The construction team is also responsible, on schedule, and cleaned the site very well. The sunroom looks even better than the renderings!">设计师很专业，根据我家的户型给出了很好的建议。施工团队也很负责，工期准时，现场清理得很干净。阳光房的效果比效果图还要好！</span>
+                    </p>
+                </div>
+                
+                <div class="testimonial-card animate-slide-up" style="animation-delay: 0.4s;">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-gradient-nature rounded-full flex items-center justify-center text-white font-bold mr-4">
+                            王
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg">王先生</h4>
+                            <div class="text-yellow-500">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">
+                        <span class="lang-text" data-zh="性价比很高的一次投资！阳光房不仅美观实用，还增加了房屋的使用面积。售后服务也很到位，有问题随时都能得到解决。" data-en="Great value investment! The sunroom is not only beautiful and practical, but also increases the usable area of the house. After-sales service is also in place, problems can be solved anytime.">性价比很高的一次投资！阳光房不仅美观实用，还增加了房屋的使用面积。售后服务也很到位，有问题随时都能得到解决。</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-gradient-primary text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="animate-slide-up">
+                    <h2 class="text-4xl font-bold mb-6"><span class="lang-text" data-zh="立即预约免费咨询" data-en="Book Free Consultation Now">立即预约免费咨询</span></h2>
+                    <p class="text-xl mb-8 text-blue-100">
+                        <span class="lang-text" data-zh="我们的专业团队将为您提供一对一的定制化服务，帮您打造理想的阳光房" data-en="Our professional team will provide you with one-on-one customized service to help you create your ideal sunroom">我们的专业团队将为您提供一对一的定制化服务，帮您打造理想的阳光房</span>
+                    </p>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <i class="fas fa-phone-alt text-yellow-300 text-xl mr-4"></i>
+                            <span class="text-lg">400-888-9999</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-envelope text-yellow-300 text-xl mr-4"></i>
+                            <span class="text-lg">info@sunroom.com</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-map-marker-alt text-yellow-300 text-xl mr-4"></i>
+                            <span class="text-lg"><span class="lang-text" data-zh="北京市朝阳区阳光大厦18楼" data-en="Room 18, Sunshine Building, Chaoyang District, Beijing">北京市朝阳区阳光大厦18楼</span></span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-clock text-yellow-300 text-xl mr-4"></i>
+                            <span class="text-lg"><span class="lang-text" data-zh="周一至周日 9:00-18:00" data-en="Monday to Sunday 9:00-18:00">周一至周日 9:00-18:00</span></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="animate-slide-up" style="animation-delay: 0.3s;">
+                    <div class="contact-form">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center"><span class="lang-text" data-zh="填写咨询表单" data-en="Fill Out Inquiry Form">填写咨询表单</span></h3>
+                        <form id="contactForm">
+                            <input type="text" placeholder="" class="form-input" required>
+                            <input type="tel" placeholder="" class="form-input" required>
+                            <input type="email" placeholder="" class="form-input">
+                            <input type="text" placeholder="" class="form-input">
+                            <select class="form-input">
+                                <option value=""><span class="lang-text" data-zh="阳光房类型" data-en="Sunroom Type">阳光房类型</span></option>
+                                <option value="modern"><span class="lang-text" data-zh="现代简约" data-en="Modern Minimalist">现代简约</span></option>
+                                <option value="european"><span class="lang-text" data-zh="欧式古典" data-en="European Classical">欧式古典</span></option>
+                                <option value="country"><span class="lang-text" data-zh="田园休闲" data-en="Rustic Leisure">田园休闲</span></option>
+                                <option value="industrial"><span class="lang-text" data-zh="现代工业" data-en="Modern Industrial">现代工业</span></option>
+                                <option value="mediterranean"><span class="lang-text" data-zh="地中海风格" data-en="Mediterranean Style">地中海风格</span></option>
+                                <option value="japanese"><span class="lang-text" data-zh="日式禅意" data-en="Japanese Zen Style">日式禅意</span></option>
+                            </select>
+                            <textarea placeholder="" class="form-input" rows="4"></textarea>
+                            
+                            <div class="checkbox-container">
+                                <input type="checkbox" id="privacy" required>
+                                <label for="privacy" class="text-gray-600">
+                                    <span class="lang-text" data-zh="我同意隐私政策并授权接收相关资讯" data-en="I agree to the privacy policy and authorize receiving relevant information">我同意隐私政策并授权接收相关资讯</span>
+                                </label>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary w-full">
+                                <i class="fas fa-paper-plane mr-2"></i><span class="lang-text" data-zh="提交咨询" data-en="Submit Inquiry">提交咨询</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="text-2xl font-bold mb-4">
+                        <i class="fas fa-sun text-yellow-500 mr-2"></i><span class="lang-text" data-zh="阳光房专家" data-en="Sunroom Expert">阳光房专家</span>
+                    </div>
+                    <p class="text-gray-400 mb-4">
+                        <span class="lang-text" data-zh="专业阳光房设计建造服务商，致力于为客户打造理想的户外生活空间。" data-en="Professional sunroom design and construction service provider, dedicated to creating ideal outdoor living spaces for customers.">专业阳光房设计建造服务商，致力于为客户打造理想的户外生活空间。</span>
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-weixin text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-weibo text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-tiktok text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4"><span class="lang-text" data-zh="产品服务" data-en="Products & Services">产品服务</span></h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors"><span class="lang-text" data-zh="现代简约阳光房" data-en="Modern Minimalist Sunroom">现代简约阳光房</span></a></li>
+                        <li><a href="#" class="hover:text-white transition-colors"><span class="lang-text" data-zh="欧式古典阳光房" data-en="European Classical Sunroom">欧式古典阳光房</span></a></li>
+                        <li><a href="#" class="hover:text-white transition-colors"><span class="lang-text" data-zh="田园休闲阳光房" data-en="Rustic Leisure Sunroom">田园休闲阳光房</span></a></li>
+                        <li><a href="#" class="hover:text-white transition-colors"><span class="lang-text" data-zh="定制化设计" data-en="Customized Design">定制化设计</span></a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4"><span class="lang-text" data-zh="支持服务" data-en="Support Services">支持服务</span></h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors"><span class="lang-text" data-zh="安装服务" data-en="Installation Service">安装服务</span></a></li>
+                        <li><a href="#" class="hover:text-white transition-colors"><span class="lang-text" data-zh="售后服务" data-en="After-sales Service">售后服务</span></a></li>
+                        <li><a href="#" class="hover:text-white transition-colors"><span class="lang-text" data-zh="保养指南" data-en="Maintenance Guide">保养指南</span></a></li>
+                        <li><a href="#" class="hover:text-white transition-colors"><span class="lang-text" data-zh="常见问题" data-en="FAQ">常见问题</span></a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4"><span class="lang-text" data-zh="联系我们" data-en="Contact Us">联系我们</span></h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt mt-1 mr-3 text-yellow-500"></i>
+                            <span><span class="lang-text" data-zh="北京市朝阳区阳光大厦18楼" data-en="Room 18, Sunshine Building, Chaoyang District, Beijing">北京市朝阳区阳光大厦18楼</span></span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-phone-alt mr-3 text-yellow-500"></i>
+                            <span>400-888-9999</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope mr-3 text-yellow-500"></i>
+                            <span>info@sunroom.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 <span class="lang-text" data-zh="阳光房专家. 保留所有权利." data-en="Sunroom Expert. All rights reserved.">阳光房专家. 保留所有权利.</span> | <span class="lang-text" data-zh="京ICP备12345678号" data-en="Beijing ICP No. 12345678">京ICP备12345678号</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chatbot Widget -->
+    <div class="chatbot-container" id="chatbot">
+        <div class="chatbot-window" id="chatWindow">
+            <div class="chatbot-header">
+                <div class="chatbot-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="chatbot-info">
+                    <h4><span class="lang-text" data-zh="阳光房智能助手" data-en="Sunroom AI Assistant">阳光房智能助手</span></h4>
+                    <div class="chatbot-status">
+                        <span class="chatbot-status-dot"></span>
+                        <p><span class="lang-text" data-zh="在线服务中" data-en="Online">在线服务中</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="chatbot-messages" id="chatMessages">
+                <!-- Messages will be added here -->
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="chatInput" placeholder="" autocomplete="off">
+                <button id="sendBtn" onclick="sendMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+        <button class="chatbot-toggle" id="chatToggle" onclick="toggleChat()">
+            <i class="fas fa-comments"></i>
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <script>
+        // Language management
+        let currentLang = 'zh';
+        
+        function switchLanguage(lang) {
+            currentLang = lang;
+            
+            // Update all language texts
+            document.querySelectorAll('.lang-text').forEach(element => {
+                const zhText = element.getAttribute('data-zh');
+                const enText = element.getAttribute('data-en');
+                
+                if (lang === 'zh') {
+                    element.textContent = zhText;
+                } else {
+                    element.textContent = enText;
+                }
+            });
+            
+            // Update form placeholders
+            updateFormPlaceholders(lang);
+            
+            // Update chatbot
+            updateChatbotPlaceholders(lang);
+            
+            // Update language toggle buttons
+            document.querySelectorAll('.language-btn').forEach(btn => {
+                if (btn.getAttribute('data-lang') === lang) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            
+            // Update HTML lang attribute
+            document.documentElement.lang = lang;
+        }
+        
+        function updateFormPlaceholders(lang) {
+            const inputs = document.querySelectorAll('#contactForm input, #contactForm textarea, #contactForm select option:first-child');
+            inputs.forEach(input => {
+                if (input.placeholder) {
+                    if (lang === 'zh') {
+                        switch(input.placeholder) {
+                            case 'Name *':
+                                input.placeholder = '您的姓名 *';
+                                break;
+                            case 'Phone *':
+                                input.placeholder = '联系电话 *';
+                                break;
+                            case 'Email':
+                                input.placeholder = '电子邮箱';
+                                break;
+                            case 'Address':
+                                input.placeholder = '房屋地址';
+                                break;
+                            case 'Requirements':
+                                input.placeholder = '具体需求和要求';
+                                break;
+                        }
+                    } else {
+                        switch(input.placeholder) {
+                            case '您的姓名 *':
+                                input.placeholder = 'Name *';
+                                break;
+                            case '联系电话 *':
+                                input.placeholder = 'Phone *';
+                                break;
+                            case '电子邮箱':
+                                input.placeholder = 'Email';
+                                break;
+                            case '房屋地址':
+                                input.placeholder = 'Address';
+                                break;
+                            case '具体需求和要求':
+                                input.placeholder = 'Requirements';
+                                break;
+                        }
+                    }
+                }
+            });
+        }
+        
+        function updateChatbotPlaceholders(lang) {
+            const chatInput = document.getElementById('chatInput');
+            if (chatInput) {
+                if (lang === 'zh') {
+                    chatInput.placeholder = '输入您的问题...';
+                } else {
+                    chatInput.placeholder = 'Type your question...';
+                }
+            }
+        }
+        
+        // Mobile menu toggle
+        document.getElementById('menu-toggle').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Form submission
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert(currentLang === 'zh' ? '感谢您的咨询！我们的工作人员会尽快与您联系。' : 'Thank you for your inquiry! Our staff will contact you soon.');
+            this.reset();
+        });
+
+        // Scroll effects
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card, .gallery-item, .testimonial-card, .stats-card').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Stats animation
+        let statCount = 0;
+        const statElements = document.querySelectorAll('.stats-number');
+        
+        function animateStats() {
+            if (statCount < 100) {
+                statCount += 2;
+                statElements[0].textContent = statCount + '+';
+                statElements[2].textContent = Math.floor(statCount/10) + '+';
+                setTimeout(animateStats, 50);
+            }
+        }
+
+        window.addEventListener('load', function() {
+            setTimeout(animateStats, 1000);
+        });
+
+        // ==================== Chatbot Functionality ====================
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const chatToggle = document.getElementById('chatToggle');
+        const chatWindow = document.getElementById('chatWindow');
+
+        // Chatbot knowledge base
+        const botResponses = {
+            'price': {
+                'zh': '我们的阳光房价格根据面积、材料和设计复杂度而定，一般在 800-2000元/㎡ 之间。建议您预约免费上门测量，我们会根据您的实际需求提供详细报价。',
+                'en': 'Our sunroom prices vary based on area, materials, and design complexity, generally ranging from 800-2000 CNY/㎡. We recommend scheduling a free on-site measurement, and we will provide detailed quotations based on your actual needs.'
+            },
+            'material': {
+                'zh': '我们主要使用以下高品质材料：\n• 框架：断桥铝合金/钢结构\n• 玻璃：双层中空钢化玻璃\n• 顶棚：钢化夹胶玻璃/德高瓦\n所有材料均通过国家质量认证。',
+                'en': 'We mainly use the following high-quality materials:\n• Frame: Thermal break aluminum alloy/steel structure\n• Glass: Double-glazed tempered glass\n• Roof: Tempered laminated glass/Decco tiles\nAll materials pass national quality certification.'
+            },
+            'duration': {
+                'zh': '阳光房的建造周期一般为：\n• 小型(10-15㎡)：7-10天\n• 中型(15-25㎡)：10-15天\n• 大型(25㎡以上)：15-20天\n具体工期会在签约时确认。',
+                'en': 'Sunroom construction cycle is generally:\n• Small (10-15㎡): 7-10 days\n• Medium (15-25㎡): 10-15 days\n• Large (over 25㎡): 15-20 days\nSpecific duration will be confirmed upon signing.'
+            },
+            'warranty': {
+                'zh': '我们提供完善的售后服务：\n• 整体结构：5年质保\n• 玻璃配件：2年质保\n• 终身维护服务\n• 24小时售后响应',
+                'en': 'We provide comprehensive after-sales service:\n• Overall structure: 5-year warranty\n• Glass accessories: 2-year warranty\n• Lifetime maintenance service\n• 24-hour after-sales response'
+            },
+            'process': {
+                'zh': '我们的服务流程如下：\n1️⃣ 免费咨询与需求沟通\n2️⃣ 上门测量与方案设计\n3️⃣ 3D效果图确认\n4️⃣ 签订合同与付款\n5️⃣ 材料生产与施工\n6️⃣ 验收与售后服务',
+                'en': 'Our service process is as follows:\n1️⃣ Free consultation and requirement communication\n2️⃣ On-site measurement and design\n3️⃣ 3D rendering confirmation\n4️⃣ Contract signing and payment\n5️⃣ Material production and construction\n6️⃣ Acceptance and after-sales service'
+            },
+            'appointment': {
+                'zh': '您可以通过以下方式预约免费咨询：\n📞 电话：400-888-9999\n📱 微信：sunroom2024\n📧 邮箱：info@sunroom.com\n或直接在网站填写咨询表单，我们会在24小时内联系您！',
+                'en': 'You can schedule a free consultation through the following ways:\n📞 Phone: 400-888-9999\n📱 WeChat: sunroom2024\n📧 Email: info@sunroom.com\nOr fill out the inquiry form on the website, we will contact you within 24 hours!'
+            },
+            'address': {
+                'zh': '我们的公司地址：\n📍 北京市朝阳区阳光大厦18楼\n\n营业时间：周一至周日 9:00-18:00\n欢迎您预约参观我们的展厅！',
+                'en': 'Our company address:\n📍 Room 18, Sunshine Building, Chaoyang District, Beijing\n\nBusiness hours: Monday to Sunday 9:00-18:00\nWelcome to schedule a visit to our showroom!'
+            },
+            'cases': {
+                'zh': '我们已完成500+阳光房项目，涵盖各种风格：\n• 现代简约风格\n• 欧式古典风格\n• 田园休闲风格\n• 日式禅意风格\n\n您可以点击网站的"案例展示"查看更多作品，或预约参观实地案例。',
+                'en': 'We have completed 500+ sunroom projects, covering various styles:\n• Modern minimalist style\n• European classical style\n• Rustic leisure style\n• Japanese zen style\n\nYou can click "Gallery" on the website to see more works, or schedule a visit to real cases.'
+            },
+            'default': {
+                'zh': '感谢您的咨询！您的问题我已记录，我们的专业顾问会尽快为您解答。\n\n您也可以直接拨打我们的服务热线：400-888-9999，获得即时帮助。',
+                'en': 'Thank you for your inquiry! Your question has been recorded, our professional consultants will answer you as soon as possible.\n\nYou can also call our service hotline: 400-888-9999, for immediate assistance.'
+            }
+        };
+
+        // Quick reply options
+        const quickReplies = [
+            { text: {zh: '了解价格', en: 'Learn Price'}, keyword: 'price' },
+            { text: {zh: '查看材料', en: 'View Materials'}, keyword: 'material' },
+            { text: {zh: '施工工期', en: 'Construction Duration'}, keyword: 'duration' },
+            { text: {zh: '售后保修', en: 'After-sales Warranty'}, keyword: 'warranty' },
+            { text: {zh: '预约咨询', en: 'Appointment'}, keyword: 'appointment' }
+        ];
+
+        // Initialize chatbot
+        function initChatbot() {
+            setTimeout(() => {
+                const welcomeMsg = currentLang === 'zh' ? 
+                    '您好！👋 欢迎来到阳光房专家！\n\n我是您的智能客服助手，可以为您解答关于阳光房的各种问题。' :
+                    'Hello! 👋 Welcome to Sunroom Expert!\n\nI am your intelligent customer service assistant, can answer various questions about sunrooms.';
+                addBotMessage(welcomeMsg, true);
+            }, 500);
+        }
+
+        // Toggle chat window
+        function toggleChat() {
+            chatWindow.classList.toggle('active');
+            chatToggle.classList.toggle('active');
+            
+            // Initialize chatbot on first open
+            if (chatWindow.classList.contains('active') && chatMessages.children.length === 0) {
+                initChatbot();
+            }
+            
+            // Focus input when opened
+            if (chatWindow.classList.contains('active')) {
+                setTimeout(() => chatInput.focus(), 300);
+            }
+        }
+
+        // Add bot message
+        function addBotMessage(text, showQuickReplies = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-message bot';
+            messageDiv.innerHTML = `
+                <div class="message-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="message-content">${text.replace(/\n/g, '<br>')}</div>
+            `;
+            chatMessages.appendChild(messageDiv);
+
+            // Add quick replies if needed
+            if (showQuickReplies) {
+                const quickReplyDiv = document.createElement('div');
+                quickReplyDiv.className = 'quick-replies';
+                quickReplyDiv.innerHTML = quickReplies.map(reply => 
+                    `<button class="quick-reply-btn" onclick="handleQuickReply('${reply.keyword}')">${currentLang === 'zh' ? reply.text.zh : reply.text.en}</button>`
+                ).join('');
+                chatMessages.appendChild(quickReplyDiv);
+            }
+
+            scrollToBottom();
+        }
+
+        // Add user message
+        function addUserMessage(text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-message user';
+            messageDiv.innerHTML = `
+                <div class="message-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="message-content">${text}</div>
+            `;
+            chatMessages.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        // Show typing indicator
+        function showTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'chat-message bot';
+            typingDiv.id = 'typingIndicator';
+            typingDiv.innerHTML = `
+                <div class="message-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            `;
+            chatMessages.appendChild(typingDiv);
+            scrollToBottom();
+        }
+
+        // Remove typing indicator
+        function removeTypingIndicator() {
+            const typing = document.getElementById('typingIndicator');
+            if (typing) typing.remove();
+        }
+
+        // Get bot response based on user input
+        function getBotResponse(userInput) {
+            const input = userInput.toLowerCase();
+            const lang = currentLang;
+            
+            if (input.includes('价格') || input.includes('多少钱') || input.includes('费用') || input.includes('报价') || 
+                input.includes('price') || input.includes('cost') || input.includes('quote')) {
+                return botResponses['price'][lang];
+            } else if (input.includes('材料') || input.includes('材质') || input.includes('玻璃') || input.includes('铝合金') ||
+                      input.includes('material') || input.includes('materials') || input.includes('glass') || input.includes('aluminum')) {
+                return botResponses['material'][lang];
+            } else if (input.includes('工期') || input.includes('多久') || input.includes('时间') || input.includes('多长') ||
+                      input.includes('duration') || input.includes('time') || input.includes('long') || input.includes('schedule')) {
+                return botResponses['duration'][lang];
+            } else if (input.includes('保修') || input.includes('售后') || input.includes('质保') || input.includes('维修') ||
+                      input.includes('warranty') || input.includes('service') || input.includes('maintenance') || input.includes('repair')) {
+                return botResponses['warranty'][lang];
+            } else if (input.includes('流程') || input.includes('步骤') || input.includes('怎么做') || input.includes('如何') ||
+                      input.includes('process') || input.includes('procedure') || input.includes('how') || input.includes('steps')) {
+                return botResponses['process'][lang];
+            } else if (input.includes('预约') || input.includes('咨询') || input.includes('联系') || input.includes('电话') ||
+                      input.includes('appointment') || input.includes('inquiry') || input.includes('contact') || input.includes('call')) {
+                return botResponses['appointment'][lang];
+            } else if (input.includes('地址') || input.includes('在哪') || input.includes('位置') || input.includes('展厅') ||
+                      input.includes('address') || input.includes('where') || input.includes('location') || input.includes('showroom')) {
+                return botResponses['address'][lang];
+            } else if (input.includes('案例') || input.includes('作品') || input.includes('效果') || input.includes('图片') ||
+                      input.includes('case') || input.includes('project') || input.includes('gallery') || input.includes('photo')) {
+                return botResponses['cases'][lang];
+            } else if (input.includes('你好') || input.includes('您好') || input.includes('hi') || input.includes('hello')) {
+                return lang === 'zh' ?
+                    '您好！很高兴为您服务！请问有什么可以帮助您的吗？您可以询问关于阳光房的价格、材料、工期等任何问题。' :
+                    'Hello! Nice to serve you! What can I help you with? You can ask any questions about sunroom prices, materials, duration, etc.';
+            } else if (input.includes('谢谢') || input.includes('感谢') || input.includes('thanks')) {
+                return lang === 'zh' ?
+                    '不客气！很高兴能帮到您！如果还有其他问题，随时可以问我。祝您生活愉快！😊' :
+                    'You\'re welcome! Happy to help you! If you have other questions, feel free to ask. Have a nice day! 😊';
+            }
+            
+            return botResponses['default'][lang];
+        }
+
+        // Send message
+        function sendMessage() {
+            const message = chatInput.value.trim();
+            if (!message) return;
+
+            // Add user message
+            addUserMessage(message);
+            chatInput.value = '';
+
+            // Remove any existing quick replies
+            document.querySelectorAll('.quick-replies').forEach(el => el.remove());
+
+            // Show typing indicator
+            showTypingIndicator();
+
+            // Simulate bot response delay
+            setTimeout(() => {
+                removeTypingIndicator();
+                const response = getBotResponse(message);
+                addBotMessage(response);
+            }, 1000 + Math.random() * 500);
+        }
+
+        // Handle quick reply click
+        function handleQuickReply(keyword) {
+            // Remove quick replies
+            document.querySelectorAll('.quick-replies').forEach(el => el.remove());
+            
+            // Add user message
+            const quickReplyText = currentLang === 'zh' ? quickReplies.find(r => r.keyword === keyword).text.zh : 
+                                                     quickReplies.find(r => r.keyword === keyword).text.en;
+            addUserMessage(quickReplyText);
+            
+            // Show typing and respond
+            showTypingIndicator();
+            setTimeout(() => {
+                removeTypingIndicator();
+                addBotMessage(botResponses[keyword][currentLang]);
+            }, 800);
+        }
+
+        // Scroll to bottom of chat
+        function scrollToBottom() {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Handle Enter key
+        chatInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Auto-open chatbot after delay (optional)
+        setTimeout(() => {
+            if (!chatWindow.classList.contains('active')) {
+                // Subtle bounce animation to draw attention
+                chatToggle.style.animation = 'none';
+                chatToggle.offsetHeight; // Trigger reflow
+                chatToggle.style.animation = 'bounce 0.5s ease 3';
+            }
+        }, 5000);
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </script>
+</body>
+</html>
