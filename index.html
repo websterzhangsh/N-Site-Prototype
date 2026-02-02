@@ -323,10 +323,6 @@
         }
 
         .language-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 10000;
             display: flex;
             gap: 5px;
             background: white;
@@ -366,12 +362,6 @@
     </style>
 </head>
 <body class="font-sans">
-    <!-- Language Toggle -->
-    <div class="language-toggle">
-        <button class="language-btn active" onclick="switchLanguage('zh')" data-lang="zh">中文</button>
-        <button class="language-btn" onclick="switchLanguage('en')" data-lang="en">English</button>
-    </div>
-
     <!-- Header -->
     <header class="fixed w-full bg-white shadow-md z-50">
         <div class="container mx-auto px-4 py-3">
@@ -387,9 +377,16 @@
                     <a href="#testimonials" class="text-gray-600 hover:text-blue-500 transition lang-text" data-zh="客户评价" data-en="Testimonials">客户评价</a>
                     <a href="#contact" class="text-gray-600 hover:text-blue-500 transition lang-text" data-zh="联系我们" data-en="Contact">联系我们</a>
                 </nav>
-                <button class="md:hidden text-gray-600">
-                    <i class="fas fa-bars text-xl"></i>
-                </button>
+                <!-- Language Toggle in header -->
+                <div class="flex items-center space-x-4">
+                    <div class="language-toggle">
+                        <button class="language-btn active" onclick="switchLanguage('zh')" data-lang="zh">中文</button>
+                        <button class="language-btn" onclick="switchLanguage('en')" data-lang="en">English</button>
+                    </div>
+                    <button class="md:hidden text-gray-600">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </header>
