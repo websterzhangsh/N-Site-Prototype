@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>阳光房解决方案 | 专业定制阳光房设计与建造</title>
+    <title class="lang-text" data-zh="阳光房解决方案 | 专业定制阳光房设计与建造" data-en="Sunroom Solutions | Professional Custom Sunroom Design & Construction">阳光房解决方案 | 专业定制阳光房设计与建造</title>
     <meta name="description" content="专业阳光房设计建造服务，提供高品质铝合金阳光房、玻璃阳光房定制方案。免费设计咨询，一站式服务。">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -322,6 +322,38 @@
             50% { transform: translateY(-10px); }
         }
 
+        .language-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            display: flex;
+            gap: 5px;
+            background: white;
+            padding: 5px;
+            border-radius: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .language-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin: 0 2px;
+        }
+
+        .language-btn.active {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .language-btn:hover:not(.active) {
+            background: #f1f5f9;
+        }
+
         @media (max-width: 480px) {
             .chatbot-window {
                 width: calc(100vw - 32px);
@@ -334,20 +366,26 @@
     </style>
 </head>
 <body class="font-sans">
+    <!-- Language Toggle -->
+    <div class="language-toggle">
+        <button class="language-btn active" onclick="switchLanguage('zh')" data-lang="zh">中文</button>
+        <button class="language-btn" onclick="switchLanguage('en')" data-lang="en">English</button>
+    </div>
+
     <!-- Header -->
     <header class="fixed w-full bg-white shadow-md z-50">
         <div class="container mx-auto px-4 py-3">
             <div class="flex justify-between items-center">
                 <div class="flex items-center space-x-2">
                     <i class="fas fa-sun text-2xl text-blue-500"></i>
-                    <span class="text-xl font-bold text-gray-800">阳光房专家</span>
+                    <span class="text-xl font-bold text-gray-800 lang-text" data-zh="阳光房专家" data-en="Sunroom Expert">阳光房专家</span>
                 </div>
                 <nav class="hidden md:flex space-x-8">
-                    <a href="#home" class="text-gray-600 hover:text-blue-500 transition">首页</a>
-                    <a href="#features" class="text-gray-600 hover:text-blue-500 transition">产品特色</a>
-                    <a href="#gallery" class="text-gray-600 hover:text-blue-500 transition">案例展示</a>
-                    <a href="#testimonials" class="text-gray-600 hover:text-blue-500 transition">客户评价</a>
-                    <a href="#contact" class="text-gray-600 hover:text-blue-500 transition">联系我们</a>
+                    <a href="#home" class="text-gray-600 hover:text-blue-500 transition lang-text" data-zh="首页" data-en="Home">首页</a>
+                    <a href="#features" class="text-gray-600 hover:text-blue-500 transition lang-text" data-zh="产品特色" data-en="Features">产品特色</a>
+                    <a href="#gallery" class="text-gray-600 hover:text-blue-500 transition lang-text" data-zh="案例展示" data-en="Gallery">案例展示</a>
+                    <a href="#testimonials" class="text-gray-600 hover:text-blue-500 transition lang-text" data-zh="客户评价" data-en="Testimonials">客户评价</a>
+                    <a href="#contact" class="text-gray-600 hover:text-blue-500 transition lang-text" data-zh="联系我们" data-en="Contact">联系我们</a>
                 </nav>
                 <button class="md:hidden text-gray-600">
                     <i class="fas fa-bars text-xl"></i>
@@ -362,19 +400,19 @@
             <div class="flex flex-col lg:flex-row items-center">
                 <div class="lg:w-1/2 mb-12 lg:mb-0">
                     <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">
-                        打造您的理想阳光房
-                        <span class="block text-yellow-300">享受四季如春的生活</span>
+                        <span class="lang-text" data-zh="打造您的理想阳光房" data-en="Create Your Ideal Sunroom"></span>
+                        <span class="block text-yellow-300 lang-text" data-zh="享受四季如春的生活" data-en="Enjoy Spring-like Life All Year Round">享受四季如春的生活</span>
                     </h1>
                     <p class="text-xl mb-8 text-blue-100">
-                        专业阳光房设计建造服务，采用高品质材料，提供个性化定制方案。
-                        让您的家拥有一个明亮舒适的休闲空间。
+                        <span class="lang-text" data-zh="专业阳光房设计建造服务，采用高品质材料，提供个性化定制方案。" data-en="Professional sunroom design and construction service, using high-quality materials to provide personalized custom solutions.">专业阳光房设计建造服务，采用高品质材料，提供个性化定制方案。</span>
+                        <span class="lang-text" data-zh="让您的家拥有一个明亮舒适的休闲空间。" data-en="Make your home have a bright and comfortable leisure space.">让您的家拥有一个明亮舒适的休闲空间。</span>
                     </p>
                     <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
                         <button class="btn-primary text-white font-semibold py-3 px-8 rounded-lg">
-                            <i class="fas fa-calendar-check mr-2"></i>免费设计咨询
+                            <i class="fas fa-calendar-check mr-2"></i><span class="lang-text" data-zh="免费设计咨询" data-en="Free Design Consultation">免费设计咨询</span>
                         </button>
                         <button class="bg-white text-blue-600 font-semibold py-3 px-8 rounded-lg hover:bg-gray-100 transition">
-                            <i class="fas fa-phone mr-2"></i>立即咨询
+                            <i class="fas fa-phone mr-2"></i><span class="lang-text" data-zh="立即咨询" data-en="Consult Now">立即咨询</span>
                         </button>
                     </div>
                 </div>
@@ -396,11 +434,11 @@
     <section id="features" class="py-16 bg-gray-50">
         <div class="container mx-auto px-4">
             <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4 lang-text" data-zh="为什么选择我们的阳光房" data-en="Why Choose Our Sunrooms">
                     为什么选择我们的阳光房
                 </h2>
                 <p class="text-gray-600 text-lg max-w-2xl mx-auto">
-                    我们致力于提供最高品质的阳光房解决方案，每一个细节都经过精心设计
+                    <span class="lang-text" data-zh="我们致力于提供最高品质的阳光房解决方案，每一个细节都经过精心设计" data-en="We are committed to providing the highest quality sunroom solutions, with every detail carefully designed">我们致力于提供最高品质的阳光房解决方案，每一个细节都经过精心设计</span>
                 </p>
             </div>
             
@@ -410,8 +448,8 @@
                     <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
                         <i class="fas fa-crown text-2xl text-blue-600"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-4 text-gray-800">优质材料</h3>
-                    <p class="text-gray-600">采用高品质铝合金框架和钢化玻璃，确保安全耐用，抗风压性能优异</p>
+                    <h3 class="text-xl font-bold mb-4 text-gray-800 lang-text" data-zh="优质材料" data-en="Premium Materials">优质材料</h3>
+                    <p class="text-gray-600 lang-text" data-zh="采用高品质铝合金框架和钢化玻璃，确保安全耐用，抗风压性能优异" data-en="Using high-quality aluminum alloy frames and tempered glass to ensure safety, durability, and excellent wind pressure resistance">采用高品质铝合金框架和钢化玻璃，确保安全耐用，抗风压性能优异</p>
                 </div>
                 
                 <!-- Feature 2 -->
@@ -419,8 +457,8 @@
                     <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
                         <i class="fas fa-temperature-high text-2xl text-green-600"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-4 text-gray-800">智能调温</h3>
-                    <p class="text-gray-600">先进的隔热系统和通风设计，冬暖夏凉，节能环保</p>
+                    <h3 class="text-xl font-bold mb-4 text-gray-800 lang-text" data-zh="智能调温" data-en="Smart Temperature Control">智能调温</h3>
+                    <p class="text-gray-600 lang-text" data-zh="先进的隔热系统和通风设计，冬暖夏凉，节能环保" data-en="Advanced insulation system and ventilation design, warm in winter and cool in summer, energy-saving and environmentally friendly">先进的隔热系统和通风设计，冬暖夏凉，节能环保</p>
                 </div>
                 
                 <!-- Feature 3 -->
@@ -428,8 +466,8 @@
                     <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6">
                         <i class="fas fa-ruler-combined text-2xl text-yellow-600"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-4 text-gray-800">个性定制</h3>
-                    <p class="text-gray-600">根据您的需求和空间特点，提供一对一专属设计方案</p>
+                    <h3 class="text-xl font-bold mb-4 text-gray-800 lang-text" data-zh="个性定制" data-en="Custom Design">个性定制</h3>
+                    <p class="text-gray-600 lang-text" data-zh="根据您的需求和空间特点，提供一对一专属设计方案" data-en="Provide one-on-one exclusive design solutions according to your needs and space characteristics">根据您的需求和空间特点，提供一对一专属设计方案</p>
                 </div>
                 
                 <!-- Feature 4 -->
@@ -437,8 +475,8 @@
                     <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
                         <i class="fas fa-tools text-2xl text-purple-600"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-4 text-gray-800">专业安装</h3>
-                    <p class="text-gray-600">经验丰富的施工团队，标准化安装流程，确保工程质量</p>
+                    <h3 class="text-xl font-bold mb-4 text-gray-800 lang-text" data-zh="专业安装" data-en="Professional Installation">专业安装</h3>
+                    <p class="text-gray-600 lang-text" data-zh="经验丰富的施工团队，标准化安装流程，确保工程质量" data-en="Experienced construction team, standardized installation process, ensuring project quality">经验丰富的施工团队，标准化安装流程，确保工程质量</p>
                 </div>
                 
                 <!-- Feature 5 -->
@@ -446,8 +484,8 @@
                     <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
                         <i class="fas fa-shield-alt text-2xl text-red-600"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-4 text-gray-800">质保服务</h3>
-                    <p class="text-gray-600">提供5年质保服务，24小时售后响应，让您无后顾之忧</p>
+                    <h3 class="text-xl font-bold mb-4 text-gray-800 lang-text" data-zh="质保服务" data-en="Warranty Service">质保服务</h3>
+                    <p class="text-gray-600 lang-text" data-zh="提供5年质保服务，24小时售后响应，让您无后顾之忧" data-en="Provide 5-year warranty service, 24-hour after-sales response, worry-free service">提供5年质保服务，24小时售后响应，让您无后顾之忧</p>
                 </div>
                 
                 <!-- Feature 6 -->
@@ -455,8 +493,8 @@
                     <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6">
                         <i class="fas fa-dollar-sign text-2xl text-indigo-600"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-4 text-gray-800">性价比高</h3>
-                    <p class="text-gray-600">工厂直销价格，无中间商赚差价，品质与价格的完美平衡</p>
+                    <h3 class="text-xl font-bold mb-4 text-gray-800 lang-text" data-zh="性价比高" data-en="High Cost-effective">性价比高</h3>
+                    <p class="text-gray-600 lang-text" data-zh="工厂直销价格，无中间商赚差价，品质与价格的完美平衡" data-en="Factory direct price, no middleman markup, perfect balance of quality and price">工厂直销价格，无中间商赚差价，品质与价格的完美平衡</p>
                 </div>
             </div>
         </div>
@@ -466,11 +504,11 @@
     <section id="gallery" class="py-16">
         <div class="container mx-auto px-4">
             <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4 lang-text" data-zh="精美案例展示" data-en="Beautiful Case Display">
                     精美案例展示
                 </h2>
                 <p class="text-gray-600 text-lg max-w-2xl mx-auto">
-                    看看我们为客户打造的精彩阳光房作品
+                    <span class="lang-text" data-zh="看看我们为客户打造的精彩阳光房作品" data-en="Take a look at our wonderful sunroom works created for customers">看看我们为客户打造的精彩阳光房作品</span>
                 </p>
             </div>
             
@@ -480,8 +518,8 @@
                          alt="现代简约阳光房" class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110">
                     <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                         <div class="text-white text-center">
-                            <h3 class="text-xl font-bold mb-2">现代简约风格</h3>
-                            <p class="text-sm">12㎡ | 铝合金框架</p>
+                            <h3 class="text-xl font-bold mb-2 lang-text" data-zh="现代简约风格" data-en="Modern Minimalist Style">现代简约风格</h3>
+                            <p class="text-sm lang-text" data-zh="12㎡ | 铝合金框架" data-en="12㎡ | Aluminum Alloy Frame">12㎡ | 铝合金框架</p>
                         </div>
                     </div>
                 </div>
@@ -491,8 +529,8 @@
                          alt="欧式豪华阳光房" class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110">
                     <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                         <div class="text-white text-center">
-                            <h3 class="text-xl font-bold mb-2">欧式豪华风格</h3>
-                            <p class="text-sm">20㎡ | 断桥铝框架</p>
+                            <h3 class="text-xl font-bold mb-2 lang-text" data-zh="欧式豪华风格" data-en="European Luxury Style">欧式豪华风格</h3>
+                            <p class="text-sm lang-text" data-zh="20㎡ | 断桥铝框架" data-en="20㎡ | Thermal Break Aluminum Frame">20㎡ | 断桥铝框架</p>
                         </div>
                     </div>
                 </div>
@@ -502,8 +540,8 @@
                          alt="田园风格阳光房" class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110">
                     <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                         <div class="text-white text-center">
-                            <h3 class="text-xl font-bold mb-2">田园自然风格</h3>
-                            <p class="text-sm">15㎡ | 铝合金+实木</p>
+                            <h3 class="text-xl font-bold mb-2 lang-text" data-zh="田园自然风格" data-en="Rustic Natural Style">田园自然风格</h3>
+                            <p class="text-sm lang-text" data-zh="15㎡ | 铝合金+实木" data-en="15㎡ | Aluminum Alloy + Solid Wood">15㎡ | 铝合金+实木</p>
                         </div>
                     </div>
                 </div>
@@ -511,7 +549,7 @@
             
             <div class="text-center mt-12">
                 <button class="btn-secondary text-white font-semibold py-3 px-8 rounded-lg">
-                    查看更多案例 <i class="fas fa-arrow-right ml-2"></i>
+                    <span class="lang-text" data-zh="查看更多案例" data-en="View More Cases">查看更多案例</span> <i class="fas fa-arrow-right ml-2"></i>
                 </button>
             </div>
         </div>
@@ -521,11 +559,11 @@
     <section id="testimonials" class="py-16 bg-gray-50">
         <div class="container mx-auto px-4">
             <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4 lang-text" data-zh="客户真实评价" data-en="Customer Reviews">
                     客户真实评价
                 </h2>
                 <p class="text-gray-600 text-lg max-w-2xl mx-auto">
-                    听听我们的客户怎么说
+                    <span class="lang-text" data-zh="听听我们的客户怎么说" data-en="Hear what our customers say">听听我们的客户怎么说</span>
                 </p>
             </div>
             
@@ -536,8 +574,8 @@
                             <span class="text-blue-600 font-bold">张</span>
                         </div>
                         <div>
-                            <h4 class="font-bold text-gray-800">张先生</h4>
-                            <p class="text-gray-600 text-sm">别墅业主</p>
+                            <h4 class="font-bold text-gray-800 lang-text" data-zh="张先生" data-en="Mr. Zhang">张先生</h4>
+                            <p class="text-gray-600 text-sm lang-text" data-zh="别墅业主" data-en="Villa Owner">别墅业主</p>
                         </div>
                     </div>
                     <div class="flex text-yellow-400 mb-4">
@@ -547,7 +585,7 @@
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                     </div>
-                    <p class="text-gray-600 italic">"服务非常专业，从设计到安装都很满意。阳光房的质量超出预期，现在每天都在里面喝茶看书，非常享受！"</p>
+                    <p class="text-gray-600 italic lang-text" data-zh='"服务非常专业，从设计到安装都很满意。阳光房的质量超出预期，现在每天都在里面喝茶看书，非常享受！"' data-en='"Service is very professional, satisfied with design and installation. The quality of the sunroom exceeded expectations, now I drink tea and read books in it every day, very enjoyable!"'>"服务非常专业，从设计到安装都很满意。阳光房的质量超出预期，现在每天都在里面喝茶看书，非常享受！"</p>
                 </div>
                 
                 <div class="bg-white p-8 rounded-2xl shadow-md">
@@ -556,8 +594,8 @@
                             <span class="text-green-600 font-bold">李</span>
                         </div>
                         <div>
-                            <h4 class="font-bold text-gray-800">李女士</h4>
-                            <p class="text-gray-600 text-sm">花园洋房业主</p>
+                            <h4 class="font-bold text-gray-800 lang-text" data-zh="李女士" data-en="Ms. Li">李女士</h4>
+                            <p class="text-gray-600 text-sm lang-text" data-zh="花园洋房业主" data-en="Townhouse Owner">花园洋房业主</p>
                         </div>
                     </div>
                     <div class="flex text-yellow-400 mb-4">
@@ -567,7 +605,7 @@
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                     </div>
-                    <p class="text-gray-600 italic">"设计师很专业，根据我家的花园环境给出了很好的建议。施工团队也很负责，工期准时，质量很好。"</p>
+                    <p class="text-gray-600 italic lang-text" data-zh='"设计师很专业，根据我家的花园环境给出了很好的建议。施工团队也很负责，工期准时，质量很好。"' data-en='"The designer is very professional and gave great advice based on my garden environment. The construction team is also responsible, on schedule, and good quality."'>"设计师很专业，根据我家的花园环境给出了很好的建议。施工团队也很负责，工期准时，质量很好。"</p>
                 </div>
                 
                 <div class="bg-white p-8 rounded-2xl shadow-md">
@@ -576,8 +614,8 @@
                             <span class="text-purple-600 font-bold">王</span>
                         </div>
                         <div>
-                            <h4 class="font-bold text-gray-800">王先生</h4>
-                            <p class="text-gray-600 text-sm">复式楼业主</p>
+                            <h4 class="font-bold text-gray-800 lang-text" data-zh="王先生" data-en="Mr. Wang">王先生</h4>
+                            <p class="text-gray-600 text-sm lang-text" data-zh="复式楼业主" data-en="Duplex Owner">复式楼业主</p>
                         </div>
                     </div>
                     <div class="flex text-yellow-400 mb-4">
@@ -587,7 +625,7 @@
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star-half-alt"></i>
                     </div>
-                    <p class="text-gray-600 italic">"性价比很高，同样的配置比其他商家便宜不少。售后也很及时，有问题都能快速解决，推荐！"</p>
+                    <p class="text-gray-600 italic lang-text" data-zh='"性价比很高，同样的配置比其他商家便宜不少。售后也很及时，有问题都能快速解决，推荐！"' data-en='"Great cost-performance ratio, similar configurations are much cheaper than other merchants. After-sales service is also timely, problems can be solved quickly, recommended!"'>"性价比很高，同样的配置比其他商家便宜不少。售后也很及时，有问题都能快速解决，推荐！"</p>
                 </div>
             </div>
         </div>
@@ -598,51 +636,51 @@
         <div class="container mx-auto px-4">
             <div class="max-w-4xl mx-auto">
                 <div class="text-center mb-12">
-                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4 lang-text" data-zh="立即获取免费设计方案" data-en="Get Free Design Plan Now">
                         立即获取免费设计方案
                     </h2>
                     <p class="text-gray-600 text-lg">
-                        填写以下信息，我们的专业设计师将为您量身定制阳光房方案
+                        <span class="lang-text" data-zh="填写以下信息，我们的专业设计师将为您量身定制阳光房方案" data-en="Fill in the following information, our professional designers will customize a sunroom plan for you">填写以下信息，我们的专业设计师将为您量身定制阳光房方案</span>
                     </p>
                 </div>
                 
                 <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
                     <div class="md:flex">
                         <div class="md:w-1/2 bg-gradient-to-br from-blue-500 to-blue-600 p-8 text-white">
-                            <h3 class="text-2xl font-bold mb-6">联系我们</h3>
+                            <h3 class="text-2xl font-bold mb-6 lang-text" data-zh="联系我们" data-en="Contact Us">联系我们</h3>
                             <div class="space-y-4">
                                 <div class="flex items-center">
                                     <i class="fas fa-phone-alt text-xl mr-4"></i>
                                     <div>
-                                        <p class="font-semibold">电话咨询</p>
+                                        <p class="font-semibold lang-text" data-zh="电话咨询" data-en="Phone Consultation">电话咨询</p>
                                         <p class="text-blue-100">400-888-9999</p>
                                     </div>
                                 </div>
                                 <div class="flex items-center">
                                     <i class="fas fa-envelope text-xl mr-4"></i>
                                     <div>
-                                        <p class="font-semibold">邮箱联系</p>
+                                        <p class="font-semibold lang-text" data-zh="邮箱联系" data-en="Email Contact">邮箱联系</p>
                                         <p class="text-blue-100">info@sunroom.com</p>
                                     </div>
                                 </div>
                                 <div class="flex items-center">
                                     <i class="fas fa-map-marker-alt text-xl mr-4"></i>
                                     <div>
-                                        <p class="font-semibold">公司地址</p>
-                                        <p class="text-blue-100">北京市朝阳区建设路123号</p>
+                                        <p class="font-semibold lang-text" data-zh="公司地址" data-en="Company Address">公司地址</p>
+                                        <p class="text-blue-100 lang-text" data-zh="北京市朝阳区建设路123号" data-en="No. 123, Jian She Road, Chaoyang District, Beijing">北京市朝阳区建设路123号</p>
                                     </div>
                                 </div>
                                 <div class="flex items-center">
                                     <i class="fas fa-clock text-xl mr-4"></i>
                                     <div>
-                                        <p class="font-semibold">服务时间</p>
-                                        <p class="text-blue-100">周一至周日 9:00-18:00</p>
+                                        <p class="font-semibold lang-text" data-zh="服务时间" data-en="Service Hours">服务时间</p>
+                                        <p class="text-blue-100 lang-text" data-zh="周一至周日 9:00-18:00" data-en="Monday to Sunday 9:00-18:00">周一至周日 9:00-18:00</p>
                                     </div>
                                 </div>
                             </div>
                             
                             <div class="mt-8 pt-8 border-t border-blue-400">
-                                <h4 class="font-bold mb-4">关注我们</h4>
+                                <h4 class="font-bold mb-4 lang-text" data-zh="关注我们" data-en="Follow Us">关注我们</h4>
                                 <div class="flex space-x-4">
                                     <a href="#" class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition">
                                         <i class="fab fa-weixin"></i>
@@ -658,35 +696,35 @@
                         </div>
                         
                         <div class="md:w-1/2 p-8">
-                            <form class="space-y-6">
+                            <form id="contactForm" class="space-y-6">
                                 <div>
-                                    <label class="block text-gray-700 font-medium mb-2">您的姓名</label>
+                                    <label class="block text-gray-700 font-medium mb-2 lang-text" data-zh="您的姓名" data-en="Your Name">您的姓名</label>
                                     <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="请输入您的姓名">
                                 </div>
                                 
                                 <div>
-                                    <label class="block text-gray-700 font-medium mb-2">联系电话</label>
+                                    <label class="block text-gray-700 font-medium mb-2 lang-text" data-zh="联系电话" data-en="Phone Number">联系电话</label>
                                     <input type="tel" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="请输入您的手机号">
                                 </div>
                                 
                                 <div>
-                                    <label class="block text-gray-700 font-medium mb-2">房屋面积</label>
+                                    <label class="block text-gray-700 font-medium mb-2 lang-text" data-zh="房屋面积" data-en="House Area">房屋面积</label>
                                     <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                        <option>请选择房屋面积</option>
-                                        <option>50㎡以下</option>
-                                        <option>50-100㎡</option>
-                                        <option>100-150㎡</option>
-                                        <option>150㎡以上</option>
+                                        <option class="lang-text" data-zh="请选择房屋面积" data-en="Please select house area">请选择房屋面积</option>
+                                        <option class="lang-text" data-zh="50㎡以下" data-en="Under 50㎡">50㎡以下</option>
+                                        <option class="lang-text" data-zh="50-100㎡" data-en="50-100㎡">50-100㎡</option>
+                                        <option class="lang-text" data-zh="100-150㎡" data-en="100-150㎡">100-150㎡</option>
+                                        <option class="lang-text" data-zh="150㎡以上" data-en="Over 150㎡">150㎡以上</option>
                                     </select>
                                 </div>
                                 
                                 <div>
-                                    <label class="block text-gray-700 font-medium mb-2">具体需求</label>
+                                    <label class="block text-gray-700 font-medium mb-2 lang-text" data-zh="具体需求" data-en="Specific Needs">具体需求</label>
                                     <textarea class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" rows="4" placeholder="请描述您的具体需求和期望"></textarea>
                                 </div>
                                 
                                 <button type="submit" class="w-full btn-primary text-white font-bold py-4 rounded-lg">
-                                    <i class="fas fa-paper-plane mr-2"></i>提交咨询
+                                    <i class="fas fa-paper-plane mr-2"></i><span class="lang-text" data-zh="提交咨询" data-en="Submit Inquiry">提交咨询</span>
                                 </button>
                             </form>
                         </div>
@@ -707,10 +745,10 @@
                     <i class="fas fa-robot"></i>
                 </div>
                 <div class="chatbot-info">
-                    <h4>阳光房智能助手</h4>
+                    <h4 class="lang-text" data-zh="阳光房智能助手" data-en="Sunroom Smart Assistant">阳光房智能助手</h4>
                     <div class="chatbot-status">
                         <span class="chatbot-status-dot"></span>
-                        <p>在线服务中</p>
+                        <p class="lang-text" data-zh="在线服务中" data-en="Online Service">在线服务中</p>
                     </div>
                 </div>
             </div>
@@ -732,9 +770,9 @@
                 <div>
                     <div class="flex items-center space-x-2 mb-4">
                         <i class="fas fa-sun text-2xl text-yellow-400"></i>
-                        <span class="text-xl font-bold">阳光房专家</span>
+                        <span class="text-xl font-bold lang-text" data-zh="阳光房专家" data-en="Sunroom Expert">阳光房专家</span>
                     </div>
-                    <p class="text-gray-400 mb-4">专业阳光房设计建造服务商，为您打造理想的休闲空间。</p>
+                    <p class="text-gray-400 mb-4 lang-text" data-zh="专业阳光房设计建造服务商，为您打造理想的休闲空间。" data-en="Professional sunroom design and construction service provider, creating ideal leisure spaces for you.">专业阳光房设计建造服务商，为您打造理想的休闲空间。</p>
                     <div class="flex space-x-4">
                         <a href="#" class="text-gray-400 hover:text-white transition">
                             <i class="fab fa-facebook-f"></i>
@@ -749,38 +787,38 @@
                 </div>
                 
                 <div>
-                    <h3 class="text-lg font-bold mb-4">产品服务</h3>
+                    <h3 class="text-lg font-bold mb-4 lang-text" data-zh="产品服务" data-en="Products & Services">产品服务</h3>
                     <ul class="space-y-2 text-gray-400">
-                        <li><a href="#" class="hover:text-white transition">铝合金阳光房</a></li>
-                        <li><a href="#" class="hover:text-white transition">断桥铝阳光房</a></li>
-                        <li><a href="#" class="hover:text-white transition">钢结构阳光房</a></li>
-                        <li><a href="#" class="hover:text-white transition">个性化定制</a></li>
+                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="铝合金阳光房" data-en="Aluminum Alloy Sunroom">铝合金阳光房</a></li>
+                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="断桥铝阳光房" data-en="Thermal Break Aluminum Sunroom">断桥铝阳光房</a></li>
+                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="钢结构阳光房" data-en="Steel Structure Sunroom">钢结构阳光房</a></li>
+                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="个性化定制" data-en="Customized Design">个性化定制</a></li>
                     </ul>
                 </div>
                 
                 <div>
-                    <h3 class="text-lg font-bold mb-4">关于我们</h3>
+                    <h3 class="text-lg font-bold mb-4 lang-text" data-zh="关于我们" data-en="About Us">关于我们</h3>
                     <ul class="space-y-2 text-gray-400">
-                        <li><a href="#" class="hover:text-white transition">公司简介</a></li>
-                        <li><a href="#" class="hover:text-white transition">工程案例</a></li>
-                        <li><a href="#" class="hover:text-white transition">新闻资讯</a></li>
-                        <li><a href="#" class="hover:text-white transition">人才招聘</a></li>
+                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="公司简介" data-en="Company Profile">公司简介</a></li>
+                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="工程案例" data-en="Engineering Cases">工程案例</a></li>
+                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="新闻资讯" data-en="News & Information">新闻资讯</a></li>
+                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="人才招聘" data-en="Careers">人才招聘</a></li>
                     </ul>
                 </div>
                 
                 <div>
-                    <h3 class="text-lg font-bold mb-4">服务支持</h3>
+                    <h3 class="text-lg font-bold mb-4 lang-text" data-zh="服务支持" data-en="Support Services">服务支持</h3>
                     <ul class="space-y-2 text-gray-400">
-                        <li><a href="#" class="hover:text-white transition">售后服务</a></li>
-                        <li><a href="#" class="hover:text-white transition">安装指南</a></li>
-                        <li><a href="#" class="hover:text-white transition">常见问题</a></li>
-                        <li><a href="#" class="hover:text-white transition">在线客服</a></li>
+                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="售后服务" data-en="After-sales Service">售后服务</a></li>
+                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="安装指南" data-en="Installation Guide">安装指南</a></li>
+                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="常见问题" data-en="FAQ">常见问题</a></li>
+                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="在线客服" data-en="Online Support">在线客服</a></li>
                     </ul>
                 </div>
             </div>
             
             <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
-                <p>&copy; 2024 阳光房专家. 保留所有权利. 京ICP备12345678号</p>
+                <p class="lang-text" data-zh="&copy; 2024 阳光房专家. 保留所有权利. 京ICP备12345678号" data-en="&copy; 2024 Sunroom Expert. All rights reserved. ICP License: 12345678">&copy; 2024 阳光房专家. 保留所有权利. 京ICP备12345678号</p>
             </div>
         </div>
     </footer>
@@ -803,7 +841,11 @@
         // Form submission handling
         document.querySelector('form').addEventListener('submit', function(e) {
             e.preventDefault();
-            alert('感谢您的咨询！我们的工作人员会尽快与您联系。');
+            if (currentLang === 'zh') {
+                alert('感谢您的咨询！我们的工作人员会尽快与您联系。');
+            } else {
+                alert('Thank you for your inquiry! Our staff will contact you as soon as possible.');
+            }
             this.reset();
         });
 
@@ -837,28 +879,54 @@
         const chatWindow = document.getElementById('chatWindow');
 
         const botResponses = {
-            '价格': '我们的阳光房价格根据面积、材料和设计复杂度而定，一般在 800-2000元/㎡ 之间。建议您预约免费上门测量，我们会根据您的实际需求提供详细报价。',
-            '材料': '我们主要使用以下高品质材料：\n• 框架：断桥铝合金/钢结构\n• 玻璃：双层中空钢化玻璃\n• 顶棚：钢化夹胶玻璃/德高瓦\n所有材料均通过国家质量认证。',
-            '工期': '阳光房的建造周期一般为：\n• 小型(10-15㎡)：7-10天\n• 中型(15-25㎡)：10-15天\n• 大型(25㎡以上)：15-20天\n具体工期会在签约时确认。',
-            '保修': '我们提供完善的售后服务：\n• 整体结构：5年质保\n• 玻璃配件：2年质保\n• 终身维护服务\n• 24小时售后响应',
-            '流程': '我们的服务流程如下：\n1️⃣ 免费咨询与需求沟通\n2️⃣ 上门测量与方案设计\n3️⃣ 3D效果图确认\n4️⃣ 签订合同与付款\n5️⃣ 材料生产与施工\n6️⃣ 验收与售后服务',
-            '预约': '您可以通过以下方式预约免费咨询：\n📞 电话：400-888-9999\n📱 微信：sunroom2024\n📧 邮箱：info@sunroom.com\n或直接在网站填写咨询表单，我们会在24小时内联系您！',
-            '地址': '我们的公司地址：\n📍 北京市朝阳区建设路123号\n\n营业时间：周一至周日 9:00-18:00\n欢迎您预约参观我们的展厅！',
-            '案例': '我们已完成500+阳光房项目，涵盖各种风格：\n• 现代简约风格\n• 欧式古典风格\n• 田园休闲风格\n• 日式禅意风格\n\n您可以点击网站的"案例展示"查看更多作品，或预约参观实地案例。',
-            'default': '感谢您的咨询！您的问题我已记录，我们的专业顾问会尽快为您解答。\n\n您也可以直接拨打我们的服务热线：400-888-9999，获得即时帮助。'
+            'zh': {
+                '价格': '我们的阳光房价格根据面积、材料和设计复杂度而定，一般在 800-2000元/㎡ 之间。建议您预约免费上门测量，我们会根据您的实际需求提供详细报价。',
+                '材料': '我们主要使用以下高品质材料：\n• 框架：断桥铝合金/钢结构\n• 玻璃：双层中空钢化玻璃\n• 顶棚：钢化夹胶玻璃/德高瓦\n所有材料均通过国家质量认证。',
+                '工期': '阳光房的建造周期一般为：\n• 小型(10-15㎡)：7-10天\n• 中型(15-25㎡)：10-15天\n• 大型(25㎡以上)：15-20天\n具体工期会在签约时确认。',
+                '保修': '我们提供完善的售后服务：\n• 整体结构：5年质保\n• 玻璃配件：2年质保\n• 终身维护服务\n• 24小时售后响应',
+                '流程': '我们的服务流程如下：\n1️⃣ 免费咨询与需求沟通\n2️⃣ 上门测量与方案设计\n3️⃣ 3D效果图确认\n4️⃣ 签订合同与付款\n5️⃣ 材料生产与施工\n6️⃣ 验收与售后服务',
+                '预约': '您可以通过以下方式预约免费咨询：\n📞 电话：400-888-9999\n📱 微信：sunroom2024\n📧 邮箱：info@sunroom.com\n或直接在网站填写咨询表单，我们会在24小时内联系您！',
+                '地址': '我们的公司地址：\n📍 北京市朝阳区建设路123号\n\n营业时间：周一至周日 9:00-18:00\n欢迎您预约参观我们的展厅！',
+                '案例': '我们已完成500+阳光房项目，涵盖各种风格：\n• 现代简约风格\n• 欧式古典风格\n• 田园休闲风格\n• 日式禅意风格\n\n您可以点击网站的"案例展示"查看更多作品，或预约参观实地案例。',
+                'default': '感谢您的咨询！您的问题我已记录，我们的专业顾问会尽快为您解答。\n\n您也可以直接拨打我们的服务热线：400-888-9999，获得即时帮助。'
+            },
+            'en': {
+                '价格': 'Our sunroom prices vary based on area, materials, and design complexity, typically ranging from 800-2000 RMB/m². We recommend scheduling a free on-site measurement, and we will provide a detailed quote based on your specific needs.',
+                '材料': 'We mainly use the following high-quality materials:\n• Frames: Thermal break aluminum alloy/steel structure\n• Glass: Double-glazed tempered glass\n• Roof: Tempered laminated glass/Dach tiles\nAll materials pass national quality certification.',
+                '工期': 'The construction cycle for sunrooms is generally:\n• Small (10-15㎡): 7-10 days\n• Medium (15-25㎡): 10-15 days\n• Large (above 25㎡): 15-20 days\nSpecific schedules will be confirmed upon signing.',
+                '保修': 'We provide comprehensive after-sales service:\n• Overall structure: 5-year warranty\n• Glass accessories: 2-year warranty\n• Lifetime maintenance service\n• 24-hour after-sales response',
+                '流程': 'Our service process is as follows:\n1️⃣ Free consultation and requirement communication\n2️⃣ On-site measurement and design\n3️⃣ 3D rendering confirmation\n4️⃣ Contract signing and payment\n5️⃣ Material production and construction\n6️⃣ Inspection and after-sales service',
+                '预约': 'You can schedule a free consultation in the following ways:\n📞 Phone: 400-888-9999\n📱 WeChat: sunroom2024\n📧 Email: info@sunroom.com\nOr fill out the inquiry form on the website, and we will contact you within 24 hours!',
+                '地址': 'Our company address:\n📍 No. 123, Jianshe Road, Chaoyang District, Beijing\n\nBusiness hours: Monday to Sunday 9:00-18:00\nWelcome to schedule a visit to our showroom!',
+                '案例': 'We have completed 500+ sunroom projects covering various styles:\n• Modern minimalist style\n• European classical style\n• Rustic leisure style\n• Japanese Zen style\n\nYou can click on "Gallery" to view more works, or schedule a visit to actual projects.',
+                'default': 'Thank you for your inquiry! Your questions have been recorded, and our professional consultants will respond to you as soon as possible.\n\nYou can also call our service hotline: 400-888-9999 for immediate assistance.'
+            }
         };
 
-        const quickReplies = [
-            { text: '了解价格', keyword: '价格' },
-            { text: '查看材料', keyword: '材料' },
-            { text: '施工工期', keyword: '工期' },
-            { text: '售后保修', keyword: '保修' },
-            { text: '预约咨询', keyword: '预约' }
-        ];
+        const quickReplies = {
+            'zh': [
+                { text: '了解价格', keyword: '价格' },
+                { text: '查看材料', keyword: '材料' },
+                { text: '施工工期', keyword: '工期' },
+                { text: '售后保修', keyword: '保修' },
+                { text: '预约咨询', keyword: '预约' }
+            ],
+            'en': [
+                { text: 'Price Information', keyword: '价格' },
+                { text: 'Material Information', keyword: '材料' },
+                { text: 'Construction Period', keyword: '工期' },
+                { text: 'After-sales Warranty', keyword: '保修' },
+                { text: 'Schedule Consultation', keyword: '预约' }
+            ]
+        };
 
         function initChatbot() {
             setTimeout(() => {
-                addBotMessage('您好！👋 欢迎来到阳光房专家！\n\n我是您的智能客服助手，可以为您解答关于阳光房的各种问题。', true);
+                if (currentLang === 'zh') {
+                    addBotMessage('您好！👋 欢迎来到阳光房专家！\n\n我是您的智能客服助手，可以为您解答关于阳光房的各种问题。', true);
+                } else {
+                    addBotMessage('Hello! 👋 Welcome to Sunroom Expert!\n\nI am your smart customer service assistant, ready to answer any questions you have about sunrooms.', true);
+                }
             }, 500);
         }
 
@@ -884,7 +952,7 @@
             if (showQuickReplies) {
                 const quickReplyDiv = document.createElement('div');
                 quickReplyDiv.className = 'quick-replies';
-                quickReplyDiv.innerHTML = quickReplies.map(reply => 
+                quickReplyDiv.innerHTML = quickReplies[currentLang].map(reply => 
                     `<button class="quick-reply-btn" onclick="handleQuickReply('${reply.keyword}')">${reply.text}</button>`
                 ).join('');
                 chatMessages.appendChild(quickReplyDiv);
@@ -922,17 +990,25 @@
 
         function getBotResponse(userInput) {
             const input = userInput.toLowerCase();
-            if (input.includes('价格') || input.includes('多少钱') || input.includes('费用') || input.includes('报价')) return botResponses['价格'];
-            if (input.includes('材料') || input.includes('材质') || input.includes('玻璃') || input.includes('铝合金')) return botResponses['材料'];
-            if (input.includes('工期') || input.includes('多久') || input.includes('时间') || input.includes('多长')) return botResponses['工期'];
-            if (input.includes('保修') || input.includes('售后') || input.includes('质保') || input.includes('维修')) return botResponses['保修'];
-            if (input.includes('流程') || input.includes('步骤') || input.includes('怎么做') || input.includes('如何')) return botResponses['流程'];
-            if (input.includes('预约') || input.includes('咨询') || input.includes('联系') || input.includes('电话')) return botResponses['预约'];
-            if (input.includes('地址') || input.includes('在哪') || input.includes('位置') || input.includes('展厅')) return botResponses['地址'];
-            if (input.includes('案例') || input.includes('作品') || input.includes('效果') || input.includes('图片')) return botResponses['案例'];
-            if (input.includes('你好') || input.includes('您好') || input.includes('hi') || input.includes('hello')) return '您好！很高兴为您服务！请问有什么可以帮助您的吗？';
-            if (input.includes('谢谢') || input.includes('感谢') || input.includes('thanks')) return '不客气！很高兴能帮到您！如果还有其他问题，随时可以问我。😊';
-            return botResponses['default'];
+            if (input.includes('价格') || input.includes('多少钱') || input.includes('费用') || input.includes('报价')) return botResponses[currentLang]['价格'];
+            if (input.includes('材料') || input.includes('材质') || input.includes('玻璃') || input.includes('铝合金')) return botResponses[currentLang]['材料'];
+            if (input.includes('工期') || input.includes('多久') || input.includes('时间') || input.includes('多长')) return botResponses[currentLang]['工期'];
+            if (input.includes('保修') || input.includes('售后') || input.includes('质保') || input.includes('维修')) return botResponses[currentLang]['保修'];
+            if (input.includes('流程') || input.includes('步骤') || input.includes('怎么做') || input.includes('如何')) return botResponses[currentLang]['流程'];
+            if (input.includes('预约') || input.includes('咨询') || input.includes('联系') || input.includes('电话')) return botResponses[currentLang]['预约'];
+            if (input.includes('地址') || input.includes('在哪') || input.includes('位置') || input.includes('展厅')) return botResponses[currentLang]['地址'];
+            if (input.includes('案例') || input.includes('作品') || input.includes('效果') || input.includes('图片')) return botResponses[currentLang]['案例'];
+            if (input.includes('你好') || input.includes('您好') || input.includes('hi') || input.includes('hello')) {
+                return currentLang === 'zh' ? 
+                    '您好！很高兴为您服务！请问有什么可以帮助您的吗？' : 
+                    'Hello! Nice to serve you! What can I help you with? You can ask any questions about sunroom prices, materials, duration, etc.';
+            }
+            if (input.includes('谢谢') || input.includes('感谢') || input.includes('thanks')) {
+                return currentLang === 'zh' ? 
+                    '不客气！很高兴能帮到您！如果还有其他问题，随时可以问我。😊' : 
+                    'You\'re welcome! Happy to help you! If you have other questions, feel free to ask. Have a nice day! 😊';
+            }
+            return botResponses[currentLang]['default'];
         }
 
         function sendMessage() {
@@ -950,11 +1026,12 @@
 
         function handleQuickReply(keyword) {
             document.querySelectorAll('.quick-replies').forEach(el => el.remove());
-            addUserMessage(quickReplies.find(r => r.keyword === keyword).text);
+            const quickReplyText = quickReplies[currentLang].find(r => r.keyword === keyword).text;
+            addUserMessage(quickReplyText);
             showTypingIndicator();
             setTimeout(() => {
                 removeTypingIndicator();
-                addBotMessage(botResponses[keyword]);
+                addBotMessage(botResponses[currentLang][keyword]);
             }, 800);
         }
 
@@ -971,6 +1048,83 @@
                 chatToggle.style.animation = 'bounce 0.5s ease 3';
             }
         }, 5000);
+
+        // Language management
+        let currentLang = 'zh';
+        
+        function switchLanguage(lang) {
+            currentLang = lang;
+            
+            // Update all language texts
+            document.querySelectorAll('.lang-text').forEach(element => {
+                const zhText = element.getAttribute('data-zh');
+                const enText = element.getAttribute('data-en');
+                
+                if (lang === 'zh') {
+                    element.textContent = zhText;
+                } else {
+                    element.textContent = enText;
+                }
+            });
+            
+            // Update form placeholders
+            updateFormPlaceholders(lang);
+            
+            // Update chatbot
+            updateChatbotPlaceholders(lang);
+            
+            // Update language toggle buttons
+            document.querySelectorAll('.language-btn').forEach(btn => {
+                if (btn.getAttribute('data-lang') === lang) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            
+            // Update HTML lang attribute
+            document.documentElement.lang = lang;
+        }
+        
+        function updateFormPlaceholders(lang) {
+            const inputs = document.querySelectorAll('#contactForm input, #contactForm textarea');
+            inputs.forEach(input => {
+                if (lang === 'zh') {
+                    if (input.type === 'text' && input.placeholder.includes('your name')) {
+                        input.placeholder = '请输入您的姓名';
+                    } else if (input.type === 'tel' && input.placeholder.includes('phone')) {
+                        input.placeholder = '请输入您的手机号';
+                    } else if (input.tagName === 'TEXTAREA') {
+                        input.placeholder = '请描述您的具体需求和期望';
+                    }
+                } else {
+                    if (input.type === 'text' && input.placeholder.includes('您的姓名')) {
+                        input.placeholder = 'Please enter your name';
+                    } else if (input.type === 'tel' && input.placeholder.includes('手机号')) {
+                        input.placeholder = 'Please enter your phone number';
+                    } else if (input.tagName === 'TEXTAREA') {
+                        input.placeholder = 'Please describe your specific needs and expectations';
+                    }
+                }
+            });
+        }
+        
+        function updateChatbotPlaceholders(lang) {
+            const chatInput = document.getElementById('chatInput');
+            if (chatInput) {
+                if (lang === 'zh') {
+                    chatInput.placeholder = '输入您的问题...';
+                } else {
+                    chatInput.placeholder = 'Type your question...';
+                }
+            }
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set initial language
+            switchLanguage('zh');
+        });
     </script>
 </body>
 </html>
