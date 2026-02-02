@@ -1,183 +1,321 @@
 # N-Site-Prototype 需求规格说明书
-# Requirements Specification Document
+# Nestopia Platform Requirements Specification
 
-**项目名称**: N-Site-Prototype  
-**版本**: 1.0.0  
+**项目名称**: Nestopia Platform (N-Site-Prototype)  
+**版本**: 2.0.0  
 **最后更新**: 2026-01-30  
 **维护者**: websterzhangsh  
+**参考文档**: Webster Nestopia project update.pdf
 
 ---
 
 ## 1. 项目概述 (Project Overview)
 
 ### 1.1 项目背景
-为 Nestopia 公司设计开发阳光房销售官网原型，用于展示产品、吸引潜在客户并提供在线咨询服务。
+为 Nestopia 公司构建企业级电商平台，用于可伸缩阳光房(Retractable Sunroom)产品的销售、设计和客户服务。
 
 ### 1.2 项目目标
-- 建立专业的品牌形象
-- 展示阳光房产品和服务
-- 提供便捷的客户咨询渠道
-- 支持移动端访问
+- 建立专业的 Nestopia 公司门户网站
+- 实现产品展示、定价、下单的完整流程
+- 提供 AI 驱动的客户服务体验
+- 支持 Sales (Partners) 和 Customers 两类用户
 
 ### 1.3 目标用户
-- 别墅/洋房业主
-- 花园改造需求者
-- 房产开发商
-- 设计师/装修公司
+| 用户类型 | 描述 |
+|----------|------|
+| Customers | 终端消费者，别墅/洋房业主 |
+| Sales (Partners) | 销售代表，渠道合作伙伴 |
+| Enterprise Users | 内部员工，使用系统与客户交互 |
+
+### 1.4 开发方法论
+- **敏捷开发**: Sprint 周期 2 周
+- **发布节奏**: 月度发布 (每2个Sprint)
+- **Sprint 1 起始**: 2026年1月5日
+- **开发模式**: Cloud Native + AI Native (Vibe Coding)
 
 ---
 
-## 2. 功能需求 (Functional Requirements)
+## 2. 产品路线图 (Product Roadmap)
 
-### 2.1 已实现功能 ✅
+> 路线图覆盖约一年的主要能力建设，建议按季度审查和更新。
 
-| ID | 功能模块 | 描述 | 状态 | 优先级 |
-|----|----------|------|------|--------|
-| FR-001 | 响应式首页 | 适配桌面端/平板/手机的主页 | ✅ 已完成 | P0 |
-| FR-002 | 导航系统 | 顶部固定导航栏，支持平滑滚动 | ✅ 已完成 | P0 |
-| FR-003 | Hero区域 | 大图展示+行动号召按钮 | ✅ 已完成 | P0 |
-| FR-004 | 产品特色 | 6大核心优势展示卡片 | ✅ 已完成 | P1 |
-| FR-005 | 案例展示 | 图片画廊+悬停效果 | ✅ 已完成 | P1 |
-| FR-006 | 客户评价 | 用户评价卡片展示 | ✅ 已完成 | P2 |
-| FR-007 | 联系表单 | 客户信息收集表单 | ✅ 已完成 | P0 |
-| FR-008 | 页脚信息 | 公司信息+社交媒体链接 | ✅ 已完成 | P2 |
-| FR-009 | 智能客服 | 关键词匹配聊天机器人 | ✅ 已完成 | P1 |
+### Phase I - 电商网站基础 (当前阶段)
+| 模块 | 能力 | 状态 |
+|------|------|------|
+| Nestopia Portal | 公司门户首页 | ✅ 已完成 |
+| Customer | 客户信息管理 | 🔄 开发中 |
+| Product | 产品目录展示 | 🔄 开发中 |
+| Pricing | 产品定价 | 📋 规划中 |
+| Order Placement | 订单管理 | 📋 规划中 |
+| Payment | 支付功能 | 📋 规划中 |
+| AI/Chatbot | 智能客服 | ✅ 基础版完成 |
 
-### 2.2 待开发功能 🔄
+### Phase II - 设计工具与CRM
+| 模块 | 能力 | 状态 |
+|------|------|------|
+| Design Tooling | AI渲染设计 (text+image => image) | 📋 规划中 |
+| Customer Service | AI/Chatbot增强 | 📋 规划中 |
+| CRM | 合作伙伴/渠道管理 | 📋 规划中 |
+| Solution Project Mgt | 解决方案项目管理 | 📋 规划中 |
 
-| ID | 功能模块 | 描述 | 状态 | 优先级 |
-|----|----------|------|------|--------|
-| FR-010 | AI智能客服 | 集成Qwen大模型实现智能对话 | 🔄 待开发 | P1 |
-| FR-011 | 在线预约系统 | 日历选择+预约确认 | 📋 规划中 | P2 |
-| FR-012 | 产品详情页 | 各类阳光房详细介绍 | 📋 规划中 | P2 |
-| FR-013 | 3D效果展示 | 阳光房3D模型查看 | 📋 规划中 | P3 |
-| FR-014 | 价格计算器 | 在线估价工具 | 📋 规划中 | P2 |
-| FR-015 | 多语言支持 | 中/英文切换 | 📋 规划中 | P3 |
+### Phase III - 数字营销与财务
+| 模块 | 能力 | 状态 |
+|------|------|------|
+| Digital Marketing | 数字营销 | 📋 规划中 |
+| Finance | 成本管理 | 📋 规划中 |
 
----
-
-## 3. 非功能需求 (Non-Functional Requirements)
-
-### 3.1 性能要求
-| ID | 需求 | 指标 | 状态 |
-|----|------|------|------|
-| NFR-001 | 首页加载时间 | < 3秒 (3G网络) | ✅ |
-| NFR-002 | 移动端适配 | 支持320px-1920px | ✅ |
-| NFR-003 | 浏览器兼容 | Chrome/Safari/Firefox/Edge | ✅ |
-
-### 3.2 安全要求
-| ID | 需求 | 描述 | 状态 |
-|----|------|------|------|
-| NFR-004 | HTTPS | 启用SSL证书 | ✅ (GitHub Pages) |
-| NFR-005 | API密钥保护 | 后端代理保护敏感信息 | 🔄 待实现 |
-
-### 3.3 可维护性
-| ID | 需求 | 描述 | 状态 |
-|----|------|------|------|
-| NFR-006 | 代码规范 | 统一的HTML/CSS/JS规范 | ✅ |
-| NFR-007 | 版本控制 | Git + GitHub管理 | ✅ |
-| NFR-008 | 文档完整 | README + 需求文档 | ✅ |
+> **Phase II 启动条件**: 公司获得约10个客户后启动
 
 ---
 
-## 4. 技术架构 (Technical Architecture)
+## 3. 业务工作流 (Business Workflow)
 
-### 4.1 当前技术栈
+### 3.1 完整业务流程
 ```
-前端框架: 原生HTML5 + CSS3 + JavaScript
-样式框架: Tailwind CSS 2.x
-图标库: Font Awesome 6.x
-部署平台: GitHub Pages
+1. Customer Info Creation (客户信息创建)
+        ↓
+2. Solution Design (方案设计/产品定制)
+        ↓
+3. Design Validation (客户确认设计)
+        ↓
+4. Deposit Payment (首付款/定金)
+        ↓
+5. Place Order (签订合同/下单)
+        ↓
+6. Order Fulfillment (BOM生成并发送工厂)
+        ↓
+7. Manufacturing (生产制造)
+        ↓
+8. Validation by Nestopia (公司内部验收)
+        ↓
+9. 2nd Payment (第二笔付款)
+        ↓
+10. Shipping and Delivery (发货配送)
+        ↓
+11. Installation (安装)
+        ↓
+12. Customer Validation (客户验收)
+        ↓
+13. Final Payment (尾款/第三笔付款)
+        ↓
+14. Maintenance (售后维护)
+```
+
+### 3.2 支持流程
+- Solution Project Management (方案项目管理)
+- CRM Functions (合作伙伴/渠道管理)
+
+---
+
+## 4. 数据与文档 (Data and Documents)
+
+### 4.1 主数据
+| 数据类型 | 描述 | Phase |
+|----------|------|-------|
+| Product Info | 产品信息含定价 | I |
+| Customer Info | 客户信息 | I |
+| Customer Success Samples | 成功案例(视频/渲染图) | I |
+| 客户场地信息 | 客户提供的场地资料 | I |
+
+### 4.2 交易数据
+| 数据类型 | 描述 | Phase |
+|----------|------|-------|
+| Order | 订单信息 | I |
+| Payment | 支付信息 | I |
+| Contract | 合同 | I |
+
+### 4.3 设计文档
+| 文档类型 | 创建者 | 审批者 | 使用者 |
+|----------|--------|--------|--------|
+| 总平面图（规划） | 设计师 | 工程师 | 客户 |
+| 效果图（空间展示） | AI+设计工具 | 设计师 | 客户 |
+| 平面布置图（客户） | 设计师 | 客户 | 工厂 |
+| 产品设计图（工厂） | 设计师 | 工程师 | 工厂 |
+| 基础设计图 | 工程师 | 主管 | 施工队 |
+| 地面铺装图（施工指导） | 工程师 | 主管 | 施工队 |
+| 结构计算书（工程力学） | 工程师 | 主管 | 审批机构 |
+| 各项认证/Permit | TBD | TBD | TBD |
+| 组装说明书+视频 | 工程师 | 主管 | 安装人员 |
+
+---
+
+## 5. Phase I 功能需求 (Functional Requirements)
+
+### 5.1 已实现功能 ✅
+
+| ID | 模块 | 功能 | 描述 | 状态 |
+|----|------|------|------|------|
+| FR-001 | Portal | 响应式首页 | 适配多端的公司门户 | ✅ |
+| FR-002 | Portal | 导航系统 | 顶部导航+平滑滚动 | ✅ |
+| FR-003 | Portal | Hero区域 | 品牌展示+CTA | ✅ |
+| FR-004 | Product | 产品特色 | 6大核心优势展示 | ✅ |
+| FR-005 | Product | 案例展示 | 图片画廊+悬停效果 | ✅ |
+| FR-006 | Customer | 客户评价 | 评价卡片展示 | ✅ |
+| FR-007 | Customer | 联系表单 | 客户信息收集 | ✅ |
+| FR-008 | Portal | 页脚信息 | 公司信息+社交链接 | ✅ |
+| FR-009 | AI/Chatbot | 智能客服(基础) | 关键词匹配机器人 | ✅ |
+
+### 5.2 Phase I 待开发功能 🔄
+
+| ID | 模块 | 功能 | 描述 | 优先级 | Sprint |
+|----|------|------|------|--------|--------|
+| FR-010 | Auth | 用户认证 | 登录/注册功能 | P0 | S3 |
+| FR-011 | Auth | 用户授权 | 角色权限管理 | P0 | S3 |
+| FR-012 | AI/Chatbot | Qwen集成 | 接入通义千问大模型 | P1 | S2 |
+| FR-013 | Customer | 客户信息管理 | CRUD操作 | P1 | S3 |
+| FR-014 | Product | 产品目录 | 完整产品展示 | P1 | S3 |
+| FR-015 | Pricing | 产品定价 | 价格展示+计算 | P1 | S4 |
+| FR-016 | Order | 订单管理 | 订单创建+跟踪 | P1 | S4 |
+| FR-017 | Payment | 支付功能 | 在线支付集成 | P2 | S5+ |
+
+---
+
+## 6. AI 启用策略 (AI Enablement)
+
+### 6.1 AI 应用场景
+| 场景 | 描述 | 目标 | Phase |
+|------|------|------|-------|
+| Design Rendering | text+image => image | 提升转化率(leads to order) | II |
+| Chatbot Experience | 智能对话客服 | 便捷客户交互 | I |
+| Vibe Coding | AI辅助开发 | 加速开发效率 | I |
+
+### 6.2 技术选型
+- **LLM选择**: 阿里云通义千问 (Qwen)
+- **开发工具**: 通义灵码 (Tongyi Lingma)
+- **部署平台**: 阿里云
+
+### 6.3 AI Agent 规划
+| Agent类型 | 应用场景 |
+|-----------|----------|
+| Sales Agent | 销售支持 |
+| Marketing Agent | 营销自动化 |
+| Design Agent | AI渲染设计 |
+| Supply Chain Agent | 供应链采购 |
+| Customer Support Agent | 客户服务 |
+
+---
+
+## 7. 技术架构 (Technical Architecture)
+
+### 7.1 技术栈评估结果
+基于公司成员共识，选择 **阿里云** 作为 IaaS 基础设施：
+
+| 评估维度 | 权重 | AliCloud | AWS | GCP | Azure |
+|----------|------|----------|-----|-----|-------|
+| 可信度（美国） | 20% | 3 | 5 | 5 | 5 |
+| LLM（开源） | 30% | 4 | 2 | 2 | 2 |
+| LLM能力 | 10% | 4 | 3 | 5 | 5 |
+| LLM运维 | 10% | 5 | 2 | 2 | 2 |
+| 开发生态 | 10% | 5 | 3 | 4 | 4 |
+| Cloud Native | 10% | 5 | 5 | 5 | 5 |
+| 价格/费用 | 10% | 4 | 3 | 3 | 3 |
+| **总计** | 100% | **4.1** | 3.2 | 3.5 | 3.5 |
+
+### 7.2 当前技术栈
+```
+前端: HTML5 + CSS3 + JavaScript + Tailwind CSS
+图标: Font Awesome 6.x
+部署: GitHub Pages (原型阶段)
 版本控制: Git + GitHub
 ```
 
-### 4.2 计划技术栈 (AI客服升级)
+### 7.3 目标技术栈
 ```
-AI模型: 阿里云通义千问 (Qwen)
-后端服务: Vercel Serverless Functions (可选)
-API管理: 阿里云百炼平台
-```
-
-### 4.3 项目结构
-```
-N-Site-Prototype/
-├── index.html              # 主页面 (含聊天机器人)
-├── sunroom-landing.html    # 备选版本
-├── README.md               # 项目说明
-├── REQUIREMENTS.md         # 需求规格说明书 (本文档)
-├── package.json            # 项目配置
-├── .gitignore              # Git忽略配置
-├── deploy.sh               # 部署脚本
-├── public/
-│   └── images/             # 图片资源
-└── src/                    # React源码 (备用)
-    ├── components/
-    ├── App.tsx
-    └── index.css
+云平台: 阿里云 (AliCloud)
+AI模型: 通义千问 (Qwen)
+开发IDE: 通义灵码 (Tongyi Lingma)
+DevOps: Alibaba Cloud DevOps
+前端框架: Vue.js (计划迁移)
 ```
 
 ---
 
-## 5. 用户故事 (User Stories)
+## 8. 开发资源 (Development Resources)
 
-### 5.1 已实现
-- ✅ 作为访客，我希望能快速了解公司的阳光房产品
-- ✅ 作为访客，我希望在手机上也能正常浏览网站
-- ✅ 作为潜在客户，我希望能方便地提交咨询信息
-- ✅ 作为访客，我希望能通过聊天窗口快速获取常见问题答案
+### 8.1 团队配置
+| 角色 | 配置 | 说明 |
+|------|------|------|
+| PM | 1人 (等效工作量) | 项目管理 |
+| Engineer | 1人 (等效工作量) | 开发实施 |
 
-### 5.2 待实现
-- 🔄 作为客户，我希望能与AI助手进行智能对话
-- 📋 作为客户，我希望能在线预约上门测量时间
-- 📋 作为客户，我希望能查看详细的产品规格和价格
-
----
-
-## 6. 里程碑计划 (Milestones)
-
-### Phase 1: MVP原型 ✅ (已完成)
-- [x] 响应式主页设计
-- [x] 基础聊天机器人
-- [x] GitHub Pages部署
-
-### Phase 2: AI升级 🔄 (进行中)
-- [ ] 集成Qwen大模型
-- [ ] 实现智能对话
-- [ ] API密钥安全处理
-
-### Phase 3: 功能扩展 📋 (规划中)
-- [ ] 在线预约系统
-- [ ] 产品详情页
-- [ ] 价格计算器
-
-### Phase 4: 优化迭代 📋 (规划中)
-- [ ] SEO优化
-- [ ] 性能优化
-- [ ] 多语言支持
+### 8.2 人员安排
+- 初期由 WZ, Dr. Zhan 联合贡献
+- 可能需要增加1名合同工
+- 灵活用工模式，按项目目标计费
 
 ---
 
-## 7. 变更记录 (Change Log)
+## 9. 项目时间线 (Timeline)
+
+### 9.1 Sprint 计划
+| Sprint | 时间 | 目标交付物 |
+|--------|------|------------|
+| Sprint 1 | Jan 5-18, 2026 | 项目启动，环境搭建 |
+| Sprint 2 | Jan 19 - Feb 1 | 开发环境完成，基础电商网站 |
+| Sprint 3 | Feb 2-15 | 认证授权，客户管理 |
+| Sprint 4 | Feb 16 - Mar 1 | 产品目录，定价功能 |
+| Sprint 5+ | Mar onwards | 订单，支付功能 |
+
+### 9.2 关键里程碑
+| 里程碑 | 目标时间 | 交付内容 |
+|--------|----------|----------|
+| M1 | Sprint 2 中期 | Qwen开发环境搭建完成 |
+| M2 | Sprint 2 末期 | 电商网站基础版上线 |
+| M3 | Sprint 2 末期 | 用户测试开始 |
+
+### 9.3 Sprint 2 交付目标
+- ✅ 官方域名
+- 🔄 Walking Skeleton (基础能力)
+- 📋 Phase I 功能(不含 Payment)
+
+---
+
+## 10. 依赖项 (Dependencies)
+
+| 依赖项 | 状态 | 负责人 |
+|--------|------|--------|
+| 阿里云账号订阅 | 🔄 进行中 | WZ |
+| Qwen API 账号 | 🔄 进行中 | WZ |
+| 域名注册 | 📋 待办 | TBD |
+| 公司注册地址 | 📋 待办 | LZ |
+
+---
+
+## 11. 变更记录 (Change Log)
 
 | 版本 | 日期 | 变更内容 | 作者 |
 |------|------|----------|------|
-| 1.0.0 | 2026-01-30 | 初始版本，包含MVP功能 | websterzhangsh |
-| 1.0.1 | 2026-01-30 | 添加聊天机器人功能 | websterzhangsh |
-| 1.0.2 | 2026-01-30 | 修复输入框文字颜色问题 | websterzhangsh |
+| 1.0.0 | 2026-01-30 | 初始版本，MVP功能 | websterzhangsh |
+| 1.0.1 | 2026-01-30 | 添加聊天机器人 | websterzhangsh |
+| 1.0.2 | 2026-01-30 | 修复输入框样式 | websterzhangsh |
+| 2.0.0 | 2026-01-30 | 整合完整项目文档 | websterzhangsh |
 
 ---
 
-## 8. 附录 (Appendix)
+## 12. 附录 (Appendix)
 
-### 8.1 相关链接
-- **GitHub仓库**: https://github.com/websterzhangsh/N-Site-Prototype
-- **在线预览**: https://websterzhangsh.github.io/N-Site-Prototype/
-- **参考设计**: https://btfmg95152cb.trickle.host/
+### 12.1 相关链接
+| 资源 | 链接 |
+|------|------|
+| GitHub仓库 | https://github.com/websterzhangsh/N-Site-Prototype |
+| 在线预览 | https://websterzhangsh.github.io/N-Site-Prototype/ |
+| 参考原型 | https://btfmg95152cb.trickle.host/ |
+| 阿里云百炼 | https://bailian.console.aliyun.com/ |
 
-### 8.2 联系方式
-- **项目负责人**: websterzhangsh
-- **GitHub**: @websterzhangsh
+### 12.2 参考文档
+- SOP of The Retractable Sunroom Business
+- Product Development Environment Exploration and Setup
+- Project Schedule and Milestones
+
+### 12.3 会议纪要索引
+| 日期 | 主题 |
+|------|------|
+| 2026-01-30 | 开发环境搭建，资源风险 |
+| 2026-01-27 | AI原生开发能力，SaaS讨论 |
+| 2026-01-20 | Phase I范围确认，Chatbot需求 |
+| 2026-01-05 | 行动计划，数据模型 |
 
 ---
 
-*本文档将随项目迭代持续更新*
+*本文档将随项目迭代持续更新*  
+*Last updated: 2026-01-30*
