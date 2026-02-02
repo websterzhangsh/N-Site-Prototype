@@ -1588,6 +1588,12 @@
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
         }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set initial language
+            switchLanguage('zh');
+        });
     </script>
 </body>
 </html>
