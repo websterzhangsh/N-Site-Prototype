@@ -9,13 +9,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --primary: #0ea5e9;
-            --primary-dark: #0284c7;
+            --primary: #10b981;  /* Green color for eco-friendly feel */
+            --primary-dark: #059669;
             --secondary: #f59e0b;
-            --accent: #10b981;
-            --gradient-primary: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+            --accent: #0ea5e9;
+            --dark-bg: #0f172a;  /* Deep dark blue-gray */
+            --darker-bg: #020617; /* Even darker for contrast */
+            --light-text: #f1f5f9; /* Light gray-white for text */
+            --light-accent: #e2e8f0; /* Light accent color */
+            --gradient-primary: linear-gradient(135deg, #10b981 0%, #059669 100%);
             --gradient-warm: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            --shadow-elegant: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --gradient-eco: linear-gradient(135deg, #10b981 0%, #0ea5e9 100%);
+            --shadow-elegant: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
         }
         
         .hero-gradient {
@@ -361,21 +366,21 @@
         }
     </style>
 </head>
-<body class="font-sans">
+<body class="font-sans bg-[--darker-bg] text-[--light-text]">
     <!-- Header -->
-    <header class="fixed w-full bg-white shadow-md z-50">
+    <header class="fixed w-full bg-[--dark-bg] shadow-md z-50 border-b border-[--primary]">
         <div class="container mx-auto px-4 py-3">
             <div class="flex justify-between items-center">
                 <div class="flex items-center space-x-2">
-                    <i class="fas fa-sun text-2xl text-blue-500"></i>
-                    <span class="text-xl font-bold text-gray-800 lang-text" data-zh="阳光房专家" data-en="Sunroom Expert">阳光房专家</span>
+                    <i class="fas fa-sun text-2xl text-[--primary]"></i>
+                    <span class="text-xl font-bold text-[--light-text] lang-text" data-zh="阳光房专家" data-en="Sunroom Expert">阳光房专家</span>
                 </div>
                 <nav class="hidden md:flex space-x-8">
-                    <a href="#home" class="text-gray-600 hover:text-blue-500 transition lang-text" data-zh="首页" data-en="Home">首页</a>
-                    <a href="#features" class="text-gray-600 hover:text-blue-500 transition lang-text" data-zh="产品特色" data-en="Features">产品特色</a>
-                    <a href="#gallery" class="text-gray-600 hover:text-blue-500 transition lang-text" data-zh="案例展示" data-en="Gallery">案例展示</a>
-                    <a href="#testimonials" class="text-gray-600 hover:text-blue-500 transition lang-text" data-zh="客户评价" data-en="Testimonials">客户评价</a>
-                    <a href="#contact" class="text-gray-600 hover:text-blue-500 transition lang-text" data-zh="联系我们" data-en="Contact">联系我们</a>
+                    <a href="#home" class="text-[--light-text] hover:text-[--primary] transition lang-text" data-zh="首页" data-en="Home">首页</a>
+                    <a href="#features" class="text-[--light-text] hover:text-[--primary] transition lang-text" data-zh="产品特色" data-en="Features">产品特色</a>
+                    <a href="#gallery" class="text-[--light-text] hover:text-[--primary] transition lang-text" data-zh="案例展示" data-en="Gallery">案例展示</a>
+                    <a href="#testimonials" class="text-[--light-text] hover:text-[--primary] transition lang-text" data-zh="客户评价" data-en="Testimonials">客户评价</a>
+                    <a href="#contact" class="text-[--light-text] hover:text-[--primary] transition lang-text" data-zh="联系我们" data-en="Contact">联系我们</a>
                 </nav>
                 <!-- Language Toggle in header -->
                 <div class="flex items-center space-x-4">
@@ -383,7 +388,7 @@
                         <button class="language-btn active" onclick="switchLanguage('zh')" data-lang="zh">中文</button>
                         <button class="language-btn" onclick="switchLanguage('en')" data-lang="en">English</button>
                     </div>
-                    <button class="md:hidden text-gray-600">
+                    <button class="md:hidden text-[--light-text]">
                         <i class="fas fa-bars text-xl"></i>
                     </button>
                 </div>
@@ -392,23 +397,23 @@
     </header>
 
     <!-- Hero Section -->
-    <section id="home" class="pt-20 pb-16 hero-gradient text-white">
+    <section id="home" class="pt-20 pb-16 bg-gradient-to-br from-[--dark-bg] to-[--primary-dark] text-white">
         <div class="container mx-auto px-4">
             <div class="flex flex-col lg:flex-row items-center">
                 <div class="lg:w-1/2 mb-12 lg:mb-0">
                     <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">
                         <span class="lang-text" data-zh="打造您的理想阳光房" data-en="Create Your Ideal Sunroom"></span>
-                        <span class="block text-yellow-300 lang-text" data-zh="享受四季如春的生活" data-en="Enjoy Spring-like Life All Year Round">享受四季如春的生活</span>
+                        <span class="block text-[--secondary] lang-text" data-zh="享受四季如春的生活" data-en="Enjoy Spring-like Life All Year Round">享受四季如春的生活</span>
                     </h1>
-                    <p class="text-xl mb-8 text-blue-100">
+                    <p class="text-xl mb-8 text-[--light-accent]">
                         <span class="lang-text" data-zh="专业阳光房设计建造服务，采用高品质材料，提供个性化定制方案。" data-en="Professional sunroom design and construction service, using high-quality materials to provide personalized custom solutions.">专业阳光房设计建造服务，采用高品质材料，提供个性化定制方案。</span>
                         <span class="lang-text" data-zh="让您的家拥有一个明亮舒适的休闲空间。" data-en="Make your home have a bright and comfortable leisure space.">让您的家拥有一个明亮舒适的休闲空间。</span>
                     </p>
                     <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                        <button class="btn-primary text-white font-semibold py-3 px-8 rounded-lg">
+                        <button class="btn-primary text-white font-semibold py-3 px-8 rounded-lg bg-gradient-to-r from-[--primary] to-[--primary-dark]">
                             <i class="fas fa-calendar-check mr-2"></i><span class="lang-text" data-zh="免费设计咨询" data-en="Free Design Consultation">免费设计咨询</span>
                         </button>
-                        <button class="bg-white text-blue-600 font-semibold py-3 px-8 rounded-lg hover:bg-gray-100 transition">
+                        <button class="bg-white text-[--primary] font-semibold py-3 px-8 rounded-lg hover:bg-gray-100 transition">
                             <i class="fas fa-phone mr-2"></i><span class="lang-text" data-zh="立即咨询" data-en="Consult Now">立即咨询</span>
                         </button>
                     </div>
@@ -417,8 +422,8 @@
                     <div class="relative">
                         <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
                              alt="现代阳光房设计" 
-                             class="rounded-2xl shadow-2xl animate-float">
-                        <div class="absolute -bottom-6 -right-6 bg-yellow-400 text-white p-4 rounded-full">
+                             class="rounded-2xl shadow-2xl animate-float border-4 border-[--primary]">
+                        <div class="absolute -bottom-6 -right-6 bg-[--primary] text-white p-4 rounded-full">
                             <i class="fas fa-sun text-2xl"></i>
                         </div>
                     </div>
@@ -428,92 +433,92 @@
     </section>
 
     <!-- Features Section -->
-    <section id="features" class="py-16 bg-gray-50">
+    <section id="features" class="py-16 bg-[--darker-bg]">
         <div class="container mx-auto px-4">
             <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4 lang-text" data-zh="为什么选择我们的阳光房" data-en="Why Choose Our Sunrooms">
+                <h2 class="text-3xl md:text-4xl font-bold text-[--light-text] mb-4 lang-text" data-zh="为什么选择我们的阳光房" data-en="Why Choose Our Sunrooms">
                     为什么选择我们的阳光房
                 </h2>
-                <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+                <p class="text-[--light-accent] text-lg max-w-2xl mx-auto">
                     <span class="lang-text" data-zh="我们致力于提供最高品质的阳光房解决方案，每一个细节都经过精心设计" data-en="We are committed to providing the highest quality sunroom solutions, with every detail carefully designed">我们致力于提供最高品质的阳光房解决方案，每一个细节都经过精心设计</span>
                 </p>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Feature 1 -->
-                <div class="feature-card bg-white p-8 text-center">
-                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="fas fa-crown text-2xl text-blue-600"></i>
+                <div class="feature-card bg-[--dark-bg] p-8 text-center border border-[--primary]/30 rounded-2xl">
+                    <div class="w-16 h-16 bg-[--primary]/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-crown text-2xl text-[--primary]"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-4 text-gray-800 lang-text" data-zh="优质材料" data-en="Premium Materials">优质材料</h3>
-                    <p class="text-gray-600 lang-text" data-zh="采用高品质铝合金框架和钢化玻璃，确保安全耐用，抗风压性能优异" data-en="Using high-quality aluminum alloy frames and tempered glass to ensure safety, durability, and excellent wind pressure resistance">采用高品质铝合金框架和钢化玻璃，确保安全耐用，抗风压性能优异</p>
+                    <h3 class="text-xl font-bold mb-4 text-[--light-text] lang-text" data-zh="优质材料" data-en="Premium Materials">优质材料</h3>
+                    <p class="text-[--light-accent] lang-text" data-zh="采用高品质铝合金框架和钢化玻璃，确保安全耐用，抗风压性能优异" data-en="Using high-quality aluminum alloy frames and tempered glass to ensure safety, durability, and excellent wind pressure resistance">采用高品质铝合金框架和钢化玻璃，确保安全耐用，抗风压性能优异</p>
                 </div>
                 
                 <!-- Feature 2 -->
-                <div class="feature-card bg-white p-8 text-center">
-                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="fas fa-temperature-high text-2xl text-green-600"></i>
+                <div class="feature-card bg-[--dark-bg] p-8 text-center border border-[--primary]/30 rounded-2xl">
+                    <div class="w-16 h-16 bg-[--primary]/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-temperature-high text-2xl text-[--primary]"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-4 text-gray-800 lang-text" data-zh="智能调温" data-en="Smart Temperature Control">智能调温</h3>
-                    <p class="text-gray-600 lang-text" data-zh="先进的隔热系统和通风设计，冬暖夏凉，节能环保" data-en="Advanced insulation system and ventilation design, warm in winter and cool in summer, energy-saving and environmentally friendly">先进的隔热系统和通风设计，冬暖夏凉，节能环保</p>
+                    <h3 class="text-xl font-bold mb-4 text-[--light-text] lang-text" data-zh="智能调温" data-en="Smart Temperature Control">智能调温</h3>
+                    <p class="text-[--light-accent] lang-text" data-zh="先进的隔热系统和通风设计，冬暖夏凉，节能环保" data-en="Advanced insulation system and ventilation design, warm in winter and cool in summer, energy-saving and environmentally friendly">先进的隔热系统和通风设计，冬暖夏凉，节能环保</p>
                 </div>
                 
                 <!-- Feature 3 -->
-                <div class="feature-card bg-white p-8 text-center">
-                    <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="fas fa-ruler-combined text-2xl text-yellow-600"></i>
+                <div class="feature-card bg-[--dark-bg] p-8 text-center border border-[--primary]/30 rounded-2xl">
+                    <div class="w-16 h-16 bg-[--primary]/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-ruler-combined text-2xl text-[--primary]"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-4 text-gray-800 lang-text" data-zh="个性定制" data-en="Custom Design">个性定制</h3>
-                    <p class="text-gray-600 lang-text" data-zh="根据您的需求和空间特点，提供一对一专属设计方案" data-en="Provide one-on-one exclusive design solutions according to your needs and space characteristics">根据您的需求和空间特点，提供一对一专属设计方案</p>
+                    <h3 class="text-xl font-bold mb-4 text-[--light-text] lang-text" data-zh="个性定制" data-en="Custom Design">个性定制</h3>
+                    <p class="text-[--light-accent] lang-text" data-zh="根据您的需求和空间特点，提供一对一专属设计方案" data-en="Provide one-on-one exclusive design solutions according to your needs and space characteristics">根据您的需求和空间特点，提供一对一专属设计方案</p>
                 </div>
                 
                 <!-- Feature 4 -->
-                <div class="feature-card bg-white p-8 text-center">
-                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="fas fa-tools text-2xl text-purple-600"></i>
+                <div class="feature-card bg-[--dark-bg] p-8 text-center border border-[--primary]/30 rounded-2xl">
+                    <div class="w-16 h-16 bg-[--primary]/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-tools text-2xl text-[--primary]"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-4 text-gray-800 lang-text" data-zh="专业安装" data-en="Professional Installation">专业安装</h3>
-                    <p class="text-gray-600 lang-text" data-zh="经验丰富的施工团队，标准化安装流程，确保工程质量" data-en="Experienced construction team, standardized installation process, ensuring project quality">经验丰富的施工团队，标准化安装流程，确保工程质量</p>
+                    <h3 class="text-xl font-bold mb-4 text-[--light-text] lang-text" data-zh="专业安装" data-en="Professional Installation">专业安装</h3>
+                    <p class="text-[--light-accent] lang-text" data-zh="经验丰富的施工团队，标准化安装流程，确保工程质量" data-en="Experienced construction team, standardized installation process, ensuring project quality">经验丰富的施工团队，标准化安装流程，确保工程质量</p>
                 </div>
                 
                 <!-- Feature 5 -->
-                <div class="feature-card bg-white p-8 text-center">
-                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="fas fa-shield-alt text-2xl text-red-600"></i>
+                <div class="feature-card bg-[--dark-bg] p-8 text-center border border-[--primary]/30 rounded-2xl">
+                    <div class="w-16 h-16 bg-[--primary]/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-shield-alt text-2xl text-[--primary]"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-4 text-gray-800 lang-text" data-zh="质保服务" data-en="Warranty Service">质保服务</h3>
-                    <p class="text-gray-600 lang-text" data-zh="提供5年质保服务，24小时售后响应，让您无后顾之忧" data-en="Provide 5-year warranty service, 24-hour after-sales response, worry-free service">提供5年质保服务，24小时售后响应，让您无后顾之忧</p>
+                    <h3 class="text-xl font-bold mb-4 text-[--light-text] lang-text" data-zh="质保服务" data-en="Warranty Service">质保服务</h3>
+                    <p class="text-[--light-accent] lang-text" data-zh="提供5年质保服务，24小时售后响应，让您无后顾之忧" data-en="Provide 5-year warranty service, 24-hour after-sales response, worry-free service">提供5年质保服务，24小时售后响应，让您无后顾之忧</p>
                 </div>
                 
                 <!-- Feature 6 -->
-                <div class="feature-card bg-white p-8 text-center">
-                    <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="fas fa-dollar-sign text-2xl text-indigo-600"></i>
+                <div class="feature-card bg-[--dark-bg] p-8 text-center border border-[--primary]/30 rounded-2xl">
+                    <div class="w-16 h-16 bg-[--primary]/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-dollar-sign text-2xl text-[--primary]"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-4 text-gray-800 lang-text" data-zh="性价比高" data-en="High Cost-effective">性价比高</h3>
-                    <p class="text-gray-600 lang-text" data-zh="工厂直销价格，无中间商赚差价，品质与价格的完美平衡" data-en="Factory direct price, no middleman markup, perfect balance of quality and price">工厂直销价格，无中间商赚差价，品质与价格的完美平衡</p>
+                    <h3 class="text-xl font-bold mb-4 text-[--light-text] lang-text" data-zh="性价比高" data-en="High Cost-effective">性价比高</h3>
+                    <p class="text-[--light-accent] lang-text" data-zh="工厂直销价格，无中间商赚差价，品质与价格的完美平衡" data-en="Factory direct price, no middleman markup, perfect balance of quality and price">工厂直销价格，无中间商赚差价，品质与价格的完美平衡</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Gallery Section -->
-    <section id="gallery" class="py-16">
+    <section id="gallery" class="py-16 bg-[--dark-bg]">
         <div class="container mx-auto px-4">
             <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4 lang-text" data-zh="精美案例展示" data-en="Beautiful Case Display">
+                <h2 class="text-3xl md:text-4xl font-bold text-[--light-text] mb-4 lang-text" data-zh="精美案例展示" data-en="Beautiful Case Display">
                     精美案例展示
                 </h2>
-                <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+                <p class="text-[--light-accent] text-lg max-w-2xl mx-auto">
                     <span class="lang-text" data-zh="看看我们为客户打造的精彩阳光房作品" data-en="Take a look at our wonderful sunroom works created for customers">看看我们为客户打造的精彩阳光房作品</span>
                 </p>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="group relative overflow-hidden rounded-2xl shadow-lg">
+                <div class="group relative overflow-hidden rounded-2xl shadow-lg border border-[--primary]/30">
                     <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
                          alt="现代简约阳光房" class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110">
-                    <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div class="absolute inset-0 bg-[--darker-bg] bg-opacity-70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                         <div class="text-white text-center">
                             <h3 class="text-xl font-bold mb-2 lang-text" data-zh="现代简约风格" data-en="Modern Minimalist Style">现代简约风格</h3>
                             <p class="text-sm lang-text" data-zh="12㎡ | 铝合金框架" data-en="12㎡ | Aluminum Alloy Frame">12㎡ | 铝合金框架</p>
@@ -521,10 +526,10 @@
                     </div>
                 </div>
                 
-                <div class="group relative overflow-hidden rounded-2xl shadow-lg">
+                <div class="group relative overflow-hidden rounded-2xl shadow-lg border border-[--primary]/30">
                     <img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
                          alt="欧式豪华阳光房" class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110">
-                    <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div class="absolute inset-0 bg-[--darker-bg] bg-opacity-70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                         <div class="text-white text-center">
                             <h3 class="text-xl font-bold mb-2 lang-text" data-zh="欧式豪华风格" data-en="European Luxury Style">欧式豪华风格</h3>
                             <p class="text-sm lang-text" data-zh="20㎡ | 断桥铝框架" data-en="20㎡ | Thermal Break Aluminum Frame">20㎡ | 断桥铝框架</p>
@@ -532,10 +537,10 @@
                     </div>
                 </div>
                 
-                <div class="group relative overflow-hidden rounded-2xl shadow-lg">
+                <div class="group relative overflow-hidden rounded-2xl shadow-lg border border-[--primary]/30">
                     <img src="https://images.unsplash.com/photo-1600573472550-8090b5e0745e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
                          alt="田园风格阳光房" class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110">
-                    <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div class="absolute inset-0 bg-[--darker-bg] bg-opacity-70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                         <div class="text-white text-center">
                             <h3 class="text-xl font-bold mb-2 lang-text" data-zh="田园自然风格" data-en="Rustic Natural Style">田园自然风格</h3>
                             <p class="text-sm lang-text" data-zh="15㎡ | 铝合金+实木" data-en="15㎡ | Aluminum Alloy + Solid Wood">15㎡ | 铝合金+实木</p>
@@ -545,7 +550,7 @@
             </div>
             
             <div class="text-center mt-12">
-                <button class="btn-secondary text-white font-semibold py-3 px-8 rounded-lg">
+                <button class="btn-secondary text-white font-semibold py-3 px-8 rounded-lg bg-gradient-to-r from-[--primary] to-[--primary-dark]">
                     <span class="lang-text" data-zh="查看更多案例" data-en="View More Cases">查看更多案例</span> <i class="fas fa-arrow-right ml-2"></i>
                 </button>
             </div>
@@ -553,26 +558,26 @@
     </section>
 
     <!-- Testimonials Section -->
-    <section id="testimonials" class="py-16 bg-gray-50">
+    <section id="testimonials" class="py-16 bg-[--darker-bg]">
         <div class="container mx-auto px-4">
             <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4 lang-text" data-zh="客户真实评价" data-en="Customer Reviews">
+                <h2 class="text-3xl md:text-4xl font-bold text-[--light-text] mb-4 lang-text" data-zh="客户真实评价" data-en="Customer Reviews">
                     客户真实评价
                 </h2>
-                <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+                <p class="text-[--light-accent] text-lg max-w-2xl mx-auto">
                     <span class="lang-text" data-zh="听听我们的客户怎么说" data-en="Hear what our customers say">听听我们的客户怎么说</span>
                 </p>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="bg-white p-8 rounded-2xl shadow-md">
+                <div class="bg-[--dark-bg] p-8 rounded-2xl shadow-md border border-[--primary]/30">
                     <div class="flex items-center mb-4">
-                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
-                            <span class="text-blue-600 font-bold">张</span>
+                        <div class="w-12 h-12 bg-[--primary]/20 rounded-full flex items-center justify-center mr-4">
+                            <span class="text-[--primary] font-bold">张</span>
                         </div>
                         <div>
-                            <h4 class="font-bold text-gray-800 lang-text" data-zh="张先生" data-en="Mr. Zhang">张先生</h4>
-                            <p class="text-gray-600 text-sm lang-text" data-zh="别墅业主" data-en="Villa Owner">别墅业主</p>
+                            <h4 class="font-bold text-[--light-text] lang-text" data-zh="张先生" data-en="Mr. Zhang">张先生</h4>
+                            <p class="text-[--light-accent] text-sm lang-text" data-zh="别墅业主" data-en="Villa Owner">别墅业主</p>
                         </div>
                     </div>
                     <div class="flex text-yellow-400 mb-4">
@@ -582,17 +587,17 @@
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                     </div>
-                    <p class="text-gray-600 italic lang-text" data-zh='"服务非常专业，从设计到安装都很满意。阳光房的质量超出预期，现在每天都在里面喝茶看书，非常享受！"' data-en='"Service is very professional, satisfied with design and installation. The quality of the sunroom exceeded expectations, now I drink tea and read books in it every day, very enjoyable!"'>"服务非常专业，从设计到安装都很满意。阳光房的质量超出预期，现在每天都在里面喝茶看书，非常享受！"</p>
+                    <p class="text-[--light-accent] italic lang-text" data-zh='"服务非常专业，从设计到安装都很满意。阳光房的质量超出预期，现在每天都在里面喝茶看书，非常享受！"' data-en='"Service is very professional, satisfied with design and installation. The quality of the sunroom exceeded expectations, now I drink tea and read books in it every day, very enjoyable!"'>"服务非常专业，从设计到安装都很满意。阳光房的质量超出预期，现在每天都在里面喝茶看书，非常享受！"</p>
                 </div>
                 
-                <div class="bg-white p-8 rounded-2xl shadow-md">
+                <div class="bg-[--dark-bg] p-8 rounded-2xl shadow-md border border-[--primary]/30">
                     <div class="flex items-center mb-4">
-                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
-                            <span class="text-green-600 font-bold">李</span>
+                        <div class="w-12 h-12 bg-[--primary]/20 rounded-full flex items-center justify-center mr-4">
+                            <span class="text-[--primary] font-bold">李</span>
                         </div>
                         <div>
-                            <h4 class="font-bold text-gray-800 lang-text" data-zh="李女士" data-en="Ms. Li">李女士</h4>
-                            <p class="text-gray-600 text-sm lang-text" data-zh="花园洋房业主" data-en="Townhouse Owner">花园洋房业主</p>
+                            <h4 class="font-bold text-[--light-text] lang-text" data-zh="李女士" data-en="Ms. Li">李女士</h4>
+                            <p class="text-[--light-accent] text-sm lang-text" data-zh="花园洋房业主" data-en="Townhouse Owner">花园洋房业主</p>
                         </div>
                     </div>
                     <div class="flex text-yellow-400 mb-4">
@@ -602,17 +607,17 @@
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                     </div>
-                    <p class="text-gray-600 italic lang-text" data-zh='"设计师很专业，根据我家的花园环境给出了很好的建议。施工团队也很负责，工期准时，质量很好。"' data-en='"The designer is very professional and gave great advice based on my garden environment. The construction team is also responsible, on schedule, and good quality."'>"设计师很专业，根据我家的花园环境给出了很好的建议。施工团队也很负责，工期准时，质量很好。"</p>
+                    <p class="text-[--light-accent] italic lang-text" data-zh='"设计师很专业，根据我家的花园环境给出了很好的建议。施工团队也很负责，工期准时，质量很好。"' data-en='"The designer is very professional and gave great advice based on my garden environment. The construction team is also responsible, on schedule, and good quality."'>"设计师很专业，根据我家的花园环境给出了很好的建议。施工团队也很负责，工期准时，质量很好。"</p>
                 </div>
                 
-                <div class="bg-white p-8 rounded-2xl shadow-md">
+                <div class="bg-[--dark-bg] p-8 rounded-2xl shadow-md border border-[--primary]/30">
                     <div class="flex items-center mb-4">
-                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mr-4">
-                            <span class="text-purple-600 font-bold">王</span>
+                        <div class="w-12 h-12 bg-[--primary]/20 rounded-full flex items-center justify-center mr-4">
+                            <span class="text-[--primary] font-bold">王</span>
                         </div>
                         <div>
-                            <h4 class="font-bold text-gray-800 lang-text" data-zh="王先生" data-en="Mr. Wang">王先生</h4>
-                            <p class="text-gray-600 text-sm lang-text" data-zh="复式楼业主" data-en="Duplex Owner">复式楼业主</p>
+                            <h4 class="font-bold text-[--light-text] lang-text" data-zh="王先生" data-en="Mr. Wang">王先生</h4>
+                            <p class="text-[--light-accent] text-sm lang-text" data-zh="复式楼业主" data-en="Duplex Owner">复式楼业主</p>
                         </div>
                     </div>
                     <div class="flex text-yellow-400 mb-4">
@@ -622,61 +627,61 @@
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star-half-alt"></i>
                     </div>
-                    <p class="text-gray-600 italic lang-text" data-zh='"性价比很高，同样的配置比其他商家便宜不少。售后也很及时，有问题都能快速解决，推荐！"' data-en='"Great cost-performance ratio, similar configurations are much cheaper than other merchants. After-sales service is also timely, problems can be solved quickly, recommended!"'>"性价比很高，同样的配置比其他商家便宜不少。售后也很及时，有问题都能快速解决，推荐！"</p>
+                    <p class="text-[--light-accent] italic lang-text" data-zh='"性价比很高，同样的配置比其他商家便宜不少。售后也很及时，有问题都能快速解决，推荐！"' data-en='"Great cost-performance ratio, similar configurations are much cheaper than other merchants. After-sales service is also timely, problems can be solved quickly, recommended!"'>"性价比很高，同样的配置比其他商家便宜不少。售后也很及时，有问题都能快速解决，推荐！"</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="py-16">
+    <section id="contact" class="py-16 bg-[--dark-bg]">
         <div class="container mx-auto px-4">
             <div class="max-w-4xl mx-auto">
                 <div class="text-center mb-12">
-                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4 lang-text" data-zh="立即获取免费设计方案" data-en="Get Free Design Plan Now">
+                    <h2 class="text-3xl md:text-4xl font-bold text-[--light-text] mb-4 lang-text" data-zh="立即获取免费设计方案" data-en="Get Free Design Plan Now">
                         立即获取免费设计方案
                     </h2>
-                    <p class="text-gray-600 text-lg">
+                    <p class="text-[--light-accent] text-lg">
                         <span class="lang-text" data-zh="填写以下信息，我们的专业设计师将为您量身定制阳光房方案" data-en="Fill in the following information, our professional designers will customize a sunroom plan for you">填写以下信息，我们的专业设计师将为您量身定制阳光房方案</span>
                     </p>
                 </div>
                 
-                <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+                <div class="bg-[--darker-bg] rounded-2xl shadow-xl overflow-hidden border border-[--primary]/30">
                     <div class="md:flex">
-                        <div class="md:w-1/2 bg-gradient-to-br from-blue-500 to-blue-600 p-8 text-white">
+                        <div class="md:w-1/2 bg-gradient-to-br from-[--primary] to-[--primary-dark] p-8 text-white">
                             <h3 class="text-2xl font-bold mb-6 lang-text" data-zh="联系我们" data-en="Contact Us">联系我们</h3>
                             <div class="space-y-4">
                                 <div class="flex items-center">
                                     <i class="fas fa-phone-alt text-xl mr-4"></i>
                                     <div>
                                         <p class="font-semibold lang-text" data-zh="电话咨询" data-en="Phone Consultation">电话咨询</p>
-                                        <p class="text-blue-100">400-888-9999</p>
+                                        <p class="text-[--light-accent]">400-888-9999</p>
                                     </div>
                                 </div>
                                 <div class="flex items-center">
                                     <i class="fas fa-envelope text-xl mr-4"></i>
                                     <div>
                                         <p class="font-semibold lang-text" data-zh="邮箱联系" data-en="Email Contact">邮箱联系</p>
-                                        <p class="text-blue-100">info@sunroom.com</p>
+                                        <p class="text-[--light-accent]">info@sunroom.com</p>
                                     </div>
                                 </div>
                                 <div class="flex items-center">
                                     <i class="fas fa-map-marker-alt text-xl mr-4"></i>
                                     <div>
                                         <p class="font-semibold lang-text" data-zh="公司地址" data-en="Company Address">公司地址</p>
-                                        <p class="text-blue-100 lang-text" data-zh="北京市朝阳区建设路123号" data-en="No. 123, Jian She Road, Chaoyang District, Beijing">北京市朝阳区建设路123号</p>
+                                        <p class="text-[--light-accent] lang-text" data-zh="北京市朝阳区建设路123号" data-en="No. 123, Jian She Road, Chaoyang District, Beijing">北京市朝阳区建设路123号</p>
                                     </div>
                                 </div>
                                 <div class="flex items-center">
                                     <i class="fas fa-clock text-xl mr-4"></i>
                                     <div>
                                         <p class="font-semibold lang-text" data-zh="服务时间" data-en="Service Hours">服务时间</p>
-                                        <p class="text-blue-100 lang-text" data-zh="周一至周日 9:00-18:00" data-en="Monday to Sunday 9:00-18:00">周一至周日 9:00-18:00</p>
+                                        <p class="text-[--light-accent] lang-text" data-zh="周一至周日 9:00-18:00" data-en="Monday to Sunday 9:00-18:00">周一至周日 9:00-18:00</p>
                                     </div>
                                 </div>
                             </div>
                             
-                            <div class="mt-8 pt-8 border-t border-blue-400">
+                            <div class="mt-8 pt-8 border-t border-[--light-accent]/50">
                                 <h4 class="font-bold mb-4 lang-text" data-zh="关注我们" data-en="Follow Us">关注我们</h4>
                                 <div class="flex space-x-4">
                                     <a href="#" class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition">
@@ -692,21 +697,21 @@
                             </div>
                         </div>
                         
-                        <div class="md:w-1/2 p-8">
+                        <div class="md:w-1/2 p-8 bg-[--dark-bg]">
                             <form id="contactForm" class="space-y-6">
                                 <div>
-                                    <label class="block text-gray-700 font-medium mb-2 lang-text" data-zh="您的姓名" data-en="Your Name">您的姓名</label>
-                                    <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="请输入您的姓名">
+                                    <label class="block text-[--light-text] font-medium mb-2 lang-text" data-zh="您的姓名" data-en="Your Name">您的姓名</label>
+                                    <input type="text" class="w-full px-4 py-3 border border-[--primary]/30 rounded-lg focus:ring-2 focus:ring-[--primary] focus:border-[--primary] bg-[--darker-bg] text-[--light-text]" placeholder="请输入您的姓名">
                                 </div>
                                 
                                 <div>
-                                    <label class="block text-gray-700 font-medium mb-2 lang-text" data-zh="联系电话" data-en="Phone Number">联系电话</label>
-                                    <input type="tel" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="请输入您的手机号">
+                                    <label class="block text-[--light-text] font-medium mb-2 lang-text" data-zh="联系电话" data-en="Phone Number">联系电话</label>
+                                    <input type="tel" class="w-full px-4 py-3 border border-[--primary]/30 rounded-lg focus:ring-2 focus:ring-[--primary] focus:border-[--primary] bg-[--darker-bg] text-[--light-text]" placeholder="请输入您的手机号">
                                 </div>
                                 
                                 <div>
-                                    <label class="block text-gray-700 font-medium mb-2 lang-text" data-zh="房屋面积" data-en="House Area">房屋面积</label>
-                                    <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    <label class="block text-[--light-text] font-medium mb-2 lang-text" data-zh="房屋面积" data-en="House Area">房屋面积</label>
+                                    <select class="w-full px-4 py-3 border border-[--primary]/30 rounded-lg focus:ring-2 focus:ring-[--primary] focus:border-[--primary] bg-[--darker-bg] text-[--light-text]">
                                         <option class="lang-text" data-zh="请选择房屋面积" data-en="Please select house area">请选择房屋面积</option>
                                         <option class="lang-text" data-zh="50㎡以下" data-en="Under 50㎡">50㎡以下</option>
                                         <option class="lang-text" data-zh="50-100㎡" data-en="50-100㎡">50-100㎡</option>
@@ -716,11 +721,11 @@
                                 </div>
                                 
                                 <div>
-                                    <label class="block text-gray-700 font-medium mb-2 lang-text" data-zh="具体需求" data-en="Specific Needs">具体需求</label>
-                                    <textarea class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" rows="4" placeholder="请描述您的具体需求和期望"></textarea>
+                                    <label class="block text-[--light-text] font-medium mb-2 lang-text" data-zh="具体需求" data-en="Specific Needs">具体需求</label>
+                                    <textarea class="w-full px-4 py-3 border border-[--primary]/30 rounded-lg focus:ring-2 focus:ring-[--primary] focus:border-[--primary] bg-[--darker-bg] text-[--light-text]" rows="4" placeholder="请描述您的具体需求和期望"></textarea>
                                 </div>
                                 
-                                <button type="submit" class="w-full btn-primary text-white font-bold py-4 rounded-lg">
+                                <button type="submit" class="w-full btn-primary text-white font-bold py-4 rounded-lg bg-gradient-to-r from-[--primary] to-[--primary-dark] hover:from-[--primary-dark] hover:to-[--primary] transition-all duration-300">
                                     <i class="fas fa-paper-plane mr-2"></i><span class="lang-text" data-zh="提交咨询" data-en="Submit Inquiry">提交咨询</span>
                                 </button>
                             </form>
@@ -732,14 +737,14 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-12">
+    <footer class="bg-[--darker-bg] text-[--light-text] py-12 border-t border-[--primary]/30">
 
     <!-- Chatbot Widget -->
     <div class="chatbot-container" id="chatbot">
         <div class="chatbot-window" id="chatWindow">
-            <div class="chatbot-header">
-                <div class="chatbot-avatar">
-                    <i class="fas fa-robot"></i>
+            <div class="chatbot-header bg-[--primary] text-white">
+                <div class="chatbot-avatar bg-white/20">
+                    <i class="fas fa-robot text-white"></i>
                 </div>
                 <div class="chatbot-info">
                     <h4 class="lang-text" data-zh="阳光房智能助手" data-en="Sunroom Smart Assistant">阳光房智能助手</h4>
@@ -749,15 +754,15 @@
                     </div>
                 </div>
             </div>
-            <div class="chatbot-messages" id="chatMessages"></div>
-            <div class="chatbot-input">
-                <input type="text" id="chatInput" placeholder="输入您的问题..." autocomplete="off">
-                <button id="sendBtn" onclick="sendMessage()">
+            <div class="chatbot-messages" id="chatMessages" style="background: var(--dark-bg);"></div>
+            <div class="chatbot-input bg-white">
+                <input type="text" id="chatInput" placeholder="输入您的问题..." autocomplete="off" style="background: var(--darker-bg); color: var(--light-text); border-color: var(--primary);">
+                <button id="sendBtn" onclick="sendMessage()" style="background: var(--primary);">
                     <i class="fas fa-paper-plane"></i>
                 </button>
             </div>
         </div>
-        <button class="chatbot-toggle" id="chatToggle" onclick="toggleChat()">
+        <button class="chatbot-toggle" id="chatToggle" onclick="toggleChat()" style="background: var(--gradient-primary);">
             <i class="fas fa-comments"></i>
             <i class="fas fa-times"></i>
         </button>
@@ -766,18 +771,18 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
                     <div class="flex items-center space-x-2 mb-4">
-                        <i class="fas fa-sun text-2xl text-yellow-400"></i>
+                        <i class="fas fa-sun text-2xl text-[--primary]"></i>
                         <span class="text-xl font-bold lang-text" data-zh="阳光房专家" data-en="Sunroom Expert">阳光房专家</span>
                     </div>
-                    <p class="text-gray-400 mb-4 lang-text" data-zh="专业阳光房设计建造服务商，为您打造理想的休闲空间。" data-en="Professional sunroom design and construction service provider, creating ideal leisure spaces for you.">专业阳光房设计建造服务商，为您打造理想的休闲空间。</p>
+                    <p class="text-[--light-accent] mb-4 lang-text" data-zh="专业阳光房设计建造服务商，为您打造理想的休闲空间。" data-en="Professional sunroom design and construction service provider, creating ideal leisure spaces for you.">专业阳光房设计建造服务商，为您打造理想的休闲空间。</p>
                     <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-white transition">
+                        <a href="#" class="text-[--light-accent] hover:text-[--primary] transition">
                             <i class="fab fa-facebook-f"></i>
                         </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition">
+                        <a href="#" class="text-[--light-accent] hover:text-[--primary] transition">
                             <i class="fab fa-twitter"></i>
                         </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition">
+                        <a href="#" class="text-[--light-accent] hover:text-[--primary] transition">
                             <i class="fab fa-instagram"></i>
                         </a>
                     </div>
@@ -785,36 +790,36 @@
                 
                 <div>
                     <h3 class="text-lg font-bold mb-4 lang-text" data-zh="产品服务" data-en="Products & Services">产品服务</h3>
-                    <ul class="space-y-2 text-gray-400">
-                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="铝合金阳光房" data-en="Aluminum Alloy Sunroom">铝合金阳光房</a></li>
-                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="断桥铝阳光房" data-en="Thermal Break Aluminum Sunroom">断桥铝阳光房</a></li>
-                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="钢结构阳光房" data-en="Steel Structure Sunroom">钢结构阳光房</a></li>
-                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="个性化定制" data-en="Customized Design">个性化定制</a></li>
+                    <ul class="space-y-2 text-[--light-accent]">
+                        <li><a href="#" class="hover:text-[--primary] transition lang-text" data-zh="铝合金阳光房" data-en="Aluminum Alloy Sunroom">铝合金阳光房</a></li>
+                        <li><a href="#" class="hover:text-[--primary] transition lang-text" data-zh="断桥铝阳光房" data-en="Thermal Break Aluminum Sunroom">断桥铝阳光房</a></li>
+                        <li><a href="#" class="hover:text-[--primary] transition lang-text" data-zh="钢结构阳光房" data-en="Steel Structure Sunroom">钢结构阳光房</a></li>
+                        <li><a href="#" class="hover:text-[--primary] transition lang-text" data-zh="个性化定制" data-en="Customized Design">个性化定制</a></li>
                     </ul>
                 </div>
                 
                 <div>
                     <h3 class="text-lg font-bold mb-4 lang-text" data-zh="关于我们" data-en="About Us">关于我们</h3>
-                    <ul class="space-y-2 text-gray-400">
-                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="公司简介" data-en="Company Profile">公司简介</a></li>
-                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="工程案例" data-en="Engineering Cases">工程案例</a></li>
-                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="新闻资讯" data-en="News & Information">新闻资讯</a></li>
-                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="人才招聘" data-en="Careers">人才招聘</a></li>
+                    <ul class="space-y-2 text-[--light-accent]">
+                        <li><a href="#" class="hover:text-[--primary] transition lang-text" data-zh="公司简介" data-en="Company Profile">公司简介</a></li>
+                        <li><a href="#" class="hover:text-[--primary] transition lang-text" data-zh="工程案例" data-en="Engineering Cases">工程案例</a></li>
+                        <li><a href="#" class="hover:text-[--primary] transition lang-text" data-zh="新闻资讯" data-en="News & Information">新闻资讯</a></li>
+                        <li><a href="#" class="hover:text-[--primary] transition lang-text" data-zh="人才招聘" data-en="Careers">人才招聘</a></li>
                     </ul>
                 </div>
                 
                 <div>
                     <h3 class="text-lg font-bold mb-4 lang-text" data-zh="服务支持" data-en="Support Services">服务支持</h3>
-                    <ul class="space-y-2 text-gray-400">
-                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="售后服务" data-en="After-sales Service">售后服务</a></li>
-                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="安装指南" data-en="Installation Guide">安装指南</a></li>
-                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="常见问题" data-en="FAQ">常见问题</a></li>
-                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="在线客服" data-en="Online Support">在线客服</a></li>
+                    <ul class="space-y-2 text-[--light-accent]">
+                        <li><a href="#" class="hover:text-[--primary] transition lang-text" data-zh="售后服务" data-en="After-sales Service">售后服务</a></li>
+                        <li><a href="#" class="hover:text-[--primary] transition lang-text" data-zh="安装指南" data-en="Installation Guide">安装指南</a></li>
+                        <li><a href="#" class="hover:text-[--primary] transition lang-text" data-zh="常见问题" data-en="FAQ">常见问题</a></li>
+                        <li><a href="#" class="hover:text-[--primary] transition lang-text" data-zh="在线客服" data-en="Online Support">在线客服</a></li>
                     </ul>
                 </div>
             </div>
             
-            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+            <div class="border-t border-[--primary]/30 mt-8 pt-8 text-center text-[--light-accent]">
                 <p class="lang-text" data-zh="&copy; 2024 阳光房专家. 保留所有权利. 京ICP备12345678号" data-en="&copy; 2024 Sunroom Expert. All rights reserved. ICP License: 12345678">&copy; 2024 阳光房专家. 保留所有权利. 京ICP备12345678号</p>
             </div>
         </div>
