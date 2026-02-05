@@ -1346,19 +1346,37 @@
             document.getElementById('generatingIndicator').classList.remove('hidden');
             document.getElementById('generateBtn').disabled = true;
 
-            // 获取产品类型（可扩展为用户选择）
-            const productType = 'sunroom';
+            // API Key (仅用于测试，生产环境请使用服务端代理)
+            const API_KEY = 'sk-2a49382372b64f8ea457eb895b5448d9';
+            
+            // 构建提示词
+            const editPrompt = '请将第二张图中的阳光房自然地融合到第一张后院实景照片中。保持透视关系正确，光影效果真实，使阳光房看起来就像是原本就在这个位置一样。整体效果要协调美观，无明显的拼接痕迹。';
 
-            // 调用 Netlify Serverless Function (阿里通义 API 代理)
-            fetch('/.netlify/functions/design-generate', {
+            // 直接调用阿里通义 DashScope API
+            fetch('https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${API_KEY}`
                 },
                 body: JSON.stringify({
-                    background_image: bgImageData,
-                    foreground_image: fgImageData,
-                    product_type: productType
+                    model: 'qwen-image-edit-max',
+                    input: {
+                        messages: [
+                            {
+                                role: 'user',
+                                content: [
+                                    { image: bgImageData },
+                                    { image: fgImageData },
+                                    { text: editPrompt }
+                                ]
+                            }
+                        ]
+                    },
+                    parameters: {
+                        n: 1,
+                        size: '1024*1024'
+                    }
                 })
             })
             .then(response => response.json())
@@ -1369,28 +1387,37 @@
 
                 console.log('API Response:', data);
 
-                if (data.success && data.result_image) {
-                    // 显示生成的图像
-                    document.getElementById('resultImg').src = data.result_image;
-                    document.getElementById('resultArea').classList.remove('hidden');
-
-                    // 滚动到结果
-                    document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-                    // 显示成功通知
-                    showNotification(
-                        currentLang === 'zh' ? '设计效果图生成成功！' : 'Design generated successfully!',
-                        'success'
-                    );
-                } else {
-                    // 显示详细错误信息
-                    let errorMsg = data.error || (currentLang === 'zh' ? '生成失败' : 'Generation failed');
-                    if (data.code) errorMsg += ` (${data.code})`;
-                    if (data.raw_response) {
-                        console.error('Raw API Response:', data.raw_response);
-                    }
+                // 检查错误
+                if (data.code || data.message) {
+                    let errorMsg = data.message || data.code || '生成失败';
                     showNotification(errorMsg, 'error');
-                    alert('API 错误详情:\n' + JSON.stringify(data, null, 2));
+                    alert('API 错误:\n' + JSON.stringify(data, null, 2));
+                    return;
+                }
+
+                // 提取生成的图像 URL
+                let resultImage = null;
+                if (data.output?.choices?.[0]?.message?.content) {
+                    const content = data.output.choices[0].message.content;
+                    if (Array.isArray(content)) {
+                        for (const item of content) {
+                            if (item.image) {
+                                resultImage = item.image;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (resultImage) {
+                    // 显示生成的图像
+                    document.getElementById('resultImg').src = resultImage;
+                    document.getElementById('resultArea').classList.remove('hidden');
+                    document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    showNotification(currentLang === 'zh' ? '设计效果图生成成功！' : 'Design generated successfully!', 'success');
+                } else {
+                    showNotification('未能提取生成的图像', 'error');
+                    alert('API 响应:\n' + JSON.stringify(data, null, 2));
                 }
             })
             .catch(error => {
