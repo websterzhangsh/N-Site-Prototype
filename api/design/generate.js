@@ -44,7 +44,7 @@ export default async function handler(req, res) {
     // 构建提示词
     const editPrompt = prompt || getPromptByProductType(product_type || 'sunroom');
 
-    // 调用阿里通义 DashScope API
+    // 调用阿里通义 DashScope API - 使用图像编辑模型
     const dashscopeResponse = await fetch(
       'https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation',
       {
@@ -54,7 +54,7 @@ export default async function handler(req, res) {
           'Authorization': `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          model: 'qwen-vl-max',
+          model: 'qwen-image-edit-max',
           input: {
             messages: [
               {
@@ -69,8 +69,7 @@ export default async function handler(req, res) {
           },
           parameters: {
             n: 1,
-            size: '1024*1024',
-            watermark: false
+            size: '1024*1024'
           }
         })
       }
