@@ -1367,6 +1367,8 @@
                 document.getElementById('generatingIndicator').classList.add('hidden');
                 document.getElementById('generateBtn').disabled = false;
 
+                console.log('API Response:', data);
+
                 if (data.success && data.result_image) {
                     // 显示生成的图像
                     document.getElementById('resultImg').src = data.result_image;
@@ -1381,11 +1383,14 @@
                         'success'
                     );
                 } else {
-                    // 显示错误
-                    showNotification(
-                        data.error || (currentLang === 'zh' ? '生成失败，请重试' : 'Generation failed, please try again'),
-                        'error'
-                    );
+                    // 显示详细错误信息
+                    let errorMsg = data.error || (currentLang === 'zh' ? '生成失败' : 'Generation failed');
+                    if (data.code) errorMsg += ` (${data.code})`;
+                    if (data.raw_response) {
+                        console.error('Raw API Response:', data.raw_response);
+                    }
+                    showNotification(errorMsg, 'error');
+                    alert('API 错误详情:\n' + JSON.stringify(data, null, 2));
                 }
             })
             .catch(error => {

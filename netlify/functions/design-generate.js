@@ -56,7 +56,7 @@ exports.handler = async (event, context) => {
         headers,
         body: JSON.stringify({ 
           success: false, 
-          error: 'API Key 未配置' 
+          error: 'API Key 未配置，请在 Netlify 环境变量中设置 DASHSCOPE_API_KEY' 
         })
       };
     }
@@ -64,7 +64,30 @@ exports.handler = async (event, context) => {
     // 构建提示词
     const editPrompt = prompt || getPromptByProductType(product_type || 'sunroom');
 
+    console.log('Calling DashScope API with model: qwen-image-edit-max');
+    console.log('Prompt:', editPrompt);
+
     // 调用阿里通义 DashScope API - 使用图像编辑模型
+    const requestBody = {
+      model: 'qwen-image-edit-max',
+      input: {
+        messages: [
+          {
+            role: 'user',
+            content: [
+              { image: background_image },
+              { image: foreground_image },
+              { text: editPrompt }
+            ]
+          }
+        ]
+      },
+      parameters: {
+        n: 1,
+        size: '1024*1024'
+      }
+    };
+
     const dashscopeResponse = await fetch(
       'https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation',
       {
@@ -73,46 +96,67 @@ exports.handler = async (event, context) => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${apiKey}`,
         },
-        body: JSON.stringify({
-          model: 'qwen-image-edit-max',
-          input: {
-            messages: [
-              {
-                role: 'user',
-                content: [
-                  { image: background_image },
-                  { image: foreground_image },
-                  { text: editPrompt }
-                ]
-              }
-            ]
-          },
-          parameters: {
-            n: 1,
-            size: '1024*1024'
-          }
-        })
+        body: JSON.stringify(requestBody)
       }
     );
 
     const dashscopeData = await dashscopeResponse.json();
+    console.log('DashScope Response Status:', dashscopeResponse.status);
+    console.log('DashScope Response:', JSON.stringify(dashscopeData, null, 2));
 
-    // 检查 API 响应
-    if (!dashscopeResponse.ok) {
+    // 检查 API 响应错误
+    if (!dashscopeResponse.ok || dashscopeData.code) {
       console.error('DashScope API Error:', dashscopeData);
       return {
-        statusCode: dashscopeResponse.status,
+        statusCode: dashscopeResponse.status || 500,
         headers,
         body: JSON.stringify({
           success: false,
-          error: dashscopeData.message || 'API 调用失败',
+          error: dashscopeData.message || dashscopeData.code || 'API 调用失败',
+          code: dashscopeData.code,
+          request_id: dashscopeData.request_id,
           details: dashscopeData
         })
       };
     }
 
-    // 提取生成的图像 URL
-    const resultImage = dashscopeData.output?.choices?.[0]?.message?.content?.[0]?.image;
+    // 尝试多种路径提取生成的图像 URL
+    let resultImage = null;
+    
+    // 路径1: output.choices[0].message.content[0].image
+    if (dashscopeData.output?.choices?.[0]?.message?.content) {
+      const content = dashscopeData.output.choices[0].message.content;
+      if (Array.isArray(content)) {
+        for (const item of content) {
+          if (item.image) {
+            resultImage = item.image;
+            break;
+          }
+        }
+      } else if (typeof content === 'string') {
+        // 可能是直接的图像URL
+        resultImage = content;
+      }
+    }
+    
+    // 路径2: output.results[0].url (某些模型的格式)
+    if (!resultImage && dashscopeData.output?.results?.[0]?.url) {
+      resultImage = dashscopeData.output.results[0].url;
+    }
+
+    // 路径3: output.task_id (异步任务)
+    if (!resultImage && dashscopeData.output?.task_id) {
+      return {
+        statusCode: 202,
+        headers,
+        body: JSON.stringify({
+          success: false,
+          error: '任务正在处理中，请稍后查询',
+          task_id: dashscopeData.output.task_id,
+          request_id: dashscopeData.request_id
+        })
+      };
+    }
 
     if (!resultImage) {
       return {
@@ -120,8 +164,8 @@ exports.handler = async (event, context) => {
         headers,
         body: JSON.stringify({
           success: false,
-          error: '未能生成图像',
-          details: dashscopeData
+          error: '未能从响应中提取图像',
+          raw_response: dashscopeData
         })
       };
     }
@@ -144,8 +188,8 @@ exports.handler = async (event, context) => {
       headers,
       body: JSON.stringify({
         success: false,
-        error: '服务器错误',
-        message: error.message
+        error: '服务器错误: ' + error.message,
+        stack: error.stack
       })
     };
   }
