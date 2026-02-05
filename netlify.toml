@@ -1,9 +1,16 @@
 [build]
   publish = "."
+  command = ""
   functions = "netlify/functions"
 
 [functions]
   node_bundler = "esbuild"
+
+# Ensure index.html is served for root
+[[redirects]]
+  from = "/"
+  to = "/index.html"
+  status = 200
 
 [[redirects]]
   from = "/api/*"
