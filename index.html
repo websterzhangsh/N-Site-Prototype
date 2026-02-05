@@ -1349,8 +1349,8 @@
             // 获取产品类型（可扩展为用户选择）
             const productType = 'sunroom';
 
-            // 调用 Vercel Serverless Function (阿里通义 API 代理)
-            fetch('/api/design/generate', {
+            // 调用 Netlify Serverless Function (阿里通义 API 代理)
+            fetch('/.netlify/functions/design-generate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
