@@ -6,14 +6,16 @@ import Gallery from './components/Gallery'
 import Testimonials from './components/Testimonials'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
+import DesignTool from './components/DesignTool'
 
 function App() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-secondary-900">
       <Header />
       <main>
         <Hero />
         <Features />
+        <DesignTool />
         <Gallery />
         <Testimonials />
         <Contact />

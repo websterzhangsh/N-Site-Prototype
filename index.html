@@ -1346,27 +1346,66 @@
             document.getElementById('generatingIndicator').classList.remove('hidden');
             document.getElementById('generateBtn').disabled = true;
 
-            // Simulate API call (In production, this would call Alibaba Tongyi API)
-            setTimeout(() => {
+            // 获取产品类型（可扩展为用户选择）
+            const productType = 'sunroom';
+
+            // 调用 Vercel Serverless Function (阿里通义 API 代理)
+            fetch('/api/design/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    background_image: bgImageData,
+                    foreground_image: fgImageData,
+                    product_type: productType
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
                 // Hide loading
                 document.getElementById('generatingIndicator').classList.add('hidden');
                 document.getElementById('generateBtn').disabled = false;
 
-                // For demo: show the background image as result
-                // In production, this would be the AI-generated merged image
-                document.getElementById('resultImg').src = bgImageData;
-                document.getElementById('resultArea').classList.remove('hidden');
+                if (data.success && data.result_image) {
+                    // 显示生成的图像
+                    document.getElementById('resultImg').src = data.result_image;
+                    document.getElementById('resultArea').classList.remove('hidden');
 
-                // Scroll to result
-                document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    // 滚动到结果
+                    document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-                // Show notification
-                if (currentLang === 'zh') {
-                    showNotification('设计效果图生成成功！（演示模式）', 'success');
+                    // 显示成功通知
+                    showNotification(
+                        currentLang === 'zh' ? '设计效果图生成成功！' : 'Design generated successfully!',
+                        'success'
+                    );
                 } else {
-                    showNotification('Design generated successfully! (Demo mode)', 'success');
+                    // 显示错误
+                    showNotification(
+                        data.error || (currentLang === 'zh' ? '生成失败，请重试' : 'Generation failed, please try again'),
+                        'error'
+                    );
                 }
-            }, 2500);
+            })
+            .catch(error => {
+                console.error('API Error:', error);
+                // Hide loading
+                document.getElementById('generatingIndicator').classList.add('hidden');
+                document.getElementById('generateBtn').disabled = false;
+
+                // 如果 API 不可用，使用演示模式
+                console.log('Falling back to demo mode...');
+                setTimeout(() => {
+                    document.getElementById('resultImg').src = bgImageData;
+                    document.getElementById('resultArea').classList.remove('hidden');
+                    document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    showNotification(
+                        currentLang === 'zh' ? 'API 未配置，显示演示效果' : 'API not configured, showing demo',
+                        'warning'
+                    );
+                }, 1000);
+            });
         }
 
         function resetDesignTool() {
@@ -1391,8 +1430,10 @@
 
         function showNotification(message, type) {
             const notification = document.createElement('div');
-            notification.className = `fixed top-24 right-4 px-6 py-3 rounded-lg shadow-lg z-50 ${type === 'success' ? 'bg-green-600' : 'bg-red-600'} text-white font-semibold`;
-            notification.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} mr-2"></i>${message}`;
+            const bgColor = type === 'success' ? 'bg-green-600' : type === 'warning' ? 'bg-yellow-600' : 'bg-red-600';
+            const icon = type === 'success' ? 'fa-check-circle' : type === 'warning' ? 'fa-exclamation-triangle' : 'fa-exclamation-circle';
+            notification.className = `fixed top-24 right-4 px-6 py-3 rounded-lg shadow-lg z-50 ${bgColor} text-white font-semibold`;
+            notification.innerHTML = `<i class="fas ${icon} mr-2"></i>${message}`;
             document.body.appendChild(notification);
             setTimeout(() => {
                 notification.style.opacity = '0';
