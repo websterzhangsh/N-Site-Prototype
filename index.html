@@ -379,6 +379,7 @@
                 <nav class="hidden md:flex space-x-8">
                     <a href="#home" class="text-[--light-text] hover:text-[--primary] transition lang-text" data-zh="首页" data-en="Home">首页</a>
                     <a href="#features" class="text-[--light-text] hover:text-[--primary] transition lang-text" data-zh="产品特色" data-en="Features">产品特色</a>
+                    <a href="#design-tool" class="text-[--light-text] hover:text-[--primary] transition lang-text flex items-center" data-zh="✨ 智能设计" data-en="✨ AI Design">✨ 智能设计</a>
                     <a href="#gallery" class="text-[--light-text] hover:text-[--primary] transition lang-text" data-zh="案例展示" data-en="Gallery">案例展示</a>
                     <a href="#testimonials" class="text-[--light-text] hover:text-[--primary] transition lang-text" data-zh="客户评价" data-en="Testimonials">客户评价</a>
                     <a href="#contact" class="text-[--light-text] hover:text-[--primary] transition lang-text" data-zh="联系我们" data-en="Contact">联系我们</a>
@@ -498,6 +499,154 @@
                     </div>
                     <h3 class="text-xl font-bold mb-4 text-[--light-text] lang-text" data-zh="性价比高" data-en="High Cost-effective">性价比高</h3>
                     <p class="text-[--light-accent] lang-text" data-zh="工厂直销价格，无中间商赚差价，品质与价格的完美平衡" data-en="Factory direct price, no middleman markup, perfect balance of quality and price">工厂直销价格，无中间商赚差价，品质与价格的完美平衡</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Design Tool Section -->
+    <section id="design-tool" class="py-16 bg-[--darker-bg]">
+        <div class="container mx-auto px-4">
+            <!-- Title -->
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-[--light-text] mb-4 lang-text" data-zh="✨ 智能设计工具" data-en="✨ AI Design Tool">
+                    ✨ 智能设计工具
+                </h2>
+                <p class="text-[--light-accent] text-lg max-w-2xl mx-auto lang-text" data-zh="上传您客户的后院实景照片和产品效果图，AI 将自动生成专业的设计效果图" data-en="Upload your client's backyard photo and product image, AI will automatically generate professional design renderings">
+                    上传您客户的后院实景照片和产品效果图，AI 将自动生成专业的设计效果图
+                </p>
+            </div>
+
+            <!-- Process Steps -->
+            <div class="flex justify-center mb-12">
+                <div class="flex items-center space-x-4 md:space-x-8">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-[--primary] text-white flex items-center justify-center font-bold">1</div>
+                        <span class="ml-2 text-white text-sm md:text-base lang-text" data-zh="上传实景" data-en="Upload Photo">上传实景</span>
+                    </div>
+                    <div class="w-8 md:w-16 h-0.5 bg-[--primary]/50"></div>
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-[--primary] text-white flex items-center justify-center font-bold">2</div>
+                        <span class="ml-2 text-white text-sm md:text-base lang-text" data-zh="上传效果图" data-en="Upload Design">上传效果图</span>
+                    </div>
+                    <div class="w-8 md:w-16 h-0.5 bg-[--primary]/50"></div>
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-[--primary] text-white flex items-center justify-center font-bold">3</div>
+                        <span class="ml-2 text-white text-sm md:text-base lang-text" data-zh="AI 生成" data-en="AI Generate">AI 生成</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upload Areas -->
+            <div class="grid md:grid-cols-2 gap-8 mb-8 max-w-4xl mx-auto">
+                <!-- Background Image Upload -->
+                <div class="bg-[--dark-bg] rounded-2xl p-6 border border-[--primary]/30">
+                    <h3 class="text-xl font-semibold text-white mb-4 flex items-center">
+                        <i class="fas fa-home mr-2 text-[--primary]"></i>
+                        <span class="lang-text" data-zh="后院实景照片" data-en="Backyard Photo">后院实景照片</span>
+                    </h3>
+                    <div id="bgUploadArea" class="upload-area border-2 border-dashed border-[--primary]/50 rounded-xl p-8 text-center cursor-pointer transition-all duration-300 hover:border-[--primary] hover:bg-[--primary]/5" onclick="document.getElementById('bgInput').click()">
+                        <input type="file" id="bgInput" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'bg')">
+                        <div id="bgPreview" class="hidden">
+                            <img id="bgPreviewImg" src="" alt="后院实景" class="max-h-48 mx-auto rounded-lg shadow-lg">
+                            <button onclick="event.stopPropagation(); clearImage('bg')" class="mt-3 px-4 py-1 bg-red-500 text-white rounded-full text-sm hover:bg-red-600">
+                                <i class="fas fa-times mr-1"></i><span class="lang-text" data-zh="移除" data-en="Remove">移除</span>
+                            </button>
+                        </div>
+                        <div id="bgPlaceholder">
+                            <i class="fas fa-cloud-upload-alt text-4xl text-[--primary]/50 mb-4"></i>
+                            <p class="text-[--light-accent] lang-text" data-zh="点击或拖拽上传图片" data-en="Click or drag to upload">点击或拖拽上传图片</p>
+                            <p class="text-[--light-accent]/60 text-sm mt-2 lang-text" data-zh="支持 JPG, PNG, WEBP" data-en="Supports JPG, PNG, WEBP">支持 JPG, PNG, WEBP</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Foreground Image Upload -->
+                <div class="bg-[--dark-bg] rounded-2xl p-6 border border-[--primary]/30">
+                    <h3 class="text-xl font-semibold text-white mb-4 flex items-center">
+                        <i class="fas fa-building mr-2 text-[--primary]"></i>
+                        <span class="lang-text" data-zh="产品效果图" data-en="Product Image">产品效果图</span>
+                    </h3>
+                    <div id="fgUploadArea" class="upload-area border-2 border-dashed border-[--primary]/50 rounded-xl p-8 text-center cursor-pointer transition-all duration-300 hover:border-[--primary] hover:bg-[--primary]/5" onclick="document.getElementById('fgInput').click()">
+                        <input type="file" id="fgInput" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'fg')">
+                        <div id="fgPreview" class="hidden">
+                            <img id="fgPreviewImg" src="" alt="产品效果图" class="max-h-48 mx-auto rounded-lg shadow-lg">
+                            <button onclick="event.stopPropagation(); clearImage('fg')" class="mt-3 px-4 py-1 bg-red-500 text-white rounded-full text-sm hover:bg-red-600">
+                                <i class="fas fa-times mr-1"></i><span class="lang-text" data-zh="移除" data-en="Remove">移除</span>
+                            </button>
+                        </div>
+                        <div id="fgPlaceholder">
+                            <i class="fas fa-cloud-upload-alt text-4xl text-[--primary]/50 mb-4"></i>
+                            <p class="text-[--light-accent] lang-text" data-zh="点击或拖拽上传图片" data-en="Click or drag to upload">点击或拖拽上传图片</p>
+                            <p class="text-[--light-accent]/60 text-sm mt-2 lang-text" data-zh="阳光房、凉亭、卷帘等" data-en="Sunroom, pavilion, roller blinds, etc.">阳光房、凉亭、卷帘等</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex justify-center gap-4 mb-8">
+                <button id="generateBtn" onclick="generateDesign()" disabled class="px-8 py-3 rounded-full font-semibold transition-all duration-300 bg-[--primary]/30 text-[--light-accent]/50 cursor-not-allowed flex items-center">
+                    <i class="fas fa-magic mr-2"></i>
+                    <span class="lang-text" data-zh="生成设计效果图" data-en="Generate Design">生成设计效果图</span>
+                </button>
+                <button onclick="resetDesignTool()" class="px-6 py-3 rounded-full font-semibold border border-[--primary]/50 text-[--light-accent] hover:bg-[--primary]/10 transition-all duration-300">
+                    <span class="lang-text" data-zh="重置" data-en="Reset">重置</span>
+                </button>
+            </div>
+
+            <!-- Loading Indicator -->
+            <div id="generatingIndicator" class="hidden text-center mb-8">
+                <div class="inline-flex items-center px-6 py-3 bg-[--primary]/20 rounded-full">
+                    <svg class="animate-spin h-5 w-5 text-[--primary] mr-3" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span class="text-[--primary] font-semibold lang-text" data-zh="AI 正在生成设计效果图..." data-en="AI is generating design...">AI 正在生成设计效果图...</span>
+                </div>
+            </div>
+
+            <!-- Result Display -->
+            <div id="resultArea" class="hidden max-w-3xl mx-auto bg-[--dark-bg] rounded-2xl p-8 border border-[--primary]/30">
+                <h3 class="text-2xl font-bold text-white mb-6 text-center flex items-center justify-center">
+                    <i class="fas fa-check-circle text-green-400 mr-2"></i>
+                    <span class="lang-text" data-zh="设计效果图" data-en="Design Result">设计效果图</span>
+                </h3>
+                <div class="relative">
+                    <img id="resultImg" src="" alt="设计效果图" class="w-full rounded-xl shadow-2xl">
+                    <div class="mt-6 flex justify-center gap-4">
+                        <button onclick="downloadResult()" class="px-6 py-2 bg-green-600 text-white rounded-full font-semibold hover:bg-green-700 transition-colors flex items-center">
+                            <i class="fas fa-download mr-2"></i>
+                            <span class="lang-text" data-zh="下载效果图" data-en="Download">下载效果图</span>
+                        </button>
+                        <button onclick="hideResult()" class="px-6 py-2 border border-[--primary]/50 text-[--light-accent] rounded-full font-semibold hover:bg-[--primary]/10 transition-colors">
+                            <span class="lang-text" data-zh="关闭" data-en="Close">关闭</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Types -->
+            <div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+                <div class="bg-[--dark-bg]/50 rounded-xl p-4 text-center border border-[--primary]/20 hover:border-[--primary]/50 transition-colors">
+                    <div class="text-3xl mb-2">🏠</div>
+                    <h4 class="text-white font-semibold lang-text" data-zh="阳光房" data-en="Sunroom">阳光房</h4>
+                    <p class="text-[--light-accent]/60 text-sm lang-text" data-zh="全景玻璃阳光房" data-en="Full glass sunroom">全景玻璃阳光房</p>
+                </div>
+                <div class="bg-[--dark-bg]/50 rounded-xl p-4 text-center border border-[--primary]/20 hover:border-[--primary]/50 transition-colors">
+                    <div class="text-3xl mb-2">⛱️</div>
+                    <h4 class="text-white font-semibold lang-text" data-zh="凉亭" data-en="Pavilion">凉亭</h4>
+                    <p class="text-[--light-accent]/60 text-sm lang-text" data-zh="户外休闲凉亭" data-en="Outdoor pavilion">户外休闲凉亭</p>
+                </div>
+                <div class="bg-[--dark-bg]/50 rounded-xl p-4 text-center border border-[--primary]/20 hover:border-[--primary]/50 transition-colors">
+                    <div class="text-3xl mb-2">🪟</div>
+                    <h4 class="text-white font-semibold lang-text" data-zh="防风卷帘" data-en="Roller Blind">防风卷帘</h4>
+                    <p class="text-[--light-accent]/60 text-sm lang-text" data-zh="阳台防风卷帘" data-en="Balcony roller blind">阳台防风卷帘</p>
+                </div>
+                <div class="bg-[--dark-bg]/50 rounded-xl p-4 text-center border border-[--primary]/20 hover:border-[--primary]/50 transition-colors">
+                    <div class="text-3xl mb-2">🌳</div>
+                    <h4 class="text-white font-semibold lang-text" data-zh="庭院附属物" data-en="Yard Accessory">庭院附属物</h4>
+                    <p class="text-[--light-accent]/60 text-sm lang-text" data-zh="各类庭院设施" data-en="Various yard facilities">各类庭院设施</p>
                 </div>
             </div>
         </div>
@@ -1127,6 +1276,157 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Set initial language
             switchLanguage('zh');
+        });
+
+        // ==================== Design Tool Functionality ====================
+        let bgImageData = null;
+        let fgImageData = null;
+
+        function handleImageUpload(input, type) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onloadend = function() {
+                    if (type === 'bg') {
+                        bgImageData = reader.result;
+                        document.getElementById('bgPreviewImg').src = reader.result;
+                        document.getElementById('bgPreview').classList.remove('hidden');
+                        document.getElementById('bgPlaceholder').classList.add('hidden');
+                        document.getElementById('bgUploadArea').classList.add('border-[--primary]', 'bg-[--primary]/10');
+                    } else {
+                        fgImageData = reader.result;
+                        document.getElementById('fgPreviewImg').src = reader.result;
+                        document.getElementById('fgPreview').classList.remove('hidden');
+                        document.getElementById('fgPlaceholder').classList.add('hidden');
+                        document.getElementById('fgUploadArea').classList.add('border-[--primary]', 'bg-[--primary]/10');
+                    }
+                    updateGenerateButton();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function clearImage(type) {
+            if (type === 'bg') {
+                bgImageData = null;
+                document.getElementById('bgInput').value = '';
+                document.getElementById('bgPreview').classList.add('hidden');
+                document.getElementById('bgPlaceholder').classList.remove('hidden');
+                document.getElementById('bgUploadArea').classList.remove('border-[--primary]', 'bg-[--primary]/10');
+            } else {
+                fgImageData = null;
+                document.getElementById('fgInput').value = '';
+                document.getElementById('fgPreview').classList.add('hidden');
+                document.getElementById('fgPlaceholder').classList.remove('hidden');
+                document.getElementById('fgUploadArea').classList.remove('border-[--primary]', 'bg-[--primary]/10');
+            }
+            updateGenerateButton();
+        }
+
+        function updateGenerateButton() {
+            const btn = document.getElementById('generateBtn');
+            if (bgImageData && fgImageData) {
+                btn.disabled = false;
+                btn.classList.remove('bg-[--primary]/30', 'text-[--light-accent]/50', 'cursor-not-allowed');
+                btn.classList.add('bg-[--primary]', 'text-white', 'hover:bg-[--primary-dark]', 'shadow-lg');
+            } else {
+                btn.disabled = true;
+                btn.classList.add('bg-[--primary]/30', 'text-[--light-accent]/50', 'cursor-not-allowed');
+                btn.classList.remove('bg-[--primary]', 'text-white', 'hover:bg-[--primary-dark]', 'shadow-lg');
+            }
+        }
+
+        function generateDesign() {
+            if (!bgImageData || !fgImageData) {
+                alert(currentLang === 'zh' ? '请先上传后院实景照片和产品效果图' : 'Please upload both backyard photo and product image first');
+                return;
+            }
+
+            // Show loading
+            document.getElementById('generatingIndicator').classList.remove('hidden');
+            document.getElementById('generateBtn').disabled = true;
+
+            // Simulate API call (In production, this would call Alibaba Tongyi API)
+            setTimeout(() => {
+                // Hide loading
+                document.getElementById('generatingIndicator').classList.add('hidden');
+                document.getElementById('generateBtn').disabled = false;
+
+                // For demo: show the background image as result
+                // In production, this would be the AI-generated merged image
+                document.getElementById('resultImg').src = bgImageData;
+                document.getElementById('resultArea').classList.remove('hidden');
+
+                // Scroll to result
+                document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                // Show notification
+                if (currentLang === 'zh') {
+                    showNotification('设计效果图生成成功！（演示模式）', 'success');
+                } else {
+                    showNotification('Design generated successfully! (Demo mode)', 'success');
+                }
+            }, 2500);
+        }
+
+        function resetDesignTool() {
+            clearImage('bg');
+            clearImage('fg');
+            hideResult();
+        }
+
+        function hideResult() {
+            document.getElementById('resultArea').classList.add('hidden');
+        }
+
+        function downloadResult() {
+            const resultImg = document.getElementById('resultImg');
+            if (resultImg.src) {
+                const link = document.createElement('a');
+                link.href = resultImg.src;
+                link.download = 'design-' + Date.now() + '.png';
+                link.click();
+            }
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-24 right-4 px-6 py-3 rounded-lg shadow-lg z-50 ${type === 'success' ? 'bg-green-600' : 'bg-red-600'} text-white font-semibold`;
+            notification.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} mr-2"></i>${message}`;
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transition = 'opacity 0.3s';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Drag and drop support
+        ['bgUploadArea', 'fgUploadArea'].forEach(areaId => {
+            const area = document.getElementById(areaId);
+            const type = areaId === 'bgUploadArea' ? 'bg' : 'fg';
+            const input = document.getElementById(type + 'Input');
+
+            area.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                area.classList.add('border-[--primary]', 'bg-[--primary]/10');
+            });
+
+            area.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                if (!eval(type + 'ImageData')) {
+                    area.classList.remove('border-[--primary]', 'bg-[--primary]/10');
+                }
+            });
+
+            area.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const file = e.dataTransfer.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    input.files = e.dataTransfer.files;
+                    handleImageUpload(input, type);
+                }
+            });
         });
     </script>
 </body>
