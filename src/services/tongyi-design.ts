@@ -70,9 +70,8 @@ export async function generateDesignImage(
       }
     }
 
-    // 注意：实际调用时需要通过后端代理
-    // 这里只是展示 API 调用结构
-    const response = await fetch('/api/design/generate', {
+    // Cloudflare Pages Functions 路径
+    const response = await fetch('/api/design-generate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -119,7 +118,8 @@ function getPromptByProductType(productType: string): string {
  */
 export async function checkApiStatus(): Promise<boolean> {
   try {
-    const response = await fetch('/api/design/health')
+    // Cloudflare Pages Functions 健康检查
+    const response = await fetch('/api/design-generate', { method: 'OPTIONS' })
     return response.ok
   } catch {
     return false

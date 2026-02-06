@@ -5,8 +5,12 @@
   "main": "index.html",
   "scripts": {
     "dev": "vite",
+    "build": "vite build",
     "build:react": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "pages:dev": "wrangler pages dev dist --compatibility-date=2024-01-01",
+    "pages:build": "vite build && wrangler pages functions build --outdir=dist/_worker.js",
+    "deploy": "wrangler pages deploy dist"
   },
   "keywords": [
     "sunroom",

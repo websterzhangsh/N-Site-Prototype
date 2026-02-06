@@ -71,8 +71,8 @@ const DesignTool: React.FC = () => {
       const fgBase64 = foregroundImage.preview?.split(',')[1]
 
       // 调用阿里通义API进行图像融合
-      // 注意：实际部署时需要通过后端代理调用，避免暴露API密钥
-      const response = await fetch('/api/design/generate', {
+      // Cloudflare Pages Functions 路径
+      const response = await fetch('/api/design-generate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
