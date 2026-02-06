@@ -1361,16 +1361,24 @@
                     prompt: editPrompt
                 })
             })
-            .then(response => response.json())
+            .then(response => {
+                console.log('=== API Response Status ===', response.status);
+                return response.json();
+            })
             .then(data => {
                 // Hide loading
                 document.getElementById('generatingIndicator').classList.add('hidden');
                 document.getElementById('generateBtn').disabled = false;
 
-                console.log('API Response:', data);
+                console.log('=== API Response Data ===');
+                console.log(JSON.stringify(data, null, 2));
+                
+                // 显示调试信息
+                alert('API 响应:\n' + JSON.stringify(data, null, 2));
 
                 // 检查成功响应
                 if (data.success && data.result_image) {
+                    console.log('=== Result Image URL ===', data.result_image);
                     document.getElementById('resultImg').src = data.result_image;
                     document.getElementById('resultArea').classList.remove('hidden');
                     document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1383,22 +1391,15 @@
                 }
             })
             .catch(error => {
-                console.error('API Error:', error);
+                console.error('=== Fetch Error ===', error);
                 // Hide loading
                 document.getElementById('generatingIndicator').classList.add('hidden');
                 document.getElementById('generateBtn').disabled = false;
 
-                // 如果 API 不可用，使用演示模式
-                console.log('Falling back to demo mode...');
-                setTimeout(() => {
-                    document.getElementById('resultImg').src = bgImageData;
-                    document.getElementById('resultArea').classList.remove('hidden');
-                    document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    showNotification(
-                        currentLang === 'zh' ? 'API 未配置，显示演示效果' : 'API not configured, showing demo',
-                        'warning'
-                    );
-                }, 1000);
+                // 显示详细错误信息，不再使用演示模式
+                alert('API 调用失败:\n' + error.message + '\n\n请检查浏览器控制台(F12)获取详细信息');
+                showNotification('API 调用失败: ' + error.message, 'error');
+            });
             });
         }
 
