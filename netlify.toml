@@ -1,10 +1,15 @@
 [build]
   publish = "."
-  command = ""
+  command = "echo 'Skipping build - using static files'"
+  ignore = "exit 0"
   functions = "netlify/functions"
 
 [functions]
   node_bundler = "esbuild"
+
+# Prevent auto-detection of framework
+[build.environment]
+  NPM_FLAGS = "--ignore-scripts"
 
 [[headers]]
   for = "/*"

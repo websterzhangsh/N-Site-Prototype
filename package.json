@@ -4,8 +4,8 @@
   "description": "Nestopia homepage prototype - Professional sunroom sales landing page",
   "main": "index.html",
   "scripts": {
-    "start": "vite",
-    "build": "vite build",
+    "dev": "vite",
+    "build:react": "vite build",
     "preview": "vite preview"
   },
   "keywords": [
