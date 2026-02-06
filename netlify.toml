@@ -1,18 +1,10 @@
 [build]
   publish = "."
-  command = "echo 'No build needed - serving static files'"
+  command = ""
   functions = "netlify/functions"
 
 [functions]
   node_bundler = "esbuild"
-
-# Serve index.html as default
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-  conditions = {Role = ["admin", "visitor"]}
-  force = false
 
 [[headers]]
   for = "/*"
