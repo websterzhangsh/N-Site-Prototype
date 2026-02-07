@@ -3,10 +3,6 @@
  * 路径: /api/design-generate
  */
 
-interface Env {
-  DASHSCOPE_API_KEY: string;
-}
-
 // 优化后的提示词
 const DEFAULT_PROMPT = `请将第二张图片中的阳光房（sunroom/glass conservatory）融合到第一张图片的后院场景中。
 
@@ -30,19 +26,14 @@ const corsHeaders = {
 };
 
 // 处理 OPTIONS 请求 (CORS 预检)
-export const onRequestOptions: PagesFunction = async () => {
+export async function onRequestOptions() {
   return new Response(null, { headers: corsHeaders });
-};
+}
 
 // 处理 POST 请求
-export const onRequestPost: PagesFunction<Env> = async (context) => {
+export async function onRequestPost(context) {
   try {
-    const body = await context.request.json() as {
-      background_image?: string;
-      foreground_image?: string;
-      prompt?: string;
-    };
-
+    const body = await context.request.json();
     const { background_image, foreground_image, prompt } = body;
 
     // 验证必要参数
@@ -97,19 +88,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       }
     );
 
-    const data = await response.json() as {
-      code?: string;
-      message?: string;
-      output?: {
-        choices?: Array<{
-          message?: {
-            content?: Array<{ image?: string }>;
-          };
-        }>;
-        results?: Array<{ url?: string } | string>;
-      };
-      request_id?: string;
-    };
+    const data = await response.json();
 
     console.log('API Response received');
 
@@ -126,7 +105,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     }
 
     // 尝试提取图像
-    let resultImage: string | null = null;
+    let resultImage = null;
     
     // 路径1: output.choices[0].message.content[].image
     if (data.output?.choices?.[0]?.message?.content) {
@@ -177,4 +156,4 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       { status: 500, headers: corsHeaders }
     );
   }
-};
+}
