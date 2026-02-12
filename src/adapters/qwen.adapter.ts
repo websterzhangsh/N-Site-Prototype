@@ -43,7 +43,7 @@ export class QwenAdapter extends BaseLLMAdapter {
           content: m.content
         })),
         temperature: options?.temperature ?? 0.7,
-        max_tokens: options?.maxTokens ?? 300,
+        max_tokens: options?.maxTokens ?? 500,
         top_p: options?.topP ?? 0.8,
         stream: false
       })
@@ -92,7 +92,7 @@ export class QwenAdapter extends BaseLLMAdapter {
           content: m.content
         })),
         temperature: options?.temperature ?? 0.7,
-        max_tokens: options?.maxTokens ?? 300,
+        max_tokens: options?.maxTokens ?? 500,
         stream: true
       })
     });

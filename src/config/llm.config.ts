@@ -28,7 +28,7 @@ export const LLM_CONFIG = {
   // 默认参数
   defaults: {
     temperature: 0.7,
-    maxTokens: 300,
+    maxTokens: 500,
     topP: 0.8
   },
 
