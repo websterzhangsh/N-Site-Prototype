@@ -20,6 +20,58 @@ const DEFAULT_PROMPT = `请将第二张图片中的阳光房（sunroom/glass con
 - 不能破坏原有后院的整体布局
 - 不能简化或修改阳光房的细节`;
 
+// --- Stability utilities ---
+const REQUEST_TIMEOUT_MS = 25000; // 25s (Cloudflare limit ~30s)
+const MAX_RETRIES = 2;
+const RETRY_DELAYS = [1000, 2000]; // backoff: 1s, 2s
+
+function isRetryable(error) {
+  const msg = String(error?.message || error).toLowerCase();
+  return (
+    msg.includes('network') ||
+    msg.includes('timeout') ||
+    msg.includes('abort') ||
+    msg.includes('connection') ||
+    msg.includes('econnreset') ||
+    msg.includes('socket')
+  );
+}
+
+async function fetchWithTimeout(url, options, timeoutMs = REQUEST_TIMEOUT_MS) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function fetchWithRetry(url, options, { retries = MAX_RETRIES, timeoutMs = REQUEST_TIMEOUT_MS } = {}) {
+  let lastError;
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const resp = await fetchWithTimeout(url, options, timeoutMs);
+      // Retry on 502/503/504 server errors
+      if (attempt < retries && [502, 503, 504].includes(resp.status)) {
+        console.warn(`Attempt ${attempt + 1} got ${resp.status}, retrying...`);
+        await new Promise(r => setTimeout(r, RETRY_DELAYS[attempt] || 2000));
+        continue;
+      }
+      return resp;
+    } catch (err) {
+      lastError = err;
+      if (attempt < retries && isRetryable(err)) {
+        console.warn(`Attempt ${attempt + 1} failed: ${err.message}, retrying...`);
+        await new Promise(r => setTimeout(r, RETRY_DELAYS[attempt] || 2000));
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw lastError;
+}
+
 // CORS 头
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -60,8 +112,8 @@ export async function onRequestPost(context) {
 
     console.log('Calling DashScope API...');
 
-    // 调用 qwen-image-edit-max
-    const response = await fetch(
+    // 调用 qwen-image-edit-max (with retry & timeout)
+    const response = await fetchWithRetry(
       'https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation',
       {
         method: 'POST',
@@ -151,11 +203,15 @@ export async function onRequestPost(context) {
 
   } catch (error) {
     console.error('Error:', error);
+    const msg = error instanceof Error ? error.message : String(error);
+    let userMsg = 'Server error: ' + msg;
+    if (msg.includes('abort') || msg.includes('timeout')) {
+      userMsg = 'Request timed out. The image generation service is busy, please try again.';
+    } else if (msg.includes('network') || msg.includes('connection') || msg.includes('socket')) {
+      userMsg = 'Network connection lost. Please check your connection and try again.';
+    }
     return new Response(
-      JSON.stringify({
-        success: false,
-        error: '服务器错误: ' + (error instanceof Error ? error.message : String(error))
-      }),
+      JSON.stringify({ success: false, error: userMsg }),
       { status: 500, headers: corsHeaders }
     );
   }

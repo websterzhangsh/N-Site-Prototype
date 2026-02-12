@@ -6,6 +6,56 @@
 
 import { LLM_CONFIG } from './llm-config.js';
 
+const REQUEST_TIMEOUT_MS = 15000; // 15s for chat
+const MAX_RETRIES = 2;
+const RETRY_DELAYS = [800, 1500];
+
+function isRetryable(error) {
+  const msg = String(error?.message || error).toLowerCase();
+  return (
+    msg.includes('network') ||
+    msg.includes('timeout') ||
+    msg.includes('abort') ||
+    msg.includes('connection') ||
+    msg.includes('econnreset') ||
+    msg.includes('socket')
+  );
+}
+
+async function fetchWithTimeout(url, options, timeoutMs = REQUEST_TIMEOUT_MS) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function fetchWithRetry(url, options, { retries = MAX_RETRIES, timeoutMs = REQUEST_TIMEOUT_MS } = {}) {
+  let lastError;
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const resp = await fetchWithTimeout(url, options, timeoutMs);
+      if (attempt < retries && [502, 503, 504].includes(resp.status)) {
+        console.warn(`Qwen attempt ${attempt + 1} got ${resp.status}, retrying...`);
+        await new Promise(r => setTimeout(r, RETRY_DELAYS[attempt] || 1500));
+        continue;
+      }
+      return resp;
+    } catch (err) {
+      lastError = err;
+      if (attempt < retries && isRetryable(err)) {
+        console.warn(`Qwen attempt ${attempt + 1} failed: ${err.message}, retrying...`);
+        await new Promise(r => setTimeout(r, RETRY_DELAYS[attempt] || 1500));
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw lastError;
+}
+
 export class QwenAdapter {
   constructor(config) {
     this.apiKey = config.apiKey;
@@ -43,7 +93,7 @@ export class QwenAdapter {
     const model = options.model || this.defaultModel;
     const finalMessages = this.buildMessages(messages, options.systemPrompt);
 
-    const response = await fetch(`${this.baseUrl}/chat/completions`, {
+    const response = await fetchWithRetry(`${this.baseUrl}/chat/completions`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${this.apiKey}`,

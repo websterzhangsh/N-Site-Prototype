@@ -77,11 +77,15 @@ export async function onRequestPost(context) {
 
   } catch (error) {
     console.error('Chat API Error:', error);
+    const msg = error instanceof Error ? error.message : String(error);
+    let userMsg = 'Server error: ' + msg;
+    if (msg.includes('abort') || msg.includes('timeout')) {
+      userMsg = 'Request timed out. Please try again.';
+    } else if (msg.includes('network') || msg.includes('connection') || msg.includes('socket')) {
+      userMsg = 'Network connection lost. Please try again.';
+    }
     return new Response(
-      JSON.stringify({
-        success: false,
-        error: '服务器错误: ' + (error instanceof Error ? error.message : String(error))
-      }),
+      JSON.stringify({ success: false, error: userMsg }),
       { status: 500, headers: corsHeaders }
     );
   }
