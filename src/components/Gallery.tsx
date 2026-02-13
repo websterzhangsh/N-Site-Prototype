@@ -1,140 +1,101 @@
 import React, { useState } from 'react'
-import { ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Maximize2, X } from 'lucide-react'
+import { products, type ProductCategory } from '../data/products'
 
-const galleryImages = [
-  {
-    id: 1,
-    src: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=600&fit=crop",
-    alt: "现代简约阳光房",
-    title: "现代简约风格"
-  },
-  {
-    id: 2,
-    src: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop",
-    alt: "欧式豪华阳光房",
-    title: "欧式豪华风格"
-  },
-  {
-    id: 3,
-    src: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop",
-    alt: "田园风格阳光房",
-    title: "田园自然风格"
-  },
-  {
-    id: 4,
-    src: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&h=600&fit=crop",
-    alt: "智能阳光房",
-    title: "智能科技风格"
-  },
-  {
-    id: 5,
-    src: "https://images.unsplash.com/photo-1600573472550-8090b5e0745e?w=800&h=600&fit=crop",
-    alt: "休闲娱乐阳光房",
-    title: "休闲娱乐风格"
-  },
-  {
-    id: 6,
-    src: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop",
-    alt: "商务办公阳光房",
-    title: "商务办公风格"
-  }
-]
+interface GalleryProps {
+  activeCategory: ProductCategory
+}
 
-const Gallery = () => {
+const Gallery: React.FC<GalleryProps> = ({ activeCategory }) => {
   const [currentImage, setCurrentImage] = useState(0)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const nextImage = () => {
-    setCurrentImage((prev) => (prev === galleryImages.length - 1 ? 0 : prev + 1))
-  }
+  const images = products[activeCategory].galleryImages
 
-  const prevImage = () => {
-    setCurrentImage((prev) => (prev === 0 ? galleryImages.length - 1 : prev - 1))
-  }
+  const nextImage = () => setCurrentImage((p) => (p >= images.length - 1 ? 0 : p + 1))
+  const prevImage = () => setCurrentImage((p) => (p <= 0 ? images.length - 1 : p - 1))
 
   const openModal = (index: number) => {
     setCurrentImage(index)
     setIsModalOpen(true)
   }
 
-  const closeModal = () => {
-    setIsModalOpen(false)
-  }
+  const closeModal = () => setIsModalOpen(false)
 
   return (
-    <section id="gallery" className="py-20 bg-gray-50">
+    <section id="gallery" className="py-20 bg-muted/50">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="section-title">案例展示</h2>
+        <div className="text-center mb-12">
+          <h2 className="section-title">Project Gallery</h2>
           <p className="section-subtitle">
-            精选成功案例，展现我们的专业实力和设计理念
+            Showcasing our finest {products[activeCategory].label.toLowerCase()} installations
           </p>
         </div>
 
-        {/* Gallery Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {galleryImages.map((image, index) => (
-            <div 
-              key={image.id}
-              className="group relative overflow-hidden rounded-xl cursor-pointer"
+        {/* Gallery grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 max-w-6xl mx-auto">
+          {images.map((img, index) => (
+            <div
+              key={`${activeCategory}-gal-${index}`}
+              className="group relative overflow-hidden rounded-xl cursor-pointer shadow-sm hover:shadow-lg transition-shadow duration-300"
               onClick={() => openModal(index)}
             >
-              <img 
-                src={image.src} 
-                alt={image.alt}
-                className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
+              <img
+                src={img.src}
+                alt={img.alt}
+                loading="lazy"
+                className="w-full h-60 object-cover transition-transform duration-500 group-hover:scale-110"
               />
               <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                <div className="text-white text-center p-4">
-                  <h3 className="text-xl font-semibold mb-2">{image.title}</h3>
-                  <p className="text-sm">{image.alt}</p>
-                  <Maximize2 className="w-8 h-8 mx-auto mt-4" />
+                <div className="text-center p-4">
+                  <h3 className="text-lg font-semibold text-white mb-1">{img.title}</h3>
+                  <p className="text-sm text-white/80">{img.alt}</p>
+                  <Maximize2 className="w-6 h-6 mx-auto mt-3 text-white/70" />
                 </div>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Modal */}
+        {/* Lightbox modal */}
         {isModalOpen && (
-          <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
-            <div className="relative max-w-4xl w-full">
-              <button 
-                className="absolute top-4 right-4 text-white hover:text-gray-300 z-10"
+          <div
+            className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+            onClick={closeModal}
+          >
+            <div className="relative max-w-4xl w-full" onClick={(e) => e.stopPropagation()}>
+              <button
+                className="absolute -top-10 right-0 text-white/70 hover:text-white z-10"
                 onClick={closeModal}
+                aria-label="Close"
               >
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <X className="w-7 h-7" />
               </button>
-              
-              <div className="relative">
-                <img 
-                  src={galleryImages[currentImage].src} 
-                  alt={galleryImages[currentImage].alt}
-                  className="w-full h-auto rounded-lg"
-                />
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 rounded-b-lg">
-                  <h3 className="text-white text-2xl font-semibold">
-                    {galleryImages[currentImage].title}
-                  </h3>
-                  <p className="text-gray-200">
-                    {galleryImages[currentImage].alt}
-                  </p>
-                </div>
+
+              <img
+                src={images[currentImage].src}
+                alt={images[currentImage].alt}
+                className="w-full h-auto rounded-lg"
+              />
+
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 rounded-b-lg">
+                <h3 className="text-white text-xl font-semibold">{images[currentImage].title}</h3>
+                <p className="text-white/70 text-sm">{images[currentImage].alt}</p>
               </div>
 
-              <button 
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300"
+              <button
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-white/70 hover:text-white"
                 onClick={prevImage}
+                aria-label="Previous"
               >
-                <ChevronLeft className="w-10 h-10" />
+                <ChevronLeft className="w-9 h-9" />
               </button>
-              <button 
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300"
+              <button
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/70 hover:text-white"
                 onClick={nextImage}
+                aria-label="Next"
               >
-                <ChevronRight className="w-10 h-10" />
+                <ChevronRight className="w-9 h-9" />
               </button>
             </div>
           </div>
