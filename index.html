@@ -392,6 +392,35 @@
             background: #e2e8f0;
         }
 
+        /* Hero category tabs */
+        .hero-tab {
+            padding: 10px 24px;
+            border-radius: 9999px;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.025em;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .hero-tab:hover {
+            border-color: var(--primary);
+            color: white;
+        }
+        .hero-tab.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.35);
+        }
+
+        /* Hero image fade transition */
+        #heroImageGrid img, .gallery-dynamic-img {
+            transition: opacity 0.4s ease, transform 0.7s ease;
+        }
+
         @media (max-width: 480px) {
             .chatbot-window {
                 width: calc(100vw - 32px);
@@ -437,45 +466,68 @@
     <!-- Hero Section -->
     <section id="home" class="pt-20 pb-16 bg-gradient-to-br from-[--dark-bg] to-[--primary-dark] text-white">
         <div class="container mx-auto px-4">
-            <div class="flex flex-col lg:flex-row items-center">
-                <div class="lg:w-1/2 mb-12 lg:mb-0">
-                    <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">
-                        <span class="lang-text" data-zh="让每一寸庭院" data-en="Transform Every Corner of"></span>
-                        <span class="block text-[--secondary] lang-text" data-zh="都成为生活的延伸" data-en="Your Yard Into Living Space">都成为生活的延伸</span>
-                    </h1>
-                    <p class="text-xl mb-8 text-[--light-accent]">
-                        <span class="lang-text" data-zh="从休闲聚餐到四季花园，从阳光阅读到泳池派对——" data-en="From leisure dining to year-round gardens, from sunny reading nooks to poolside parties —">从休闲聚餐到四季花园，从阳光阅读到泳池派对——</span>
-                        <span class="lang-text" data-zh="我们为您定制专属的户外生活体验。" data-en="We craft bespoke outdoor living experiences just for you.">我们为您定制专属的户外生活体验。</span>
-                    </p>
-                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                        <button class="btn-primary text-white font-semibold py-3 px-8 rounded-lg bg-gradient-to-r from-[--primary] to-[--primary-dark]">
-                            <i class="fas fa-calendar-check mr-2"></i><span class="lang-text" data-zh="免费设计咨询" data-en="Free Design Consultation">免费设计咨询</span>
-                        </button>
-                        <button class="bg-white text-[--primary] font-semibold py-3 px-8 rounded-lg hover:bg-gray-100 transition">
-                            <i class="fas fa-phone mr-2"></i><span class="lang-text" data-zh="立即咨询" data-en="Consult Now">立即咨询</span>
-                        </button>
-                    </div>
+            <div class="text-center mb-8">
+                <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+                    <span class="lang-text" data-zh="让每一寸庭院" data-en="Transform Every Corner of"></span>
+                    <span class="block text-[--secondary] lang-text" data-zh="都成为生活的延伸" data-en="Your Yard Into Living Space">都成为生活的延伸</span>
+                </h1>
+                <p class="text-xl mb-8 text-[--light-accent] max-w-2xl mx-auto">
+                    <span class="lang-text" data-zh="从休闲聚餐到四季花园，从阳光阅读到泳池派对——我们为您定制专属的户外生活体验。" data-en="From leisure dining to year-round gardens, from sunny reading nooks to poolside parties — We craft bespoke outdoor living experiences just for you.">从休闲聚餐到四季花园，从阳光阅读到泳池派对——我们为您定制专属的户外生活体验。</span>
+                </p>
+
+                <!-- Product Category Tabs -->
+                <div class="flex flex-wrap justify-center gap-3 mb-4" id="heroCategoryTabs">
+                    <button class="hero-tab active" data-category="sunroom" onmouseenter="switchCategory('sunroom')" onclick="switchCategory('sunroom')">
+                        <span class="lang-text" data-zh="阳光房" data-en="Sun Room">阳光房</span>
+                    </button>
+                    <button class="hero-tab" data-category="pavilion" onmouseenter="switchCategory('pavilion')" onclick="switchCategory('pavilion')">
+                        <span class="lang-text" data-zh="户外凉亭" data-en="Pavilion">户外凉亭</span>
+                    </button>
+                    <button class="hero-tab" data-category="windproof" onmouseenter="switchCategory('windproof')" onclick="switchCategory('windproof')">
+                        <span class="lang-text" data-zh="防风卷帘" data-en="Windproof Roller Shutter">防风卷帘</span>
+                    </button>
                 </div>
-                <div class="lg:w-1/2 flex justify-center">
-                    <div class="relative">
-                        <!-- Hero Image Carousel -->
-                        <div class="hero-carousel overflow-hidden rounded-2xl shadow-2xl border-4 border-[--primary]" style="width: 400px; height: 300px;">
-                            <div class="hero-slides flex" style="animation: heroSlide 12s ease-in-out infinite;">
-                                <img src="images/hero/sunroom-living.jpg" 
-                                     alt="阳光房内舒适的庭院生活体验" 
-                                     class="w-full h-full object-cover flex-shrink-0" style="width: 400px; height: 300px;">
-                                <img src="images/hero/pavilion-dining.jpg" 
-                                     alt="庭院凉亭中的夜间聚餐场景" 
-                                     class="w-full h-full object-cover flex-shrink-0" style="width: 400px; height: 300px;">
-                                <img src="images/hero/balcony-garden.jpg" 
-                                     alt="阳台花园休闲空间" 
-                                     class="w-full h-full object-cover flex-shrink-0" style="width: 400px; height: 300px;">
-                            </div>
-                        </div>
-                        <div class="absolute -bottom-6 -right-6 bg-[--primary] text-white p-4 rounded-full">
-                            <i class="fas fa-sun text-2xl"></i>
-                        </div>
-                    </div>
+                <p class="text-sm text-[--light-accent]/70 mb-6" id="categoryTagline">
+                    <span class="lang-text" data-zh="明亮通透的生活空间，沐浴自然光" data-en="Bright, open living spaces bathed in natural light">明亮通透的生活空间，沐浴自然光</span>
+                </p>
+            </div>
+
+            <!-- Hero Image Grid (3 images) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto mb-10" id="heroImageGrid">
+                <div class="overflow-hidden rounded-2xl shadow-2xl border-2 border-[--primary]/30 group">
+                    <img id="heroImg1" src="images/products/sunroom/hero-1.jpg" alt="Sun room" class="w-full h-56 md:h-64 object-cover transition-all duration-700 group-hover:scale-105">
+                </div>
+                <div class="overflow-hidden rounded-2xl shadow-2xl border-2 border-[--primary]/30 group md:-mt-3 md:mb-3">
+                    <img id="heroImg2" src="images/products/sunroom/hero-2.jpg" alt="Sun room" class="w-full h-56 md:h-64 object-cover transition-all duration-700 group-hover:scale-105">
+                </div>
+                <div class="overflow-hidden rounded-2xl shadow-2xl border-2 border-[--primary]/30 group">
+                    <img id="heroImg3" src="images/products/sunroom/hero-3.jpg" alt="Sun room" class="w-full h-56 md:h-64 object-cover transition-all duration-700 group-hover:scale-105">
+                </div>
+            </div>
+
+            <!-- CTA Buttons -->
+            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4 mb-10">
+                <button class="btn-primary text-white font-semibold py-3 px-8 rounded-lg bg-gradient-to-r from-[--primary] to-[--primary-dark]">
+                    <i class="fas fa-calendar-check mr-2"></i><span class="lang-text" data-zh="免费设计咨询" data-en="Free Design Consultation">免费设计咨询</span>
+                </button>
+                <button class="bg-white text-[--primary] font-semibold py-3 px-8 rounded-lg hover:bg-gray-100 transition">
+                    <i class="fas fa-phone mr-2"></i><span class="lang-text" data-zh="立即咨询" data-en="Consult Now">立即咨询</span>
+                </button>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-3 gap-8 max-w-md mx-auto text-center">
+                <div>
+                    <div class="text-3xl font-bold text-[--secondary]">500+</div>
+                    <div class="text-[--light-accent]/70 text-sm lang-text" data-zh="成功案例" data-en="Projects">成功案例</div>
+                </div>
+                <div>
+                    <div class="text-3xl font-bold text-[--secondary]">10<span class="lang-text" data-zh="年" data-en="yr">年</span></div>
+                    <div class="text-[--light-accent]/70 text-sm lang-text" data-zh="行业经验" data-en="Experience">行业经验</div>
+                </div>
+                <div>
+                    <div class="text-3xl font-bold text-[--secondary]">100%</div>
+                    <div class="text-[--light-accent]/70 text-sm lang-text" data-zh="客户满意" data-en="Satisfaction">客户满意</div>
                 </div>
             </div>
         </div>
@@ -706,77 +758,13 @@
                 <h2 class="text-3xl md:text-4xl font-bold text-[--light-text] mb-4 lang-text" data-zh="真实案例展示" data-en="Real Project Showcase">
                     真实案例展示
                 </h2>
-                <p class="text-[--light-accent] text-lg max-w-2xl mx-auto">
+                <p class="text-[--light-accent] text-lg max-w-2xl mx-auto" id="gallerySubtitle">
                     <span class="lang-text" data-zh="每一个项目都是一次生活方式的升级，看看我们如何为客户实现理想的户外空间" data-en="Every project is a lifestyle upgrade. See how we brought our clients' ideal outdoor spaces to life">每一个项目都是一次生活方式的升级，看看我们如何为客户实现理想的户外空间</span>
                 </p>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="group relative overflow-hidden rounded-2xl shadow-lg border border-[--primary]/30">
-                    <img src="images/gallery/sunroom-elegant.jpg" 
-                         alt="弧形阳光房 — 欧式别墅庭院休闲空间" class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110">
-                    <div class="absolute inset-0 bg-[--darker-bg] bg-opacity-70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <div class="text-white text-center">
-                            <h3 class="text-xl font-bold mb-2 lang-text" data-zh="弧形阳光房 · 别墅休闲" data-en="Curved Sunroom · Villa Leisure">弧形阳光房 · 别墅休闲</h3>
-                            <p class="text-sm lang-text" data-zh="将庭院变为四季可用的会客厅" data-en="Transform your yard into a year-round living room">将庭院变为四季可用的会客厅</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="group relative overflow-hidden rounded-2xl shadow-lg border border-[--primary]/30">
-                    <img src="images/gallery/sunroom-pool.jpg" 
-                         alt="泳池阳光房 — 湖景别墅温泉泳池" class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110">
-                    <div class="absolute inset-0 bg-[--darker-bg] bg-opacity-70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <div class="text-white text-center">
-                            <h3 class="text-xl font-bold mb-2 lang-text" data-zh="泳池阳光房 · 湖景温泉" data-en="Pool Sunroom · Lakeside Spa">泳池阳光房 · 湖景温泉</h3>
-                            <p class="text-sm lang-text" data-zh="四季畅游，尽享湖光山色" data-en="Swim year-round with stunning lake views">四季畅游，尽享湖光山色</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="group relative overflow-hidden rounded-2xl shadow-lg border border-[--primary]/30">
-                    <img src="images/gallery/pavilion-garden.jpg" 
-                         alt="现代凉亭 — 花园户外休闲区" class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110">
-                    <div class="absolute inset-0 bg-[--darker-bg] bg-opacity-70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <div class="text-white text-center">
-                            <h3 class="text-xl font-bold mb-2 lang-text" data-zh="现代凉亭 · 花园休闲" data-en="Modern Pavilion · Garden Lounge">现代凉亭 · 花园休闲</h3>
-                            <p class="text-sm lang-text" data-zh="打造属于您的户外会客空间" data-en="Create your own outdoor entertaining space">打造属于您的户外会客空间</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="group relative overflow-hidden rounded-2xl shadow-lg border border-[--primary]/30">
-                    <img src="images/gallery/sunroom-commercial.jpg" 
-                         alt="商业阳光房 — 屋顶餐厅全景空间" class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110">
-                    <div class="absolute inset-0 bg-[--darker-bg] bg-opacity-70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <div class="text-white text-center">
-                            <h3 class="text-xl font-bold mb-2 lang-text" data-zh="商业空间 · 屋顶餐厅" data-en="Commercial · Rooftop Restaurant">商业空间 · 屋顶餐厅</h3>
-                            <p class="text-sm lang-text" data-zh="为商业空间创造独特的用餐体验" data-en="Create unique dining experiences for commercial spaces">为商业空间创造独特的用餐体验</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="group relative overflow-hidden rounded-2xl shadow-lg border border-[--primary]/30">
-                    <img src="images/gallery/roller-shutter-living.jpg" 
-                         alt="防风卷帘 — 高端客厅智能遮阳方案" class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110">
-                    <div class="absolute inset-0 bg-[--darker-bg] bg-opacity-70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <div class="text-white text-center">
-                            <h3 class="text-xl font-bold mb-2 lang-text" data-zh="智能卷帘 · 舒适遮阳" data-en="Smart Blinds · Comfort Shading">智能卷帘 · 舒适遮阳</h3>
-                            <p class="text-sm lang-text" data-zh="一键调节光线，尽享静谧空间" data-en="Adjust light with one touch, enjoy serene spaces">一键调节光线，尽享静谧空间</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="group relative overflow-hidden rounded-2xl shadow-lg border border-[--primary]/30">
-                    <img src="images/gallery/sunroom-pool-villa.jpg" 
-                         alt="别墅泳池阳光房封顶方案" class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110">
-                    <div class="absolute inset-0 bg-[--darker-bg] bg-opacity-70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <div class="text-white text-center">
-                            <h3 class="text-xl font-bold mb-2 lang-text" data-zh="泳池封顶 · 别墅定制" data-en="Pool Enclosure · Villa Custom">泳池封顶 · 别墅定制</h3>
-                            <p class="text-sm lang-text" data-zh="全年享受私家泳池的乐趣" data-en="Enjoy your private pool all year round">全年享受私家泳池的乐趣</p>
-                        </div>
-                    </div>
-                </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="galleryGrid">
+                <!-- Gallery images will be dynamically populated by JS -->
             </div>
             
             <div class="text-center mt-12">
@@ -1102,6 +1090,121 @@
             el.style.transform = 'translateY(20px)';
             el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
             observer.observe(el);
+        });
+
+        // ==================== Product Category Switching ====================
+        let activeCategory = 'sunroom';
+
+        const categoryData = {
+            sunroom: {
+                tagline: { zh: '明亮通透的生活空间，沐浴自然光', en: 'Bright, open living spaces bathed in natural light' },
+                heroImages: [
+                    'images/products/sunroom/hero-1.jpg',
+                    'images/products/sunroom/hero-2.jpg',
+                    'images/products/sunroom/hero-3.jpg'
+                ],
+                gallery: [
+                    { src: 'images/products/sunroom/gallery-1.jpg', zh: '住宅阳光房 · 温馨家居', en: 'Residential Sunroom · Cozy Living', descZh: '将自然光引入家中', descEn: 'Bring natural light into your home' },
+                    { src: 'images/products/sunroom/gallery-2.jpg', zh: '开放空间 · 现代设计', en: 'Open Space · Modern Design', descZh: '宽敞明亮的生活延伸', descEn: 'Spacious and bright living extension' },
+                    { src: 'images/products/sunroom/gallery-3.jpg', zh: '商业阳光房 · 全景视野', en: 'Commercial Sunroom · Panoramic View', descZh: '为商业空间增添自然光', descEn: 'Add natural light to commercial spaces' },
+                    { src: 'images/products/sunroom/gallery-4.jpg', zh: '全景阳光房 · 观景台', en: 'Panoramic Sunroom · Viewpoint', descZh: '尽享360度自然风光', descEn: 'Enjoy 360-degree natural views' },
+                    { src: 'images/products/sunroom/gallery-5.jpg', zh: '泳池阳光房 · 休闲空间', en: 'Pool Sunroom · Leisure Space', descZh: '四季恒温畅游体验', descEn: 'Year-round swimming experience' },
+                    { src: 'images/products/sunroom/gallery-6.jpg', zh: '豪华泳池房 · 别墅定制', en: 'Luxury Pool Room · Villa Custom', descZh: '私家泳池的终极享受', descEn: 'Ultimate private pool experience' }
+                ]
+            },
+            pavilion: {
+                tagline: { zh: '优雅的户外遮蔽空间，聚会与放松的理想之选', en: 'Elegant outdoor shelters for gatherings and relaxation' },
+                heroImages: [
+                    'images/products/pavilion/hero-1.jpg',
+                    'images/products/pavilion/hero-2.jpg',
+                    'images/products/pavilion/hero-3.jpg'
+                ],
+                gallery: [
+                    { src: 'images/products/pavilion/gallery-1.jpg', zh: '现代凉亭 · 简约风格', en: 'Modern Pavilion · Contemporary', descZh: '简约而不简单的户外空间', descEn: 'Simple yet sophisticated outdoor space' },
+                    { src: 'images/products/pavilion/gallery-2.jpg', zh: '百叶凉亭 · 智能遮阳', en: 'Louvered Pavilion · Smart Shade', descZh: '可调节百叶屋顶', descEn: 'Adjustable louvered rooftop' },
+                    { src: 'images/products/pavilion/gallery-3.jpg', zh: '花园凉亭 · 休闲空间', en: 'Garden Pavilion · Leisure', descZh: '后院的完美休憩处', descEn: 'Perfect backyard retreat' },
+                    { src: 'images/products/pavilion/gallery-4.jpg', zh: 'LED 氛围灯 · 夜间魅力', en: 'LED Ambiance · Night Charm', descZh: '灯光下的浪漫夜晚', descEn: 'Romantic evenings under the lights' },
+                    { src: 'images/products/pavilion/gallery-5.jpg', zh: '大型凉亭 · 聚会空间', en: 'Large Pavilion · Party Space', descZh: '宽敞的户外聚会场所', descEn: 'Spacious outdoor gathering venue' },
+                    { src: 'images/products/pavilion/gallery-6.jpg', zh: '户外餐厅 · 凉亭用餐', en: 'Outdoor Dining · Pavilion Meal', descZh: '在自然中享用美食', descEn: 'Dine surrounded by nature' }
+                ]
+            },
+            windproof: {
+                tagline: { zh: '智能防风、防雨、防晒，一键掌控', en: 'Smart protection against wind, rain, and harsh weather' },
+                heroImages: [
+                    'images/products/windproof/hero-1.jpg',
+                    'images/products/windproof/hero-2.jpg',
+                    'images/products/windproof/hero-3.jpg'
+                ],
+                gallery: [
+                    { src: 'images/products/windproof/gallery-1.jpg', zh: '电动卷帘 · 智能控制', en: 'Motorized Shutter · Smart Control', descZh: '一键升降，智能便捷', descEn: 'One-touch control, smart and convenient' },
+                    { src: 'images/products/windproof/gallery-2.jpg', zh: '透明卷帘 · 清晰视野', en: 'Clear View · Transparent Shield', descZh: '防风不挡景', descEn: 'Wind protection without blocking views' },
+                    { src: 'images/products/windproof/gallery-3.jpg', zh: '露台卷帘 · 全天候保护', en: 'Patio Shutter · All-Weather', descZh: '阳台露台的最佳搭档', descEn: 'Best companion for patios and terraces' },
+                    { src: 'images/products/windproof/gallery-4.jpg', zh: '商用卷帘 · 坚固耐用', en: 'Commercial Grade · Durable', descZh: '商业级别的可靠品质', descEn: 'Commercial-grade reliability' },
+                    { src: 'images/products/windproof/gallery-5.jpg', zh: '伸缩卷帘 · 灵活收放', en: 'Retractable · Flexible', descZh: '需要时展开，不需要时隐藏', descEn: 'Extend when needed, retract when not' },
+                    { src: 'images/products/windproof/gallery-6.jpg', zh: '全覆盖 · 完整防护', en: 'Full Coverage · Complete', descZh: '360度全方位防护', descEn: '360-degree full protection' }
+                ]
+            }
+        };
+
+        function switchCategory(category) {
+            if (activeCategory === category) return;
+            activeCategory = category;
+
+            // Update tabs
+            document.querySelectorAll('.hero-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.category === category);
+            });
+
+            // Update tagline
+            const data = categoryData[category];
+            const taglineEl = document.getElementById('categoryTagline');
+            const taglineSpan = taglineEl.querySelector('.lang-text');
+            taglineSpan.setAttribute('data-zh', data.tagline.zh);
+            taglineSpan.setAttribute('data-en', data.tagline.en);
+            taglineSpan.textContent = currentLang === 'zh' ? data.tagline.zh : data.tagline.en;
+
+            // Update hero images with fade
+            const imgs = [document.getElementById('heroImg1'), document.getElementById('heroImg2'), document.getElementById('heroImg3')];
+            imgs.forEach((img, i) => {
+                img.style.opacity = '0';
+                setTimeout(() => {
+                    img.src = data.heroImages[i];
+                    img.style.opacity = '1';
+                }, 200);
+            });
+
+            // Update gallery
+            renderGallery(category);
+        }
+
+        function renderGallery(category) {
+            const data = categoryData[category];
+            const grid = document.getElementById('galleryGrid');
+            grid.innerHTML = data.gallery.map(item => `
+                <div class="group relative overflow-hidden rounded-2xl shadow-lg border border-[--primary]/30">
+                    <img src="${item.src}" alt="${currentLang === 'zh' ? item.zh : item.en}" 
+                         class="gallery-dynamic-img w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy">
+                    <div class="absolute inset-0 bg-[--darker-bg] bg-opacity-70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div class="text-white text-center">
+                            <h3 class="text-xl font-bold mb-2">${currentLang === 'zh' ? item.zh : item.en}</h3>
+                            <p class="text-sm">${currentLang === 'zh' ? item.descZh : item.descEn}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Re-observe for scroll animation
+            grid.querySelectorAll('.group').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(el);
+            });
+        }
+
+        // Initialize gallery on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            renderGallery('sunroom');
         });
 
         // ==================== Chatbot Functionality ====================
