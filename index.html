@@ -1638,17 +1638,26 @@
 
                 console.log('=== API Response Data ===');
                 console.log(JSON.stringify(data, null, 2));
-                
-                // 显示调试信息
-                alert('API 响应:\n' + JSON.stringify(data, null, 2));
 
                 // 检查成功响应
                 if (data.success && data.result_image) {
                     console.log('=== Result Image URL ===', data.result_image);
+                    console.log('=== Model Used ===', data.model_used);
                     document.getElementById('resultImg').src = data.result_image;
                     document.getElementById('resultArea').classList.remove('hidden');
                     document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    showNotification(currentLang === 'zh' ? '设计效果图生成成功！' : 'Design generated successfully!', 'success');
+                    
+                    // 根据是否使用了降级服务显示不同消息
+                    let successMsg;
+                    if (data.fallback_used) {
+                        successMsg = currentLang === 'zh' 
+                            ? '设计效果图生成成功！（使用标准服务）' 
+                            : 'Design generated successfully! (Standard service)';
+                        showNotification(successMsg, 'warning');
+                    } else {
+                        successMsg = currentLang === 'zh' ? '设计效果图生成成功！' : 'Design generated successfully!';
+                        showNotification(successMsg, 'success');
+                    }
                 } else {
                     // 显示错误
                     let errorMsg = data.error || (currentLang === 'zh' ? '生成失败' : 'Generation failed');
