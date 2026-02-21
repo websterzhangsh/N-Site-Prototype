@@ -1,7 +1,7 @@
 /**
- * Cloudflare Pages Function - 阿里通义图像编辑 API 代理 (异步模式)
+ * Cloudflare Pages Function - 阿里通义图像编辑 API 代理 (SSE 流式响应)
  * 路径: /api/design-generate
- * 提交异步任务，返回 task_id，前端通过 /api/design-status 轮询结果
+ * 同步调用 DashScope API，通过 SSE 流式心跳保持连接活跃，实时推送进度与结果
  */
 
 // 模型配置
@@ -32,22 +32,21 @@ const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
-  'Content-Type': 'application/json',
 };
 
 export async function onRequestOptions() {
   return new Response(null, { headers: corsHeaders });
 }
 
-// 提交异步任务
-async function submitAsyncTask(apiKey, model, bgImage, fgImage, refImage, prompt, isIteration = false) {
+// 同步调用 DashScope API（无异步头）
+async function callDashScope(apiKey, model, bgImage, fgImage, refImage, prompt, isIteration) {
   const imageContent = [];
 
   if (isIteration) {
-    console.log(`Submitting async task: model=${model}, iteration mode (1 image)`);
+    console.log(`Calling DashScope: model=${model}, iteration mode (1 image)`);
     imageContent.push({ image: bgImage });
   } else {
-    console.log(`Submitting async task: model=${model}, images=${refImage ? 3 : 2}`);
+    console.log(`Calling DashScope: model=${model}, initial mode (${refImage ? 3 : 2} images)`);
     imageContent.push({ image: bgImage });
     imageContent.push({ image: fgImage });
     if (refImage) {
@@ -64,7 +63,7 @@ async function submitAsyncTask(apiKey, model, bgImage, fgImage, refImage, prompt
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${apiKey}`,
-        'X-DashScope-Async': 'enable',  // 启用异步模式
+        // 注意：不使用 X-DashScope-Async 头，qwen-image-edit 不支持异步模式
       },
       body: JSON.stringify({
         model: model,
@@ -105,97 +104,182 @@ function isServiceBusy(response, data) {
   return false;
 }
 
-// 处理 POST 请求 - 提交异步任务
+// 从 DashScope 响应中提取图像 URL
+function extractImage(data) {
+  // 路径1: output.choices[0].message.content[].image
+  if (data.output?.choices?.[0]?.message?.content) {
+    const content = data.output.choices[0].message.content;
+    if (Array.isArray(content)) {
+      for (const item of content) {
+        if (item.image) return item.image;
+      }
+    }
+  }
+
+  // 路径2: output.results[].url or output.results[] (string)
+  if (data.output?.results?.[0]) {
+    const first = data.output.results[0];
+    return typeof first === 'string' ? first : first.url || null;
+  }
+
+  return null;
+}
+
+// 处理 POST 请求 - SSE 流式响应
 export async function onRequestPost(context) {
+  // 解析请求体
+  let body;
   try {
-    const body = await context.request.json();
-    const { background_image, foreground_image, reference_image, prompt, is_iteration } = body;
-
-    // 验证必要参数
-    if (is_iteration) {
-      if (!background_image) {
-        return new Response(
-          JSON.stringify({ success: false, error: 'Please provide the image to edit' }),
-          { status: 400, headers: corsHeaders }
-        );
-      }
-    } else {
-      if (!background_image || !foreground_image) {
-        return new Response(
-          JSON.stringify({ success: false, error: 'Please provide both backyard photo and product image' }),
-          { status: 400, headers: corsHeaders }
-        );
-      }
-    }
-
-    // 获取 API Key
-    const apiKey = context.env.DASHSCOPE_API_KEY;
-    if (!apiKey) {
-      return new Response(
-        JSON.stringify({ success: false, error: 'API Key not configured' }),
-        { status: 500, headers: corsHeaders }
-      );
-    }
-
-    const editPrompt = prompt || DEFAULT_PROMPT;
-    let usedModel = MODELS.max;
-
-    // 尝试 max 模型
-    let { response, data } = await submitAsyncTask(apiKey, MODELS.max, background_image, foreground_image, reference_image, editPrompt, is_iteration);
-
-    // 如果 max 繁忙，降级到 plus
-    if (isServiceBusy(response, data)) {
-      console.log(`${MODELS.max} is busy, falling back to ${MODELS.plus}...`);
-      usedModel = MODELS.plus;
-      ({ response, data } = await submitAsyncTask(apiKey, MODELS.plus, background_image, foreground_image, reference_image, editPrompt, is_iteration));
-    }
-
-    // 检查提交是否成功
-    if (!response.ok || data.code) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: data.message || data.code || 'Failed to submit task',
-          model_used: usedModel
-        }),
-        { status: response.status || 500, headers: corsHeaders }
-      );
-    }
-
-    // 提取 task_id
-    const taskId = data.output?.task_id;
-    const taskStatus = data.output?.task_status;
-
-    if (!taskId) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: 'No task_id returned from API',
-          raw_response: data
-        }),
-        { status: 500, headers: corsHeaders }
-      );
-    }
-
-    console.log(`Task submitted: ${taskId}, status: ${taskStatus}, model: ${usedModel}`);
-
+    body = await context.request.json();
+  } catch (e) {
     return new Response(
-      JSON.stringify({
-        success: true,
-        task_id: taskId,
-        task_status: taskStatus || 'PENDING',
-        model_used: usedModel,
-        fallback_used: usedModel === MODELS.plus
-      }),
-      { status: 200, headers: corsHeaders }
-    );
-
-  } catch (error) {
-    console.error('Error:', error);
-    const msg = error instanceof Error ? error.message : String(error);
-    return new Response(
-      JSON.stringify({ success: false, error: 'Server error: ' + msg }),
-      { status: 500, headers: corsHeaders }
+      JSON.stringify({ success: false, error: 'Invalid request body' }),
+      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
+
+  const { background_image, foreground_image, reference_image, prompt, is_iteration } = body;
+
+  // 验证必要参数
+  if (is_iteration) {
+    if (!background_image) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Please provide the image to edit' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+  } else {
+    if (!background_image || !foreground_image) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Please provide both backyard photo and product image' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+  }
+
+  // 获取 API Key
+  const apiKey = context.env.DASHSCOPE_API_KEY;
+  if (!apiKey) {
+    return new Response(
+      JSON.stringify({ success: false, error: 'API Key not configured' }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+
+  const editPrompt = prompt || DEFAULT_PROMPT;
+
+  // 创建 SSE 流
+  const encoder = new TextEncoder();
+  const { readable, writable } = new TransformStream();
+  const writer = writable.getWriter();
+
+  // SSE 事件发送辅助函数
+  const sendEvent = async (data) => {
+    try {
+      await writer.write(encoder.encode(`data: ${JSON.stringify(data)}\n\n`));
+    } catch (e) {
+      // 客户端已断开连接，忽略写入错误
+      console.log('SSE write failed (client likely disconnected):', e.message);
+    }
+  };
+
+  // 后台处理任务
+  const processTask = async () => {
+    try {
+      await sendEvent({ type: 'processing', elapsed: 0 });
+
+      // 带心跳的 DashScope 调用
+      const fetchWithHeartbeats = async (model, startElapsed) => {
+        let done = false;
+        let result = null;
+        let fetchError = null;
+        let elapsed = startElapsed;
+
+        // 启动 DashScope 调用（不 await，让它在后台运行）
+        callDashScope(apiKey, model, background_image, foreground_image, reference_image, editPrompt, is_iteration)
+          .then(r => { result = r; done = true; })
+          .catch(e => { fetchError = e; done = true; });
+
+        // 每 5 秒发送心跳，保持连接活跃
+        while (!done) {
+          await new Promise(r => setTimeout(r, 5000));
+          elapsed += 5;
+          if (!done) {
+            await sendEvent({ type: 'heartbeat', elapsed });
+          }
+          // 安全超时：5 分钟
+          if (elapsed > 300) {
+            done = true;
+            throw new Error('Generation timed out (5 min)');
+          }
+        }
+
+        if (fetchError) throw fetchError;
+        return { ...result, elapsed };
+      };
+
+      // 先尝试 max 模型
+      let usedModel = MODELS.max;
+      let { response, data, elapsed } = await fetchWithHeartbeats(MODELS.max, 0);
+
+      // 如果 max 繁忙，降级到 plus
+      if (isServiceBusy(response, data)) {
+        console.log(`${MODELS.max} is busy, falling back to ${MODELS.plus}...`);
+        await sendEvent({ type: 'fallback', message: 'Primary model busy, switching to standard...' });
+        usedModel = MODELS.plus;
+        ({ response, data, elapsed } = await fetchWithHeartbeats(MODELS.plus, elapsed));
+      }
+
+      // 检查 API 错误
+      if (!response.ok || data.code) {
+        await sendEvent({
+          type: 'error',
+          message: data.message || data.code || 'Generation failed',
+          model_used: usedModel
+        });
+        return;
+      }
+
+      // 提取结果图像
+      const resultImage = extractImage(data);
+      if (!resultImage) {
+        await sendEvent({
+          type: 'error',
+          message: 'Task completed but no image found in response'
+        });
+        return;
+      }
+
+      console.log(`Generation succeeded: model=${usedModel}, elapsed=${elapsed}s`);
+
+      // 发送最终结果
+      await sendEvent({
+        type: 'result',
+        success: true,
+        result_image: resultImage,
+        model_used: usedModel,
+        fallback_used: usedModel === MODELS.plus
+      });
+
+    } catch (e) {
+      console.error('Processing error:', e);
+      try {
+        await sendEvent({ type: 'error', message: e.message || 'Unknown server error' });
+      } catch (_) { /* stream already closed */ }
+    } finally {
+      try { await writer.close(); } catch (_) { /* already closed */ }
+    }
+  };
+
+  // 使用 waitUntil 确保后台任务完成
+  context.waitUntil(processTask());
+
+  // 立即返回 SSE 流式响应
+  return new Response(readable, {
+    headers: {
+      ...corsHeaders,
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+    }
+  });
 }

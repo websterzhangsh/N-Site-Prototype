@@ -1721,54 +1721,78 @@
             }
         }
 
-        // ==================== Async Poll Helper ====================
-        function pollTaskStatus(taskId, modelUsed, fallbackUsed, onSuccess, onError) {
-            const pollInterval = 3000; // 3s
-            const maxPolls = 60;       // max 3 min
-            let pollCount = 0;
+        // ==================== SSE Stream Helper ====================
+        async function streamDesignRequest(body, onProgress, onResult, onError) {
+            try {
+                const response = await fetch('/api/design-generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
 
-            function poll() {
-                pollCount++;
-                if (pollCount > maxPolls) {
-                    onError(currentLang === 'zh' ? '生成超时，请重试' : 'Generation timed out, please retry');
+                // 非 SSE 响应（参数验证错误等）
+                if (!response.ok) {
+                    let errorMsg = 'Request failed';
+                    try {
+                        const errorData = await response.json();
+                        errorMsg = errorData.error || errorMsg;
+                    } catch (_) {}
+                    onError(errorMsg);
                     return;
                 }
 
-                // Update loading text with progress
-                const loadingText = document.querySelector('#generatingIndicator .lang-text');
-                if (loadingText) {
-                    const dots = '.'.repeat((pollCount % 3) + 1);
-                    loadingText.textContent = currentLang === 'zh' 
-                        ? `AI 正在生成设计效果图${dots} (${pollCount * 3}s)` 
-                        : `AI is generating design${dots} (${pollCount * 3}s)`;
+                // 读取 SSE 流
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = '';
+                let completed = false;
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    buffer += decoder.decode(value, { stream: true });
+                    const events = buffer.split('\n\n');
+                    buffer = events.pop(); // 保留不完整的事件
+
+                    for (const event of events) {
+                        const line = event.trim();
+                        if (!line.startsWith('data: ')) continue;
+
+                        try {
+                            const data = JSON.parse(line.substring(6));
+                            console.log('SSE event:', data.type, data.elapsed ? `${data.elapsed}s` : '');
+
+                            switch (data.type) {
+                                case 'processing':
+                                case 'heartbeat':
+                                    onProgress(data.elapsed || 0);
+                                    break;
+                                case 'fallback':
+                                    console.log('Fallback:', data.message);
+                                    break;
+                                case 'result':
+                                    completed = true;
+                                    onResult(data);
+                                    return;
+                                case 'error':
+                                    completed = true;
+                                    onError(data.message || 'Generation failed');
+                                    return;
+                            }
+                        } catch (e) {
+                            console.warn('Failed to parse SSE event:', line, e);
+                        }
+                    }
                 }
 
-                fetch(`/api/design-status?task_id=${encodeURIComponent(taskId)}`)
-                    .then(r => r.json())
-                    .then(statusData => {
-                        console.log(`Poll #${pollCount}: status=${statusData.task_status}`);
-
-                        if (statusData.task_status === 'SUCCEEDED' && statusData.result_image) {
-                            onSuccess(statusData.result_image, modelUsed, fallbackUsed);
-                        } else if (statusData.task_status === 'FAILED') {
-                            onError(statusData.error || 'Generation failed');
-                        } else {
-                            // PENDING or RUNNING, continue polling
-                            setTimeout(poll, pollInterval);
-                        }
-                    })
-                    .catch(err => {
-                        console.error('Poll error:', err);
-                        // Retry on network error
-                        if (pollCount < maxPolls) {
-                            setTimeout(poll, pollInterval);
-                        } else {
-                            onError('Network error during polling');
-                        }
-                    });
+                // 流结束但未收到结果
+                if (!completed) {
+                    onError(currentLang === 'zh' ? '连接中断，请重试' : 'Connection interrupted, please retry');
+                }
+            } catch (error) {
+                onError(currentLang === 'zh' ? '网络错误：' + error.message : 'Network error: ' + error.message);
             }
-
-            poll();
         }
 
         function generateDesign() {
@@ -1786,61 +1810,50 @@
             const customPrompt = document.getElementById('customPromptInput').value.trim();
             const editPrompt = customPrompt ? `${basePrompt} 额外要求：${customPrompt}` : basePrompt;
 
-            // Step 1: 提交异步任务
-            fetch('/api/design-generate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
+            // SSE 流式请求
+            streamDesignRequest(
+                {
                     background_image: bgImageData,
                     foreground_image: fgImageData,
                     reference_image: refImageData,
                     prompt: editPrompt
-                })
-            })
-            .then(r => r.json())
-            .then(data => {
-                console.log('Task submitted:', data);
-
-                if (data.success && data.task_id) {
-                    // Step 2: 轮询任务状态
-                    pollTaskStatus(data.task_id, data.model_used, data.fallback_used,
-                        // onSuccess
-                        (resultImage, modelUsed, fallbackUsed) => {
-                            document.getElementById('generatingIndicator').classList.add('hidden');
-                            document.getElementById('generateBtn').disabled = false;
-
-                            lastResultImageData = resultImage;
-                            currentIteration = 1;
-                            updateIterationUI();
-
-                            document.getElementById('resultImg').src = resultImage;
-                            document.getElementById('resultArea').classList.remove('hidden');
-                            document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-                            if (fallbackUsed) {
-                                showNotification(currentLang === 'zh' ? '设计效果图生成成功！（使用标准服务）' : 'Design generated successfully! (Standard service)', 'warning');
-                            } else {
-                                showNotification(currentLang === 'zh' ? '设计效果图生成成功！' : 'Design generated successfully!', 'success');
-                            }
-                        },
-                        // onError
-                        (errorMsg) => {
-                            document.getElementById('generatingIndicator').classList.add('hidden');
-                            document.getElementById('generateBtn').disabled = false;
-                            showNotification(errorMsg, 'error');
-                        }
-                    );
-                } else {
+                },
+                // onProgress - 更新进度
+                (elapsed) => {
+                    const loadingText = document.querySelector('#generatingIndicator .lang-text');
+                    if (loadingText) {
+                        const dots = '.'.repeat((Math.floor(elapsed / 5) % 3) + 1);
+                        loadingText.textContent = currentLang === 'zh' 
+                            ? `AI 正在生成设计效果图${dots} (${elapsed}s)` 
+                            : `AI is generating design${dots} (${elapsed}s)`;
+                    }
+                },
+                // onResult - 生成成功
+                (data) => {
                     document.getElementById('generatingIndicator').classList.add('hidden');
                     document.getElementById('generateBtn').disabled = false;
-                    showNotification(data.error || 'Failed to submit task', 'error');
+
+                    lastResultImageData = data.result_image;
+                    currentIteration = 1;
+                    updateIterationUI();
+
+                    document.getElementById('resultImg').src = data.result_image;
+                    document.getElementById('resultArea').classList.remove('hidden');
+                    document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                    if (data.fallback_used) {
+                        showNotification(currentLang === 'zh' ? '设计效果图生成成功！（使用标准服务）' : 'Design generated successfully! (Standard service)', 'warning');
+                    } else {
+                        showNotification(currentLang === 'zh' ? '设计效果图生成成功！' : 'Design generated successfully!', 'success');
+                    }
+                },
+                // onError - 生成失败
+                (errorMsg) => {
+                    document.getElementById('generatingIndicator').classList.add('hidden');
+                    document.getElementById('generateBtn').disabled = false;
+                    showNotification(errorMsg, 'error');
                 }
-            })
-            .catch(error => {
-                document.getElementById('generatingIndicator').classList.add('hidden');
-                document.getElementById('generateBtn').disabled = false;
-                showNotification('API error: ' + error.message, 'error');
-            });
+            );
         }
 
         function resetDesignTool() {
@@ -1896,49 +1909,42 @@
             document.getElementById('generatingIndicator').classList.remove('hidden');
             document.getElementById('continueEditBtn').disabled = true;
 
-            // Step 1: 提交异步任务
-            fetch('/api/design-generate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
+            // SSE 流式请求（迭代模式）
+            streamDesignRequest(
+                {
                     background_image: lastResultImageData,
                     prompt: editPrompt,
                     is_iteration: true
-                })
-            })
-            .then(r => r.json())
-            .then(data => {
-                if (data.success && data.task_id) {
-                    // Step 2: 轮询任务状态
-                    pollTaskStatus(data.task_id, data.model_used, data.fallback_used,
-                        (resultImage) => {
-                            document.getElementById('generatingIndicator').classList.add('hidden');
-                            document.getElementById('continueEditBtn').disabled = false;
-
-                            currentIteration++;
-                            lastResultImageData = resultImage;
-                            document.getElementById('resultImg').src = resultImage;
-                            document.getElementById('iterEditPrompt').value = '';
-                            updateIterationUI();
-                            showNotification(currentLang === 'zh' ? `第${currentIteration}轮编辑完成！` : `Round ${currentIteration} complete!`, 'success');
-                        },
-                        (errorMsg) => {
-                            document.getElementById('generatingIndicator').classList.add('hidden');
-                            document.getElementById('continueEditBtn').disabled = false;
-                            showNotification(errorMsg, 'error');
-                        }
-                    );
-                } else {
+                },
+                // onProgress
+                (elapsed) => {
+                    const loadingText = document.querySelector('#generatingIndicator .lang-text');
+                    if (loadingText) {
+                        const dots = '.'.repeat((Math.floor(elapsed / 5) % 3) + 1);
+                        loadingText.textContent = currentLang === 'zh' 
+                            ? `AI 正在编辑设计效果图${dots} (${elapsed}s)` 
+                            : `AI is editing design${dots} (${elapsed}s)`;
+                    }
+                },
+                // onResult
+                (data) => {
                     document.getElementById('generatingIndicator').classList.add('hidden');
                     document.getElementById('continueEditBtn').disabled = false;
-                    showNotification(data.error || 'Failed to submit task', 'error');
+
+                    currentIteration++;
+                    lastResultImageData = data.result_image;
+                    document.getElementById('resultImg').src = data.result_image;
+                    document.getElementById('iterEditPrompt').value = '';
+                    updateIterationUI();
+                    showNotification(currentLang === 'zh' ? `第${currentIteration}轮编辑完成！` : `Round ${currentIteration} complete!`, 'success');
+                },
+                // onError
+                (errorMsg) => {
+                    document.getElementById('generatingIndicator').classList.add('hidden');
+                    document.getElementById('continueEditBtn').disabled = false;
+                    showNotification(errorMsg, 'error');
                 }
-            })
-            .catch(error => {
-                document.getElementById('generatingIndicator').classList.add('hidden');
-                document.getElementById('continueEditBtn').disabled = false;
-                showNotification('Network error: ' + error.message, 'error');
-            });
+            );
         }
 
         function resetToInitial() {
