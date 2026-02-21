@@ -745,7 +745,7 @@
             </div>
 
             <!-- Result Display -->
-            <div id="resultArea" class="hidden max-w-3xl mx-auto bg-[--dark-bg] rounded-2xl p-8 border border-[--primary]/30">
+            <div id="resultArea" class="hidden max-w-xl mx-auto bg-[--dark-bg] rounded-2xl p-6 border border-[--primary]/30">
                 <div class="flex items-center justify-between mb-6">
                     <h3 class="text-2xl font-bold text-white flex items-center">
                         <i class="fas fa-check-circle text-green-400 mr-2"></i>
@@ -773,10 +773,20 @@
                             <span class="text-[--light-accent]/50 text-xs">
                                 <span class="lang-text" data-zh="剩余" data-en="Remaining: ">剩余</span><span id="remainingIterations">8</span><span class="lang-text" data-zh="次编辑机会" data-en=" edits"> 次编辑机会</span>
                             </span>
-                            <button onclick="continueEdit()" id="continueEditBtn" class="px-5 py-2 bg-[--secondary] text-white rounded-full font-semibold hover:bg-[--secondary]/80 transition-colors flex items-center text-sm">
-                                <i class="fas fa-magic mr-2"></i>
-                                <span class="lang-text" data-zh="重新生成" data-en="Regenerate">重新生成</span>
-                            </button>
+                            <div class="flex items-center gap-3">
+                                <!-- Inline regeneration loading indicator -->
+                                <div id="regenLoadingIndicator" class="hidden flex items-center text-[--primary] text-sm">
+                                    <svg class="animate-spin h-4 w-4 mr-2" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    <span id="regenLoadingText" class="lang-text" data-zh="生成中..." data-en="Generating...">生成中...</span>
+                                </div>
+                                <button onclick="continueEdit()" id="continueEditBtn" class="px-5 py-2 bg-[--secondary] text-white rounded-full font-semibold hover:bg-[--secondary]/80 transition-colors flex items-center text-sm">
+                                    <i class="fas fa-magic mr-2"></i>
+                                    <span class="lang-text" data-zh="重新生成" data-en="Regenerate">重新生成</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                     
@@ -1837,7 +1847,9 @@
                     currentIteration = 1;
                     updateIterationUI();
 
-                    document.getElementById('resultImg').src = data.result_image;
+                    // 加时间戳防止浏览器缓存
+                    const cacheBust = data.result_image + (data.result_image.includes('?') ? '&' : '?') + '_t=' + Date.now();
+                    document.getElementById('resultImg').src = cacheBust;
                     document.getElementById('resultArea').classList.remove('hidden');
                     document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth', block: 'center' });
 
@@ -1905,8 +1917,8 @@
                 return;
             }
 
-            // Show loading
-            document.getElementById('generatingIndicator').classList.remove('hidden');
+            // Show inline loading indicator (near the button)
+            document.getElementById('regenLoadingIndicator').classList.remove('hidden');
             document.getElementById('continueEditBtn').disabled = true;
 
             // SSE 流式请求（迭代模式）
@@ -1918,17 +1930,17 @@
                 },
                 // onProgress
                 (elapsed) => {
-                    const loadingText = document.querySelector('#generatingIndicator .lang-text');
+                    const loadingText = document.getElementById('regenLoadingText');
                     if (loadingText) {
                         const dots = '.'.repeat((Math.floor(elapsed / 5) % 3) + 1);
                         loadingText.textContent = currentLang === 'zh' 
-                            ? `AI 正在编辑设计效果图${dots} (${elapsed}s)` 
-                            : `AI is editing design${dots} (${elapsed}s)`;
+                            ? `生成中${dots} (${elapsed}s)` 
+                            : `Generating${dots} (${elapsed}s)`;
                     }
                 },
                 // onResult
                 (data) => {
-                    document.getElementById('generatingIndicator').classList.add('hidden');
+                    document.getElementById('regenLoadingIndicator').classList.add('hidden');
                     document.getElementById('continueEditBtn').disabled = false;
 
                     // Debug: 对比新旧图片 URL
@@ -1943,16 +1955,18 @@
 
                     currentIteration++;
                     lastResultImageData = data.result_image;
-                    // 添加时间戳防止浏览器缓存旧图片
+                    // 强制刷新图片：先清空再设置，加时间戳防缓存
+                    const resultImg = document.getElementById('resultImg');
+                    resultImg.src = '';  // 清空触发重新加载
                     const cacheBust = data.result_image + (data.result_image.includes('?') ? '&' : '?') + '_t=' + Date.now();
-                    document.getElementById('resultImg').src = cacheBust;
+                    resultImg.src = cacheBust;
                     document.getElementById('iterEditPrompt').value = '';
                     updateIterationUI();
                     showNotification(currentLang === 'zh' ? `第${currentIteration}轮编辑完成！` : `Round ${currentIteration} complete!`, 'success');
                 },
                 // onError
                 (errorMsg) => {
-                    document.getElementById('generatingIndicator').classList.add('hidden');
+                    document.getElementById('regenLoadingIndicator').classList.add('hidden');
                     document.getElementById('continueEditBtn').disabled = false;
                     showNotification(errorMsg, 'error');
                 }
