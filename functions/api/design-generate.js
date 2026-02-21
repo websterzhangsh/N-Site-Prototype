@@ -80,18 +80,24 @@ export async function onRequestOptions() {
 }
 
 // 调用图像编辑 API
-async function callImageEditAPI(apiKey, model, bgImage, fgImage, refImage, prompt) {
-  console.log(`Calling DashScope API with model: ${model}, images: ${refImage ? 3 : 2}`);
-  
+async function callImageEditAPI(apiKey, model, bgImage, fgImage, refImage, prompt, isIteration = false) {
   // 构建图片内容数组
-  const imageContent = [
-    { image: bgImage },
-    { image: fgImage }
-  ];
+  const imageContent = [];
   
-  // 如果有参考图，添加到内容中
-  if (refImage) {
-    imageContent.push({ image: refImage });
+  if (isIteration) {
+    // 迭代模式：只传入上一次的结果图
+    console.log(`Calling DashScope API with model: ${model}, iteration mode (1 image)`);
+    imageContent.push({ image: bgImage });
+  } else {
+    // 初始模式：传入背景图和产品图
+    console.log(`Calling DashScope API with model: ${model}, images: ${refImage ? 3 : 2}`);
+    imageContent.push({ image: bgImage });
+    imageContent.push({ image: fgImage });
+    
+    // 如果有参考图，添加到内容中
+    if (refImage) {
+      imageContent.push({ image: refImage });
+    }
   }
   
   // 添加文本提示
@@ -157,14 +163,25 @@ function extractImage(data) {
 export async function onRequestPost(context) {
   try {
     const body = await context.request.json();
-    const { background_image, foreground_image, reference_image, prompt } = body;
+    const { background_image, foreground_image, reference_image, prompt, is_iteration } = body;
 
     // 验证必要参数
-    if (!background_image || !foreground_image) {
-      return new Response(
-        JSON.stringify({ success: false, error: '请提供背景图和前景图' }),
-        { status: 400, headers: corsHeaders }
-      );
+    if (is_iteration) {
+      // 迭代模式：只需要背景图（上一次的结果）
+      if (!background_image) {
+        return new Response(
+          JSON.stringify({ success: false, error: 'Please provide the image to edit' }),
+          { status: 400, headers: corsHeaders }
+        );
+      }
+    } else {
+      // 初始模式：需要背景图和产品图
+      if (!background_image || !foreground_image) {
+        return new Response(
+          JSON.stringify({ success: false, error: '请提供背景图和前景图' }),
+          { status: 400, headers: corsHeaders }
+        );
+      }
     }
 
     // 获取 API Key
@@ -182,13 +199,13 @@ export async function onRequestPost(context) {
 
     // 第一次尝试：qwen-image-edit-max
     try {
-      ({ response, data } = await callImageEditAPI(apiKey, MODELS.max, background_image, foreground_image, reference_image, editPrompt));
+      ({ response, data } = await callImageEditAPI(apiKey, MODELS.max, background_image, foreground_image, reference_image, editPrompt, is_iteration));
       
       // 检查是否服务繁忙，需要降级
       if (isServiceBusy(response, data)) {
         console.log(`${MODELS.max} is busy, falling back to ${MODELS.plus}...`);
         usedModel = MODELS.plus;
-        ({ response, data } = await callImageEditAPI(apiKey, MODELS.plus, background_image, foreground_image, reference_image, editPrompt));
+        ({ response, data } = await callImageEditAPI(apiKey, MODELS.plus, background_image, foreground_image, reference_image, editPrompt, is_iteration));
       }
     } catch (maxError) {
       // 如果 max 模型超时或网络错误，尝试 plus
@@ -196,7 +213,7 @@ export async function onRequestPost(context) {
       if (errMsg.includes('abort') || errMsg.includes('timeout') || errMsg.includes('network')) {
         console.log(`${MODELS.max} timed out, falling back to ${MODELS.plus}...`);
         usedModel = MODELS.plus;
-        ({ response, data } = await callImageEditAPI(apiKey, MODELS.plus, background_image, foreground_image, reference_image, editPrompt));
+        ({ response, data } = await callImageEditAPI(apiKey, MODELS.plus, background_image, foreground_image, reference_image, editPrompt, is_iteration));
       } else {
         throw maxError;
       }
