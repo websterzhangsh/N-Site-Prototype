@@ -1,7 +1,7 @@
 /**
- * Cloudflare Pages Function - 阿里通义图像编辑 API 代理
+ * Cloudflare Pages Function - 阿里通义图像编辑 API 代理 (异步模式)
  * 路径: /api/design-generate
- * 支持自动降级：qwen-image-edit-max -> qwen-image-edit-plus
+ * 提交异步任务，返回 task_id，前端通过 /api/design-status 轮询结果
  */
 
 // 模型配置
@@ -27,45 +27,6 @@ const DEFAULT_PROMPT = `请将第二张图片中的阳光房（sunroom/glass con
 - 不能破坏原有后院的整体布局
 - 不能简化或修改阳光房的细节`;
 
-// --- Stability utilities ---
-const REQUEST_TIMEOUT_MS = 25000; // 25s (Cloudflare limit ~30s)
-
-async function fetchWithTimeout(url, options, timeoutMs = REQUEST_TIMEOUT_MS) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    return await fetch(url, { ...options, signal: controller.signal });
-  } finally {
-    clearTimeout(timer);
-  }
-}
-
-// 检查是否为服务繁忙/限流错误
-function isServiceBusy(response, data) {
-  // HTTP 429 Too Many Requests
-  if (response.status === 429) return true;
-  // HTTP 503 Service Unavailable
-  if (response.status === 503) return true;
-  
-  // DashScope 特定错误码
-  const busyCodes = [
-    'Throttling',
-    'Throttling.RateQuota',
-    'Throttling.AllocationQuota',
-    'ServiceUnavailable',
-    'InternalError.Busy',
-    'QueueFull'
-  ];
-  if (data?.code && busyCodes.some(code => data.code.includes(code))) return true;
-  
-  // 检查错误消息
-  const busyMessages = ['busy', 'throttl', 'rate limit', 'quota', 'overload', 'too many'];
-  const msg = (data?.message || '').toLowerCase();
-  if (busyMessages.some(keyword => msg.includes(keyword))) return true;
-  
-  return false;
-}
-
 // CORS 头
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -74,42 +35,36 @@ const corsHeaders = {
   'Content-Type': 'application/json',
 };
 
-// 处理 OPTIONS 请求 (CORS 预检)
 export async function onRequestOptions() {
   return new Response(null, { headers: corsHeaders });
 }
 
-// 调用图像编辑 API
-async function callImageEditAPI(apiKey, model, bgImage, fgImage, refImage, prompt, isIteration = false) {
-  // 构建图片内容数组
+// 提交异步任务
+async function submitAsyncTask(apiKey, model, bgImage, fgImage, refImage, prompt, isIteration = false) {
   const imageContent = [];
-  
+
   if (isIteration) {
-    // 迭代模式：只传入上一次的结果图
-    console.log(`Calling DashScope API with model: ${model}, iteration mode (1 image)`);
+    console.log(`Submitting async task: model=${model}, iteration mode (1 image)`);
     imageContent.push({ image: bgImage });
   } else {
-    // 初始模式：传入背景图和产品图
-    console.log(`Calling DashScope API with model: ${model}, images: ${refImage ? 3 : 2}`);
+    console.log(`Submitting async task: model=${model}, images=${refImage ? 3 : 2}`);
     imageContent.push({ image: bgImage });
     imageContent.push({ image: fgImage });
-    
-    // 如果有参考图，添加到内容中
     if (refImage) {
       imageContent.push({ image: refImage });
     }
   }
-  
-  // 添加文本提示
+
   imageContent.push({ text: prompt });
-  
-  const response = await fetchWithTimeout(
+
+  const response = await fetch(
     'https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation',
     {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${apiKey}`,
+        'X-DashScope-Async': 'enable',  // 启用异步模式
       },
       body: JSON.stringify({
         model: model,
@@ -133,33 +88,24 @@ async function callImageEditAPI(apiKey, model, bgImage, fgImage, refImage, promp
   return { response, data };
 }
 
-// 从响应中提取图像
-function extractImage(data) {
-  let resultImage = null;
-  
-  // 路径1: output.choices[0].message.content[].image
-  if (data.output?.choices?.[0]?.message?.content) {
-    const content = data.output.choices[0].message.content;
-    if (Array.isArray(content)) {
-      for (const item of content) {
-        if (item.image) {
-          resultImage = item.image;
-          break;
-        }
-      }
-    }
-  }
-  
-  // 路径2: output.results
-  if (!resultImage && data.output?.results?.[0]) {
-    const firstResult = data.output.results[0];
-    resultImage = typeof firstResult === 'string' ? firstResult : firstResult.url || null;
-  }
-  
-  return resultImage;
+// 检查是否为服务繁忙/限流错误
+function isServiceBusy(response, data) {
+  if (response.status === 429 || response.status === 503) return true;
+
+  const busyCodes = [
+    'Throttling', 'Throttling.RateQuota', 'Throttling.AllocationQuota',
+    'ServiceUnavailable', 'InternalError.Busy', 'QueueFull'
+  ];
+  if (data?.code && busyCodes.some(code => data.code.includes(code))) return true;
+
+  const busyMessages = ['busy', 'throttl', 'rate limit', 'quota', 'overload', 'too many'];
+  const msg = (data?.message || '').toLowerCase();
+  if (busyMessages.some(keyword => msg.includes(keyword))) return true;
+
+  return false;
 }
 
-// 处理 POST 请求
+// 处理 POST 请求 - 提交异步任务
 export async function onRequestPost(context) {
   try {
     const body = await context.request.json();
@@ -167,7 +113,6 @@ export async function onRequestPost(context) {
 
     // 验证必要参数
     if (is_iteration) {
-      // 迭代模式：只需要背景图（上一次的结果）
       if (!background_image) {
         return new Response(
           JSON.stringify({ success: false, error: 'Please provide the image to edit' }),
@@ -175,10 +120,9 @@ export async function onRequestPost(context) {
         );
       }
     } else {
-      // 初始模式：需要背景图和产品图
       if (!background_image || !foreground_image) {
         return new Response(
-          JSON.stringify({ success: false, error: '请提供背景图和前景图' }),
+          JSON.stringify({ success: false, error: 'Please provide both backyard photo and product image' }),
           { status: 400, headers: corsHeaders }
         );
       }
@@ -188,72 +132,58 @@ export async function onRequestPost(context) {
     const apiKey = context.env.DASHSCOPE_API_KEY;
     if (!apiKey) {
       return new Response(
-        JSON.stringify({ success: false, error: 'API Key 未配置' }),
+        JSON.stringify({ success: false, error: 'API Key not configured' }),
         { status: 500, headers: corsHeaders }
       );
     }
 
     const editPrompt = prompt || DEFAULT_PROMPT;
     let usedModel = MODELS.max;
-    let response, data;
 
-    // 第一次尝试：qwen-image-edit-max
-    try {
-      ({ response, data } = await callImageEditAPI(apiKey, MODELS.max, background_image, foreground_image, reference_image, editPrompt, is_iteration));
-      
-      // 检查是否服务繁忙，需要降级
-      if (isServiceBusy(response, data)) {
-        console.log(`${MODELS.max} is busy, falling back to ${MODELS.plus}...`);
-        usedModel = MODELS.plus;
-        ({ response, data } = await callImageEditAPI(apiKey, MODELS.plus, background_image, foreground_image, reference_image, editPrompt, is_iteration));
-      }
-    } catch (maxError) {
-      // 如果 max 模型超时或网络错误，尝试 plus
-      const errMsg = String(maxError?.message || maxError).toLowerCase();
-      if (errMsg.includes('abort') || errMsg.includes('timeout') || errMsg.includes('network')) {
-        console.log(`${MODELS.max} timed out, falling back to ${MODELS.plus}...`);
-        usedModel = MODELS.plus;
-        ({ response, data } = await callImageEditAPI(apiKey, MODELS.plus, background_image, foreground_image, reference_image, editPrompt, is_iteration));
-      } else {
-        throw maxError;
-      }
+    // 尝试 max 模型
+    let { response, data } = await submitAsyncTask(apiKey, MODELS.max, background_image, foreground_image, reference_image, editPrompt, is_iteration);
+
+    // 如果 max 繁忙，降级到 plus
+    if (isServiceBusy(response, data)) {
+      console.log(`${MODELS.max} is busy, falling back to ${MODELS.plus}...`);
+      usedModel = MODELS.plus;
+      ({ response, data } = await submitAsyncTask(apiKey, MODELS.plus, background_image, foreground_image, reference_image, editPrompt, is_iteration));
     }
 
-    console.log(`API Response received from ${usedModel}`);
-
-    // 检查最终错误
+    // 检查提交是否成功
     if (!response.ok || data.code) {
       return new Response(
         JSON.stringify({
           success: false,
-          error: data.message || data.code || 'API 调用失败',
-          details: data,
+          error: data.message || data.code || 'Failed to submit task',
           model_used: usedModel
         }),
         { status: response.status || 500, headers: corsHeaders }
       );
     }
 
-    // 提取图像
-    const resultImage = extractImage(data);
+    // 提取 task_id
+    const taskId = data.output?.task_id;
+    const taskStatus = data.output?.task_status;
 
-    if (!resultImage) {
+    if (!taskId) {
       return new Response(
         JSON.stringify({
           success: false,
-          error: '未能从API响应中提取生成的图像',
-          raw_response: data,
-          model_used: usedModel
+          error: 'No task_id returned from API',
+          raw_response: data
         }),
         { status: 500, headers: corsHeaders }
       );
     }
 
+    console.log(`Task submitted: ${taskId}, status: ${taskStatus}, model: ${usedModel}`);
+
     return new Response(
       JSON.stringify({
         success: true,
-        result_image: resultImage,
-        request_id: data.request_id,
+        task_id: taskId,
+        task_status: taskStatus || 'PENDING',
         model_used: usedModel,
         fallback_used: usedModel === MODELS.plus
       }),
@@ -263,14 +193,8 @@ export async function onRequestPost(context) {
   } catch (error) {
     console.error('Error:', error);
     const msg = error instanceof Error ? error.message : String(error);
-    let userMsg = 'Server error: ' + msg;
-    if (msg.includes('abort') || msg.includes('timeout')) {
-      userMsg = 'Request timed out. The image generation service is busy, please try again.';
-    } else if (msg.includes('network') || msg.includes('connection') || msg.includes('socket')) {
-      userMsg = 'Network connection lost. Please check your connection and try again.';
-    }
     return new Response(
-      JSON.stringify({ success: false, error: userMsg }),
+      JSON.stringify({ success: false, error: 'Server error: ' + msg }),
       { status: 500, headers: corsHeaders }
     );
   }
