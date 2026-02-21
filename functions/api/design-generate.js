@@ -80,8 +80,22 @@ export async function onRequestOptions() {
 }
 
 // 调用图像编辑 API
-async function callImageEditAPI(apiKey, model, bgImage, fgImage, prompt) {
-  console.log(`Calling DashScope API with model: ${model}`);
+async function callImageEditAPI(apiKey, model, bgImage, fgImage, refImage, prompt) {
+  console.log(`Calling DashScope API with model: ${model}, images: ${refImage ? 3 : 2}`);
+  
+  // 构建图片内容数组
+  const imageContent = [
+    { image: bgImage },
+    { image: fgImage }
+  ];
+  
+  // 如果有参考图，添加到内容中
+  if (refImage) {
+    imageContent.push({ image: refImage });
+  }
+  
+  // 添加文本提示
+  imageContent.push({ text: prompt });
   
   const response = await fetchWithTimeout(
     'https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation',
@@ -97,11 +111,7 @@ async function callImageEditAPI(apiKey, model, bgImage, fgImage, prompt) {
           messages: [
             {
               role: 'user',
-              content: [
-                { image: bgImage },
-                { image: fgImage },
-                { text: prompt }
-              ]
+              content: imageContent
             }
           ]
         },
@@ -147,7 +157,7 @@ function extractImage(data) {
 export async function onRequestPost(context) {
   try {
     const body = await context.request.json();
-    const { background_image, foreground_image, prompt } = body;
+    const { background_image, foreground_image, reference_image, prompt } = body;
 
     // 验证必要参数
     if (!background_image || !foreground_image) {
@@ -172,13 +182,13 @@ export async function onRequestPost(context) {
 
     // 第一次尝试：qwen-image-edit-max
     try {
-      ({ response, data } = await callImageEditAPI(apiKey, MODELS.max, background_image, foreground_image, editPrompt));
+      ({ response, data } = await callImageEditAPI(apiKey, MODELS.max, background_image, foreground_image, reference_image, editPrompt));
       
       // 检查是否服务繁忙，需要降级
       if (isServiceBusy(response, data)) {
         console.log(`${MODELS.max} is busy, falling back to ${MODELS.plus}...`);
         usedModel = MODELS.plus;
-        ({ response, data } = await callImageEditAPI(apiKey, MODELS.plus, background_image, foreground_image, editPrompt));
+        ({ response, data } = await callImageEditAPI(apiKey, MODELS.plus, background_image, foreground_image, reference_image, editPrompt));
       }
     } catch (maxError) {
       // 如果 max 模型超时或网络错误，尝试 plus
@@ -186,7 +196,7 @@ export async function onRequestPost(context) {
       if (errMsg.includes('abort') || errMsg.includes('timeout') || errMsg.includes('network')) {
         console.log(`${MODELS.max} timed out, falling back to ${MODELS.plus}...`);
         usedModel = MODELS.plus;
-        ({ response, data } = await callImageEditAPI(apiKey, MODELS.plus, background_image, foreground_image, editPrompt));
+        ({ response, data } = await callImageEditAPI(apiKey, MODELS.plus, background_image, foreground_image, reference_image, editPrompt));
       } else {
         throw maxError;
       }

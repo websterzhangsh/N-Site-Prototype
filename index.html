@@ -637,47 +637,71 @@
             </div>
 
             <!-- Upload Areas -->
-            <div class="grid md:grid-cols-2 gap-8 mb-8 max-w-4xl mx-auto">
+            <div class="grid md:grid-cols-3 gap-6 mb-8 max-w-5xl mx-auto">
                 <!-- Background Image Upload -->
-                <div class="bg-[--dark-bg] rounded-2xl p-6 border border-[--primary]/30">
-                    <h3 class="text-xl font-semibold text-white mb-4 flex items-center">
+                <div class="bg-[--dark-bg] rounded-2xl p-5 border border-[--primary]/30">
+                    <h3 class="text-lg font-semibold text-white mb-3 flex items-center">
                         <i class="fas fa-home mr-2 text-[--primary]"></i>
                         <span class="lang-text" data-zh="后院实景照片" data-en="Backyard Photo">后院实景照片</span>
+                        <span class="ml-1 text-red-400 text-sm">*</span>
                     </h3>
-                    <div id="bgUploadArea" class="upload-area border-2 border-dashed border-[--primary]/50 rounded-xl p-8 text-center cursor-pointer transition-all duration-300 hover:border-[--primary] hover:bg-[--primary]/5" onclick="document.getElementById('bgInput').click()">
+                    <div id="bgUploadArea" class="upload-area border-2 border-dashed border-[--primary]/50 rounded-xl p-6 text-center cursor-pointer transition-all duration-300 hover:border-[--primary] hover:bg-[--primary]/5" onclick="document.getElementById('bgInput').click()">
                         <input type="file" id="bgInput" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'bg')">
                         <div id="bgPreview" class="hidden" style="display: none;">
-                            <img id="bgPreviewImg" src="" alt="后院实景" class="max-h-48 mx-auto rounded-lg shadow-lg" style="max-height: 200px;">
-                            <button onclick="event.stopPropagation(); clearImage('bg')" class="mt-3 px-4 py-1 bg-red-500 text-white rounded-full text-sm hover:bg-red-600">
+                            <img id="bgPreviewImg" src="" alt="后院实景" class="max-h-36 mx-auto rounded-lg shadow-lg" style="max-height: 144px;">
+                            <button onclick="event.stopPropagation(); clearImage('bg')" class="mt-2 px-3 py-1 bg-red-500 text-white rounded-full text-xs hover:bg-red-600">
                                 <i class="fas fa-times mr-1"></i><span class="lang-text" data-zh="移除" data-en="Remove">移除</span>
                             </button>
                         </div>
                         <div id="bgPlaceholder">
-                            <i class="fas fa-cloud-upload-alt text-4xl text-[--primary]/50 mb-4"></i>
-                            <p class="text-[--light-accent] lang-text" data-zh="点击或拖拽上传图片" data-en="Click or drag to upload">点击或拖拽上传图片</p>
-                            <p class="text-[--light-accent]/60 text-sm mt-2 lang-text" data-zh="支持 JPG, PNG, WEBP" data-en="Supports JPG, PNG, WEBP">支持 JPG, PNG, WEBP</p>
+                            <i class="fas fa-cloud-upload-alt text-3xl text-[--primary]/50 mb-3"></i>
+                            <p class="text-[--light-accent] text-sm lang-text" data-zh="点击或拖拽上传" data-en="Click or drag to upload">点击或拖拽上传</p>
+                            <p class="text-[--light-accent]/60 text-xs mt-1 lang-text" data-zh="JPG, PNG, WEBP" data-en="JPG, PNG, WEBP">JPG, PNG, WEBP</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Foreground Image Upload -->
-                <div class="bg-[--dark-bg] rounded-2xl p-6 border border-[--primary]/30">
-                    <h3 class="text-xl font-semibold text-white mb-4 flex items-center">
+                <!-- Product Image Upload -->
+                <div class="bg-[--dark-bg] rounded-2xl p-5 border border-[--primary]/30">
+                    <h3 class="text-lg font-semibold text-white mb-3 flex items-center">
                         <i class="fas fa-building mr-2 text-[--primary]"></i>
                         <span class="lang-text" data-zh="产品效果图" data-en="Product Image">产品效果图</span>
+                        <span class="ml-1 text-red-400 text-sm">*</span>
                     </h3>
-                    <div id="fgUploadArea" class="upload-area border-2 border-dashed border-[--primary]/50 rounded-xl p-8 text-center cursor-pointer transition-all duration-300 hover:border-[--primary] hover:bg-[--primary]/5" onclick="document.getElementById('fgInput').click()">
+                    <div id="fgUploadArea" class="upload-area border-2 border-dashed border-[--primary]/50 rounded-xl p-6 text-center cursor-pointer transition-all duration-300 hover:border-[--primary] hover:bg-[--primary]/5" onclick="document.getElementById('fgInput').click()">
                         <input type="file" id="fgInput" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'fg')">
                         <div id="fgPreview" class="hidden" style="display: none;">
-                            <img id="fgPreviewImg" src="" alt="产品效果图" class="max-h-48 mx-auto rounded-lg shadow-lg" style="max-height: 200px;">
-                            <button onclick="event.stopPropagation(); clearImage('fg')" class="mt-3 px-4 py-1 bg-red-500 text-white rounded-full text-sm hover:bg-red-600">
+                            <img id="fgPreviewImg" src="" alt="产品效果图" class="max-h-36 mx-auto rounded-lg shadow-lg" style="max-height: 144px;">
+                            <button onclick="event.stopPropagation(); clearImage('fg')" class="mt-2 px-3 py-1 bg-red-500 text-white rounded-full text-xs hover:bg-red-600">
                                 <i class="fas fa-times mr-1"></i><span class="lang-text" data-zh="移除" data-en="Remove">移除</span>
                             </button>
                         </div>
                         <div id="fgPlaceholder">
-                            <i class="fas fa-cloud-upload-alt text-4xl text-[--primary]/50 mb-4"></i>
-                            <p class="text-[--light-accent] lang-text" data-zh="点击或拖拽上传图片" data-en="Click or drag to upload">点击或拖拽上传图片</p>
-                            <p class="text-[--light-accent]/60 text-sm mt-2 lang-text" data-zh="阳光房、凉亭、卷帘等" data-en="Sunroom, pavilion, windproof roller shutter, etc.">阳光房、凉亭、卷帘等</p>
+                            <i class="fas fa-cloud-upload-alt text-3xl text-[--primary]/50 mb-3"></i>
+                            <p class="text-[--light-accent] text-sm lang-text" data-zh="点击或拖拽上传" data-en="Click or drag to upload">点击或拖拽上传</p>
+                            <p class="text-[--light-accent]/60 text-xs mt-1 lang-text" data-zh="阳光房、凉亭等" data-en="Sunroom, pavilion, etc.">阳光房、凉亭等</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reference Image Upload (Optional) -->
+                <div class="bg-[--dark-bg] rounded-2xl p-5 border border-[--primary]/30">
+                    <h3 class="text-lg font-semibold text-white mb-3 flex items-center">
+                        <i class="fas fa-image mr-2 text-[--primary]"></i>
+                        <span class="lang-text" data-zh="参考图（可选）" data-en="Reference (Optional)">参考图（可选）</span>
+                    </h3>
+                    <div id="refUploadArea" class="upload-area border-2 border-dashed border-[--primary]/50 rounded-xl p-6 text-center cursor-pointer transition-all duration-300 hover:border-[--primary] hover:bg-[--primary]/5" onclick="document.getElementById('refInput').click()">
+                        <input type="file" id="refInput" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'ref')">
+                        <div id="refPreview" class="hidden" style="display: none;">
+                            <img id="refPreviewImg" src="" alt="参考图" class="max-h-36 mx-auto rounded-lg shadow-lg" style="max-height: 144px;">
+                            <button onclick="event.stopPropagation(); clearImage('ref')" class="mt-2 px-3 py-1 bg-red-500 text-white rounded-full text-xs hover:bg-red-600">
+                                <i class="fas fa-times mr-1"></i><span class="lang-text" data-zh="移除" data-en="Remove">移除</span>
+                            </button>
+                        </div>
+                        <div id="refPlaceholder">
+                            <i class="fas fa-cloud-upload-alt text-3xl text-[--primary]/50 mb-3"></i>
+                            <p class="text-[--light-accent] text-sm lang-text" data-zh="点击或拖拽上传" data-en="Click or drag to upload">点击或拖拽上传</p>
+                            <p class="text-[--light-accent]/60 text-xs mt-1 lang-text" data-zh="风格/细节参考" data-en="Style/detail reference">风格/细节参考</p>
                         </div>
                     </div>
                 </div>
@@ -1531,6 +1555,7 @@
         // ==================== Design Tool Functionality ====================
         let bgImageData = null;
         let fgImageData = null;
+        let refImageData = null;
 
         function handleImageUpload(input, type) {
             const file = input.files[0];
@@ -1544,13 +1569,20 @@
                         document.getElementById('bgPlaceholder').style.display = 'none';
                         document.getElementById('bgUploadArea').style.borderColor = 'var(--primary)';
                         document.getElementById('bgUploadArea').style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
-                    } else {
+                    } else if (type === 'fg') {
                         fgImageData = reader.result;
                         document.getElementById('fgPreviewImg').src = reader.result;
                         document.getElementById('fgPreview').style.display = 'block';
                         document.getElementById('fgPlaceholder').style.display = 'none';
                         document.getElementById('fgUploadArea').style.borderColor = 'var(--primary)';
                         document.getElementById('fgUploadArea').style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+                    } else if (type === 'ref') {
+                        refImageData = reader.result;
+                        document.getElementById('refPreviewImg').src = reader.result;
+                        document.getElementById('refPreview').style.display = 'block';
+                        document.getElementById('refPlaceholder').style.display = 'none';
+                        document.getElementById('refUploadArea').style.borderColor = 'var(--primary)';
+                        document.getElementById('refUploadArea').style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
                     }
                     updateGenerateButton();
                 };
@@ -1566,13 +1598,20 @@
                 document.getElementById('bgPlaceholder').style.display = 'block';
                 document.getElementById('bgUploadArea').style.borderColor = '';
                 document.getElementById('bgUploadArea').style.backgroundColor = '';
-            } else {
+            } else if (type === 'fg') {
                 fgImageData = null;
                 document.getElementById('fgInput').value = '';
                 document.getElementById('fgPreview').style.display = 'none';
                 document.getElementById('fgPlaceholder').style.display = 'block';
                 document.getElementById('fgUploadArea').style.borderColor = '';
                 document.getElementById('fgUploadArea').style.backgroundColor = '';
+            } else if (type === 'ref') {
+                refImageData = null;
+                document.getElementById('refInput').value = '';
+                document.getElementById('refPreview').style.display = 'none';
+                document.getElementById('refPlaceholder').style.display = 'block';
+                document.getElementById('refUploadArea').style.borderColor = '';
+                document.getElementById('refUploadArea').style.backgroundColor = '';
             }
             updateGenerateButton();
         }
@@ -1624,6 +1663,7 @@
                 body: JSON.stringify({
                     background_image: bgImageData,
                     foreground_image: fgImageData,
+                    reference_image: refImageData,
                     prompt: editPrompt
                 })
             })
@@ -1680,6 +1720,7 @@
         function resetDesignTool() {
             clearImage('bg');
             clearImage('fg');
+            clearImage('ref');
             document.getElementById('customPromptInput').value = '';
             document.getElementById('charCount').textContent = '0/800';
             hideResult();
@@ -1714,9 +1755,9 @@
         }
 
         // Drag and drop support
-        ['bgUploadArea', 'fgUploadArea'].forEach(areaId => {
+        ['bgUploadArea', 'fgUploadArea', 'refUploadArea'].forEach(areaId => {
             const area = document.getElementById(areaId);
-            const type = areaId === 'bgUploadArea' ? 'bg' : 'fg';
+            const type = areaId === 'bgUploadArea' ? 'bg' : (areaId === 'fgUploadArea' ? 'fg' : 'ref');
             const input = document.getElementById(type + 'Input');
 
             area.addEventListener('dragover', (e) => {
@@ -1726,7 +1767,8 @@
 
             area.addEventListener('dragleave', (e) => {
                 e.preventDefault();
-                if (!eval(type + 'ImageData')) {
+                const imgData = type === 'bg' ? bgImageData : (type === 'fg' ? fgImageData : refImageData);
+                if (!imgData) {
                     area.classList.remove('border-[--primary]', 'bg-[--primary]/10');
                 }
             });
