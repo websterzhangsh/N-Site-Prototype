@@ -667,27 +667,17 @@
                     </div>
                 </div>
 
-                <!-- Product Image Upload -->
+                <!-- Product Image Selector -->
                 <div class="bg-[--dark-bg] rounded-2xl p-5 border border-[--primary]/30">
                     <h3 class="text-lg font-semibold text-white mb-3 flex items-center">
                         <i class="fas fa-building mr-2 text-[--primary]"></i>
-                        <span class="lang-text" data-zh="产品效果图" data-en="Product Image">产品效果图</span>
+                        <span class="lang-text" data-zh="选择产品效果图" data-en="Select Product Image">选择产品效果图</span>
                         <span class="ml-1 text-red-400 text-sm">*</span>
                     </h3>
-                    <div id="fgUploadArea" class="upload-area border-2 border-dashed border-[--primary]/50 rounded-xl p-6 text-center cursor-pointer transition-all duration-300 hover:border-[--primary] hover:bg-[--primary]/5" onclick="document.getElementById('fgInput').click()">
-                        <input type="file" id="fgInput" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'fg')">
-                        <div id="fgPreview" class="hidden" style="display: none;">
-                            <img id="fgPreviewImg" src="" alt="产品效果图" class="max-h-36 mx-auto rounded-lg shadow-lg" style="max-height: 144px;">
-                            <button onclick="event.stopPropagation(); clearImage('fg')" class="mt-2 px-3 py-1 bg-red-500 text-white rounded-full text-xs hover:bg-red-600">
-                                <i class="fas fa-times mr-1"></i><span class="lang-text" data-zh="移除" data-en="Remove">移除</span>
-                            </button>
-                        </div>
-                        <div id="fgPlaceholder">
-                            <i class="fas fa-cloud-upload-alt text-3xl text-[--primary]/50 mb-3"></i>
-                            <p class="text-[--light-accent] text-sm lang-text" data-zh="点击或拖拽上传" data-en="Click or drag to upload">点击或拖拽上传</p>
-                            <p class="text-[--light-accent]/60 text-xs mt-1 lang-text" data-zh="阳光房、凉亭等" data-en="Sunroom, pavilion, etc.">阳光房、凉亭等</p>
-                        </div>
+                    <div id="productImageGrid" class="grid grid-cols-3 gap-2">
+                        <!-- Product images will be populated by JS -->
                     </div>
+                    <p class="text-[--light-accent]/60 text-xs mt-2 lang-text" data-zh="点击选择一张产品图" data-en="Click to select a product image">点击选择一张产品图</p>
                 </div>
 
                 <!-- Reference Image Upload (Optional) -->
@@ -1224,6 +1214,9 @@
 
             // Update gallery
             renderGallery(category);
+            
+            // Update product image selector in design tool
+            updateProductImageSelector(category);
         }
 
         function renderGallery(category) {
@@ -1566,12 +1559,62 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Set initial language
             switchLanguage('zh');
+            // Initialize product image selector
+            updateProductImageSelector('sunroom');
         });
 
         // ==================== Design Tool Functionality ====================
         let bgImageData = null;
-        let fgImageData = null;
+        let fgImageData = null;  // Will be set from product selector
         let refImageData = null;
+
+        // Product images per category (max 3)
+        const productImages = {
+            sunroom: ['images/products/sunroom/hero-1.jpg', 'images/products/sunroom/hero-2.jpg', 'images/products/sunroom/hero-3.jpg'],
+            pavilion: ['images/products/pavilion/hero-1.jpg', 'images/products/pavilion/hero-2.jpg', 'images/products/pavilion/hero-3.jpg'],
+            windproof: ['images/products/windproof/hero-1.jpg', 'images/products/windproof/hero-2.jpg', 'images/products/windproof/hero-3.jpg']
+        };
+
+        function updateProductImageSelector(category) {
+            const grid = document.getElementById('productImageGrid');
+            const images = productImages[category] || productImages.sunroom;
+            
+            grid.innerHTML = images.map((src, i) => `
+                <div class="product-img-option cursor-pointer rounded-lg overflow-hidden border-2 border-transparent hover:border-[--primary]/50 transition-all" 
+                     onclick="selectProductImage('${src}', this)" data-src="${src}">
+                    <img src="${src}" alt="Product ${i+1}" class="w-full h-20 object-cover">
+                </div>
+            `).join('');
+            
+            // Clear previous selection
+            fgImageData = null;
+            updateGenerateButton();
+        }
+
+        function selectProductImage(src, element) {
+            // Remove selection from all
+            document.querySelectorAll('.product-img-option').forEach(el => {
+                el.classList.remove('border-[--primary]', 'ring-2', 'ring-[--primary]');
+                el.classList.add('border-transparent');
+            });
+            
+            // Add selection to clicked
+            element.classList.remove('border-transparent');
+            element.classList.add('border-[--primary]', 'ring-2', 'ring-[--primary]');
+            
+            // Convert image URL to base64 for API
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                canvas.getContext('2d').drawImage(img, 0, 0);
+                fgImageData = canvas.toDataURL('image/jpeg');
+                updateGenerateButton();
+            };
+            img.src = src;
+        }
 
         function handleImageUpload(input, type) {
             const file = input.files[0];
@@ -1585,13 +1628,6 @@
                         document.getElementById('bgPlaceholder').style.display = 'none';
                         document.getElementById('bgUploadArea').style.borderColor = 'var(--primary)';
                         document.getElementById('bgUploadArea').style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
-                    } else if (type === 'fg') {
-                        fgImageData = reader.result;
-                        document.getElementById('fgPreviewImg').src = reader.result;
-                        document.getElementById('fgPreview').style.display = 'block';
-                        document.getElementById('fgPlaceholder').style.display = 'none';
-                        document.getElementById('fgUploadArea').style.borderColor = 'var(--primary)';
-                        document.getElementById('fgUploadArea').style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
                     } else if (type === 'ref') {
                         refImageData = reader.result;
                         document.getElementById('refPreviewImg').src = reader.result;
@@ -1614,13 +1650,6 @@
                 document.getElementById('bgPlaceholder').style.display = 'block';
                 document.getElementById('bgUploadArea').style.borderColor = '';
                 document.getElementById('bgUploadArea').style.backgroundColor = '';
-            } else if (type === 'fg') {
-                fgImageData = null;
-                document.getElementById('fgInput').value = '';
-                document.getElementById('fgPreview').style.display = 'none';
-                document.getElementById('fgPlaceholder').style.display = 'block';
-                document.getElementById('fgUploadArea').style.borderColor = '';
-                document.getElementById('fgUploadArea').style.backgroundColor = '';
             } else if (type === 'ref') {
                 refImageData = null;
                 document.getElementById('refInput').value = '';
@@ -1735,11 +1764,17 @@
 
         function resetDesignTool() {
             clearImage('bg');
-            clearImage('fg');
             clearImage('ref');
+            // Reset product image selection
+            fgImageData = null;
+            document.querySelectorAll('.product-img-option').forEach(el => {
+                el.classList.remove('border-[--primary]', 'ring-2', 'ring-[--primary]');
+                el.classList.add('border-transparent');
+            });
             document.getElementById('customPromptInput').value = '';
             document.getElementById('charCount').textContent = '0/800';
             hideResult();
+            updateGenerateButton();
         }
 
         function hideResult() {
@@ -1770,10 +1805,10 @@
             }, 3000);
         }
 
-        // Drag and drop support
-        ['bgUploadArea', 'fgUploadArea', 'refUploadArea'].forEach(areaId => {
+        // Drag and drop support (bg and ref only, product images are selected from built-in)
+        ['bgUploadArea', 'refUploadArea'].forEach(areaId => {
             const area = document.getElementById(areaId);
-            const type = areaId === 'bgUploadArea' ? 'bg' : (areaId === 'fgUploadArea' ? 'fg' : 'ref');
+            const type = areaId === 'bgUploadArea' ? 'bg' : 'ref';
             const input = document.getElementById(type + 'Input');
 
             area.addEventListener('dragover', (e) => {
@@ -1783,7 +1818,7 @@
 
             area.addEventListener('dragleave', (e) => {
                 e.preventDefault();
-                const imgData = type === 'bg' ? bgImageData : (type === 'fg' ? fgImageData : refImageData);
+                const imgData = type === 'bg' ? bgImageData : refImageData;
                 if (!imgData) {
                     area.classList.remove('border-[--primary]', 'bg-[--primary]/10');
                 }
