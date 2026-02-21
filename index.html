@@ -1931,9 +1931,21 @@
                     document.getElementById('generatingIndicator').classList.add('hidden');
                     document.getElementById('continueEditBtn').disabled = false;
 
+                    // Debug: 对比新旧图片 URL
+                    const oldUrl = lastResultImageData;
+                    const newUrl = data.result_image;
+                    console.log('Iteration result:', {
+                        oldUrl: oldUrl?.substring(0, 100),
+                        newUrl: newUrl?.substring(0, 100),
+                        urlChanged: oldUrl !== newUrl,
+                        iteration: currentIteration + 1
+                    });
+
                     currentIteration++;
                     lastResultImageData = data.result_image;
-                    document.getElementById('resultImg').src = data.result_image;
+                    // 添加时间戳防止浏览器缓存旧图片
+                    const cacheBust = data.result_image + (data.result_image.includes('?') ? '&' : '?') + '_t=' + Date.now();
+                    document.getElementById('resultImg').src = cacheBust;
                     document.getElementById('iterEditPrompt').value = '';
                     updateIterationUI();
                     showNotification(currentLang === 'zh' ? `第${currentIteration}轮编辑完成！` : `Round ${currentIteration} complete!`, 'success');

@@ -44,6 +44,7 @@ async function callDashScope(apiKey, model, bgImage, fgImage, refImage, prompt, 
 
   if (isIteration) {
     console.log(`Calling DashScope: model=${model}, iteration mode (1 image)`);
+    console.log(`Input image: ${bgImage?.substring(0, 80)}...`);
     imageContent.push({ image: bgImage });
   } else {
     console.log(`Calling DashScope: model=${model}, initial mode (${refImage ? 3 : 2} images)`);
@@ -166,7 +167,14 @@ export async function onRequestPost(context) {
     );
   }
 
-  const editPrompt = prompt || DEFAULT_PROMPT;
+  // 迭代模式：增强提示词，明确要求模型编辑图片
+  let editPrompt;
+  if (is_iteration && prompt) {
+    editPrompt = `请对这张图片进行编辑修改，具体要求如下：${prompt}。请确保按照要求做出明显的修改，不要保持原样不变。`;
+    console.log('Iteration prompt (enhanced):', editPrompt);
+  } else {
+    editPrompt = prompt || DEFAULT_PROMPT;
+  }
 
   // 创建 SSE 流
   const encoder = new TextEncoder();
