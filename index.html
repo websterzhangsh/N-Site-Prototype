@@ -1563,6 +1563,9 @@
                 }
             });
             
+            // Re-render Gallery to update hover text
+            renderGallery(activeCategory);
+            
             // Update HTML lang attribute
             document.documentElement.lang = lang;
         }
