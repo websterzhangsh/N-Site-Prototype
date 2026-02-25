@@ -8,7 +8,14 @@ export const LLM_CONFIG = {
   providers: {
     qwen: {
       baseUrl: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
-      defaultModel: 'qwen-turbo'
+      // 模型优先级列表（按顺序尝试，失败时降级）
+      modelPriority: [
+        'qwen3.5-flash',
+        'qwen3.5-flash-2026-02-23',
+        'qwen3.5-plus',
+        'qwen-turbo'
+      ],
+      defaultModel: 'qwen3.5-flash'
     }
   },
 

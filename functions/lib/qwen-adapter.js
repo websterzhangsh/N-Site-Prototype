@@ -61,6 +61,7 @@ export class QwenAdapter {
     this.apiKey = config.apiKey;
     this.baseUrl = config.baseUrl || LLM_CONFIG.providers.qwen.baseUrl;
     this.defaultModel = config.defaultModel || LLM_CONFIG.providers.qwen.defaultModel;
+    this.modelPriority = config.modelPriority || LLM_CONFIG.providers.qwen.modelPriority || [this.defaultModel];
   }
 
   getProvider() {
@@ -68,7 +69,24 @@ export class QwenAdapter {
   }
 
   getModels() {
-    return ['qwen-turbo', 'qwen-plus', 'qwen-max', 'qwen-max-longcontext'];
+    return this.modelPriority;
+  }
+
+  /**
+   * Check if error indicates model unavailable (should try next model)
+   */
+  isModelUnavailable(error, response) {
+    if (response?.status === 429 || response?.status === 503) return true;
+    const msg = String(error?.message || error).toLowerCase();
+    return (
+      msg.includes('model') ||
+      msg.includes('quota') ||
+      msg.includes('rate') ||
+      msg.includes('busy') ||
+      msg.includes('unavailable') ||
+      msg.includes('not found') ||
+      msg.includes('not exist')
+    );
   }
 
   /**
@@ -84,15 +102,41 @@ export class QwenAdapter {
   }
 
   /**
-   * Single chat completion
+   * Single chat completion with automatic model fallback
    * @param {Array} messages - Array of {role, content} objects
    * @param {Object} options - Chat options (model, temperature, maxTokens, systemPrompt)
    * @returns {Promise<Object>} ChatResponse
    */
   async chat(messages, options = {}) {
-    const model = options.model || this.defaultModel;
     const finalMessages = this.buildMessages(messages, options.systemPrompt);
+    
+    // 按优先级尝试模型
+    let lastError;
+    for (const model of this.modelPriority) {
+      try {
+        console.log(`Trying model: ${model}`);
+        const result = await this._callModel(model, finalMessages, options);
+        console.log(`Model ${model} succeeded`);
+        return result;
+      } catch (err) {
+        console.warn(`Model ${model} failed: ${err.message}`);
+        lastError = err;
+        // 如果是模型不可用错误，尝试下一个模型
+        if (this.isModelUnavailable(err)) {
+          continue;
+        }
+        // 其他错误直接抛出
+        throw err;
+      }
+    }
+    // 所有模型都失败
+    throw lastError || new Error('All models failed');
+  }
 
+  /**
+   * Internal method to call a specific model
+   */
+  async _callModel(model, finalMessages, options) {
     const response = await fetchWithRetry(`${this.baseUrl}/chat/completions`, {
       method: 'POST',
       headers: {
@@ -115,7 +159,9 @@ export class QwenAdapter {
     const data = await response.json();
 
     if (data.error) {
-      throw new Error(`Qwen API Error: ${data.error.message || JSON.stringify(data.error)}`);
+      const err = new Error(`Qwen API Error: ${data.error.message || JSON.stringify(data.error)}`);
+      err.response = response;
+      throw err;
     }
 
     const choice = data.choices?.[0];
