@@ -4,11 +4,15 @@
  * 同步调用 DashScope API，通过 SSE 流式心跳保持连接活跃，实时推送进度与结果
  */
 
-// 模型配置
-const MODELS = {
-  max: 'qwen-image-edit-max',
-  plus: 'qwen-image-edit-plus'
-};
+// 模型配置 - 按优先级顺序（降级时依次尝试）
+const MODEL_PRIORITY = [
+  'qwen-image-edit-max',
+  'qwen-image-edit-max-2026-01-16',
+  'qwen-image-edit-plus',
+  'qwen-image-edit-plus-2025-12-15',
+  'qwen-image-edit-plus-2025-10-30',
+  'qwen-image-edit'
+];
 
 // 优化后的提示词
 const DEFAULT_PROMPT = `请将第二张图片中的阳光房（sunroom/glass conservatory）融合到第一张图片的后院场景中。
@@ -226,16 +230,28 @@ export async function onRequestPost(context) {
         return { ...result, elapsed };
       };
 
-      // 先尝试 max 模型
-      let usedModel = MODELS.max;
-      let { response, data, elapsed } = await fetchWithHeartbeats(MODELS.max, 0);
+      // 按优先级顺序尝试模型
+      let usedModel = MODEL_PRIORITY[0];
+      let response, data, elapsed = 0;
+      let fallbackUsed = false;
 
-      // 如果 max 繁忙，降级到 plus
-      if (isServiceBusy(response, data)) {
-        console.log(`${MODELS.max} is busy, falling back to ${MODELS.plus}...`);
-        await sendEvent({ type: 'fallback', message: 'Primary model busy, switching to standard...' });
-        usedModel = MODELS.plus;
-        ({ response, data, elapsed } = await fetchWithHeartbeats(MODELS.plus, elapsed));
+      for (let i = 0; i < MODEL_PRIORITY.length; i++) {
+        const model = MODEL_PRIORITY[i];
+        console.log(`Trying model ${i + 1}/${MODEL_PRIORITY.length}: ${model}`);
+        
+        if (i > 0) {
+          await sendEvent({ type: 'fallback', message: `Model busy, trying ${model}...` });
+          fallbackUsed = true;
+        }
+
+        ({ response, data, elapsed } = await fetchWithHeartbeats(model, elapsed));
+        usedModel = model;
+
+        // 如果成功或非繁忙错误，停止尝试
+        if (!isServiceBusy(response, data)) {
+          break;
+        }
+        console.log(`${model} is busy, trying next...`);
       }
 
       // 检查 API 错误
@@ -266,7 +282,7 @@ export async function onRequestPost(context) {
         success: true,
         result_image: resultImage,
         model_used: usedModel,
-        fallback_used: usedModel === MODELS.plus
+        fallback_used: fallbackUsed
       });
 
     } catch (e) {
