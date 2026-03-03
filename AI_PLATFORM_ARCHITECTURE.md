@@ -11,7 +11,7 @@
 This document outlines the architecture and phased implementation plan for building an AI-powered platform for outdoor living product customization business. The platform integrates multi-modal data (images, CAD files, text, structured data) with Large Language Models (LLM) to automate design, customer interaction, and business operations.
 
 ### 1.1 Current State
-- **Implemented**: Photo-realistic rendering (qwen-image-edit), Basic chatbot (qwen3.5-flash)
+- **Implemented**: Photo-realistic rendering (Image Edit LLM), Basic chatbot (Chat LLM)
 - **Gap**: Data silos, no RAG capability, manual design workflows
 
 ### 1.2 Target State
@@ -67,7 +67,7 @@ This document outlines the architecture and phased implementation plan for build
 │                         AI PROCESSING LAYER                                  │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
 │  │ Image Edit   │  │ Text/Chat    │  │ RAG Engine   │  │ Analytics    │     │
-│  │ (qwen-image) │  │ (qwen-3.5)   │  │ (Retrieval)  │  │ (Insights)   │     │
+│  │ (Image LLM)  │  │ (Chat LLM)   │  │ (Retrieval)  │  │ (Insights)   │     │
 │  └──────────────┘  └──────────────┘  └──────────────┘  └──────────────┘     │
 └─────────────────────────────────────────────────────────────────────────────┘
          │                 │                 │                   │
@@ -120,8 +120,8 @@ This document outlines the architecture and phased implementation plan for build
 │  ┌───────────────────────────────────────────────────────────────────┐      │
 │  │                    Model Adapter Layer                             │      │
 │  │  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐               │      │
-│  │  │ Qwen    │  │ Qwen    │  │ Qwen    │  │ Future  │               │      │
-│  │  │ Chat    │  │ Image   │  │ Embed   │  │ Models  │               │      │
+│  │  │ Chat    │  │ Image   │  │ Embed   │  │ Future  │               │      │
+│  │  │ Model   │  │ Model   │  │ Model   │  │ Models  │               │      │
 │  │  └─────────┘  └─────────┘  └─────────┘  └─────────┘               │      │
 │  └───────────────────────────────────────────────────────────────────┘      │
 └─────────────────────────────────────────────────────────────────────────────┘
@@ -140,8 +140,8 @@ This document outlines the architecture and phased implementation plan for build
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                         EXTERNAL SERVICES                                    │
 │  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐                    │
-│  │  DashScope    │  │  ERP System   │  │  OA System    │                    │
-│  │  (Qwen API)   │  │  (Optional)   │  │  (Optional)   │                    │
+│  │  LLM Provider │  │  ERP System   │  │  OA System    │                    │
+│  │  (API)        │  │  (Optional)   │  │  (Optional)   │                    │
 │  └───────────────┘  └───────────────┘  └───────────────┘                    │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -153,7 +153,7 @@ This document outlines the architecture and phased implementation plan for build
 | **Frontend** | React + Tailwind CSS | Current stack, responsive |
 | **Hosting** | Cloudflare Pages | Edge deployment, serverless |
 | **API** | Cloudflare Functions | Low latency, auto-scaling |
-| **LLM** | Alibaba DashScope | Qwen models, China-friendly |
+| **LLM** | LLM Provider (pluggable) | Multi-provider support via adapter |
 | **Vector DB** | Supabase pgvector | PostgreSQL native, easy setup |
 | **Object Store** | Cloudflare R2 / Aliyun OSS | Multi-modal data storage |
 | **Metadata** | Supabase PostgreSQL | Relational data, easy API |
@@ -162,26 +162,26 @@ This document outlines the architecture and phased implementation plan for build
 
 #### 3.3.1 Chat Models (Priority Order)
 ```
-1. qwen3.5-flash          (Primary - fast, cost-effective)
-2. qwen3.5-flash-2026-02-23
-3. qwen3.5-plus           (Fallback - higher quality)
-4. qwen-turbo             (Legacy fallback)
+1. [Primary Chat Model]       (Fast, cost-effective)
+2. [Primary Chat Model v2]    (Version pinned)
+3. [Enhanced Chat Model]      (Fallback - higher quality)
+4. [Legacy Chat Model]        (Legacy fallback)
 ```
 
 #### 3.3.2 Image Edit Models (Priority Order)
 ```
-1. qwen-image-edit-max
-2. qwen-image-edit-max-2026-01-16
-3. qwen-image-edit-plus
-4. qwen-image-edit-plus-2025-12-15
-5. qwen-image-edit-plus-2025-10-30
-6. qwen-image-edit
+1. [Image Edit Model - Max]
+2. [Image Edit Model - Max v2]
+3. [Image Edit Model - Plus]
+4. [Image Edit Model - Plus v2]
+5. [Image Edit Model - Plus v3]
+6. [Image Edit Model - Base]
 ```
 
 #### 3.3.3 Embedding Models (For RAG)
 ```
-1. text-embedding-v3      (DashScope recommended)
-2. text-embedding-v2      (Fallback)
+1. [Text Embedding v3]       (Recommended)
+2. [Text Embedding v2]       (Fallback)
 ```
 
 ---
@@ -215,7 +215,7 @@ This document outlines the architecture and phased implementation plan for build
 │  │                               ┌──────────────────────────────┐      │    │
 │  │                               │     Context + Query          │      │    │
 │  │                               │          ↓                   │      │    │
-│  │                               │      LLM (Qwen)              │      │    │
+│  │                               │      LLM (Chat Model)        │      │    │
 │  │                               │          ↓                   │      │    │
 │  │                               │   Grounded Response          │      │    │
 │  │                               └──────────────────────────────┘      │    │
@@ -318,7 +318,7 @@ interface RAGQueryResponse {
 │  ┌──────────────────────────────────────────────────────────────────┐       │
 │  │  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐           │       │
 │  │  │ Parser      │    │ Visual AI   │    │ Manual      │           │       │
-│  │  │ (DXF/DWG)   │    │ (Qwen-VL)   │    │ Annotation  │           │       │
+│  │  │ (DXF/DWG)   │    │ (Vision LLM)│    │ Annotation  │           │       │
 │  │  │             │    │             │    │             │           │       │
 │  │  │ • Layers    │    │ CAD→Image   │    │ Designer    │           │       │
 │  │  │ • Entities  │    │ → Analysis  │    │ Input       │           │       │
@@ -420,7 +420,7 @@ interface RAGQueryResponse {
 | **DXF Parser** | `dxf-parser` (JS), `ezdxf` (Python) | `ezdxf` for accuracy |
 | **DWG Parser** | ODA SDK, LibreDWG, Autodesk Forge | Autodesk Forge (if budget allows) |
 | **CAD→Image** | LibreCAD, QCAD, Autodesk Viewer | Cloud-based converter |
-| **Visual AI** | Qwen-VL, GPT-4V | Qwen-VL (cost-effective) |
+| **Visual AI** | Vision LLM (e.g. GPT-4V, etc.) | Configurable via adapter |
 | **3D Processing** | Open3D, Three.js | Based on use case |
 | **Point Cloud** | CloudCompare, PDAL | Phase 3+ consideration |
 
@@ -430,7 +430,7 @@ interface RAGQueryResponse {
 |-------|------------|------------|
 | **Phase 1** | Store CAD + Manual metadata | R2 + Postgres |
 | **Phase 1.5** | DXF parsing (basic) | `dxf-parser` |
-| **Phase 2** | CAD→Image + Qwen-VL analysis | Converter + Qwen-VL |
+| **Phase 2** | CAD→Image + Vision LLM analysis | Converter + Vision LLM |
 | **Phase 2.5** | Semantic search on CAD | Vector DB + Embedding |
 | **Phase 3** | Full DWG parsing + BOM extraction | Autodesk Forge |
 | **Phase 3+** | 3D/Point cloud processing | Specialized tools |
@@ -480,8 +480,8 @@ POST   /api/cad/:id/annotate    - Add manual annotations
 | Feature | Status | Technology |
 |---------|--------|------------|
 | Landing page with product showcase | ✅ | React + Tailwind |
-| AI Designer (photo-realistic rendering) | ✅ | qwen-image-edit-max |
-| Basic chatbot | ✅ | qwen3.5-flash |
+| AI Designer (photo-realistic rendering) | ✅ | Image Edit LLM |
+| Basic chatbot | ✅ | Chat LLM |
 | Multi-language support (CN/EN) | ✅ | Custom i18n |
 | Model fallback mechanism | ✅ | Priority-based |
 
@@ -568,8 +568,8 @@ GET    /api/kb/search          - Basic keyword search
 | Component | Description | Technology |
 |-----------|-------------|------------|
 | **Vector Database** | Store embeddings | Supabase pgvector |
-| **Embedding Pipeline** | Convert text to vectors | text-embedding-v3 |
-| **RAG Engine** | Retrieval + generation | Custom + Qwen |
+| **Embedding Pipeline** | Convert text to vectors | Embedding LLM |
+| **RAG Engine** | Retrieval + generation | Custom + Chat LLM |
 | **Smart Chatbot** | Context-aware responses | Enhanced chat API |
 | **Knowledge Admin** | Manage KB with preview | React |
 
