@@ -5,19 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title class="lang-text" data-zh="庭院定制专家 | 让每一寸庭院都成为生活的延伸" data-en="Outdoor Living Solutions | Transform Your Yard Into Living Space">庭院定制专家 | 让每一寸庭院都成为生活的延伸</title>
     <meta name="description" content="专业庭院生活空间定制，从阳光阅读到户外聚餐，从四季泳池到花园茶室，为您量身打造理想的户外生活体验。">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link href="https://cdn.tailwindcss.com" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
+                    fontFamily: {
+                        sans: ['Roboto', 'system-ui', '-apple-system', 'sans-serif'],
+                    },
                     colors: {
                         primary: {
-                            DEFAULT: '#10b981',
-                            dark: '#059669',
+                            DEFAULT: '#222222',
+                            dark: '#111111',
                         },
-                        secondary: '#f59e0b',
-                        accent: '#0ea5e9',
+                        secondary: '#888888',
+                        accent: '#555555',
                     }
                 }
             }
@@ -26,28 +30,28 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --primary: #10b981;  /* Green color for eco-friendly feel */
-            --primary-dark: #059669;
-            --secondary: #f59e0b;
-            --accent: #0ea5e9;
-            --dark-bg: #0f172a;  /* Deep dark blue-gray */
-            --darker-bg: #020617; /* Even darker for contrast */
-            --light-text: #ffffff; /* Pure white for better contrast */
-            --light-accent: #f8fafc; /* Lighter accent color for better contrast */
-            --gradient-primary: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            --gradient-warm: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            --gradient-eco: linear-gradient(135deg, #10b981 0%, #0ea5e9 100%);
-            --shadow-elegant: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+            --primary: #222222;
+            --primary-dark: #111111;
+            --secondary: #888888;
+            --accent: #555555;
+            --dark-bg: #ffffff;
+            --darker-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #666666;
+            --gradient-primary: linear-gradient(135deg, #222222 0%, #444444 100%);
+            --gradient-warm: linear-gradient(135deg, #444444 0%, #666666 100%);
+            --gradient-eco: linear-gradient(135deg, #222222 0%, #555555 100%);
+            --shadow-elegant: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
         
         .hero-gradient {
-            background: linear-gradient(135deg, rgba(14, 165, 233, 0.9) 0%, rgba(2, 132, 199, 0.9) 100%);
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.3) 100%);
         }
         
         .glass-effect {
             backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.1);
         }
         
         .feature-card {
@@ -67,7 +71,7 @@
         
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(14, 165, 233, 0.3);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
         }
         
         .btn-secondary {
@@ -77,7 +81,7 @@
         
         .btn-secondary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.3);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
         }
         
         .animate-float {
@@ -122,7 +126,7 @@
             background: var(--gradient-primary);
             border: none;
             cursor: pointer;
-            box-shadow: 0 4px 20px rgba(14, 165, 233, 0.4);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -131,7 +135,7 @@
 
         .chatbot-toggle:hover {
             transform: scale(1.1);
-            box-shadow: 0 6px 30px rgba(14, 165, 233, 0.5);
+            box-shadow: 0 6px 30px rgba(0, 0, 0, 0.3);
         }
 
         .chatbot-toggle i {
@@ -209,7 +213,7 @@
             flex: 1;
             overflow-y: auto;
             padding: 16px;
-            background: #f8fafc;
+            background: #ffffff;
             display: flex;
             flex-direction: column;
             gap: 12px;
@@ -241,7 +245,7 @@
         }
 
         .chat-message.bot .message-avatar { background: var(--gradient-primary); color: white; }
-        .chat-message.user .message-avatar { background: #e2e8f0; color: #64748b; }
+        .chat-message.user .message-avatar { background: #e5e5e5; color: #666666; }
 
         .message-content {
             padding: 12px 16px;
@@ -251,10 +255,10 @@
         }
 
         .chat-message.bot .message-content {
-            background: white;
-            color: #1e293b;
+            background: #f5f5f5;
+            color: #1a1a1a;
             border-bottom-left-radius: 4px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         }
 
         .chat-message.user .message-content {
@@ -273,18 +277,18 @@
         .quick-reply-btn {
             padding: 8px 14px;
             background: white;
-            border: 1px solid #e2e8f0;
+            border: 1px solid #e0e0e0;
             border-radius: 20px;
             font-size: 13px;
-            color: var(--primary);
+            color: #222222;
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
         .quick-reply-btn:hover {
-            background: var(--primary);
+            background: #222222;
             color: white;
-            border-color: var(--primary);
+            border-color: #222222;
         }
 
         .chatbot-input {
@@ -299,20 +303,20 @@
         .chatbot-input input {
             flex: 1;
             padding: 12px 16px;
-            border: 2px solid #e2e8f0;
+            border: 2px solid #e0e0e0;
             border-radius: 24px;
             font-size: 14px;
             outline: none;
             transition: all 0.3s ease;
             background: white;
-            color: #1e293b;
+            color: #1a1a1a;
         }
 
         .chatbot-input input::placeholder {
-            color: #94a3b8;
+            color: #999999;
         }
 
-        .chatbot-input input:focus { border-color: var(--primary); }
+        .chatbot-input input:focus { border-color: #222222; }
 
         .chatbot-input button {
             width: 44px;
@@ -343,7 +347,7 @@
         .typing-indicator span {
             width: 8px;
             height: 8px;
-            background: #94a3b8;
+            background: #999999;
             border-radius: 50%;
             animation: typingBounce 1.4s infinite;
         }
@@ -364,10 +368,10 @@
         .language-toggle {
             display: flex;
             gap: 5px;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(0, 0, 0, 0.06);
             padding: 5px;
             border-radius: 25px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            box-shadow: none;
         }
 
         .language-btn {
@@ -379,17 +383,17 @@
             transition: all 0.3s ease;
             margin: 0 2px;
             background: transparent;
-            color: #1e293b;
+            color: #666666;
         }
 
         .language-btn.active {
-            background: var(--primary);
+            background: #222222;
             color: white;
-            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
 
         .language-btn:hover:not(.active) {
-            background: #e2e8f0;
+            background: rgba(0, 0, 0, 0.08);
         }
 
         /* Hero category tabs */
@@ -399,21 +403,22 @@
             font-size: 14px;
             font-weight: 600;
             letter-spacing: 0.025em;
-            border: 2px solid rgba(255, 255, 255, 0.15);
-            background: rgba(255, 255, 255, 0.05);
-            color: rgba(255, 255, 255, 0.7);
+            border: 2px solid #d0d0d0;
+            background: transparent;
+            color: #666666;
             cursor: pointer;
             transition: all 0.3s ease;
         }
         .hero-tab:hover {
-            border-color: var(--primary);
-            color: white;
+            border-color: #222222;
+            color: #222222;
+            background: rgba(0, 0, 0, 0.03);
         }
         .hero-tab.active {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: white;
-            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.35);
+            background: #222222;
+            border-color: #222222;
+            color: #ffffff;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
         }
 
         /* Hero image fade transition */
@@ -432,22 +437,22 @@
         }
     </style>
 </head>
-<body class="font-sans bg-gray-900 text-white">
+<body class="font-sans bg-white text-[--light-text]">
     <!-- Header -->
-    <header class="fixed w-full bg-[--dark-bg] shadow-md z-50 border-b border-[--primary]">
+    <header class="fixed w-full bg-white shadow-sm z-50 border-b border-gray-200">
         <div class="container mx-auto px-4 py-3">
             <div class="flex justify-between items-center">
                 <div class="flex items-center space-x-2">
-                    <i class="fas fa-sun text-2xl text-[--primary]"></i>
+                    <i class="fas fa-sun text-2xl text-[--light-text]"></i>
                     <span class="text-xl font-bold text-[--light-text] lang-text" data-zh="庭院定制专家" data-en="Outdoor Living Expert">庭院定制专家</span>
                 </div>
                 <nav class="hidden md:flex space-x-8">
-                    <a href="#home" class="text-[--light-text] hover:text-[--primary] transition lang-text" data-zh="首页" data-en="Home">首页</a>
-                    <a href="#features" class="text-[--light-text] hover:text-[--primary] transition lang-text" data-zh="产品特色" data-en="Features">产品特色</a>
-                    <a href="#design-tool" class="text-[--light-text] hover:text-[--primary] transition lang-text flex items-center" data-zh="✨ 智能设计" data-en="✨ AI Design">✨ 智能设计</a>
-                    <a href="#gallery" class="text-[--light-text] hover:text-[--primary] transition lang-text" data-zh="案例展示" data-en="Gallery">案例展示</a>
-                    <a href="#testimonials" class="text-[--light-text] hover:text-[--primary] transition lang-text" data-zh="客户评价" data-en="Testimonials">客户评价</a>
-                    <a href="#contact" class="text-[--light-text] hover:text-[--primary] transition lang-text" data-zh="联系我们" data-en="Contact">联系我们</a>
+                    <a href="#home" class="text-[--light-accent] hover:text-[--light-text] transition lang-text" data-zh="首页" data-en="Home">首页</a>
+                    <a href="#features" class="text-[--light-accent] hover:text-[--light-text] transition lang-text" data-zh="产品特色" data-en="Features">产品特色</a>
+                    <a href="#design-tool" class="text-[--light-accent] hover:text-[--light-text] transition lang-text flex items-center" data-zh="✨ 智能设计" data-en="✨ AI Design">✨ 智能设计</a>
+                    <a href="#gallery" class="text-[--light-accent] hover:text-[--light-text] transition lang-text" data-zh="案例展示" data-en="Gallery">案例展示</a>
+                    <a href="#testimonials" class="text-[--light-accent] hover:text-[--light-text] transition lang-text" data-zh="客户评价" data-en="Testimonials">客户评价</a>
+                    <a href="#contact" class="text-[--light-accent] hover:text-[--light-text] transition lang-text" data-zh="联系我们" data-en="Contact">联系我们</a>
                 </nav>
                 <!-- Language Toggle in header -->
                 <div class="flex items-center space-x-4">
@@ -464,14 +469,14 @@
     </header>
 
     <!-- Hero Section -->
-    <section id="home" class="pt-20 pb-16 bg-gradient-to-br from-[--dark-bg] to-[--primary-dark] text-white">
+    <section id="home" class="pt-20 pb-16 bg-[--darker-bg] text-[--light-text]">
         <div class="container mx-auto px-4">
             <div class="text-center mb-8">
-                <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+                <h1 class="text-4xl md:text-5xl font-light mb-6 leading-tight tracking-tight">
                     <span class="lang-text" data-zh="让每一寸庭院" data-en="Transform Every Corner of Your Yard"></span>
-                    <span class="block text-[--secondary] lang-text" data-zh="都成为生活的延伸" data-en="Into Inspired Living">都成为生活的延伸</span>
+                    <span class="block text-[--light-text] font-bold lang-text" data-zh="都成为生活的延伸" data-en="Into Inspired Living">都成为生活的延伸</span>
                 </h1>
-                <p class="text-xl mb-8 text-[--light-accent] max-w-2xl mx-auto">
+                <p class="text-lg mb-8 text-[--light-accent] max-w-2xl mx-auto">
                     <span class="lang-text" data-zh="从休闲聚餐到四季花园，从阳光阅读到泳池派对——我们为您定制专属的户外生活体验。" data-en="From relaxed alfresco dining to lush year-round gardens, from sunlit reading retreats to vibrant poolside gatherings — we design bespoke outdoor environments that elevate the way you live.">从休闲聚餐到四季花园，从阳光阅读到泳池派对——我们为您定制专属的户外生活体验。</span>
                 </p>
 
@@ -487,30 +492,30 @@
                         <span class="lang-text" data-zh="防风卷帘" data-en="Windproof Roller Shutter">防风卷帘</span>
                     </button>
                 </div>
-                <p class="text-sm text-[--light-accent]/70 mb-6" id="categoryTagline">
+                <p class="text-sm text-[--light-accent] mb-6" id="categoryTagline">
                     <span class="lang-text" data-zh="明亮通透的生活空间，沐浴自然光" data-en="Bright, open living spaces bathed in natural light">明亮通透的生活空间，沐浴自然光</span>
                 </p>
             </div>
 
             <!-- Hero Image Grid (3 images) -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto mb-10" id="heroImageGrid">
-                <div class="overflow-hidden rounded-2xl shadow-2xl border-2 border-[--primary]/30 group">
+                <div class="overflow-hidden rounded-2xl shadow-lg group">
                     <img id="heroImg1" src="images/products/sunroom/hero-1.jpg" alt="Sun room" class="w-full h-56 md:h-64 object-cover transition-all duration-700 group-hover:scale-105">
                 </div>
-                <div class="overflow-hidden rounded-2xl shadow-2xl border-2 border-[--primary]/30 group">
+                <div class="overflow-hidden rounded-2xl shadow-lg group">
                     <img id="heroImg2" src="images/products/sunroom/hero-2.jpg" alt="Sun room" class="w-full h-56 md:h-64 object-cover transition-all duration-700 group-hover:scale-105">
                 </div>
-                <div class="overflow-hidden rounded-2xl shadow-2xl border-2 border-[--primary]/30 group">
+                <div class="overflow-hidden rounded-2xl shadow-lg group">
                     <img id="heroImg3" src="images/products/sunroom/hero-3.jpg" alt="Sun room" class="w-full h-56 md:h-64 object-cover transition-all duration-700 group-hover:scale-105">
                 </div>
             </div>
 
             <!-- CTA Buttons -->
             <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4 mb-10">
-                <button class="btn-primary text-white font-semibold py-3 px-8 rounded-lg bg-gradient-to-r from-[--primary] to-[--primary-dark]">
+                <button class="btn-primary text-white font-semibold py-3 px-8 rounded-lg">
                     <i class="fas fa-calendar-check mr-2"></i><span class="lang-text" data-zh="免费设计咨询" data-en="Free Design Consultation">免费设计咨询</span>
                 </button>
-                <button class="bg-white text-[--primary] font-semibold py-3 px-8 rounded-lg hover:bg-gray-100 transition">
+                <button class="border-2 border-[--light-text] text-[--light-text] font-semibold py-3 px-8 rounded-lg hover:bg-[--light-text] hover:text-white transition">
                     <i class="fas fa-phone mr-2"></i><span class="lang-text" data-zh="立即咨询" data-en="Consult Now">立即咨询</span>
                 </button>
             </div>
@@ -518,26 +523,26 @@
             <!-- Stats -->
             <div class="grid grid-cols-3 gap-8 max-w-md mx-auto text-center">
                 <div>
-                    <div class="text-3xl font-bold text-[--secondary]">500+</div>
-                    <div class="text-[--light-accent]/70 text-sm lang-text" data-zh="成功案例" data-en="Projects">成功案例</div>
+                    <div class="text-3xl font-bold text-[--light-text]">500+</div>
+                    <div class="text-[--light-accent] text-sm lang-text" data-zh="成功案例" data-en="Projects">成功案例</div>
                 </div>
                 <div>
-                    <div class="text-3xl font-bold text-[--secondary]">10<span class="lang-text" data-zh="年" data-en="yr">年</span></div>
-                    <div class="text-[--light-accent]/70 text-sm lang-text" data-zh="行业经验" data-en="Experience">行业经验</div>
+                    <div class="text-3xl font-bold text-[--light-text]">10<span class="lang-text" data-zh="年" data-en="yr">年</span></div>
+                    <div class="text-[--light-accent] text-sm lang-text" data-zh="行业经验" data-en="Experience">行业经验</div>
                 </div>
                 <div>
-                    <div class="text-3xl font-bold text-[--secondary]">100%</div>
-                    <div class="text-[--light-accent]/70 text-sm lang-text" data-zh="客户满意" data-en="Satisfaction">客户满意</div>
+                    <div class="text-3xl font-bold text-[--light-text]">100%</div>
+                    <div class="text-[--light-accent] text-sm lang-text" data-zh="客户满意" data-en="Satisfaction">客户满意</div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Features Section -->
-    <section id="features" class="py-16 bg-slate-900">
+    <section id="features" class="py-16 bg-white">
         <div class="container mx-auto px-4">
             <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold text-[--light-text] mb-4 lang-text" data-zh="为什么选择我们" data-en="Why Choose Us">
+                <h2 class="text-3xl md:text-4xl font-light text-[--light-text] mb-4 lang-text" data-zh="为什么选择我们" data-en="Why Choose Us">
                     为什么选择我们
                 </h2>
                 <p class="text-[--light-accent] text-lg max-w-2xl mx-auto">
@@ -547,54 +552,54 @@
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Feature 1 -->
-                <div class="feature-card bg-[--dark-bg] p-8 border border-[--primary]/30 rounded-2xl">
-                    <div class="w-16 h-16 bg-[--primary]/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="fas fa-lightbulb text-2xl text-[--primary]"></i>
+                <div class="feature-card bg-white p-8 border border-gray-200 rounded-2xl">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-lightbulb text-2xl text-[--light-text]"></i>
                     </div>
                     <h3 class="text-xl font-bold mb-4 text-[--light-text] text-center lang-text" data-zh="场景化方案设计" data-en="Scenario-Based Design">场景化方案设计</h3>
                     <p class="text-[--light-accent] text-justify lang-text" data-zh="我们不只卖产品，而是根据您的生活方式——聚餐、阅读、种花、泳池——量身打造解决方案。每一个空间都精心设计，匹配您的聚会、休闲、庆祝和社交需求。" data-en="We don't just create structures — we design around your lifestyle. Every space is thoughtfully crafted for how you gather, unwind, celebrate, and connect. Dining, reading, gardening, entertaining — each scenario becomes an experience.">我们不只卖产品，而是根据您的生活方式——聚餐、阅读、种花、泳池——量身打造解决方案。每一个空间都精心设计，匹配您的聚会、休闲、庆祝和社交需求。</p>
                 </div>
                 
                 <!-- Feature 2 -->
-                <div class="feature-card bg-[--dark-bg] p-8 border border-[--primary]/30 rounded-2xl">
-                    <div class="w-16 h-16 bg-[--primary]/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="fas fa-drafting-compass text-2xl text-[--primary]"></i>
+                <div class="feature-card bg-white p-8 border border-gray-200 rounded-2xl">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-drafting-compass text-2xl text-[--light-text]"></i>
                     </div>
                     <h3 class="text-xl font-bold mb-4 text-[--light-text] text-center lang-text" data-zh="AI 辅助效果预览" data-en="AI-Powered Design Preview">AI 辅助效果预览</h3>
                     <p class="text-[--light-accent] text-justify lang-text" data-zh="上传您的庭院照片，AI 智能生成逼真效果图，提前看到改造后的真实效果，让您充满信心地做出决策。" data-en="See your transformation before it begins. Upload a photo of your yard and our AI instantly generates a realistic, photorealistic rendering — allowing you to visualize your future outdoor space with confidence and clarity.">上传您的庭院照片，AI 智能生成逼真效果图，提前看到改造后的真实效果，让您充满信心地做出决策。</p>
                 </div>
                 
                 <!-- Feature 3 -->
-                <div class="feature-card bg-[--dark-bg] p-8 border border-[--primary]/30 rounded-2xl">
-                    <div class="w-16 h-16 bg-[--primary]/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="fas fa-temperature-high text-2xl text-[--primary]"></i>
+                <div class="feature-card bg-white p-8 border border-gray-200 rounded-2xl">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-temperature-high text-2xl text-[--light-text]"></i>
                     </div>
                     <h3 class="text-xl font-bold mb-4 text-[--light-text] text-center lang-text" data-zh="四季舒适体验" data-en="Year-Round Comfort">四季舒适体验</h3>
                     <p class="text-[--light-accent] text-justify lang-text" data-zh="先进的隔热通风系统，无论春夏秋冬，您的户外生活空间都保持宜人温度，全年舒适平衡。" data-en="Engineered for all seasons. Advanced insulation and intelligent ventilation systems keep your outdoor living space cool in summer, warm in winter, and perfectly balanced year-round.">先进的隔热通风系统，无论春夏秋冬，您的户外生活空间都保持宜人温度，全年舒适平衡。</p>
                 </div>
                 
                 <!-- Feature 4 -->
-                <div class="feature-card bg-[--dark-bg] p-8 border border-[--primary]/30 rounded-2xl">
-                    <div class="w-16 h-16 bg-[--primary]/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="fas fa-crown text-2xl text-[--primary]"></i>
+                <div class="feature-card bg-white p-8 border border-gray-200 rounded-2xl">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-crown text-2xl text-[--light-text]"></i>
                     </div>
                     <h3 class="text-xl font-bold mb-4 text-[--light-text] text-center lang-text" data-zh="高品质选材" data-en="Premium Materials">高品质选材</h3>
                     <p class="text-[--light-accent] text-justify lang-text" data-zh="断桥铝合金框架+钢化中空玻璃，抗风压、保温隔热，安全耐用" data-en="Thermal break aluminum frames with double-glazed tempered glass — windproof, insulated, safe and durable">断桥铝合金框架+钢化中空玻璃，抗风压、保温隔热，安全耐用</p>
                 </div>
                 
                 <!-- Feature 5 -->
-                <div class="feature-card bg-[--dark-bg] p-8 border border-[--primary]/30 rounded-2xl">
-                    <div class="w-16 h-16 bg-[--primary]/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="fas fa-tools text-2xl text-[--primary]"></i>
+                <div class="feature-card bg-white p-8 border border-gray-200 rounded-2xl">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-tools text-2xl text-[--light-text]"></i>
                     </div>
                     <h3 class="text-xl font-bold mb-4 text-[--light-text] text-center lang-text" data-zh="一站式交付" data-en="Turnkey Delivery">一站式交付</h3>
                     <p class="text-[--light-accent] text-justify lang-text" data-zh="从方案设计、材料生产到现场安装，全程专业团队负责，省心省力" data-en="From design and manufacturing to on-site installation, our professional team handles everything">从方案设计、材料生产到现场安装，全程专业团队负责，省心省力</p>
                 </div>
                 
                 <!-- Feature 6 -->
-                <div class="feature-card bg-[--dark-bg] p-8 border border-[--primary]/30 rounded-2xl">
-                    <div class="w-16 h-16 bg-[--primary]/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="fas fa-shield-alt text-2xl text-[--primary]"></i>
+                <div class="feature-card bg-white p-8 border border-gray-200 rounded-2xl">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-shield-alt text-2xl text-[--light-text]"></i>
                     </div>
                     <h3 class="text-xl font-bold mb-4 text-[--light-text] text-center lang-text" data-zh="5年质保无忧" data-en="5-Year Warranty">5年质保无忧</h3>
                     <p class="text-[--light-accent] text-justify lang-text" data-zh="5年结构质保，24小时售后响应，让您的投资长期无忧" data-en="5-year structural warranty with 24-hour after-sales support — your investment is always protected">5年结构质保，24小时售后响应，让您的投资长期无忧</p>
@@ -608,7 +613,7 @@
         <div class="container mx-auto px-4">
             <!-- Title -->
             <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-bold text-[--light-text] mb-4 lang-text" data-zh="✨ 智能设计工具" data-en="✨ AI Design Tool">
+                <h2 class="text-3xl md:text-4xl font-light text-[--light-text] mb-4 lang-text" data-zh="✨ 智能设计工具" data-en="✨ AI Design Tool">
                     ✨ 智能设计工具
                 </h2>
                 <p class="text-[--light-accent] text-lg max-w-2xl mx-auto lang-text" data-zh="上传您客户的后院实景照片和产品效果图，AI 将自动生成专业的设计效果图" data-en="Upload your client's backyard photo and product image, AI will automatically generate professional design renderings">
@@ -620,18 +625,18 @@
             <div class="flex justify-center mb-12">
                 <div class="flex items-center space-x-4 md:space-x-8">
                     <div class="flex items-center">
-                        <div class="w-10 h-10 rounded-full bg-[--primary] text-white flex items-center justify-center font-bold">1</div>
-                        <span class="ml-2 text-white text-sm md:text-base lang-text" data-zh="上传实景" data-en="Upload Photo">上传实景</span>
+                        <div class="w-10 h-10 rounded-full bg-[--light-text] text-white flex items-center justify-center font-bold">1</div>
+                        <span class="ml-2 text-[--light-text] text-sm md:text-base lang-text" data-zh="上传实景" data-en="Upload Photo">上传实景</span>
                     </div>
-                    <div class="w-8 md:w-16 h-0.5 bg-[--primary]/50"></div>
+                    <div class="w-8 md:w-16 h-0.5 bg-gray-300"></div>
                     <div class="flex items-center">
-                        <div class="w-10 h-10 rounded-full bg-[--primary] text-white flex items-center justify-center font-bold">2</div>
-                        <span class="ml-2 text-white text-sm md:text-base lang-text" data-zh="上传效果图" data-en="Upload Design">上传效果图</span>
+                        <div class="w-10 h-10 rounded-full bg-[--light-text] text-white flex items-center justify-center font-bold">2</div>
+                        <span class="ml-2 text-[--light-text] text-sm md:text-base lang-text" data-zh="上传效果图" data-en="Upload Design">上传效果图</span>
                     </div>
-                    <div class="w-8 md:w-16 h-0.5 bg-[--primary]/50"></div>
+                    <div class="w-8 md:w-16 h-0.5 bg-gray-300"></div>
                     <div class="flex items-center">
-                        <div class="w-10 h-10 rounded-full bg-[--primary] text-white flex items-center justify-center font-bold">3</div>
-                        <span class="ml-2 text-white text-sm md:text-base lang-text" data-zh="AI 生成" data-en="AI Generate">AI 生成</span>
+                        <div class="w-10 h-10 rounded-full bg-[--light-text] text-white flex items-center justify-center font-bold">3</div>
+                        <span class="ml-2 text-[--light-text] text-sm md:text-base lang-text" data-zh="AI 生成" data-en="AI Generate">AI 生成</span>
                     </div>
                 </div>
             </div>
@@ -639,13 +644,13 @@
             <!-- Upload Areas -->
             <div class="grid md:grid-cols-3 gap-6 mb-8 max-w-5xl mx-auto">
                 <!-- Background Image Upload -->
-                <div class="bg-[--dark-bg] rounded-2xl p-5 border border-[--primary]/30">
-                    <h3 class="text-lg font-semibold text-white mb-3 flex items-center">
-                        <i class="fas fa-home mr-2 text-[--primary]"></i>
+                <div class="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm">
+                    <h3 class="text-lg font-semibold text-[--light-text] mb-3 flex items-center">
+                        <i class="fas fa-home mr-2 text-[--light-accent]"></i>
                         <span class="lang-text" data-zh="后院实景照片" data-en="Backyard Photo">后院实景照片</span>
-                        <span class="ml-1 text-red-400 text-sm">*</span>
+                        <span class="ml-1 text-red-500 text-sm">*</span>
                     </h3>
-                    <div id="bgUploadArea" class="upload-area border-2 border-dashed border-[--primary]/50 rounded-xl p-6 text-center cursor-pointer transition-all duration-300 hover:border-[--primary] hover:bg-[--primary]/5" onclick="document.getElementById('bgInput').click()">
+                    <div id="bgUploadArea" class="upload-area border-2 border-dashed border-gray-300 rounded-xl p-6 text-center cursor-pointer transition-all duration-300 hover:border-[--light-text] hover:bg-gray-50" onclick="document.getElementById('bgInput').click()">
                         <input type="file" id="bgInput" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'bg')">
                         <div id="bgPreview" class="hidden" style="display: none;">
                             <img id="bgPreviewImg" src="" alt="后院实景" class="max-h-36 mx-auto rounded-lg shadow-lg" style="max-height: 144px;">
@@ -654,13 +659,13 @@
                             </button>
                         </div>
                         <div id="bgPlaceholder">
-                            <i class="fas fa-cloud-upload-alt text-3xl text-[--primary]/50 mb-3"></i>
+                            <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-3"></i>
                             <p class="text-[--light-accent] text-sm lang-text" data-zh="点击或拖拽上传" data-en="Click or drag to upload">点击或拖拽上传</p>
-                            <p class="text-[--light-accent]/60 text-xs mt-1 lang-text" data-zh="JPG, PNG, WEBP" data-en="JPG, PNG, WEBP">JPG, PNG, WEBP</p>
+                            <p class="text-gray-400 text-xs mt-1 lang-text" data-zh="JPG, PNG, WEBP" data-en="JPG, PNG, WEBP">JPG, PNG, WEBP</p>
                         </div>
                     </div>
-                    <div class="mt-3 p-2 bg-[--primary]/10 rounded-lg border border-[--primary]/20">
-                        <p class="text-[--light-accent]/80 text-xs flex items-start">
+                    <div class="mt-3 p-2 bg-gray-50 rounded-lg border border-gray-100">
+                        <p class="text-[--light-accent] text-xs flex items-start">
                             <i class="fas fa-lightbulb text-[--secondary] mr-2 mt-0.5"></i>
                             <span class="lang-text" data-zh="拍摄建议：正面平视角度，距离3-5米，确保目标安装位置清晰可见" data-en="Photo tips: Front-facing angle, 3-5m distance, ensure installation area is clearly visible">拍摄建议：正面平视角度，距离3-5米，确保目标安装位置清晰可见</span>
                         </p>
@@ -668,25 +673,25 @@
                 </div>
 
                 <!-- Product Image Selector -->
-                <div class="bg-[--dark-bg] rounded-2xl p-5 border border-[--primary]/30">
-                    <h3 class="text-lg font-semibold text-white mb-3 flex items-center">
-                        <i class="fas fa-building mr-2 text-[--primary]"></i>
+                <div class="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm">
+                    <h3 class="text-lg font-semibold text-[--light-text] mb-3 flex items-center">
+                        <i class="fas fa-building mr-2 text-[--light-accent]"></i>
                         <span class="lang-text" data-zh="选择产品效果图" data-en="Select Product Image">选择产品效果图</span>
-                        <span class="ml-1 text-red-400 text-sm">*</span>
+                        <span class="ml-1 text-red-500 text-sm">*</span>
                     </h3>
                     <div id="productImageGrid" class="grid grid-cols-3 gap-2">
                         <!-- Product images will be populated by JS -->
                     </div>
-                    <p class="text-[--light-accent]/60 text-xs mt-2 lang-text" data-zh="点击选择一张产品图" data-en="Click to select a product image">点击选择一张产品图</p>
+                    <p class="text-gray-400 text-xs mt-2 lang-text" data-zh="点击选择一张产品图" data-en="Click to select a product image">点击选择一张产品图</p>
                 </div>
 
                 <!-- Reference Image Upload (Optional) -->
-                <div class="bg-[--dark-bg] rounded-2xl p-5 border border-[--primary]/30">
-                    <h3 class="text-lg font-semibold text-white mb-3 flex items-center">
-                        <i class="fas fa-image mr-2 text-[--primary]"></i>
+                <div class="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm">
+                    <h3 class="text-lg font-semibold text-[--light-text] mb-3 flex items-center">
+                        <i class="fas fa-image mr-2 text-[--light-accent]"></i>
                         <span class="lang-text" data-zh="参考图（可选）" data-en="Reference (Optional)">参考图（可选）</span>
                     </h3>
-                    <div id="refUploadArea" class="upload-area border-2 border-dashed border-[--primary]/50 rounded-xl p-6 text-center cursor-pointer transition-all duration-300 hover:border-[--primary] hover:bg-[--primary]/5" onclick="document.getElementById('refInput').click()">
+                    <div id="refUploadArea" class="upload-area border-2 border-dashed border-gray-300 rounded-xl p-6 text-center cursor-pointer transition-all duration-300 hover:border-[--light-text] hover:bg-gray-50" onclick="document.getElementById('refInput').click()">
                         <input type="file" id="refInput" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'ref')">
                         <div id="refPreview" class="hidden" style="display: none;">
                             <img id="refPreviewImg" src="" alt="参考图" class="max-h-36 mx-auto rounded-lg shadow-lg" style="max-height: 144px;">
@@ -695,9 +700,9 @@
                             </button>
                         </div>
                         <div id="refPlaceholder">
-                            <i class="fas fa-cloud-upload-alt text-3xl text-[--primary]/50 mb-3"></i>
+                            <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-3"></i>
                             <p class="text-[--light-accent] text-sm lang-text" data-zh="点击或拖拽上传" data-en="Click or drag to upload">点击或拖拽上传</p>
-                            <p class="text-[--light-accent]/60 text-xs mt-1 lang-text" data-zh="风格/细节参考" data-en="Style/detail reference">风格/细节参考</p>
+                            <p class="text-gray-400 text-xs mt-1 lang-text" data-zh="风格/细节参考" data-en="Style/detail reference">风格/细节参考</p>
                         </div>
                     </div>
                 </div>
@@ -705,53 +710,53 @@
 
             <!-- Custom Prompt Input -->
             <div class="max-w-4xl mx-auto mb-8">
-                <div class="bg-[--dark-bg] rounded-2xl p-6 border border-[--primary]/30">
-                    <h3 class="text-lg font-semibold text-white mb-3 flex items-center">
-                        <i class="fas fa-pencil-alt mr-2 text-[--primary]"></i>
+                <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
+                    <h3 class="text-lg font-semibold text-[--light-text] mb-3 flex items-center">
+                        <i class="fas fa-pencil-alt mr-2 text-[--light-accent]"></i>
                         <span class="lang-text" data-zh="设计指令（可选）" data-en="Design Instructions (Optional)">设计指令（可选）</span>
                     </h3>
                     <textarea id="customPromptInput" rows="3" maxlength="800"
-                        class="w-full px-4 py-3 bg-[--darker-bg] border border-[--primary]/30 rounded-xl text-[--light-text] placeholder-[--light-accent]/50 focus:border-[--primary] focus:ring-1 focus:ring-[--primary] transition-all resize-none"
+                        class="w-full px-4 py-3 bg-[--darker-bg] border border-gray-200 rounded-xl text-[--light-text] placeholder-gray-400 focus:border-[--light-text] focus:ring-1 focus:ring-[--light-text] transition-all resize-none"
                         data-placeholder-zh="例如：将阳光房放在后院左侧，保持现代简约风格，添加绿植装饰..."
                         data-placeholder-en="e.g., Place the sunroom on the left side of the backyard, keep modern minimalist style, add greenery..."
                         placeholder="例如：将阳光房放在后院左侧，保持现代简约风格，添加绿植装饰..." oninput="updateCharCount()"></textarea>
                     <div class="flex justify-between items-center mt-2">
-                        <p class="text-[--light-accent]/60 text-sm lang-text" data-zh="输入额外的设计要求，AI 将根据您的指令生成更精准的效果图" data-en="Enter additional design requirements. AI will generate more precise renderings based on your instructions.">输入额外的设计要求，AI 将根据您的指令生成更精准的效果图</p>
-                        <span id="charCount" class="text-[--light-accent]/50 text-sm">0/800</span>
+                        <p class="text-[--light-accent] text-sm lang-text" data-zh="输入额外的设计要求，AI 将根据您的指令生成更精准的效果图" data-en="Enter additional design requirements. AI will generate more precise renderings based on your instructions.">输入额外的设计要求，AI 将根据您的指令生成更精准的效果图</p>
+                        <span id="charCount" class="text-gray-400 text-sm">0/800</span>
                     </div>
                 </div>
             </div>
 
             <!-- Action Buttons -->
             <div class="flex justify-center gap-4 mb-8">
-                <button id="generateBtn" onclick="generateDesign()" disabled class="px-8 py-3 rounded-full font-semibold transition-all duration-300 bg-[--primary]/30 text-[--light-accent]/50 cursor-not-allowed flex items-center">
+                <button id="generateBtn" onclick="generateDesign()" disabled class="px-8 py-3 rounded-full font-semibold transition-all duration-300 bg-gray-300 text-gray-500 cursor-not-allowed flex items-center">
                     <i class="fas fa-magic mr-2"></i>
                     <span class="lang-text" data-zh="生成设计效果图" data-en="Generate Design">生成设计效果图</span>
                 </button>
-                <button onclick="resetDesignTool()" class="px-6 py-3 rounded-full font-semibold border border-[--primary]/50 text-[--light-accent] hover:bg-[--primary]/10 transition-all duration-300">
+                <button onclick="resetDesignTool()" class="px-6 py-3 rounded-full font-semibold border border-gray-300 text-[--light-accent] hover:bg-gray-100 transition-all duration-300">
                     <span class="lang-text" data-zh="重置" data-en="Reset">重置</span>
                 </button>
             </div>
 
             <!-- Loading Indicator -->
             <div id="generatingIndicator" class="hidden text-center mb-8">
-                <div class="inline-flex items-center px-6 py-3 bg-[--primary]/20 rounded-full">
-                    <svg class="animate-spin h-5 w-5 text-[--primary] mr-3" viewBox="0 0 24 24">
+                <div class="inline-flex items-center px-6 py-3 bg-gray-100 rounded-full">
+                    <svg class="animate-spin h-5 w-5 text-[--light-text] mr-3" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    <span class="text-[--primary] font-semibold lang-text" data-zh="AI 正在生成设计效果图..." data-en="AI is generating design...">AI 正在生成设计效果图...</span>
+                    <span class="text-[--light-text] font-semibold lang-text" data-zh="AI 正在生成设计效果图..." data-en="AI is generating design...">AI 正在生成设计效果图...</span>
                 </div>
             </div>
 
             <!-- Result Display -->
-            <div id="resultArea" class="hidden max-w-xl mx-auto bg-[--dark-bg] rounded-2xl p-6 border border-[--primary]/30">
+            <div id="resultArea" class="hidden max-w-xl mx-auto bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
                 <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-2xl font-bold text-white flex items-center">
-                        <i class="fas fa-check-circle text-green-400 mr-2"></i>
+                    <h3 class="text-2xl font-bold text-[--light-text] flex items-center">
+                        <i class="fas fa-check-circle text-green-500 mr-2"></i>
                         <span class="lang-text" data-zh="设计效果图" data-en="Design Result">设计效果图</span>
                     </h3>
-                    <span id="iterationCounter" class="px-3 py-1 bg-[--primary]/20 text-[--primary] rounded-full text-sm font-semibold">
+                    <span id="iterationCounter" class="px-3 py-1 bg-gray-100 text-[--light-text] rounded-full text-sm font-semibold">
                         <span class="lang-text" data-zh="第" data-en="Round ">第</span><span id="currentIteration">1</span>/9
                     </span>
                 </div>
@@ -759,30 +764,30 @@
                     <img id="resultImg" src="" alt="设计效果图" class="w-full rounded-xl shadow-2xl">
                     
                     <!-- Continue Edit Section -->
-                    <div id="continueEditSection" class="mt-6 p-4 bg-[--darker-bg] rounded-xl border border-[--primary]/20">
-                        <h4 class="text-white font-semibold mb-3 flex items-center">
-                            <i class="fas fa-edit mr-2 text-[--primary]"></i>
+                    <div id="continueEditSection" class="mt-6 p-4 bg-[--darker-bg] rounded-xl border border-gray-200">
+                        <h4 class="text-[--light-text] font-semibold mb-3 flex items-center">
+                            <i class="fas fa-edit mr-2 text-[--light-accent]"></i>
                             <span class="lang-text" data-zh="继续编辑" data-en="Continue Editing">继续编辑</span>
                         </h4>
                         <textarea id="iterEditPrompt" rows="2" maxlength="500"
-                            class="w-full px-4 py-2 bg-[--dark-bg] border border-[--primary]/30 rounded-lg text-[--light-text] placeholder-[--light-accent]/50 focus:border-[--primary] focus:ring-1 focus:ring-[--primary] transition-all resize-none text-sm"
+                            class="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg text-[--light-text] placeholder-gray-400 focus:border-[--light-text] focus:ring-1 focus:ring-[--light-text] transition-all resize-none text-sm"
                             data-placeholder-zh="输入修改指令，如：将阳光房移到右边、调整大小、增加植物..."
                             data-placeholder-en="Enter edit instructions, e.g., move sunroom to right, resize, add plants..."
                             placeholder="输入修改指令，如：将阳光房移到右边、调整大小、增加植物..."></textarea>
                         <div class="flex items-center justify-between mt-3">
-                            <span class="text-[--light-accent]/50 text-xs">
+                            <span class="text-gray-400 text-xs">
                                 <span class="lang-text" data-zh="剩余" data-en="Remaining: ">剩余</span><span id="remainingIterations">8</span><span class="lang-text" data-zh="次编辑机会" data-en=" edits"> 次编辑机会</span>
                             </span>
                             <div class="flex items-center gap-3">
                                 <!-- Inline regeneration loading indicator -->
-                                <div id="regenLoadingIndicator" class="hidden flex items-center text-[--primary] text-sm">
+                                <div id="regenLoadingIndicator" class="hidden flex items-center text-[--light-text] text-sm">
                                     <svg class="animate-spin h-4 w-4 mr-2" viewBox="0 0 24 24">
                                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
                                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                     </svg>
                                     <span id="regenLoadingText" class="lang-text" data-zh="生成中..." data-en="Generating...">生成中...</span>
                                 </div>
-                                <button onclick="continueEdit()" id="continueEditBtn" class="px-5 py-2 bg-[--secondary] text-white rounded-full font-semibold hover:bg-[--secondary]/80 transition-colors flex items-center text-sm">
+                                <button onclick="continueEdit()" id="continueEditBtn" class="px-5 py-2 bg-[--light-text] text-white rounded-full font-semibold hover:bg-gray-700 transition-colors flex items-center text-sm">
                                     <i class="fas fa-magic mr-2"></i>
                                     <span class="lang-text" data-zh="重新生成" data-en="Regenerate">重新生成</span>
                                 </button>
@@ -796,7 +801,7 @@
                             <i class="fas fa-download mr-2"></i>
                             <span class="lang-text" data-zh="下载效果图" data-en="Download">下载效果图</span>
                         </button>
-                        <button onclick="resetToInitial()" class="px-6 py-2 border border-[--primary]/50 text-[--light-accent] rounded-full font-semibold hover:bg-[--primary]/10 transition-colors">
+                        <button onclick="resetToInitial()" class="px-6 py-2 border border-gray-300 text-[--light-accent] rounded-full font-semibold hover:bg-gray-100 transition-colors">
                             <span class="lang-text" data-zh="重新开始" data-en="Start Over">重新开始</span>
                         </button>
                     </div>
@@ -805,35 +810,35 @@
 
             <!-- Solution Scenarios -->
             <div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
-                <div class="bg-[--dark-bg]/50 rounded-xl p-4 text-center border border-[--primary]/20 hover:border-[--primary]/50 transition-colors">
+                <div class="bg-white rounded-xl p-4 text-center border border-gray-200 hover:border-gray-400 transition-colors shadow-sm">
                     <div class="text-3xl mb-2">☀️</div>
-                    <h4 class="text-white font-semibold lang-text" data-zh="阳光阅读角" data-en="Sunny Reading Nook">阳光阅读角</h4>
-                    <p class="text-[--light-accent]/60 text-sm lang-text" data-zh="享受自然光的静谧时光" data-en="Enjoy quiet moments in natural light">享受自然光的静谧时光</p>
+                    <h4 class="text-[--light-text] font-semibold lang-text" data-zh="阳光阅读角" data-en="Sunny Reading Nook">阳光阅读角</h4>
+                    <p class="text-[--light-accent] text-sm lang-text" data-zh="享受自然光的静谧时光" data-en="Enjoy quiet moments in natural light">享受自然光的静谧时光</p>
                 </div>
-                <div class="bg-[--dark-bg]/50 rounded-xl p-4 text-center border border-[--primary]/20 hover:border-[--primary]/50 transition-colors">
+                <div class="bg-white rounded-xl p-4 text-center border border-gray-200 hover:border-gray-400 transition-colors shadow-sm">
                     <div class="text-3xl mb-2">🍽️</div>
-                    <h4 class="text-white font-semibold lang-text" data-zh="户外聚餐区" data-en="Outdoor Dining Area">户外聚餐区</h4>
-                    <p class="text-[--light-accent]/60 text-sm lang-text" data-zh="与亲友共享星空下的晚宴" data-en="Share dinners under the stars with loved ones">与亲友共享星空下的晚宴</p>
+                    <h4 class="text-[--light-text] font-semibold lang-text" data-zh="户外聚餐区" data-en="Outdoor Dining Area">户外聚餐区</h4>
+                    <p class="text-[--light-accent] text-sm lang-text" data-zh="与亲友共享星空下的晚宴" data-en="Share dinners under the stars with loved ones">与亲友共享星空下的晚宴</p>
                 </div>
-                <div class="bg-[--dark-bg]/50 rounded-xl p-4 text-center border border-[--primary]/20 hover:border-[--primary]/50 transition-colors">
+                <div class="bg-white rounded-xl p-4 text-center border border-gray-200 hover:border-gray-400 transition-colors shadow-sm">
                     <div class="text-3xl mb-2">🏊</div>
-                    <h4 class="text-white font-semibold lang-text" data-zh="四季泳池" data-en="Year-Round Pool">四季泳池</h4>
-                    <p class="text-[--light-accent]/60 text-sm lang-text" data-zh="无论寒暑，畅享私家泳池" data-en="Enjoy your private pool in any season">无论寒暑，畅享私家泳池</p>
+                    <h4 class="text-[--light-text] font-semibold lang-text" data-zh="四季泳池" data-en="Year-Round Pool">四季泳池</h4>
+                    <p class="text-[--light-accent] text-sm lang-text" data-zh="无论寒暑，畅享私家泳池" data-en="Enjoy your private pool in any season">无论寒暑，畅享私家泳池</p>
                 </div>
-                <div class="bg-[--dark-bg]/50 rounded-xl p-4 text-center border border-[--primary]/20 hover:border-[--primary]/50 transition-colors">
+                <div class="bg-white rounded-xl p-4 text-center border border-gray-200 hover:border-gray-400 transition-colors shadow-sm">
                     <div class="text-3xl mb-2">🌿</div>
-                    <h4 class="text-white font-semibold lang-text" data-zh="花园茶室" data-en="Garden Tea Room">花园茶室</h4>
-                    <p class="text-[--light-accent]/60 text-sm lang-text" data-zh="在绿意中品茶悟道" data-en="Savor tea amidst lush greenery">在绿意中品茶悟道</p>
+                    <h4 class="text-[--light-text] font-semibold lang-text" data-zh="花园茶室" data-en="Garden Tea Room">花园茶室</h4>
+                    <p class="text-[--light-accent] text-sm lang-text" data-zh="在绿意中品茶悟道" data-en="Savor tea amidst lush greenery">在绿意中品茶悟道</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Gallery Section -->
-    <section id="gallery" class="py-16 bg-[--dark-bg]">
+    <section id="gallery" class="py-16 bg-white">
         <div class="container mx-auto px-4">
             <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold text-[--light-text] mb-4 lang-text" data-zh="真实案例展示" data-en="Real Project Showcase">
+                <h2 class="text-3xl md:text-4xl font-light text-[--light-text] mb-4 lang-text" data-zh="真实案例展示" data-en="Real Project Showcase">
                     真实案例展示
                 </h2>
                 <p class="text-[--light-accent] text-lg max-w-2xl mx-auto" id="gallerySubtitle">
@@ -846,7 +851,7 @@
             </div>
             
             <div class="text-center mt-12">
-                <button class="btn-secondary text-white font-semibold py-3 px-8 rounded-lg bg-gradient-to-r from-[--primary] to-[--primary-dark]">
+                <button class="btn-secondary text-white font-semibold py-3 px-8 rounded-lg">
                     <span class="lang-text" data-zh="查看更多案例" data-en="View More Cases">查看更多案例</span> <i class="fas fa-arrow-right ml-2"></i>
                 </button>
             </div>
@@ -857,7 +862,7 @@
     <section id="testimonials" class="py-16 bg-[--darker-bg]">
         <div class="container mx-auto px-4">
             <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold text-[--light-text] mb-4 lang-text" data-zh="客户真实评价" data-en="Customer Reviews">
+                <h2 class="text-3xl md:text-4xl font-light text-[--light-text] mb-4 lang-text" data-zh="客户真实评价" data-en="Customer Reviews">
                     客户真实评价
                 </h2>
                 <p class="text-[--light-accent] text-lg max-w-2xl mx-auto">
@@ -866,10 +871,10 @@
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="bg-[--dark-bg] p-8 rounded-2xl shadow-md border border-[--primary]/30">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200">
                     <div class="flex items-center mb-4">
-                        <div class="w-12 h-12 bg-[--primary]/20 rounded-full flex items-center justify-center mr-4">
-                            <span class="text-[--primary] font-bold">张</span>
+                        <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mr-4">
+                            <span class="text-[--light-text] font-bold">张</span>
                         </div>
                         <div>
                             <h4 class="font-bold text-[--light-text] lang-text" data-zh="张先生" data-en="Mr. Zhang">张先生</h4>
@@ -886,10 +891,10 @@
                     <p class="text-[--light-accent] italic lang-text" data-zh='"服务非常专业，从设计到安装都很满意。阳光房的质量超出预期，现在每天都在里面喝茶看书，非常享受！"' data-en='"Service is very professional, satisfied with design and installation. The quality of the sunroom exceeded expectations, now I drink tea and read books in it every day, very enjoyable!"'>"服务非常专业，从设计到安装都很满意。阳光房的质量超出预期，现在每天都在里面喝茶看书，非常享受！"</p>
                 </div>
                 
-                <div class="bg-[--dark-bg] p-8 rounded-2xl shadow-md border border-[--primary]/30">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200">
                     <div class="flex items-center mb-4">
-                        <div class="w-12 h-12 bg-[--primary]/20 rounded-full flex items-center justify-center mr-4">
-                            <span class="text-[--primary] font-bold">李</span>
+                        <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mr-4">
+                            <span class="text-[--light-text] font-bold">李</span>
                         </div>
                         <div>
                             <h4 class="font-bold text-[--light-text] lang-text" data-zh="李女士" data-en="Ms. Li">李女士</h4>
@@ -906,10 +911,10 @@
                     <p class="text-[--light-accent] italic lang-text" data-zh='"设计师很专业，根据我家的花园环境给出了很好的建议。施工团队也很负责，工期准时，质量很好。"' data-en='"The designer is very professional and gave great advice based on my garden environment. The construction team is also responsible, on schedule, and good quality."'>"设计师很专业，根据我家的花园环境给出了很好的建议。施工团队也很负责，工期准时，质量很好。"</p>
                 </div>
                 
-                <div class="bg-[--dark-bg] p-8 rounded-2xl shadow-md border border-[--primary]/30">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200">
                     <div class="flex items-center mb-4">
-                        <div class="w-12 h-12 bg-[--primary]/20 rounded-full flex items-center justify-center mr-4">
-                            <span class="text-[--primary] font-bold">王</span>
+                        <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mr-4">
+                            <span class="text-[--light-text] font-bold">王</span>
                         </div>
                         <div>
                             <h4 class="font-bold text-[--light-text] lang-text" data-zh="王先生" data-en="Mr. Wang">王先生</h4>
@@ -930,11 +935,11 @@
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="py-16 bg-[--dark-bg]">
+    <section id="contact" class="py-16 bg-white">
         <div class="container mx-auto px-4">
             <div class="max-w-4xl mx-auto">
                 <div class="text-center mb-12">
-                    <h2 class="text-3xl md:text-4xl font-bold text-[--light-text] mb-4 lang-text" data-zh="立即获取免费设计方案" data-en="Get Free Design Plan Now">
+                    <h2 class="text-3xl md:text-4xl font-light text-[--light-text] mb-4 lang-text" data-zh="立即获取免费设计方案" data-en="Get Free Design Plan Now">
                         立即获取免费设计方案
                     </h2>
                     <p class="text-[--light-accent] text-lg">
@@ -942,42 +947,42 @@
                     </p>
                 </div>
                 
-                <div class="bg-[--darker-bg] rounded-2xl shadow-xl overflow-hidden border border-[--primary]/30">
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200">
                     <div class="md:flex">
-                        <div class="md:w-1/2 bg-gradient-to-br from-[--primary] to-[--primary-dark] p-8 text-white">
+                        <div class="md:w-1/2 bg-[--light-text] p-8 text-white">
                             <h3 class="text-2xl font-bold mb-6 lang-text" data-zh="联系我们" data-en="Contact Us">联系我们</h3>
                             <div class="space-y-4">
                                 <div class="flex items-center">
                                     <i class="fas fa-phone-alt text-xl mr-4"></i>
                                     <div>
                                         <p class="font-semibold lang-text" data-zh="电话咨询" data-en="Phone Consultation">电话咨询</p>
-                                        <p class="text-[--light-accent]">400-888-9999</p>
+                                        <p class="text-gray-300">400-888-9999</p>
                                     </div>
                                 </div>
                                 <div class="flex items-center">
                                     <i class="fas fa-envelope text-xl mr-4"></i>
                                     <div>
                                         <p class="font-semibold lang-text" data-zh="邮箱联系" data-en="Email Contact">邮箱联系</p>
-                                        <p class="text-[--light-accent]">info@sunroom.com</p>
+                                        <p class="text-gray-300">info@sunroom.com</p>
                                     </div>
                                 </div>
                                 <div class="flex items-center">
                                     <i class="fas fa-map-marker-alt text-xl mr-4"></i>
                                     <div>
                                         <p class="font-semibold lang-text" data-zh="公司地址" data-en="Company Address">公司地址</p>
-                                        <p class="text-[--light-accent] lang-text" data-zh="北京市朝阳区建设路123号" data-en="No. 123, Jian She Road, Chaoyang District, Beijing">北京市朝阳区建设路123号</p>
+                                        <p class="text-gray-300 lang-text" data-zh="北京市朝阳区建设路123号" data-en="No. 123, Jian She Road, Chaoyang District, Beijing">北京市朝阳区建设路123号</p>
                                     </div>
                                 </div>
                                 <div class="flex items-center">
                                     <i class="fas fa-clock text-xl mr-4"></i>
                                     <div>
                                         <p class="font-semibold lang-text" data-zh="服务时间" data-en="Service Hours">服务时间</p>
-                                        <p class="text-[--light-accent] lang-text" data-zh="周一至周日 9:00-18:00" data-en="Monday to Sunday 9:00-18:00">周一至周日 9:00-18:00</p>
+                                        <p class="text-gray-300 lang-text" data-zh="周一至周日 9:00-18:00" data-en="Monday to Sunday 9:00-18:00">周一至周日 9:00-18:00</p>
                                     </div>
                                 </div>
                             </div>
                             
-                            <div class="mt-8 pt-8 border-t border-[--light-accent]/50">
+                            <div class="mt-8 pt-8 border-t border-white/30">
                                 <h4 class="font-bold mb-4 lang-text" data-zh="关注我们" data-en="Follow Us">关注我们</h4>
                                 <div class="flex space-x-4">
                                     <a href="#" class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition">
@@ -993,21 +998,21 @@
                             </div>
                         </div>
                         
-                        <div class="md:w-1/2 p-8 bg-[--dark-bg]">
+                        <div class="md:w-1/2 p-8 bg-white">
                             <form id="contactForm" class="space-y-6">
                                 <div>
                                     <label class="block text-[--light-text] font-medium mb-2 lang-text" data-zh="您的姓名" data-en="Your Name">您的姓名</label>
-                                    <input type="text" class="w-full px-4 py-3 border border-[--primary]/30 rounded-lg focus:ring-2 focus:ring-[--primary] focus:border-[--primary] bg-[--darker-bg] text-[--light-text]" placeholder="请输入您的姓名">
+                                    <input type="text" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-gray-400 bg-white text-[--light-text]" placeholder="请输入您的姓名">
                                 </div>
                                 
                                 <div>
                                     <label class="block text-[--light-text] font-medium mb-2 lang-text" data-zh="联系电话" data-en="Phone Number">联系电话</label>
-                                    <input type="tel" class="w-full px-4 py-3 border border-[--primary]/30 rounded-lg focus:ring-2 focus:ring-[--primary] focus:border-[--primary] bg-[--darker-bg] text-[--light-text]" placeholder="请输入您的手机号">
+                                    <input type="tel" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-gray-400 bg-white text-[--light-text]" placeholder="请输入您的手机号">
                                 </div>
                                 
                                 <div>
                                     <label class="block text-[--light-text] font-medium mb-2 lang-text" data-zh="房屋面积" data-en="House Area">房屋面积</label>
-                                    <select class="w-full px-4 py-3 border border-[--primary]/30 rounded-lg focus:ring-2 focus:ring-[--primary] focus:border-[--primary] bg-[--darker-bg] text-[--light-text]">
+                                    <select class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-gray-400 bg-white text-[--light-text]">
                                         <option class="lang-text" data-zh="请选择房屋面积" data-en="Please select house area">请选择房屋面积</option>
                                         <option class="lang-text" data-zh="50㎡以下" data-en="Under 50㎡">50㎡以下</option>
                                         <option class="lang-text" data-zh="50-100㎡" data-en="50-100㎡">50-100㎡</option>
@@ -1018,10 +1023,10 @@
                                 
                                 <div>
                                     <label class="block text-[--light-text] font-medium mb-2 lang-text" data-zh="具体需求" data-en="Specific Needs">具体需求</label>
-                                    <textarea class="w-full px-4 py-3 border border-[--primary]/30 rounded-lg focus:ring-2 focus:ring-[--primary] focus:border-[--primary] bg-[--darker-bg] text-[--light-text]" rows="4" placeholder="请描述您的具体需求和期望"></textarea>
+                                    <textarea class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-gray-400 bg-white text-[--light-text]" rows="4" placeholder="请描述您的具体需求和期望"></textarea>
                                 </div>
                                 
-                                <button type="submit" class="w-full btn-primary text-white font-bold py-4 rounded-lg bg-gradient-to-r from-[--primary] to-[--primary-dark] hover:from-[--primary-dark] hover:to-[--primary] transition-all duration-300">
+                                <button type="submit" class="w-full btn-primary text-white font-bold py-4 rounded-lg transition-all duration-300">
                                     <i class="fas fa-paper-plane mr-2"></i><span class="lang-text" data-zh="提交咨询" data-en="Submit Inquiry">提交咨询</span>
                                 </button>
                             </form>
@@ -1033,12 +1038,12 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-[--darker-bg] text-[--light-text] py-12 border-t border-[--primary]/30">
+    <footer class="bg-[--light-text] text-white py-12 border-t border-gray-200">
 
     <!-- Chatbot Widget -->
     <div class="chatbot-container" id="chatbot">
         <div class="chatbot-window" id="chatWindow">
-            <div class="chatbot-header bg-[--primary] text-white">
+            <div class="chatbot-header bg-[--light-text] text-white">
                 <div class="chatbot-avatar bg-white/20">
                     <i class="fas fa-robot text-white"></i>
                 </div>
@@ -1050,10 +1055,10 @@
                     </div>
                 </div>
             </div>
-            <div class="chatbot-messages" id="chatMessages" style="background: var(--dark-bg); color: var(--light-text);"></div>
-            <div class="chatbot-input" style="background: var(--darker-bg); border-top: 1px solid var(--primary);">
-                <input type="text" id="chatInput" placeholder="输入您的问题..." autocomplete="off" style="background: var(--darker-bg); color: var(--light-text); border: 1px solid var(--primary); padding: 12px;">
-                <button id="sendBtn" onclick="sendMessage()" style="background: var(--primary); color: white;">
+            <div class="chatbot-messages" id="chatMessages" style="background: #ffffff; color: #1a1a1a;"></div>
+            <div class="chatbot-input" style="background: #ffffff; border-top: 1px solid #e0e0e0;">
+                <input type="text" id="chatInput" placeholder="输入您的问题..." autocomplete="off" style="background: #ffffff; color: #1a1a1a; border: 1px solid #e0e0e0; padding: 12px;">
+                <button id="sendBtn" onclick="sendMessage()" style="background: #222222; color: white;">
                     <i class="fas fa-paper-plane"></i>
                 </button>
             </div>
@@ -1067,18 +1072,18 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
                     <div class="flex items-center space-x-2 mb-4">
-                        <i class="fas fa-sun text-2xl text-[--primary]"></i>
+                        <i class="fas fa-sun text-2xl text-white"></i>
                         <span class="text-xl font-bold lang-text" data-zh="庭院定制专家" data-en="Outdoor Living Expert">庭院定制专家</span>
                     </div>
-                    <p class="text-[--light-accent] mb-4 lang-text" data-zh="专注庭院生活空间定制，为您打造理想的户外休闲体验。" data-en="Dedicated to crafting custom outdoor living spaces and creating your ideal leisure experience.">专注庭院生活空间定制，为您打造理想的户外休闲体验。</p>
+                    <p class="text-gray-400 mb-4 lang-text" data-zh="专注庭院生活空间定制，为您打造理想的户外休闲体验。" data-en="Dedicated to crafting custom outdoor living spaces and creating your ideal leisure experience.">专注庭院生活空间定制，为您打造理想的户外休闲体验。</p>
                     <div class="flex space-x-4">
-                        <a href="#" class="text-[--light-accent] hover:text-[--primary] transition">
+                        <a href="#" class="text-gray-400 hover:text-white transition">
                             <i class="fab fa-facebook-f"></i>
                         </a>
-                        <a href="#" class="text-[--light-accent] hover:text-[--primary] transition">
+                        <a href="#" class="text-gray-400 hover:text-white transition">
                             <i class="fab fa-twitter"></i>
                         </a>
-                        <a href="#" class="text-[--light-accent] hover:text-[--primary] transition">
+                        <a href="#" class="text-gray-400 hover:text-white transition">
                             <i class="fab fa-instagram"></i>
                         </a>
                     </div>
@@ -1086,36 +1091,36 @@
                 
                 <div>
                     <h3 class="text-lg font-bold mb-4 lang-text" data-zh="解决方案" data-en="Solutions">解决方案</h3>
-                    <ul class="space-y-2 text-[--light-accent]">
-                        <li><a href="#" class="hover:text-[--primary] transition lang-text" data-zh="庭院阳光房" data-en="Yard Sunroom">庭院阳光房</a></li>
-                        <li><a href="#" class="hover:text-[--primary] transition lang-text" data-zh="户外凉亭空间" data-en="Outdoor Pavilion Space">户外凉亭空间</a></li>
-                        <li><a href="#" class="hover:text-[--primary] transition lang-text" data-zh="泳池封顶方案" data-en="Pool Enclosure Solution">泳池封顶方案</a></li>
-                        <li><a href="#" class="hover:text-[--primary] transition lang-text" data-zh="智能遮阳卷帘" data-en="Windproof Roller Shutter">智能遮阳卷帘</a></li>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="庭院阳光房" data-en="Yard Sunroom">庭院阳光房</a></li>
+                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="户外凉亭空间" data-en="Outdoor Pavilion Space">户外凉亭空间</a></li>
+                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="泳池封顶方案" data-en="Pool Enclosure Solution">泳池封顶方案</a></li>
+                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="智能遮阳卷帘" data-en="Windproof Roller Shutter">智能遮阳卷帘</a></li>
                     </ul>
                 </div>
                 
                 <div>
                     <h3 class="text-lg font-bold mb-4 lang-text" data-zh="关于我们" data-en="About Us">关于我们</h3>
-                    <ul class="space-y-2 text-[--light-accent]">
-                        <li><a href="#" class="hover:text-[--primary] transition lang-text" data-zh="公司简介" data-en="Company Profile">公司简介</a></li>
-                        <li><a href="#" class="hover:text-[--primary] transition lang-text" data-zh="工程案例" data-en="Engineering Cases">工程案例</a></li>
-                        <li><a href="#" class="hover:text-[--primary] transition lang-text" data-zh="新闻资讯" data-en="News & Information">新闻资讯</a></li>
-                        <li><a href="#" class="hover:text-[--primary] transition lang-text" data-zh="人才招聘" data-en="Careers">人才招聘</a></li>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="公司简介" data-en="Company Profile">公司简介</a></li>
+                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="工程案例" data-en="Engineering Cases">工程案例</a></li>
+                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="新闻资讯" data-en="News & Information">新闻资讯</a></li>
+                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="人才招聘" data-en="Careers">人才招聘</a></li>
                     </ul>
                 </div>
                 
                 <div>
                     <h3 class="text-lg font-bold mb-4 lang-text" data-zh="服务支持" data-en="Support Services">服务支持</h3>
-                    <ul class="space-y-2 text-[--light-accent]">
-                        <li><a href="#" class="hover:text-[--primary] transition lang-text" data-zh="售后服务" data-en="After-sales Service">售后服务</a></li>
-                        <li><a href="#" class="hover:text-[--primary] transition lang-text" data-zh="安装指南" data-en="Installation Guide">安装指南</a></li>
-                        <li><a href="#" class="hover:text-[--primary] transition lang-text" data-zh="常见问题" data-en="FAQ">常见问题</a></li>
-                        <li><a href="#" class="hover:text-[--primary] transition lang-text" data-zh="在线客服" data-en="Online Support">在线客服</a></li>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="售后服务" data-en="After-sales Service">售后服务</a></li>
+                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="安装指南" data-en="Installation Guide">安装指南</a></li>
+                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="常见问题" data-en="FAQ">常见问题</a></li>
+                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="在线客服" data-en="Online Support">在线客服</a></li>
                     </ul>
                 </div>
             </div>
             
-            <div class="border-t border-[--primary]/30 mt-8 pt-8 text-center text-[--light-accent]">
+            <div class="border-t border-gray-600 mt-8 pt-8 text-center text-gray-400">
                 <p class="lang-text" data-zh="&copy; 2024 庭院定制专家. 保留所有权利. 京ICP备12345678号" data-en="&copy; 2024 Outdoor Living Expert. All rights reserved. ICP License: 12345678">&copy; 2024 庭院定制专家. 保留所有权利. 京ICP备12345678号</p>
             </div>
         </div>
@@ -1262,10 +1267,10 @@
             const data = categoryData[category];
             const grid = document.getElementById('galleryGrid');
             grid.innerHTML = data.gallery.map(item => `
-                <div class="group relative overflow-hidden rounded-2xl shadow-lg border border-[--primary]/30">
+                <div class="group relative overflow-hidden rounded-2xl shadow-sm border border-gray-200">
                     <img src="${item.src}" alt="${currentLang === 'zh' ? item.zh : item.en}" 
                          class="gallery-dynamic-img w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy">
-                    <div class="absolute inset-0 bg-[--darker-bg] bg-opacity-70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div class="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                         <div class="text-white text-center">
                             <h3 class="text-xl font-bold mb-2">${currentLang === 'zh' ? item.zh : item.en}</h3>
                             <p class="text-sm">${currentLang === 'zh' ? item.descZh : item.descEn}</p>
@@ -1634,7 +1639,7 @@
             const images = productImages[category] || productImages.sunroom;
             
             grid.innerHTML = images.map((src, i) => `
-                <div class="product-img-option cursor-pointer rounded-lg overflow-hidden border-2 border-transparent hover:border-[--primary]/50 transition-all" 
+                <div class="product-img-option cursor-pointer rounded-lg overflow-hidden border-2 border-transparent hover:border-gray-400 transition-all" 
                      onclick="selectProductImage('${src}', this)" data-src="${src}">
                     <img src="${src}" alt="Product ${i+1}" class="w-full h-20 object-cover">
                 </div>
@@ -1648,13 +1653,13 @@
         function selectProductImage(src, element) {
             // Remove selection from all
             document.querySelectorAll('.product-img-option').forEach(el => {
-                el.classList.remove('border-[--primary]', 'ring-2', 'ring-[--primary]');
+                el.classList.remove('border-gray-800', 'ring-2', 'ring-gray-800');
                 el.classList.add('border-transparent');
             });
             
             // Add selection to clicked
             element.classList.remove('border-transparent');
-            element.classList.add('border-[--primary]', 'ring-2', 'ring-[--primary]');
+            element.classList.add('border-gray-800', 'ring-2', 'ring-gray-800');
             
             // Convert image URL to base64 for API
             const img = new Image();
@@ -1680,15 +1685,15 @@
                         document.getElementById('bgPreviewImg').src = reader.result;
                         document.getElementById('bgPreview').style.display = 'block';
                         document.getElementById('bgPlaceholder').style.display = 'none';
-                        document.getElementById('bgUploadArea').style.borderColor = 'var(--primary)';
-                        document.getElementById('bgUploadArea').style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+                        document.getElementById('bgUploadArea').style.borderColor = '#222222';
+                        document.getElementById('bgUploadArea').style.backgroundColor = 'rgba(0, 0, 0, 0.03)';
                     } else if (type === 'ref') {
                         refImageData = reader.result;
                         document.getElementById('refPreviewImg').src = reader.result;
                         document.getElementById('refPreview').style.display = 'block';
                         document.getElementById('refPlaceholder').style.display = 'none';
-                        document.getElementById('refUploadArea').style.borderColor = 'var(--primary)';
-                        document.getElementById('refUploadArea').style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+                        document.getElementById('refUploadArea').style.borderColor = '#222222';
+                        document.getElementById('refUploadArea').style.backgroundColor = 'rgba(0, 0, 0, 0.03)';
                     }
                     updateGenerateButton();
                 };
@@ -1725,12 +1730,12 @@
             const btn = document.getElementById('generateBtn');
             if (bgImageData && fgImageData) {
                 btn.disabled = false;
-                btn.classList.remove('bg-[--primary]/30', 'text-[--light-accent]/50', 'cursor-not-allowed');
-                btn.classList.add('bg-[--primary]', 'text-white', 'hover:bg-[--primary-dark]', 'shadow-lg');
+                btn.classList.remove('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
+                btn.classList.add('bg-[--light-text]', 'text-white', 'hover:bg-gray-700', 'shadow-lg');
             } else {
                 btn.disabled = true;
-                btn.classList.add('bg-[--primary]/30', 'text-[--light-accent]/50', 'cursor-not-allowed');
-                btn.classList.remove('bg-[--primary]', 'text-white', 'hover:bg-[--primary-dark]', 'shadow-lg');
+                btn.classList.add('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
+                btn.classList.remove('bg-[--light-text]', 'text-white', 'hover:bg-gray-700', 'shadow-lg');
             }
         }
 
@@ -1877,7 +1882,7 @@
             // Reset product image selection
             fgImageData = null;
             document.querySelectorAll('.product-img-option').forEach(el => {
-                el.classList.remove('border-[--primary]', 'ring-2', 'ring-[--primary]');
+                el.classList.remove('border-gray-800', 'ring-2', 'ring-gray-800');
                 el.classList.add('border-transparent');
             });
             document.getElementById('customPromptInput').value = '';
@@ -2016,14 +2021,14 @@
 
             area.addEventListener('dragover', (e) => {
                 e.preventDefault();
-                area.classList.add('border-[--primary]', 'bg-[--primary]/10');
+                area.classList.add('border-gray-800', 'bg-gray-50');
             });
 
             area.addEventListener('dragleave', (e) => {
                 e.preventDefault();
                 const imgData = type === 'bg' ? bgImageData : refImageData;
                 if (!imgData) {
-                    area.classList.remove('border-[--primary]', 'bg-[--primary]/10');
+                    area.classList.remove('border-gray-800', 'bg-gray-50');
                 }
             });
 
