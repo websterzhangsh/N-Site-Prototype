@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title class="tenant-title">登录</title>
+    <meta name="description" content="合作伙伴登录">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #222222;
+            --primary-hover: #333333;
+            --bg-color: #f5f5f5;
+            --card-bg: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', system-ui, -apple-system, sans-serif;
+            background: var(--bg-color);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .tenant-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 24px;
+            border-radius: 12px;
+            object-fit: contain;
+        }
+
+        .tenant-name {
+            text-align: center;
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .tenant-subtitle {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.2s;
+            background: #fafafa;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: #fff;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .input-with-icon {
+            padding-left: 44px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary);
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            font-size: 13px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary);
+        }
+
+        .forgot-password {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-login:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-login.loading .btn-text {
+            opacity: 0.7;
+        }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: none;
+        }
+
+        .btn-login.loading .spinner {
+            display: block;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .error-message.show {
+            display: flex;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 24px;
+        }
+
+        .back-link a {
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+        }
+
+        .back-link a:hover {
+            color: var(--primary);
+        }
+
+        .powered-by {
+            text-align: center;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid #eee;
+        }
+
+        .powered-by-text {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .powered-by-brand {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-top: 4px;
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .loading-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loading-content {
+            text-align: center;
+        }
+
+        .loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid #eee;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        .loading-text {
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 32px 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">正在加载...</p>
+        </div>
+    </div>
+
+    <div class="login-container">
+        <div class="login-card">
+            <!-- Tenant Logo -->
+            <img src="" alt="Logo" class="tenant-logo" id="tenantLogo">
+            
+            <!-- Tenant Name -->
+            <h1 class="tenant-name" id="tenantName">加载中...</h1>
+            <p class="tenant-subtitle" id="tenantSubtitle">合作伙伴登录</p>
+
+            <!-- Error Message -->
+            <div class="error-message" id="errorMessage">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="errorText"></span>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label" for="email">邮箱地址</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-envelope input-icon"></i>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            class="form-input input-with-icon" 
+                            placeholder="请输入邮箱地址"
+                            required
+                            autocomplete="email"
+                        >
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">密码</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            class="form-input input-with-icon" 
+                            placeholder="请输入密码"
+                            required
+                            autocomplete="current-password"
+                        >
+                        <i class="fas fa-eye password-toggle" id="togglePassword"></i>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="remember-me">
+                        <input type="checkbox" id="rememberMe">
+                        <span>记住我</span>
+                    </label>
+                    <a href="#" class="forgot-password" id="forgotPassword">忘记密码？</a>
+                </div>
+
+                <button type="submit" class="btn-login" id="loginBtn">
+                    <div class="spinner"></div>
+                    <span class="btn-text">登录</span>
+                </button>
+            </form>
+
+            <div class="back-link">
+                <a href="index.html">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>返回首页</span>
+                </a>
+            </div>
+
+            <div class="powered-by">
+                <p class="powered-by-text">Powered by</p>
+                <p class="powered-by-brand">庭院定制专家</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tenant Configuration
+        let currentTenant = null;
+
+        // Extract tenant slug from URL
+        function getTenantSlug() {
+            const hostname = window.location.hostname;
+            const path = window.location.pathname;
+            
+            // Subdomain: partner1.nestopia.com
+            if (hostname.includes('.') && !hostname.startsWith('www.')) {
+                const parts = hostname.split('.');
+                if (parts.length >= 3) {
+                    return parts[0];
+                }
+            }
+            
+            // Path-based: nestopia.com/login/partner1
+            const pathMatch = path.match(/\/login\/([^\/]+)/);
+            if (pathMatch) {
+                return pathMatch[1];
+            }
+            
+            // Query param: ?tenant=partner1
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('tenant') || 'default';
+        }
+
+        // Load tenant configuration
+        async function loadTenantConfig() {
+            const slug = getTenantSlug();
+            
+            try {
+                // In production, this would be an API call
+                // const response = await fetch(`/api/tenant?slug=${slug}`);
+                // const tenant = await response.json();
+                
+                // For demo, using mock data
+                const tenants = {
+                    'partner1': {
+                        name: '阳光建筑合作伙伴',
+                        slug: 'partner1',
+                        logo: 'https://via.placeholder.com/80x80/222222/FFFFFF?text=P1',
+                        primaryColor: '#222222',
+                        subtitle: '专业阳光房定制服务'
+                    },
+                    'partner2': {
+                        name: '绿意庭院设计',
+                        slug: 'partner2',
+                        logo: 'https://via.placeholder.com/80x80/2d5a27/FFFFFF?text=P2',
+                        primaryColor: '#2d5a27',
+                        subtitle: '生态庭院解决方案'
+                    },
+                    'default': {
+                        name: '庭院定制专家',
+                        slug: 'default',
+                        logo: 'https://via.placeholder.com/80x80/222222/FFFFFF?text=NE',
+                        primaryColor: '#222222',
+                        subtitle: '合作伙伴登录'
+                    }
+                };
+                
+                currentTenant = tenants[slug] || tenants['default'];
+                applyTenantUI(currentTenant);
+                
+            } catch (error) {
+                console.error('Failed to load tenant config:', error);
+                showError('加载租户配置失败，请刷新重试');
+            }
+        }
+
+        // Apply tenant UI customization
+        function applyTenantUI(tenant) {
+            document.documentElement.style.setProperty('--primary', tenant.primaryColor);
+            document.documentElement.style.setProperty('--primary-hover', adjustColor(tenant.primaryColor, -20));
+            
+            document.getElementById('tenantLogo').src = tenant.logo;
+            document.getElementById('tenantName').textContent = tenant.name;
+            document.getElementById('tenantSubtitle').textContent = tenant.subtitle;
+            document.title = `${tenant.name} - 登录`;
+            
+            // Hide loading
+            document.getElementById('loadingOverlay').classList.remove('show');
+        }
+
+        // Helper: Adjust color brightness
+        function adjustColor(color, amount) {
+            const num = parseInt(color.replace('#', ''), 16);
+            const r = Math.min(255, Math.max(0, (num >> 16) + amount));
+            const g = Math.min(255, Math.max(0, ((num >> 8) & 0x00FF) + amount));
+            const b = Math.min(255, Math.max(0, (num & 0x00FF) + amount));
+            return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, '0')}`;
+        }
+
+        // Show error message
+        function showError(message) {
+            const errorEl = document.getElementById('errorMessage');
+            document.getElementById('errorText').textContent = message;
+            errorEl.classList.add('show');
+            
+            setTimeout(() => {
+                errorEl.classList.remove('show');
+            }, 5000);
+        }
+
+        // Toggle password visibility
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const type = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = type;
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+
+        // Handle login form submission
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+            const loginBtn = document.getElementById('loginBtn');
+            
+            // Validate
+            if (!email || !password) {
+                showError('请填写邮箱和密码');
+                return;
+            }
+            
+            // Show loading
+            loginBtn.classList.add('loading');
+            loginBtn.disabled = true;
+            
+            try {
+                // In production, this would be an API call
+                // const response = await fetch('/api/auth/login', {
+                //     method: 'POST',
+                //     headers: { 'Content-Type': 'application/json' },
+                //     body: JSON.stringify({
+                //         email,
+                //         password,
+                //         tenantSlug: currentTenant?.slug
+                //     })
+                // });
+                
+                // Mock login for demo
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // Simulate successful login
+                const mockToken = 'mock-jwt-token-' + Date.now();
+                
+                // Store token
+                if (rememberMe) {
+                    localStorage.setItem('auth_token', mockToken);
+                    localStorage.setItem('tenant_slug', currentTenant?.slug);
+                } else {
+                    sessionStorage.setItem('auth_token', mockToken);
+                    sessionStorage.setItem('tenant_slug', currentTenant?.slug);
+                }
+                
+                // Redirect to dashboard
+                window.location.href = 'dashboard.html';
+                
+            } catch (error) {
+                console.error('Login failed:', error);
+                showError('登录失败，请检查邮箱和密码');
+                loginBtn.classList.remove('loading');
+                loginBtn.disabled = false;
+            }
+        });
+
+        // Handle forgot password
+        document.getElementById('forgotPassword').addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('密码重置功能即将上线');
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('loadingOverlay').classList.add('show');
+            loadTenantConfig();
+        });
+    </script>
+</body>
+</html>
