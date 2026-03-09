@@ -523,6 +523,104 @@
             }
             .chatbot-toggle { width: 54px; height: 54px; }
         }
+
+        /* ====== 2C Service Flow Cards ====== */
+        .flow-step-card {
+            position: relative;
+            padding: 2.5rem 2rem;
+            border-radius: 1.5rem;
+            background: white;
+            border: 1px solid #e5e7eb;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+        .flow-step-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+        .flow-step-card:hover::before { transform: scaleX(1); }
+        .flow-step-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        /* ====== 2B Professional Timeline ====== */
+        .pro-timeline {
+            position: relative;
+            padding: 1rem 0;
+        }
+        .pro-timeline::before {
+            content: '';
+            position: absolute;
+            left: 24px; top: 0; bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, #d1d5db, #222222, #d1d5db);
+        }
+        .tl-item {
+            position: relative;
+            padding-left: 64px;
+            margin-bottom: 1.5rem;
+        }
+        .tl-node {
+            position: absolute;
+            left: 8px; top: 4px;
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+            z-index: 10;
+            border: 3px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        }
+        .tl-card {
+            padding: 1.25rem 1.5rem;
+            border-radius: 1rem;
+            background: white;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+        .tl-card:hover {
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            transform: translateX(4px);
+        }
+        .payment-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.2rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+            border: 1px solid #fbbf24;
+        }
+        .phase-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.625rem 1.75rem;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 0.875rem;
+            letter-spacing: 0.05em;
+        }
+
+        @media (min-width: 768px) {
+            .pro-timeline::before { left: 50%; transform: translateX(-50%); }
+            .tl-item { padding-left: 0; display: flex; align-items: flex-start; }
+            .tl-item:nth-child(odd) { flex-direction: row-reverse; }
+            .tl-item .tl-card { width: 44%; }
+            .tl-item:nth-child(odd) .tl-card { margin-right: auto; margin-left: 6%; }
+            .tl-item:nth-child(even) .tl-card { margin-left: auto; margin-right: 6%; }
+            .tl-node { left: 50%; transform: translateX(-50%); position: absolute; }
+        }
     </style>
 </head>
 <body class="font-sans bg-white text-[--light-text]">
@@ -552,9 +650,9 @@
                     <nav class="hidden md:flex space-x-8">
                         <a href="#home" class="text-white/80 hover:text-white transition lang-text" data-zh="首页" data-en="Home">首页</a>
                         <a href="#features" class="text-white/80 hover:text-white transition lang-text" data-zh="产品特色" data-en="Features">产品特色</a>
-                        <a href="#design-tool" class="text-white/80 hover:text-white transition lang-text flex items-center" data-zh="✨ 智能设计" data-en="✨ AI Design">✨ 智能设计</a>
+                        <a href="#service-flow" class="text-white/80 hover:text-white transition lang-text" data-zh="服务流程" data-en="Process">服务流程</a>
+                        <a href="#pro-workflow" class="text-white/80 hover:text-white transition lang-text flex items-center" data-zh="✨ 专业服务" data-en="✨ Pro Service">✨ 专业服务</a>
                         <a href="#gallery" class="text-white/80 hover:text-white transition lang-text" data-zh="案例展示" data-en="Gallery">案例展示</a>
-                        <a href="#testimonials" class="text-white/80 hover:text-white transition lang-text" data-zh="客户评价" data-en="Testimonials">客户评价</a>
                         <a href="#contact" class="text-white/80 hover:text-white transition lang-text" data-zh="联系我们" data-en="Contact">联系我们</a>
                     </nav>
                     <div class="flex items-center space-x-4">
@@ -685,7 +783,105 @@
         </div>
     </section>
 
-    <!-- AI Design Tool Section -->
+    <!-- ====== 2C Service Flow: 3 Steps for Consumers ====== -->
+    <section id="service-flow" class="py-20 bg-[--darker-bg]">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <span class="inline-block px-4 py-1.5 bg-gray-200 text-[--light-text] rounded-full text-sm font-semibold tracking-wider mb-4 lang-text" data-zh="服务流程" data-en="OUR PROCESS">服务流程</span>
+                <h2 class="text-3xl md:text-4xl font-light text-[--light-text] mb-4 lang-text" data-zh="三步开启理想庭院" data-en="Start Your Dream Outdoor Space in 3 Steps">
+                    三步开启理想庭院
+                </h2>
+                <p class="text-[--light-accent] text-lg max-w-2xl mx-auto lang-text" data-zh="简单三步，开始您的户外生活空间定制之旅" data-en="Begin your outdoor living customization journey in just three simple steps">
+                    简单三步，开始您的户外生活空间定制之旅
+                </p>
+            </div>
+
+            <!-- 3 Step Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- Step 1: 初步信息收集 -->
+                <div class="relative">
+                    <div class="flow-step-card text-center">
+                        <div class="w-16 h-16 bg-[--light-text] text-white rounded-full flex items-center justify-center mx-auto mb-5 text-2xl font-bold shadow-lg">1</div>
+                        <div class="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
+                            <i class="fas fa-clipboard-list text-2xl text-[--light-text]"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-[--light-text] mb-3 lang-text" data-zh="提交您的需求" data-en="Submit Your Requirements">提交您的需求</h3>
+                        <p class="text-[--light-accent] mb-6 text-sm leading-relaxed lang-text" data-zh="告诉我们您的庭院面积、偏好风格和预算范围，我们的专业顾问将为您提供初步建议和产品推荐。" data-en="Share your yard size, preferred style, and budget. Our consultants will provide initial recommendations and product suggestions.">
+                            告诉我们您的庭院面积、偏好风格和预算范围，我们的专业顾问将为您提供初步建议和产品推荐。
+                        </p>
+                        <a href="#contact" class="inline-flex items-center px-5 py-2.5 bg-[--light-text] text-white rounded-full text-sm font-semibold hover:bg-gray-700 transition lang-text" data-zh="开始咨询" data-en="Start Consultation">
+                            <i class="fas fa-arrow-right mr-2"></i>开始咨询
+                        </a>
+                    </div>
+                    <div class="hidden md:flex absolute top-1/2 -right-4 transform -translate-y-1/2 z-10 text-gray-300">
+                        <i class="fas fa-chevron-right text-2xl"></i>
+                    </div>
+                </div>
+
+                <!-- Step 2: Product Animation -->
+                <div class="relative">
+                    <div class="flow-step-card text-center">
+                        <div class="w-16 h-16 bg-[--light-text] text-white rounded-full flex items-center justify-center mx-auto mb-5 text-2xl font-bold shadow-lg">2</div>
+                        <div class="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
+                            <i class="fas fa-film text-2xl text-[--light-text]"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-[--light-text] mb-3 lang-text" data-zh="探索产品方案" data-en="Explore Product Solutions">探索产品方案</h3>
+                        <p class="text-[--light-accent] mb-6 text-sm leading-relaxed lang-text" data-zh="通过3D产品动画和真实案例，直观感受阳光房、凉亭、防风卷帘等产品的魅力与功能。" data-en="Experience sunrooms, pavilions, and windproof shutters through 3D animations and real project showcases.">
+                            通过3D产品动画和真实案例，直观感受阳光房、凉亭、防风卷帘等产品的魅力与功能。
+                        </p>
+                        <a href="#home" class="inline-flex items-center px-5 py-2.5 bg-[--light-text] text-white rounded-full text-sm font-semibold hover:bg-gray-700 transition lang-text" data-zh="查看产品" data-en="View Products">
+                            <i class="fas fa-play mr-2"></i>查看产品
+                        </a>
+                    </div>
+                    <div class="hidden md:flex absolute top-1/2 -right-4 transform -translate-y-1/2 z-10 text-gray-300">
+                        <i class="fas fa-chevron-right text-2xl"></i>
+                    </div>
+                </div>
+
+                <!-- Step 3: 初步意向 -->
+                <div class="relative">
+                    <div class="flow-step-card text-center">
+                        <div class="w-16 h-16 bg-[--light-text] text-white rounded-full flex items-center justify-center mx-auto mb-5 text-2xl font-bold shadow-lg">3</div>
+                        <div class="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
+                            <i class="fas fa-handshake text-2xl text-[--light-text]"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-[--light-text] mb-3 lang-text" data-zh="确认设计意向" data-en="Confirm Design Intent">确认设计意向</h3>
+                        <p class="text-[--light-accent] mb-6 text-sm leading-relaxed lang-text" data-zh="选定心仪的产品类型，确认设计方向，我们将启动专属的AI智能设计与专业定制服务。" data-en="Select your preferred product type, confirm the design direction, and we'll activate your exclusive AI-powered design service.">
+                            选定心仪的产品类型，确认设计方向，我们将启动专属的AI智能设计与专业定制服务。
+                        </p>
+                        <a href="#pro-workflow" class="inline-flex items-center px-5 py-2.5 border-2 border-[--light-text] text-[--light-text] rounded-full text-sm font-semibold hover:bg-[--light-text] hover:text-white transition lang-text" data-zh="了解专业流程" data-en="View Pro Process">
+                            <i class="fas fa-arrow-down mr-2"></i>了解专业流程
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== 2B Professional Workflow ====== -->
+    <div id="pro-workflow">
+        <!-- Phase 1 Header -->
+        <div class="bg-[--darker-bg] pt-20 pb-6">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-4">
+                    <span class="inline-block px-4 py-1.5 bg-[--light-text] text-white rounded-full text-sm font-semibold tracking-wider mb-4 lang-text" data-zh="专业定制服务 · B2B" data-en="PROFESSIONAL SERVICE · B2B">专业定制服务 · B2B</span>
+                    <h2 class="text-3xl md:text-4xl font-light text-[--light-text] mb-4 lang-text" data-zh="从设计到交付的完整旅程" data-en="Complete Journey — Design to Delivery">
+                        从设计到交付的完整旅程
+                    </h2>
+                    <p class="text-[--light-accent] text-lg max-w-2xl mx-auto lang-text" data-zh="专业团队全程跟进，AI智能辅助设计，确保每个环节精准到位" data-en="Professional team guidance with AI-assisted design ensures precision at every step">
+                        专业团队全程跟进，AI智能辅助设计，确保每个环节精准到位
+                    </p>
+                </div>
+                <div class="flex justify-center mt-8">
+                    <span class="phase-badge bg-[--light-text] text-white shadow-lg">
+                        <i class="fas fa-pencil-ruler mr-2"></i>
+                        <span class="lang-text" data-zh="Phase 1 · 售前设计" data-en="Phase 1 · Pre-Sale Design">Phase 1 · 售前设计</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+    <!-- AI Design Tool Section (Part of 2B Phase 1) -->
     <section id="design-tool" class="py-16 bg-[--darker-bg]">
         <div class="container mx-auto px-4">
             <!-- Title -->
@@ -910,6 +1106,216 @@
             </div>
         </div>
     </section>
+
+    <!-- Phase 1 Payment Milestone -->
+    <div class="bg-[--darker-bg] py-10">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-center">
+                <div class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl shadow-sm">
+                    <i class="fas fa-coins text-amber-500 mr-4 text-2xl"></i>
+                    <div>
+                        <span class="font-bold text-amber-800 text-lg lang-text" data-zh="💰 付费节点：收取设计费" data-en="💰 Payment Milestone: Design Fee">💰 付费节点：收取设计费</span>
+                        <p class="text-amber-600 text-sm mt-1 lang-text" data-zh="客户确认设计方案后，收取设计服务费用，标志着正式进入交付阶段" data-en="Design fee collected after client approves. This marks the transition to the delivery phase.">客户确认设计方案后，收取设计服务费用，标志着正式进入交付阶段</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Phase 2: Delivery & Implementation -->
+    <section id="delivery-flow" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <!-- Phase 2 Badge -->
+            <div class="flex justify-center mb-12">
+                <span class="phase-badge bg-[--light-text] text-white shadow-lg">
+                    <i class="fas fa-truck mr-2"></i>
+                    <span class="lang-text" data-zh="Phase 2 · 交付实施" data-en="Phase 2 · Delivery & Implementation">Phase 2 · 交付实施</span>
+                </span>
+            </div>
+
+            <!-- Delivery Timeline -->
+            <div class="pro-timeline max-w-4xl mx-auto">
+
+                <!-- Step 1: 信息进一步收集 -->
+                <div class="tl-item">
+                    <div class="tl-node bg-[--light-text] text-white">1</div>
+                    <div class="tl-card">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-ruler-combined text-[--light-text]"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-[--light-text] mb-1 lang-text" data-zh="信息进一步收集" data-en="Detailed Information Collection">信息进一步收集</h4>
+                                <p class="text-[--light-accent] text-sm lang-text" data-zh="专业人员上门精确测量场地尺寸，获取Plot Map和产品效果图所需的全部数据" data-en="On-site precision measurement, obtaining Plot Map and all data needed for product renderings">专业人员上门精确测量场地尺寸，获取Plot Map和产品效果图所需的全部数据</p>
+                                <div class="flex gap-2 mt-2">
+                                    <span class="px-2 py-0.5 bg-gray-100 text-[--light-accent] rounded text-xs lang-text" data-zh="测量" data-en="Measurement">测量</span>
+                                    <span class="px-2 py-0.5 bg-gray-100 text-[--light-accent] rounded text-xs">Plot Map</span>
+                                    <span class="px-2 py-0.5 bg-gray-100 text-[--light-accent] rounded text-xs lang-text" data-zh="产品效果图" data-en="Product Rendering">产品效果图</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: 生成方案效果图 -->
+                <div class="tl-item">
+                    <div class="tl-node bg-[--light-text] text-white">2</div>
+                    <div class="tl-card">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-image text-[--light-text]"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-[--light-text] mb-1 lang-text" data-zh="生成方案效果图" data-en="Generate Solution Rendering">生成方案效果图</h4>
+                                <p class="text-[--light-accent] text-sm lang-text" data-zh="基于精确测量数据，生成最终3D方案效果图，包含结构方案可视化和材料清单预览" data-en="Based on precise measurements, generate final 3D renderings with structural visualization and material list">基于精确测量数据，生成最终3D方案效果图，包含结构方案可视化和材料清单预览</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: 报价 -->
+                <div class="tl-item">
+                    <div class="tl-node bg-[--light-text] text-white">3</div>
+                    <div class="tl-card">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-file-invoice-dollar text-[--light-text]"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-[--light-text] mb-1 lang-text" data-zh="正式报价" data-en="Formal Quotation">正式报价</h4>
+                                <p class="text-[--light-accent] text-sm lang-text" data-zh="基于最终方案生成详细报价单，包含材料费、人工费、运输费和安装费明细" data-en="Detailed quotation including materials, labor, shipping, and installation costs">基于最终方案生成详细报价单，包含材料费、人工费、运输费和安装费明细</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: 签合同交定金 💰 -->
+                <div class="tl-item">
+                    <div class="tl-node bg-amber-500 text-white">4</div>
+                    <div class="tl-card border-amber-200 bg-amber-50/30">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-file-signature text-amber-600"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <h4 class="font-bold text-[--light-text] lang-text" data-zh="签合同交定金" data-en="Sign Contract & Pay Deposit">签合同交定金</h4>
+                                    <span class="payment-badge lang-text" data-zh="💰 付费节点" data-en="💰 Payment">💰 付费节点</span>
+                                </div>
+                                <p class="text-[--light-accent] text-sm lang-text" data-zh="签署正式合同，客户支付项目定金，正式启动生产流程" data-en="Sign formal contract and pay deposit to officially start the production process">签署正式合同，客户支付项目定金，正式启动生产流程</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 5: 生成设计图 -->
+                <div class="tl-item">
+                    <div class="tl-node bg-[--light-text] text-white">5</div>
+                    <div class="tl-card">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-drafting-compass text-[--light-text]"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-[--light-text] mb-1 lang-text" data-zh="生成设计图" data-en="Generate Engineering Drawings">生成设计图</h4>
+                                <p class="text-[--light-accent] text-sm lang-text" data-zh="生成生产和施工所需的结构工程图、安装施工图和材料切割图" data-en="Generate structural engineering drawings, installation plans, and material cutting diagrams">生成生产和施工所需的结构工程图、安装施工图和材料切割图</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 6: 生产 -->
+                <div class="tl-item">
+                    <div class="tl-node bg-[--light-text] text-white">6</div>
+                    <div class="tl-card">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-industry text-[--light-text]"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-[--light-text] mb-1 lang-text" data-zh="生产制造" data-en="Manufacturing">生产制造</h4>
+                                <p class="text-[--light-accent] text-sm lang-text" data-zh="按照设计图进行材料采购、组件加工制造和质量检测" data-en="Material procurement, component manufacturing, and quality inspection per design specifications">按照设计图进行材料采购、组件加工制造和质量检测</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 7: 收取二期款 💰 -->
+                <div class="tl-item">
+                    <div class="tl-node bg-amber-500 text-white">7</div>
+                    <div class="tl-card border-amber-200 bg-amber-50/30">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-coins text-amber-600"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <h4 class="font-bold text-[--light-text] lang-text" data-zh="收取二期款" data-en="Collect 2nd Payment">收取二期款</h4>
+                                    <span class="payment-badge lang-text" data-zh="💰 付费节点" data-en="💰 Payment">💰 付费节点</span>
+                                </div>
+                                <p class="text-[--light-accent] text-sm lang-text" data-zh="生产完成，准备发货前收取合同约定的第二期款项" data-en="Second payment collected upon production completion, before shipping">生产完成，准备发货前收取合同约定的第二期款项</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 8: 运输 -->
+                <div class="tl-item">
+                    <div class="tl-node bg-[--light-text] text-white">8</div>
+                    <div class="tl-card">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-shipping-fast text-[--light-text]"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-[--light-text] mb-1 lang-text" data-zh="运输配送" data-en="Shipping & Delivery">运输配送</h4>
+                                <p class="text-[--light-accent] text-sm lang-text" data-zh="专业包装防护，安排物流运输，全程跟踪直至送达客户现场" data-en="Professional packaging, logistics arrangement, and full tracking until delivery">专业包装防护，安排物流运输，全程跟踪直至送达客户现场</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 9: 收取三期款 💰 -->
+                <div class="tl-item">
+                    <div class="tl-node bg-amber-500 text-white">9</div>
+                    <div class="tl-card border-amber-200 bg-amber-50/30">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-coins text-amber-600"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <h4 class="font-bold text-[--light-text] lang-text" data-zh="收取三期款" data-en="Collect 3rd Payment">收取三期款</h4>
+                                    <span class="payment-badge lang-text" data-zh="💰 付费节点" data-en="💰 Payment">💰 付费节点</span>
+                                </div>
+                                <p class="text-[--light-accent] text-sm lang-text" data-zh="货物到达现场，安装前收取合同约定的第三期款项" data-en="Third payment collected upon delivery arrival, before installation begins">货物到达现场，安装前收取合同约定的第三期款项</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 10: 安装交付完成 ✅ -->
+                <div class="tl-item">
+                    <div class="tl-node bg-green-600 text-white text-lg">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div class="tl-card border-green-200 bg-green-50/30">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-home text-green-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-green-800 mb-1 lang-text" data-zh="安装交付完成 ✅" data-en="Installation Complete ✅">安装交付完成 ✅</h4>
+                                <p class="text-[--light-accent] text-sm lang-text" data-zh="现场安装施工、质量验收、使用培训和保修说明，客户签收确认" data-en="On-site installation, quality acceptance, usage training, warranty, and client sign-off">现场安装施工、质量验收、使用培训和保修说明，客户签收确认</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    </div><!-- end #pro-workflow -->
 
     <!-- Gallery Section -->
     <section id="gallery" class="py-16 bg-white">
