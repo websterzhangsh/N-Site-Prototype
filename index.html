@@ -829,7 +829,7 @@
                         <p class="text-[--light-accent] mb-6 text-sm leading-relaxed lang-text" data-zh="通过3D产品动画和真实案例，直观感受阳光房、凉亭、防风卷帘等产品的魅力与功能。" data-en="Experience sunrooms, pavilions, and windproof shutters through 3D animations and real project showcases.">
                             通过3D产品动画和真实案例，直观感受阳光房、凉亭、防风卷帘等产品的魅力与功能。
                         </p>
-                        <a href="#home" class="inline-flex items-center px-5 py-2.5 bg-[--light-text] text-white rounded-full text-sm font-semibold hover:bg-gray-700 transition lang-text" data-zh="查看产品" data-en="View Products">
+                        <a href="#product-matrix" class="inline-flex items-center px-5 py-2.5 bg-[--light-text] text-white rounded-full text-sm font-semibold hover:bg-gray-700 transition lang-text" data-zh="查看产品" data-en="View Products">
                             <i class="fas fa-play mr-2"></i>查看产品
                         </a>
                     </div>
@@ -853,6 +853,92 @@
                             <i class="fas fa-arrow-down mr-2"></i>了解专业流程
                         </a>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== Product Animation / Product Matrix (Placeholder) ====== -->
+    <section id="product-matrix" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <span class="inline-block px-4 py-1.5 bg-gray-200 text-[--light-text] rounded-full text-sm font-semibold tracking-wider mb-4 lang-text" data-zh="产品展示" data-en="PRODUCT SHOWCASE">产品展示</span>
+                <h2 class="text-3xl md:text-4xl font-light text-[--light-text] mb-4 lang-text" data-zh="产品矩阵" data-en="Product Matrix">
+                    产品矩阵
+                </h2>
+                <p class="text-[--light-accent] text-lg max-w-2xl mx-auto lang-text" data-zh="通过3D动画和交互展示，全方位了解我们的产品系列" data-en="Explore our full product lineup through 3D animations and interactive showcases">
+                    通过3D动画和交互展示，全方位了解我们的产品系列
+                </p>
+            </div>
+
+            <!-- Product Matrix Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- Sunroom -->
+                <div class="group relative bg-[--darker-bg] rounded-2xl overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-400">
+                    <div class="aspect-[4/3] bg-gray-200 flex items-center justify-center overflow-hidden">
+                        <img src="https://raw.githubusercontent.com/websterzhangsh/N-Site-Prototype/main/public/images/products/sunroom/hero-1.jpg" alt="阳光房" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-[--light-text] mb-2 lang-text" data-zh="阳光房系列" data-en="Sunroom Series">阳光房系列</h3>
+                        <p class="text-[--light-accent] text-sm mb-4 lang-text" data-zh="住宅、商业、泳池阳光房，多场景全覆盖" data-en="Residential, commercial, and pool sunrooms for every scenario">住宅、商业、泳池阳光房，多场景全覆盖</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-2.5 py-1 bg-white rounded-full text-xs text-[--light-accent] border border-gray-200 lang-text" data-zh="住宅" data-en="Residential">住宅</span>
+                            <span class="px-2.5 py-1 bg-white rounded-full text-xs text-[--light-accent] border border-gray-200 lang-text" data-zh="商业" data-en="Commercial">商业</span>
+                            <span class="px-2.5 py-1 bg-white rounded-full text-xs text-[--light-accent] border border-gray-200 lang-text" data-zh="泳池" data-en="Pool">泳池</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-gray-400 lang-text" data-zh="🎬 产品动画即将上线" data-en="🎬 Product animation coming soon">🎬 产品动画即将上线</span>
+                            <button class="px-4 py-1.5 bg-[--light-text] text-white rounded-full text-xs font-semibold opacity-50 cursor-not-allowed lang-text" data-zh="即将开放" data-en="Coming Soon" disabled>即将开放</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pavilion -->
+                <div class="group relative bg-[--darker-bg] rounded-2xl overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-400">
+                    <div class="aspect-[4/3] bg-gray-200 flex items-center justify-center overflow-hidden">
+                        <img src="https://raw.githubusercontent.com/websterzhangsh/N-Site-Prototype/main/public/images/products/pavilion/hero-1.jpg" alt="凉亭" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-[--light-text] mb-2 lang-text" data-zh="户外凉亭系列" data-en="Pavilion Series">户外凉亭系列</h3>
+                        <p class="text-[--light-accent] text-sm mb-4 lang-text" data-zh="花园凉亭、户外餐厅、景观亭，打造优雅户外空间" data-en="Garden pavilions, outdoor dining, and landscape shelters for elegant spaces">花园凉亭、户外餐厅、景观亭，打造优雅户外空间</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-2.5 py-1 bg-white rounded-full text-xs text-[--light-accent] border border-gray-200 lang-text" data-zh="花园" data-en="Garden">花园</span>
+                            <span class="px-2.5 py-1 bg-white rounded-full text-xs text-[--light-accent] border border-gray-200 lang-text" data-zh="餐厅" data-en="Dining">餐厅</span>
+                            <span class="px-2.5 py-1 bg-white rounded-full text-xs text-[--light-accent] border border-gray-200 lang-text" data-zh="景观" data-en="Landscape">景观</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-gray-400 lang-text" data-zh="🎬 产品动画即将上线" data-en="🎬 Product animation coming soon">🎬 产品动画即将上线</span>
+                            <button class="px-4 py-1.5 bg-[--light-text] text-white rounded-full text-xs font-semibold opacity-50 cursor-not-allowed lang-text" data-zh="即将开放" data-en="Coming Soon" disabled>即将开放</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Windproof Roller Shutter -->
+                <div class="group relative bg-[--darker-bg] rounded-2xl overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-400">
+                    <div class="aspect-[4/3] bg-gray-200 flex items-center justify-center overflow-hidden">
+                        <img src="https://raw.githubusercontent.com/websterzhangsh/N-Site-Prototype/main/public/images/products/windproof/hero-2.jpg" alt="防风卷帘" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-[--light-text] mb-2 lang-text" data-zh="防风卷帘系列" data-en="Windproof Shutter Series">防风卷帘系列</h3>
+                        <p class="text-[--light-accent] text-sm mb-4 lang-text" data-zh="智能遮阳、防风防雨，全天候户外空间保护方案" data-en="Smart shading and wind/rain protection for all-weather outdoor spaces">智能遮阳、防风防雨，全天候户外空间保护方案</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-2.5 py-1 bg-white rounded-full text-xs text-[--light-accent] border border-gray-200 lang-text" data-zh="遮阳" data-en="Shading">遮阳</span>
+                            <span class="px-2.5 py-1 bg-white rounded-full text-xs text-[--light-accent] border border-gray-200 lang-text" data-zh="防风" data-en="Windproof">防风</span>
+                            <span class="px-2.5 py-1 bg-white rounded-full text-xs text-[--light-accent] border border-gray-200 lang-text" data-zh="智能" data-en="Smart">智能</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-gray-400 lang-text" data-zh="🎬 产品动画即将上线" data-en="🎬 Product animation coming soon">🎬 产品动画即将上线</span>
+                            <button class="px-4 py-1.5 bg-[--light-text] text-white rounded-full text-xs font-semibold opacity-50 cursor-not-allowed lang-text" data-zh="即将开放" data-en="Coming Soon" disabled>即将开放</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coming Soon Notice -->
+            <div class="mt-12 text-center">
+                <div class="inline-flex items-center px-6 py-3 bg-[--darker-bg] rounded-full border border-gray-200">
+                    <i class="fas fa-info-circle text-[--light-accent] mr-3"></i>
+                    <span class="text-[--light-accent] text-sm lang-text" data-zh="产品3D动画与详细参数正在制作中，敬请期待" data-en="Product 3D animations and detailed specifications are under development. Stay tuned!">产品3D动画与详细参数正在制作中，敬请期待</span>
                 </div>
             </div>
         </div>
