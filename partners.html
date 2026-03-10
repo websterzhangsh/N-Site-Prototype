@@ -329,6 +329,217 @@
                     </div>
                 </div>
 
+                <!-- AI Design Tool Section -->
+                <div class="col-span-full mt-8">
+                    <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
+                        <h3 class="text-xl font-semibold text-[--light-text] mb-4 flex items-center">
+                            <i class="fas fa-magic mr-2 text-[--light-accent]"></i>
+                            <span class="lang-text" data-zh="✨ AI 设计工具" data-en="✨ AI Design Tool">✨ AI 设计工具</span>
+                        </h3>
+                        <p class="text-[--light-accent] text-sm mb-6 lang-text" data-zh="上传客户后院实景照片和产品效果图，AI 自动生成专业设计效果图" data-en="Upload client backyard photo and product image, AI generates professional design renderings">上传客户后院实景照片和产品效果图，AI 自动生成专业设计效果图</p>
+                        
+                        <!-- Process Steps -->
+                        <div class="flex justify-center mb-6">
+                            <div class="flex items-center space-x-4 md:space-x-8">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 rounded-full bg-[--light-text] text-white flex items-center justify-center font-bold">1</div>
+                                    <span class="ml-2 text-[--light-text] text-sm md:text-base lang-text" data-zh="上传实景" data-en="Upload Photo">上传实景</span>
+                                </div>
+                                <div class="w-8 md:w-16 h-0.5 bg-gray-300"></div>
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 rounded-full bg-[--light-text] text-white flex items-center justify-center font-bold">2</div>
+                                    <span class="ml-2 text-[--light-text] text-sm md:text-base lang-text" data-zh="上传效果图" data-en="Upload Design">上传效果图</span>
+                                </div>
+                                <div class="w-8 md:w-16 h-0.5 bg-gray-300"></div>
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 rounded-full bg-[--light-text] text-white flex items-center justify-center font-bold">3</div>
+                                    <span class="ml-2 text-[--light-text] text-sm md:text-base lang-text" data-zh="AI 生成" data-en="AI Generate">AI 生成</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Upload Areas -->
+                        <div class="grid md:grid-cols-3 gap-6 mb-6">
+                            <!-- Background Image Upload -->
+                            <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                                <h4 class="text-sm font-semibold text-[--light-text] mb-3 flex items-center">
+                                    <i class="fas fa-home mr-2 text-[--light-accent]"></i>
+                                    <span class="lang-text" data-zh="后院实景照片" data-en="Backyard Photo">后院实景照片</span>
+                                    <span class="ml-1 text-red-500 text-xs">*</span>
+                                </h4>
+                                <div id="bgUploadArea" class="upload-area border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer transition-all duration-300 hover:border-[--light-text] hover:bg-white" onclick="document.getElementById('bgInput').click()">
+                                    <input type="file" id="bgInput" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'bg')">
+                                    <div id="bgPreview" class="hidden">
+                                        <img id="bgPreviewImg" src="" alt="后院实景" class="max-h-24 mx-auto rounded-lg shadow">
+                                        <button onclick="event.stopPropagation(); clearImage('bg')" class="mt-2 px-2 py-1 bg-red-500 text-white rounded-full text-xs hover:bg-red-600">
+                                            <i class="fas fa-times mr-1"></i><span class="lang-text" data-zh="移除" data-en="Remove">移除</span>
+                                        </button>
+                                    </div>
+                                    <div id="bgPlaceholder">
+                                        <i class="fas fa-cloud-upload-alt text-2xl text-gray-400 mb-2"></i>
+                                        <p class="text-[--light-accent] text-xs lang-text" data-zh="点击或拖拽上传" data-en="Click or drag to upload">点击或拖拽上传</p>
+                                        <p class="text-gray-400 text-xs mt-1">JPG, PNG, WEBP</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Product Image Selector -->
+                            <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                                <h4 class="text-sm font-semibold text-[--light-text] mb-3 flex items-center">
+                                    <i class="fas fa-building mr-2 text-[--light-accent]"></i>
+                                    <span class="lang-text" data-zh="选择产品效果图" data-en="Select Product Image">选择产品效果图</span>
+                                    <span class="ml-1 text-red-500 text-xs">*</span>
+                                </h4>
+                                <div id="productImageGrid" class="grid grid-cols-3 gap-1">
+                                    <!-- Product images will be populated by JS -->
+                                </div>
+                                <p class="text-gray-400 text-xs mt-2 lang-text" data-zh="点击选择一张产品图" data-en="Click to select a product image">点击选择一张产品图</p>
+                            </div>
+
+                            <!-- Reference Image Upload -->
+                            <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                                <h4 class="text-sm font-semibold text-[--light-text] mb-3 flex items-center">
+                                    <i class="fas fa-image mr-2 text-[--light-accent]"></i>
+                                    <span class="lang-text" data-zh="参考图（可选）" data-en="Reference (Optional)">参考图（可选）</span>
+                                </h4>
+                                <div id="refUploadArea" class="upload-area border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer transition-all duration-300 hover:border-[--light-text] hover:bg-white" onclick="document.getElementById('refInput').click()">
+                                    <input type="file" id="refInput" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'ref')">
+                                    <div id="refPreview" class="hidden">
+                                        <img id="refPreviewImg" src="" alt="参考图" class="max-h-24 mx-auto rounded-lg shadow">
+                                        <button onclick="event.stopPropagation(); clearImage('ref')" class="mt-2 px-2 py-1 bg-red-500 text-white rounded-full text-xs hover:bg-red-600">
+                                            <i class="fas fa-times mr-1"></i><span class="lang-text" data-zh="移除" data-en="Remove">移除</span>
+                                        </button>
+                                    </div>
+                                    <div id="refPlaceholder">
+                                        <i class="fas fa-cloud-upload-alt text-2xl text-gray-400 mb-2"></i>
+                                        <p class="text-[--light-accent] text-xs lang-text" data-zh="点击或拖拽上传" data-en="Click or drag to upload">点击或拖拽上传</p>
+                                        <p class="text-gray-400 text-xs mt-1 lang-text" data-zh="风格/细节参考" data-en="Style/detail reference">风格/细节参考</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Custom Prompt Input -->
+                        <div class="mb-6">
+                            <h4 class="text-sm font-semibold text-[--light-text] mb-2 flex items-center">
+                                <i class="fas fa-pencil-alt mr-2 text-[--light-accent]"></i>
+                                <span class="lang-text" data-zh="设计指令（可选）" data-en="Design Instructions (Optional)">设计指令（可选）</span>
+                            </h4>
+                            <textarea id="customPromptInput" rows="2" maxlength="800"
+                                class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-[--light-text] placeholder-gray-400 focus:border-[--light-text] focus:ring-1 focus:ring-[--light-text] transition-all resize-none text-sm"
+                                data-placeholder-zh="例如：将阳光房放在后院左侧，保持现代简约风格..."
+                                data-placeholder-en="e.g., Place the sunroom on the left side, keep modern minimalist style..."
+                                placeholder="例如：将阳光房放在后院左侧，保持现代简约风格..." oninput="updateCharCount()"></textarea>
+                            <div class="flex justify-between items-center mt-1">
+                                <p class="text-[--light-accent] text-xs lang-text" data-zh="输入额外设计要求，AI 将生成更精准的效果图" data-en="Enter additional requirements for more precise results">输入额外设计要求，AI 将生成更精准的效果图</p>
+                                <span id="charCount" class="text-gray-400 text-xs">0/800</span>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex justify-center gap-4 mb-6">
+                            <button id="generateBtn" onclick="generateDesign()" disabled class="px-6 py-2 rounded-full font-semibold transition-all duration-300 bg-gray-300 text-gray-500 cursor-not-allowed flex items-center text-sm">
+                                <i class="fas fa-magic mr-2"></i>
+                                <span class="lang-text" data-zh="生成设计效果图" data-en="Generate Design">生成设计效果图</span>
+                            </button>
+                            <button onclick="resetDesignTool()" class="px-4 py-2 rounded-full font-semibold border border-gray-300 text-[--light-accent] hover:bg-gray-100 transition-all duration-300 text-sm">
+                                <span class="lang-text" data-zh="重置" data-en="Reset">重置</span>
+                            </button>
+                        </div>
+
+                        <!-- Loading Indicator -->
+                        <div id="generatingIndicator" class="hidden text-center mb-4">
+                            <div class="inline-flex items-center px-4 py-2 bg-gray-100 rounded-full">
+                                <svg class="animate-spin h-4 w-4 text-[--light-text] mr-2" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <span class="text-[--light-text] font-semibold text-sm lang-text" data-zh="AI 正在生成..." data-en="AI is generating...">AI 正在生成...</span>
+                            </div>
+                        </div>
+
+                        <!-- Result Display -->
+                        <div id="resultArea" class="hidden max-w-md mx-auto bg-gray-50 rounded-xl p-4 border border-gray-200">
+                            <div class="flex items-center justify-between mb-4">
+                                <h4 class="text-lg font-bold text-[--light-text] flex items-center">
+                                    <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                    <span class="lang-text" data-zh="设计效果图" data-en="Design Result">设计效果图</span>
+                                </h4>
+                                <span id="iterationCounter" class="px-2 py-1 bg-gray-100 text-[--light-text] rounded-full text-xs font-semibold">
+                                    <span class="lang-text" data-zh="第" data-en="Round ">第</span><span id="currentIteration">1</span>/9
+                                </span>
+                            </div>
+                            <img id="resultImg" src="" alt="设计效果图" class="w-full rounded-lg shadow-lg mb-4">
+                            
+                            <!-- Continue Edit Section -->
+                            <div id="continueEditSection" class="p-3 bg-white rounded-lg border border-gray-200">
+                                <h5 class="text-[--light-text] font-semibold mb-2 flex items-center text-sm">
+                                    <i class="fas fa-edit mr-2 text-[--light-accent]"></i>
+                                    <span class="lang-text" data-zh="继续编辑" data-en="Continue Editing">继续编辑</span>
+                                </h5>
+                                <textarea id="iterEditPrompt" rows="2" maxlength="500"
+                                    class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-[--light-text] placeholder-gray-400 focus:border-[--light-text] focus:ring-1 focus:ring-[--light-text] transition-all resize-none text-xs"
+                                    data-placeholder-zh="输入修改指令..."
+                                    data-placeholder-en="Enter edit instructions..."
+                                    placeholder="输入修改指令..."></textarea>
+                                <div class="flex items-center justify-between mt-2">
+                                    <span class="text-gray-400 text-xs">
+                                        <span class="lang-text" data-zh="剩余" data-en="Remaining: ">剩余</span><span id="remainingIterations">8</span><span class="lang-text" data-zh="次" data-en=" edits">次</span>
+                                    </span>
+                                    <div class="flex items-center gap-2">
+                                        <div id="regenLoadingIndicator" class="hidden flex items-center text-[--light-text] text-xs">
+                                            <svg class="animate-spin h-3 w-3 mr-1" viewBox="0 0 24 24">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                            <span class="lang-text" data-zh="生成中..." data-en="Generating...">生成中...</span>
+                                        </div>
+                                        <button onclick="continueEdit()" id="continueEditBtn" class="px-3 py-1 bg-[--light-text] text-white rounded-full font-semibold hover:bg-gray-700 transition-colors flex items-center text-xs">
+                                            <i class="fas fa-magic mr-1"></i>
+                                            <span class="lang-text" data-zh="重新生成" data-en="Regenerate">重新生成</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <div class="mt-3 flex justify-center gap-3">
+                                <button onclick="downloadResult()" class="px-4 py-1.5 bg-green-600 text-white rounded-full font-semibold hover:bg-green-700 transition-colors flex items-center text-xs">
+                                    <i class="fas fa-download mr-1"></i>
+                                    <span class="lang-text" data-zh="下载效果图" data-en="Download">下载效果图</span>
+                                </button>
+                                <button onclick="resetToInitial()" class="px-4 py-1.5 border border-gray-300 text-[--light-accent] rounded-full font-semibold hover:bg-gray-100 transition-colors text-xs">
+                                    <span class="lang-text" data-zh="重新开始" data-en="Start Over">重新开始</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Solution Scenarios -->
+                        <div class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <div class="bg-gray-50 rounded-lg p-3 text-center border border-gray-100 hover:border-gray-300 transition-colors">
+                                <div class="text-2xl mb-1">☀️</div>
+                                <h5 class="text-[--light-text] font-semibold text-sm lang-text" data-zh="阳光阅读角" data-en="Sunny Reading Nook">阳光阅读角</h5>
+                                <p class="text-[--light-accent] text-xs lang-text" data-zh="享受自然光" data-en="Enjoy natural light">享受自然光</p>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-3 text-center border border-gray-100 hover:border-gray-300 transition-colors">
+                                <div class="text-2xl mb-1">🍽️</div>
+                                <h5 class="text-[--light-text] font-semibold text-sm lang-text" data-zh="户外聚餐区" data-en="Outdoor Dining">户外聚餐区</h5>
+                                <p class="text-[--light-accent] text-xs lang-text" data-zh="星空下的晚宴" data-en="Dine under stars">星空下的晚宴</p>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-3 text-center border border-gray-100 hover:border-gray-300 transition-colors">
+                                <div class="text-2xl mb-1">🏊</div>
+                                <h5 class="text-[--light-text] font-semibold text-sm lang-text" data-zh="四季泳池" data-en="Year-Round Pool">四季泳池</h5>
+                                <p class="text-[--light-accent] text-xs lang-text" data-zh="畅享私家泳池" data-en="Private pool">畅享私家泳池</p>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-3 text-center border border-gray-100 hover:border-gray-300 transition-colors">
+                                <div class="text-2xl mb-1">🌿</div>
+                                <h5 class="text-[--light-text] font-semibold text-sm lang-text" data-zh="花园茶室" data-en="Garden Tea Room">花园茶室</h5>
+                                <p class="text-[--light-accent] text-xs lang-text" data-zh="绿意中品茶" data-en="Tea in greenery">绿意中品茶</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Step 5 -->
                 <div class="tl-item">
                     <div class="tl-node bg-[--light-text] text-white">5</div>
