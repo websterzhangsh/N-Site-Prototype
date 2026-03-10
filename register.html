@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册成为合作伙伴 | 庭院定制专家</title>
+    <meta name="description" content="注册成为我们的合作伙伴，获取专属B2B定制服务支持">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #222222;
+            --primary-hover: #333333;
+            --bg-color: #f5f5f5;
+            --card-bg: #ffffff;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Roboto', system-ui, -apple-system, sans-serif;
+            background: var(--bg-color);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 16px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--primary);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .header-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .header-link {
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .header-link:hover {
+            color: var(--primary);
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 24px;
+        }
+
+        /* Progress Steps */
+        .progress-steps {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .step-number {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #e5e7eb;
+            color: #9ca3af;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .step.active .step-number {
+            background: var(--primary);
+            color: white;
+        }
+
+        .step.completed .step-number {
+            background: var(--success);
+            color: white;
+        }
+
+        .step-title {
+            font-size: 14px;
+            color: #9ca3af;
+            font-weight: 500;
+        }
+
+        .step.active .step-title {
+            color: var(--primary);
+        }
+
+        .step-line {
+            width: 60px;
+            height: 2px;
+            background: #e5e7eb;
+            margin: 0 16px;
+        }
+
+        .step.completed + .step-line {
+            background: var(--success);
+        }
+
+        /* Card */
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 32px 40px 24px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .card-body {
+            padding: 32px 40px;
+        }
+
+        /* Form Styles */
+        .form-section {
+            margin-bottom: 32px;
+        }
+
+        .form-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f3f4f6;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .form-label .required {
+            color: #ef4444;
+            margin-left: 2px;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            padding: 12px 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.2s;
+            background: #fafafa;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+        }
+
+        .form-input.error, .form-select.error {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .input-hint {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .input-error {
+            font-size: 12px;
+            color: #ef4444;
+            display: none;
+        }
+
+        .input-error.show {
+            display: block;
+        }
+
+        /* Plan Selection */
+        .plan-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 8px;
+        }
+
+        .plan-card {
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .plan-card:hover {
+            border-color: #d1d5db;
+        }
+
+        .plan-card.selected {
+            border-color: var(--primary);
+            background: #f9fafb;
+        }
+
+        .plan-card.recommended {
+            position: relative;
+        }
+
+        .plan-badge {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .plan-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .plan-price {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .plan-price span {
+            font-size: 14px;
+            font-weight: 400;
+            color: #6b7280;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin-top: 16px;
+            text-align: left;
+        }
+
+        .plan-features li {
+            font-size: 13px;
+            color: #6b7280;
+            padding: 4px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .plan-features li i {
+            color: var(--success);
+            font-size: 12px;
+        }
+
+        /* Checkbox */
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .checkbox-input {
+            width: 20px;
+            height: 20px;
+            margin-top: 2px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .checkbox-label {
+            font-size: 14px;
+            color: #4b5563;
+            line-height: 1.5;
+        }
+
+        .checkbox-label a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .checkbox-label a:hover {
+            text-decoration: underline;
+        }
+
+        /* Buttons */
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid #f3f4f6;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #4b5563;
+            border: 1px solid #e5e7eb;
+        }
+
+        .btn-secondary:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+        }
+
+        .btn-text {
+            background: none;
+            color: #6b7280;
+            padding: 8px 16px;
+        }
+
+        .btn-text:hover {
+            color: var(--primary);
+        }
+
+        /* Success State */
+        .success-state {
+            text-align: center;
+            padding: 60px 40px;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #d1fae5;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+        }
+
+        .success-icon i {
+            font-size: 40px;
+            color: var(--success);
+        }
+
+        .success-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+
+        .success-message {
+            font-size: 15px;
+            color: #6b7280;
+            margin-bottom: 32px;
+            line-height: 1.6;
+        }
+
+        .success-details {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 32px;
+            text-align: left;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .detail-value {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--primary);
+        }
+
+        /* Loading */
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Hidden */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .plan-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card-header, .card-body {
+                padding: 24px;
+            }
+
+            .step-line {
+                width: 30px;
+            }
+
+            .step-title {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-sun"></i>
+                </div>
+                <span class="logo-text">庭院定制专家</span>
+            </a>
+            <div class="header-links">
+                <span style="font-size: 14px; color: #666;">已有账号？</span>
+                <a href="login.html" class="header-link" style="color: var(--primary); font-weight: 500;">立即登录</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Progress Steps -->
+        <div class="progress-steps">
+            <div class="step active" data-step="1">
+                <div class="step-number">1</div>
+                <span class="step-title">公司信息</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step" data-step="2">
+                <div class="step-number">2</div>
+                <span class="step-title">管理员账号</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step" data-step="3">
+                <div class="step-number">3</div>
+                <span class="step-title">完成注册</span>
+            </div>
+        </div>
+
+        <!-- Registration Form -->
+        <div class="card" id="registrationCard">
+            <!-- Step 1: Company Info -->
+            <div id="step1Content">
+                <div class="card-header">
+                    <h1 class="card-title">注册合作伙伴</h1>
+                    <p class="card-subtitle">填写公司基本信息，开启您的专属B2B服务</p>
+                </div>
+                <div class="card-body">
+                    <form id="companyForm">
+                        <!-- Company Information -->
+                        <div class="form-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-building"></i>
+                                公司信息
+                            </h3>
+                            <div class="form-grid">
+                                <div class="form-group full-width">
+                                    <label class="form-label">公司名称 <span class="required">*</span></label>
+                                    <input type="text" class="form-input" id="companyName" name="companyName" placeholder="请输入公司全称" required>
+                                    <span class="input-error" id="companyNameError">请输入公司名称</span>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">公司简称</label>
+                                    <input type="text" class="form-input" id="companyShortName" name="companyShortName" placeholder="用于显示的名称">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">统一社会信用代码</label>
+                                    <input type="text" class="form-input" id="businessLicense" name="businessLicense" placeholder="18位信用代码">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label class="form-label">公司地址 <span class="required">*</span></label>
+                                    <input type="text" class="form-input" id="companyAddress" name="companyAddress" placeholder="请输入公司详细地址" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">联系人姓名 <span class="required">*</span></label>
+                                    <input type="text" class="form-input" id="contactName" name="contactName" placeholder="请输入联系人姓名" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">联系电话 <span class="required">*</span></label>
+                                    <input type="tel" class="form-input" id="contactPhone" name="contactPhone" placeholder="请输入联系电话" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">联系邮箱 <span class="required">*</span></label>
+                                    <input type="email" class="form-input" id="contactEmail" name="contactEmail" placeholder="请输入联系邮箱" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">公司网站</label>
+                                    <input type="url" class="form-input" id="companyWebsite" name="companyWebsite" placeholder="https://www.example.com">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Business Type -->
+                        <div class="form-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-briefcase"></i>
+                                业务信息
+                            </h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label">主营业务 <span class="required">*</span></label>
+                                    <select class="form-select" id="businessType" name="businessType" required>
+                                        <option value="">请选择主营业务</option>
+                                        <option value="design">庭院设计</option>
+                                        <option value="construction">建筑施工</option>
+                                        <option value="landscape">景观绿化</option>
+                                        <option value="interior">室内装饰</option>
+                                        <option value="trading">建材贸易</option>
+                                        <option value="other">其他</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">公司规模</label>
+                                    <select class="form-select" id="companySize" name="companySize">
+                                        <option value="">请选择公司规模</option>
+                                        <option value="1-10">1-10人</option>
+                                        <option value="11-50">11-50人</option>
+                                        <option value="51-200">51-200人</option>
+                                        <option value="200+">200人以上</option>
+                                    </select>
+                                </div>
+                                <div class="form-group full-width">
+                                    <label class="form-label">公司简介</label>
+                                    <textarea class="form-textarea" id="companyDescription" name="companyDescription" placeholder="请简要介绍您的公司业务范围和优势..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Plan Selection -->
+                        <div class="form-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-star"></i>
+                                选择服务方案
+                            </h3>
+                            <div class="plan-grid">
+                                <div class="plan-card" data-plan="basic">
+                                    <div class="plan-name">基础版</div>
+                                    <div class="plan-price">免费 <span>/ 月</span></div>
+                                    <ul class="plan-features">
+                                        <li><i class="fas fa-check"></i> 最多 5 个项目</li>
+                                        <li><i class="fas fa-check"></i> 2 个团队成员</li>
+                                        <li><i class="fas fa-check"></i> 基础 AI 设计</li>
+                                        <li><i class="fas fa-check"></i> 邮件支持</li>
+                                    </ul>
+                                </div>
+                                <div class="plan-card recommended selected" data-plan="pro">
+                                    <div class="plan-badge">推荐</div>
+                                    <div class="plan-name">专业版</div>
+                                    <div class="plan-price">¥299 <span>/ 月</span></div>
+                                    <ul class="plan-features">
+                                        <li><i class="fas fa-check"></i> 最多 50 个项目</li>
+                                        <li><i class="fas fa-check"></i> 10 个团队成员</li>
+                                        <li><i class="fas fa-check"></i> 高级 AI 设计</li>
+                                        <li><i class="fas fa-check"></i> 优先技术支持</li>
+                                        <li><i class="fas fa-check"></i> 数据分析报表</li>
+                                    </ul>
+                                </div>
+                                <div class="plan-card" data-plan="enterprise">
+                                    <div class="plan-name">企业版</div>
+                                    <div class="plan-price">定制 <span>报价</span></div>
+                                    <ul class="plan-features">
+                                        <li><i class="fas fa-check"></i> 无限项目</li>
+                                        <li><i class="fas fa-check"></i> 无限团队成员</li>
+                                        <li><i class="fas fa-check"></i> 专属 AI 模型</li>
+                                        <li><i class="fas fa-check"></i> 7x24 专属客服</li>
+                                        <li><i class="fas fa-check"></i> API 接口接入</li>
+                                        <li><i class="fas fa-check"></i> 私有化部署</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Terms -->
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="checkbox-input" id="agreeTerms" required>
+                            <label class="checkbox-label" for="agreeTerms">
+                                我已阅读并同意 <a href="#" target="_blank">《服务协议》</a> 和 <a href="#" target="_blank">《隐私政策》</a>，确认提交的信息真实有效。
+                            </label>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-text" onclick="window.location.href='index.html'">
+                                <i class="fas fa-arrow-left"></i>
+                                返回首页
+                            </button>
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
+                                下一步：创建管理员账号
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Step 2: Admin Account -->
+            <div id="step2Content" class="hidden">
+                <div class="card-header">
+                    <h1 class="card-title">创建管理员账号</h1>
+                    <p class="card-subtitle">设置您的管理员登录信息</p>
+                </div>
+                <div class="card-body">
+                    <form id="adminForm">
+                        <div class="form-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-user-shield"></i>
+                                管理员信息
+                            </h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label">姓名 <span class="required">*</span></label>
+                                    <input type="text" class="form-input" id="adminName" name="adminName" placeholder="请输入您的姓名" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">职位</label>
+                                    <input type="text" class="form-input" id="adminTitle" name="adminTitle" placeholder="如：总经理、技术总监">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label class="form-label">登录邮箱 <span class="required">*</span></label>
+                                    <input type="email" class="form-input" id="adminEmail" name="adminEmail" placeholder="此邮箱将用于登录系统" required>
+                                    <p class="input-hint">此邮箱将作为您的登录账号，请确保可以正常接收邮件</p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">登录密码 <span class="required">*</span></label>
+                                    <input type="password" class="form-input" id="adminPassword" name="adminPassword" placeholder="至少8位，包含字母和数字" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">确认密码 <span class="required">*</span></label>
+                                    <input type="password" class="form-input" id="adminPasswordConfirm" name="adminPasswordConfirm" placeholder="请再次输入密码" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" onclick="goToStep(1)">
+                                <i class="fas fa-arrow-left"></i>
+                                上一步
+                            </button>
+                            <button type="submit" class="btn btn-primary" id="createAccountBtn">
+                                创建账号
+                                <i class="fas fa-check"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Step 3: Success -->
+            <div id="step3Content" class="hidden">
+                <div class="success-state">
+                    <div class="success-icon">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <h2 class="success-title">注册成功！</h2>
+                    <p class="success-message">
+                        您的合作伙伴账号已创建成功。<br>
+                        我们已发送验证邮件到您的邮箱，请查收并完成验证。
+                    </p>
+                    <div class="success-details">
+                        <div class="detail-row">
+                            <span class="detail-label">公司名称</span>
+                            <span class="detail-value" id="successCompanyName">-</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">管理员账号</span>
+                            <span class="detail-value" id="successAdminEmail">-</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">专属登录地址</span>
+                            <span class="detail-value" id="successLoginUrl">-</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">服务方案</span>
+                            <span class="detail-value" id="successPlan">-</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 16px; justify-content: center;">
+                        <a href="login.html" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt"></i>
+                            立即登录
+                        </a>
+                        <a href="index.html" class="btn btn-secondary">
+                            返回首页
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let currentStep = 1;
+        let formData = {
+            company: {},
+            admin: {},
+            plan: 'pro'
+        };
+
+        // Plan selection
+        document.querySelectorAll('.plan-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+                formData.plan = this.dataset.plan;
+            });
+        });
+
+        // Step navigation
+        function goToStep(step) {
+            currentStep = step;
+            
+            // Update steps UI
+            document.querySelectorAll('.step').forEach((s, index) => {
+                s.classList.remove('active', 'completed');
+                if (index + 1 < step) {
+                    s.classList.add('completed');
+                } else if (index + 1 === step) {
+                    s.classList.add('active');
+                }
+            });
+
+            // Show/hide content
+            document.getElementById('step1Content').classList.add('hidden');
+            document.getElementById('step2Content').classList.add('hidden');
+            document.getElementById('step3Content').classList.add('hidden');
+            document.getElementById(`step${step}Content`).classList.remove('hidden');
+        }
+
+        // Company form submission
+        document.getElementById('companyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validate
+            if (!document.getElementById('agreeTerms').checked) {
+                alert('请阅读并同意服务协议');
+                return;
+            }
+
+            // Collect data
+            formData.company = {
+                name: document.getElementById('companyName').value,
+                shortName: document.getElementById('companyShortName').value,
+                businessLicense: document.getElementById('businessLicense').value,
+                address: document.getElementById('companyAddress').value,
+                contactName: document.getElementById('contactName').value,
+                contactPhone: document.getElementById('contactPhone').value,
+                contactEmail: document.getElementById('contactEmail').value,
+                website: document.getElementById('companyWebsite').value,
+                businessType: document.getElementById('businessType').value,
+                companySize: document.getElementById('companySize').value,
+                description: document.getElementById('companyDescription').value
+            };
+
+            // Pre-fill admin name
+            document.getElementById('adminName').value = formData.company.contactName || '';
+
+            goToStep(2);
+        });
+
+        // Admin form submission
+        document.getElementById('adminForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const password = document.getElementById('adminPassword').value;
+            const passwordConfirm = document.getElementById('adminPasswordConfirm').value;
+            
+            if (password !== passwordConfirm) {
+                alert('两次输入的密码不一致');
+                return;
+            }
+
+            if (password.length < 8) {
+                alert('密码至少需要8位');
+                return;
+            }
+
+            // Collect admin data
+            formData.admin = {
+                name: document.getElementById('adminName').value,
+                title: document.getElementById('adminTitle').value,
+                email: document.getElementById('adminEmail').value,
+                password: password
+            };
+
+            // Show loading
+            const btn = document.getElementById('createAccountBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<div class="spinner"></div> 创建中...';
+
+            try {
+                // In production, this would be an API call
+                // const response = await fetch('/api/tenant/register', {
+                //     method: 'POST',
+                //     headers: { 'Content-Type': 'application/json' },
+                //     body: JSON.stringify(formData)
+                // });
+                
+                // Mock API call
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Generate tenant slug
+                const tenantSlug = formData.company.name.toLowerCase()
+                    .replace(/[^a-z0-9\u4e00-\u9fa5]/g, '-')
+                    .replace(/-+/g, '-')
+                    .substring(0, 20);
+
+                // Show success
+                document.getElementById('successCompanyName').textContent = formData.company.name;
+                document.getElementById('successAdminEmail').textContent = formData.admin.email;
+                document.getElementById('successLoginUrl').textContent = `${tenantSlug}.nestopia.com`;
+                document.getElementById('successPlan').textContent = 
+                    formData.plan === 'basic' ? '基础版（免费）' :
+                    formData.plan === 'pro' ? '专业版' : '企业版';
+
+                goToStep(3);
+
+            } catch (error) {
+                console.error('Registration failed:', error);
+                alert('注册失败，请稍后重试');
+                btn.disabled = false;
+                btn.innerHTML = '创建账号 <i class="fas fa-check"></i>';
+            }
+        });
+    </script>
+</body>
+</html>
