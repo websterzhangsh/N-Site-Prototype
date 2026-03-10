@@ -1,5 +1,19 @@
 {
   "version": 1,
   "include": ["/*"],
-  "exclude": ["/public/*", "/images/*", "/*.jpg", "/*.png", "/*.webp", "/*.gif", "/*.ico"]
+  "exclude": [
+    "/partners.html",
+    "/login.html",
+    "/dashboard.html",
+    "/public/*",
+    "/images/*",
+    "/*.html",
+    "/*.jpg",
+    "/*.png",
+    "/*.webp",
+    "/*.gif",
+    "/*.ico",
+    "/*.css",
+    "/*.js"
+  ]
 }
