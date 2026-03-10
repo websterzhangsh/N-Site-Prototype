@@ -31,6 +31,7 @@
         }
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --primary: #222222;
@@ -624,6 +625,144 @@
             .tl-item:nth-child(even) .tl-card { margin-left: auto; margin-right: 6%; }
             .tl-node { left: 50%; transform: translateX(-50%); position: absolute; }
         }
+
+        /* ====== Customer Intake Form Modal ====== */
+        .intake-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 10000;
+            display: none;
+            align-items: center; justify-content: center;
+            padding: 1rem;
+        }
+        .intake-overlay.active { display: flex; animation: intakeFadeIn 0.3s ease; }
+        @keyframes intakeFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .intake-modal {
+            background: white; border-radius: 1.5rem;
+            width: 100%; max-width: 680px; max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            animation: intakeSlideUp 0.4s cubic-bezier(0.4,0,0.2,1);
+        }
+        @keyframes intakeSlideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .intake-header {
+            padding: 1.5rem 2rem; border-bottom: 1px solid #e5e7eb;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; background: white; z-index: 1;
+            border-radius: 1.5rem 1.5rem 0 0;
+        }
+        .intake-progress {
+            display: flex; align-items: center; justify-content: center;
+            gap: 0; padding: 1.25rem 2rem 0.75rem;
+        }
+        .intake-step-indicator { display: flex; align-items: center; gap: 0.5rem; }
+        .intake-step-dot {
+            width: 32px; height: 32px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; font-weight: 700;
+            border: 2px solid #d1d5db; color: #9ca3af; background: white;
+            transition: all 0.3s ease;
+        }
+        .intake-step-dot.active { border-color: var(--light-text); background: var(--light-text); color: white; }
+        .intake-step-dot.completed { border-color: #22c55e; background: #22c55e; color: white; }
+        .intake-step-label { font-size: 0.75rem; font-weight: 500; color: #9ca3af; transition: color 0.3s ease; }
+        .intake-step-indicator.active .intake-step-label,
+        .intake-step-indicator.completed .intake-step-label { color: var(--light-text); }
+        .intake-step-line {
+            width: 60px; height: 2px; background: #e5e7eb;
+            margin: 0 0.5rem; transition: background 0.3s ease; margin-bottom: 1rem;
+        }
+        .intake-step-line.completed { background: #22c55e; }
+
+        .intake-body { padding: 1.5rem 2rem; }
+        .intake-step-content { display: none; animation: intakeFadeSlide 0.4s ease; }
+        .intake-step-content.active { display: block; }
+        @keyframes intakeFadeSlide {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .intake-field-group { margin-bottom: 1.25rem; }
+        .intake-label { display: block; font-size: 0.875rem; font-weight: 600; color: var(--light-text); margin-bottom: 0.5rem; }
+        .intake-label .optional { font-weight: 400; color: #9ca3af; font-size: 0.75rem; margin-left: 0.25rem; }
+        .intake-label .required { color: #ef4444; margin-left: 2px; }
+
+        .intake-input, .intake-select, .intake-textarea {
+            width: 100%; padding: 0.75rem 1rem;
+            border: 1.5px solid #e5e7eb; border-radius: 0.75rem;
+            font-size: 0.875rem; color: var(--light-text); background: white;
+            transition: all 0.2s ease; outline: none;
+        }
+        .intake-input:focus, .intake-select:focus, .intake-textarea:focus {
+            border-color: var(--light-text); box-shadow: 0 0 0 3px rgba(34,34,34,0.1);
+        }
+        .intake-input.error, .intake-select.error {
+            border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.1);
+        }
+        .intake-error-msg { font-size: 0.75rem; color: #ef4444; margin-top: 0.25rem; display: none; }
+        .intake-input.error + .intake-error-msg,
+        .intake-select.error + .intake-error-msg { display: block; }
+
+        .intake-checkbox-group, .intake-radio-group {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem;
+        }
+        .intake-checkbox-item, .intake-radio-item {
+            display: flex; align-items: center; gap: 0.5rem;
+            padding: 0.625rem 0.75rem; border: 1.5px solid #e5e7eb;
+            border-radius: 0.75rem; cursor: pointer;
+            transition: all 0.2s ease; font-size: 0.8rem; color: var(--light-text);
+        }
+        .intake-checkbox-item:hover, .intake-radio-item:hover { border-color: #9ca3af; background: #fafafa; }
+        .intake-checkbox-item.selected, .intake-radio-item.selected {
+            border-color: var(--light-text); background: rgba(34,34,34,0.05); font-weight: 600;
+        }
+        .intake-checkbox-item input[type="checkbox"],
+        .intake-radio-item input[type="radio"] { width: 16px; height: 16px; accent-color: var(--light-text); }
+
+        .intake-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+        .intake-footer {
+            padding: 1.25rem 2rem; border-top: 1px solid #e5e7eb;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; bottom: 0; background: white;
+            border-radius: 0 0 1.5rem 1.5rem;
+        }
+        .intake-btn {
+            padding: 0.75rem 1.75rem; border-radius: 0.75rem;
+            font-size: 0.875rem; font-weight: 600; cursor: pointer;
+            transition: all 0.2s ease; border: none;
+            display: inline-flex; align-items: center; gap: 0.5rem;
+        }
+        .intake-btn-primary { background: var(--light-text); color: white; }
+        .intake-btn-primary:hover { background: #333; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .intake-btn-secondary { background: transparent; color: var(--light-text); border: 1.5px solid #d1d5db; }
+        .intake-btn-secondary:hover { border-color: var(--light-text); background: #f9f9f9; }
+        .intake-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+
+        .intake-section-title {
+            font-size: 0.8rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.05em; color: #6b7280;
+            margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #f3f4f6;
+        }
+        .intake-success { text-align: center; padding: 3rem 2rem; }
+        .intake-success-icon {
+            width: 80px; height: 80px; background: #dcfce7; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;
+        }
+        .intake-success-icon i { font-size: 2rem; color: #22c55e; }
+
+        @media (max-width: 640px) {
+            .intake-modal { max-height: 95vh; border-radius: 1rem; }
+            .intake-header, .intake-body, .intake-footer { padding-left: 1.25rem; padding-right: 1.25rem; }
+            .intake-checkbox-group, .intake-radio-group, .intake-row { grid-template-columns: 1fr; }
+            .intake-step-line { width: 30px; }
+        }
     </style>
 </head>
 <body class="font-sans bg-white text-[--light-text]">
@@ -851,9 +990,9 @@
                         <p class="text-[--light-accent] mb-6 text-sm leading-relaxed lang-text" data-zh="告诉我们您的庭院面积、偏好风格和预算范围，我们的专业顾问将为您提供初步建议和产品推荐。" data-en="Share your yard size, preferred style, and budget. Our consultants will provide initial recommendations and product suggestions.">
                             告诉我们您的庭院面积、偏好风格和预算范围，我们的专业顾问将为您提供初步建议和产品推荐。
                         </p>
-                        <a href="#contact" class="inline-flex items-center px-5 py-2.5 bg-[--light-text] text-white rounded-full text-sm font-semibold hover:bg-gray-700 transition lang-text" data-zh="开始咨询" data-en="Start Consultation">
-                            <i class="fas fa-arrow-right mr-2"></i>开始咨询
-                        </a>
+                        <button onclick="openIntakeForm()" class="inline-flex items-center px-5 py-2.5 bg-[--light-text] text-white rounded-full text-sm font-semibold hover:bg-gray-700 transition lang-text" data-zh="填写需求问卷" data-en="Fill Out Intake Form">
+                            <i class="fas fa-clipboard-check mr-2"></i>Fill Out Intake Form
+                        </button>
                     </div>
                     <div class="hidden md:flex absolute top-1/2 -right-4 transform -translate-y-1/2 z-10 text-gray-300">
                         <i class="fas fa-chevron-right text-2xl"></i>
@@ -972,6 +1111,309 @@
 
     <!-- Footer -->
     <footer class="bg-[--light-text] text-white py-12 border-t border-gray-200">
+
+    <!-- Customer Intake Form Modal -->
+    <div class="intake-overlay" id="intakeOverlay" onclick="if(event.target===this)closeIntakeForm()">
+        <div class="intake-modal">
+            <div class="intake-header">
+                <div>
+                    <h3 class="text-lg font-bold text-[--light-text] lang-text" data-zh="设计需求问卷" data-en="Design Intake Questionnaire">Design Intake Questionnaire</h3>
+                    <p class="text-sm text-gray-500 lang-text" data-zh="只需几分钟，帮助我们更好地了解您的需求" data-en="Just a few minutes to help us understand your needs">Just a few minutes to help us understand your needs</p>
+                </div>
+                <button onclick="closeIntakeForm()" class="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="intake-progress" id="intakeProgress">
+                <div class="intake-step-indicator active" data-step="1">
+                    <div class="intake-step-dot active">1</div>
+                    <span class="intake-step-label lang-text" data-zh="基本信息" data-en="Basic Info">Basic Info</span>
+                </div>
+                <div class="intake-step-line" data-line="1"></div>
+                <div class="intake-step-indicator" data-step="2">
+                    <div class="intake-step-dot">2</div>
+                    <span class="intake-step-label lang-text" data-zh="项目需求" data-en="Requirements">Requirements</span>
+                </div>
+                <div class="intake-step-line" data-line="2"></div>
+                <div class="intake-step-indicator" data-step="3">
+                    <div class="intake-step-dot">3</div>
+                    <span class="intake-step-label lang-text" data-zh="设计偏好" data-en="Design Taste">Design Taste</span>
+                </div>
+            </div>
+            <div class="intake-body">
+                <form id="intakeForm" novalidate>
+                    <!-- Step 1: Basic Info -->
+                    <div class="intake-step-content active" data-step="1">
+                        <div class="intake-field-group">
+                            <label class="intake-label"><span class="lang-text" data-zh="您的姓名" data-en="Full Name">Full Name</span><span class="required">*</span></label>
+                            <input type="text" class="intake-input" id="intake_name" name="client_name" required
+                                   placeholder="Please enter your name" data-placeholder-zh="请输入您的姓名" data-placeholder-en="Please enter your name">
+                            <p class="intake-error-msg lang-text" data-zh="请输入您的姓名" data-en="Please enter your name">Please enter your name</p>
+                        </div>
+                        <div class="intake-row">
+                            <div class="intake-field-group">
+                                <label class="intake-label"><span class="lang-text" data-zh="电子邮箱" data-en="Email">Email</span><span class="required">*</span></label>
+                                <input type="email" class="intake-input" id="intake_email" name="email" required placeholder="email@example.com">
+                                <p class="intake-error-msg lang-text" data-zh="请输入有效的邮箱地址" data-en="Please enter a valid email">Please enter a valid email</p>
+                            </div>
+                            <div class="intake-field-group">
+                                <label class="intake-label"><span class="lang-text" data-zh="联系电话" data-en="Phone">Phone</span><span class="required">*</span></label>
+                                <input type="tel" class="intake-input" id="intake_phone" name="phone" required
+                                       placeholder="(555) 123-4567" data-placeholder-zh="请输入手机号" data-placeholder-en="(555) 123-4567">
+                                <p class="intake-error-msg lang-text" data-zh="请输入联系电话" data-en="Please enter your phone number">Please enter your phone number</p>
+                            </div>
+                        </div>
+                        <div class="intake-field-group">
+                            <label class="intake-label"><span class="lang-text" data-zh="项目地址" data-en="Project Address">Project Address</span><span class="optional lang-text" data-zh="(选填)" data-en="(Optional)">(Optional)</span></label>
+                            <input type="text" class="intake-input" id="intake_address" name="project_address"
+                                   placeholder="123 Main St, City, State" data-placeholder-zh="请输入项目地址" data-placeholder-en="123 Main St, City, State">
+                        </div>
+                        <div class="intake-row">
+                            <div class="intake-field-group">
+                                <label class="intake-label"><span class="lang-text" data-zh="项目类型" data-en="Project Type">Project Type</span><span class="required">*</span></label>
+                                <select class="intake-select" id="intake_project_type" name="project_type" required>
+                                    <option value="" class="lang-text" data-zh="请选择" data-en="Please select">Please select</option>
+                                    <option value="sunroom" class="lang-text" data-zh="阳光房" data-en="Sunroom">Sunroom</option>
+                                    <option value="pavilion" class="lang-text" data-zh="户外凉亭" data-en="Pavilion">Pavilion</option>
+                                    <option value="windproof" class="lang-text" data-zh="防风卷帘" data-en="Windproof Shutter">Windproof Shutter</option>
+                                    <option value="combo" class="lang-text" data-zh="组合方案" data-en="Combination">Combination</option>
+                                    <option value="other" class="lang-text" data-zh="其他" data-en="Other">Other</option>
+                                </select>
+                                <p class="intake-error-msg lang-text" data-zh="请选择项目类型" data-en="Please select a project type">Please select a project type</p>
+                            </div>
+                            <div class="intake-field-group">
+                                <label class="intake-label"><span class="lang-text" data-zh="沟通方式偏好" data-en="Preferred Contact">Preferred Contact</span><span class="optional lang-text" data-zh="(选填)" data-en="(Optional)">(Optional)</span></label>
+                                <select class="intake-select" id="intake_contact_pref" name="communication_preference">
+                                    <option value="" class="lang-text" data-zh="请选择" data-en="Please select">Please select</option>
+                                    <option value="phone" class="lang-text" data-zh="电话" data-en="Phone">Phone</option>
+                                    <option value="email" class="lang-text" data-zh="邮箱" data-en="Email">Email</option>
+                                    <option value="wechat" class="lang-text" data-zh="微信" data-en="WeChat">WeChat</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Requirements -->
+                    <div class="intake-step-content" data-step="2">
+                        <div class="intake-section-title lang-text" data-zh="预算与时间" data-en="BUDGET & TIMELINE">BUDGET & TIMELINE</div>
+                        <div class="intake-field-group">
+                            <label class="intake-label"><span class="lang-text" data-zh="预算范围" data-en="Budget Range">Budget Range</span><span class="required">*</span></label>
+                            <div class="intake-radio-group" id="budgetGroup">
+                                <label class="intake-radio-item" onclick="selectRadio(this)">
+                                    <input type="radio" name="budget_range" value="under_100k">
+                                    <span class="lang-text" data-zh="< $100,000" data-en="Under $100,000">Under $100,000</span>
+                                </label>
+                                <label class="intake-radio-item" onclick="selectRadio(this)">
+                                    <input type="radio" name="budget_range" value="100k_300k">
+                                    <span class="lang-text" data-zh="$100K – $300K" data-en="$100K – $300K">$100K – $300K</span>
+                                </label>
+                                <label class="intake-radio-item" onclick="selectRadio(this)">
+                                    <input type="radio" name="budget_range" value="300k_700k">
+                                    <span class="lang-text" data-zh="$300K – $700K" data-en="$300K – $700K">$300K – $700K</span>
+                                </label>
+                                <label class="intake-radio-item" onclick="selectRadio(this)">
+                                    <input type="radio" name="budget_range" value="over_700k">
+                                    <span class="lang-text" data-zh="> $700,000" data-en="Over $700,000">Over $700,000</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="intake-row">
+                            <div class="intake-field-group">
+                                <label class="intake-label"><span class="lang-text" data-zh="期望开工日期" data-en="Desired Start Date">Desired Start Date</span><span class="optional lang-text" data-zh="(选填)" data-en="(Optional)">(Optional)</span></label>
+                                <input type="date" class="intake-input" id="intake_start_date" name="start_date">
+                            </div>
+                            <div class="intake-field-group">
+                                <label class="intake-label"><span class="lang-text" data-zh="期望完工日期" data-en="Target Completion">Target Completion</span><span class="optional lang-text" data-zh="(选填)" data-en="(Optional)">(Optional)</span></label>
+                                <input type="date" class="intake-input" id="intake_completion_date" name="completion_date">
+                            </div>
+                        </div>
+
+                        <div class="intake-section-title lang-text" data-zh="生活方式与空间" data-en="LIFESTYLE & SPACE" style="margin-top:1.5rem">LIFESTYLE & SPACE</div>
+                        <div class="intake-row">
+                            <div class="intake-field-group">
+                                <label class="intake-label"><span class="lang-text" data-zh="家庭成员数量" data-en="Household Size">Household Size</span><span class="optional lang-text" data-zh="(选填)" data-en="(Optional)">(Optional)</span></label>
+                                <input type="number" class="intake-input" id="intake_household" name="household_size" min="1" max="20"
+                                       placeholder="e.g. 4" data-placeholder-zh="例: 4" data-placeholder-en="e.g. 4">
+                            </div>
+                            <div class="intake-field-group">
+                                <label class="intake-label"><span class="lang-text" data-zh="聚会/娱乐频率" data-en="Entertaining Frequency">Entertaining Frequency</span><span class="optional lang-text" data-zh="(选填)" data-en="(Optional)">(Optional)</span></label>
+                                <select class="intake-select" id="intake_entertaining" name="entertaining_frequency">
+                                    <option value="" class="lang-text" data-zh="请选择" data-en="Please select">Please select</option>
+                                    <option value="rarely" class="lang-text" data-zh="很少" data-en="Rarely">Rarely</option>
+                                    <option value="monthly" class="lang-text" data-zh="每月" data-en="Monthly">Monthly</option>
+                                    <option value="weekly" class="lang-text" data-zh="每周" data-en="Weekly">Weekly</option>
+                                    <option value="daily" class="lang-text" data-zh="每天" data-en="Daily">Daily</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="intake-field-group">
+                            <label class="intake-label"><span class="lang-text" data-zh="空间需求" data-en="Space Needs">Space Needs</span><span class="optional lang-text" data-zh="(可多选)" data-en="(Select multiple)">(Select multiple)</span></label>
+                            <div class="intake-checkbox-group" id="spaceNeedsGroup">
+                                <label class="intake-checkbox-item" onclick="toggleCheckbox(this)">
+                                    <input type="checkbox" name="space_needs" value="kitchen">
+                                    <span class="lang-text" data-zh="户外厨房" data-en="Outdoor Kitchen">Outdoor Kitchen</span>
+                                </label>
+                                <label class="intake-checkbox-item" onclick="toggleCheckbox(this)">
+                                    <input type="checkbox" name="space_needs" value="living">
+                                    <span class="lang-text" data-zh="休闲客厅" data-en="Living Area">Living Area</span>
+                                </label>
+                                <label class="intake-checkbox-item" onclick="toggleCheckbox(this)">
+                                    <input type="checkbox" name="space_needs" value="office">
+                                    <span class="lang-text" data-zh="家庭办公" data-en="Home Office">Home Office</span>
+                                </label>
+                                <label class="intake-checkbox-item" onclick="toggleCheckbox(this)">
+                                    <input type="checkbox" name="space_needs" value="guest">
+                                    <span class="lang-text" data-zh="客房空间" data-en="Guest Room">Guest Room</span>
+                                </label>
+                                <label class="intake-checkbox-item" onclick="toggleCheckbox(this)">
+                                    <input type="checkbox" name="space_needs" value="pool">
+                                    <span class="lang-text" data-zh="泳池区域" data-en="Pool Area">Pool Area</span>
+                                </label>
+                                <label class="intake-checkbox-item" onclick="toggleCheckbox(this)">
+                                    <input type="checkbox" name="space_needs" value="garden">
+                                    <span class="lang-text" data-zh="花园/庭院" data-en="Garden/Yard">Garden/Yard</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="intake-field-group">
+                            <label class="intake-label"><span class="lang-text" data-zh="您最想实现的3个项目目标" data-en="Top 3 Project Goals">Top 3 Project Goals</span><span class="optional lang-text" data-zh="(选填)" data-en="(Optional)">(Optional)</span></label>
+                            <textarea class="intake-textarea" id="intake_goals" name="project_goals" rows="3"
+                                      placeholder="e.g. 1. More outdoor living space 2. Year-round usability 3. Increase home value"
+                                      data-placeholder-zh="例: 1. 更多户外生活空间 2. 四季可用 3. 提升房屋价值"
+                                      data-placeholder-en="e.g. 1. More outdoor living space 2. Year-round usability 3. Increase home value"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Design Preferences -->
+                    <div class="intake-step-content" data-step="3">
+                        <div class="intake-section-title lang-text" data-zh="风格偏好" data-en="STYLE PREFERENCES">STYLE PREFERENCES</div>
+                        <div class="intake-field-group">
+                            <label class="intake-label"><span class="lang-text" data-zh="喜欢的设计风格" data-en="Preferred Design Style">Preferred Design Style</span><span class="optional lang-text" data-zh="(可多选)" data-en="(Select multiple)">(Select multiple)</span></label>
+                            <div class="intake-checkbox-group" id="styleGroup">
+                                <label class="intake-checkbox-item" onclick="toggleCheckbox(this)">
+                                    <input type="checkbox" name="style_pref" value="modern">
+                                    <span class="lang-text" data-zh="现代简约" data-en="Modern">Modern</span>
+                                </label>
+                                <label class="intake-checkbox-item" onclick="toggleCheckbox(this)">
+                                    <input type="checkbox" name="style_pref" value="traditional">
+                                    <span class="lang-text" data-zh="传统经典" data-en="Traditional">Traditional</span>
+                                </label>
+                                <label class="intake-checkbox-item" onclick="toggleCheckbox(this)">
+                                    <input type="checkbox" name="style_pref" value="transitional">
+                                    <span class="lang-text" data-zh="过渡风格" data-en="Transitional">Transitional</span>
+                                </label>
+                                <label class="intake-checkbox-item" onclick="toggleCheckbox(this)">
+                                    <input type="checkbox" name="style_pref" value="minimalist">
+                                    <span class="lang-text" data-zh="极简主义" data-en="Minimalist">Minimalist</span>
+                                </label>
+                                <label class="intake-checkbox-item" onclick="toggleCheckbox(this)">
+                                    <input type="checkbox" name="style_pref" value="scandinavian">
+                                    <span class="lang-text" data-zh="北欧风格" data-en="Scandinavian">Scandinavian</span>
+                                </label>
+                                <label class="intake-checkbox-item" onclick="toggleCheckbox(this)">
+                                    <input type="checkbox" name="style_pref" value="eclectic">
+                                    <span class="lang-text" data-zh="混搭风格" data-en="Eclectic">Eclectic</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="intake-field-group">
+                            <label class="intake-label"><span class="lang-text" data-zh="当前痛点" data-en="Current Pain Points">Current Pain Points</span><span class="optional lang-text" data-zh="(可多选)" data-en="(Select multiple)">(Select multiple)</span></label>
+                            <div class="intake-checkbox-group" id="painPointsGroup">
+                                <label class="intake-checkbox-item" onclick="toggleCheckbox(this)">
+                                    <input type="checkbox" name="pain_points" value="layout">
+                                    <span class="lang-text" data-zh="布局不合理" data-en="Poor Layout">Poor Layout</span>
+                                </label>
+                                <label class="intake-checkbox-item" onclick="toggleCheckbox(this)">
+                                    <input type="checkbox" name="pain_points" value="storage">
+                                    <span class="lang-text" data-zh="收纳不足" data-en="Lack of Storage">Lack of Storage</span>
+                                </label>
+                                <label class="intake-checkbox-item" onclick="toggleCheckbox(this)">
+                                    <input type="checkbox" name="pain_points" value="lighting">
+                                    <span class="lang-text" data-zh="采光不好" data-en="Poor Lighting">Poor Lighting</span>
+                                </label>
+                                <label class="intake-checkbox-item" onclick="toggleCheckbox(this)">
+                                    <input type="checkbox" name="pain_points" value="aesthetics">
+                                    <span class="lang-text" data-zh="美观度差" data-en="Outdated Look">Outdated Look</span>
+                                </label>
+                                <label class="intake-checkbox-item" onclick="toggleCheckbox(this)">
+                                    <input type="checkbox" name="pain_points" value="efficiency">
+                                    <span class="lang-text" data-zh="空间利用低" data-en="Low Efficiency">Low Efficiency</span>
+                                </label>
+                                <label class="intake-checkbox-item" onclick="toggleCheckbox(this)">
+                                    <input type="checkbox" name="pain_points" value="weather">
+                                    <span class="lang-text" data-zh="户外受天气限制" data-en="Weather Limitations">Weather Limitations</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="intake-section-title lang-text" data-zh="可持续性与智能" data-en="SUSTAINABILITY & SMART HOME" style="margin-top:1.5rem">SUSTAINABILITY & SMART HOME</div>
+                        <div class="intake-field-group">
+                            <label class="intake-label"><span class="lang-text" data-zh="感兴趣的功能" data-en="Features of Interest">Features of Interest</span><span class="optional lang-text" data-zh="(可多选)" data-en="(Select multiple)">(Select multiple)</span></label>
+                            <div class="intake-checkbox-group" id="sustainGroup">
+                                <label class="intake-checkbox-item" onclick="toggleCheckbox(this)">
+                                    <input type="checkbox" name="sustainability" value="energy">
+                                    <span class="lang-text" data-zh="节能隔热" data-en="Energy Efficiency">Energy Efficiency</span>
+                                </label>
+                                <label class="intake-checkbox-item" onclick="toggleCheckbox(this)">
+                                    <input type="checkbox" name="sustainability" value="solar">
+                                    <span class="lang-text" data-zh="太阳能" data-en="Solar Panels">Solar Panels</span>
+                                </label>
+                                <label class="intake-checkbox-item" onclick="toggleCheckbox(this)">
+                                    <input type="checkbox" name="sustainability" value="eco_materials">
+                                    <span class="lang-text" data-zh="环保材料" data-en="Eco Materials">Eco Materials</span>
+                                </label>
+                                <label class="intake-checkbox-item" onclick="toggleCheckbox(this)">
+                                    <input type="checkbox" name="sustainability" value="smart_home">
+                                    <span class="lang-text" data-zh="智能家居" data-en="Smart Home">Smart Home</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="intake-field-group">
+                            <label class="intake-label"><span class="lang-text" data-zh="材料/颜色偏好" data-en="Material & Color Preferences">Material & Color Preferences</span><span class="optional lang-text" data-zh="(选填)" data-en="(Optional)">(Optional)</span></label>
+                            <textarea class="intake-textarea" id="intake_materials" name="materials_colors" rows="2"
+                                      placeholder="e.g. Natural wood tones, matte black frames, warm white..."
+                                      data-placeholder-zh="例: 自然木色、哑光黑框架、暖白色调..."
+                                      data-placeholder-en="e.g. Natural wood tones, matte black frames, warm white..."></textarea>
+                        </div>
+                        <div class="intake-field-group">
+                            <label class="intake-label"><span class="lang-text" data-zh="其他愿景或补充说明" data-en="Additional Comments / Vision">Additional Comments / Vision</span><span class="optional lang-text" data-zh="(选填)" data-en="(Optional)">(Optional)</span></label>
+                            <textarea class="intake-textarea" id="intake_comments" name="additional_comments" rows="3"
+                                      placeholder="Share any other ideas, inspirations, or priorities..."
+                                      data-placeholder-zh="分享您的其他想法、灵感或优先事项..."
+                                      data-placeholder-en="Share any other ideas, inspirations, or priorities..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Success State -->
+                    <div class="intake-step-content" data-step="success" id="intakeSuccess">
+                        <div class="intake-success">
+                            <div class="intake-success-icon"><i class="fas fa-check"></i></div>
+                            <h3 class="text-2xl font-bold text-[--light-text] mb-3 lang-text" data-zh="提交成功！" data-en="Successfully Submitted!">Successfully Submitted!</h3>
+                            <p class="text-gray-500 mb-6 lang-text" data-zh="感谢您提供详细信息。我们的设计顾问将在24小时内与您联系，讨论您的项目。" data-en="Thank you for the detailed information. Our design consultant will contact you within 24 hours to discuss your project.">Thank you for the detailed information. Our design consultant will contact you within 24 hours to discuss your project.</p>
+                            <button type="button" onclick="closeIntakeForm()" class="intake-btn intake-btn-primary">
+                                <i class="fas fa-check mr-1"></i>
+                                <span class="lang-text" data-zh="完成" data-en="Done">Done</span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="intake-footer" id="intakeFooter">
+                <button type="button" id="intakePrevBtn" class="intake-btn intake-btn-secondary" onclick="intakePrevStep()" style="visibility:hidden">
+                    <i class="fas fa-arrow-left"></i>
+                    <span class="lang-text" data-zh="上一步" data-en="Previous">Previous</span>
+                </button>
+                <div class="text-xs text-gray-400">
+                    <span id="intakeStepInfo" class="lang-text" data-zh="第 1 步，共 3 步" data-en="Step 1 of 3">Step 1 of 3</span>
+                </div>
+                <button type="button" id="intakeNextBtn" class="intake-btn intake-btn-primary" onclick="intakeNextStep()">
+                    <span class="lang-text" data-zh="下一步" data-en="Next">Next</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Chatbot Widget -->
     <div class="chatbot-container" id="chatbot">
@@ -1293,15 +1735,18 @@
         });
 
         // Form submission handling
-        document.querySelector('form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            if (currentLang === 'zh') {
-                alert('感谢您的咨询！我们的工作人员会尽快与您联系。');
-            } else {
-                alert('Thank you for your inquiry! Our staff will contact you as soon as possible.');
-            }
-            this.reset();
-        });
+        const contactFormEl = document.querySelector('#contactForm');
+        if (contactFormEl) {
+            contactFormEl.addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (currentLang === 'zh') {
+                    alert('感谢您的咨询！我们的工作人员会尽快与您联系。');
+                } else {
+                    alert('Thank you for your inquiry! Our staff will contact you as soon as possible.');
+                }
+                this.reset();
+            });
+        }
 
         // Animation on scroll
         const observerOptions = {
@@ -1388,6 +1833,7 @@
         function renderGallery(category) {
             const data = categoryData[category];
             const grid = document.getElementById('galleryGrid');
+            if (!grid) return;
             // Only show first 3 gallery images
             const galleryItems = data.gallery.slice(0, 3);
             grid.innerHTML = galleryItems.map(item => `
@@ -1762,6 +2208,7 @@
 
         function updateProductImageSelector(category) {
             const grid = document.getElementById('productImageGrid');
+            if (!grid) return;
             const images = productImages[category] || productImages.sunroom;
             
             grid.innerHTML = images.map((src, i) => `
@@ -2142,8 +2589,10 @@
         // Drag and drop support (bg and ref only, product images are selected from built-in)
         ['bgUploadArea', 'refUploadArea'].forEach(areaId => {
             const area = document.getElementById(areaId);
+            if (!area) return;
             const type = areaId === 'bgUploadArea' ? 'bg' : 'ref';
             const input = document.getElementById(type + 'Input');
+            if (!input) return;
 
             area.addEventListener('dragover', (e) => {
                 e.preventDefault();
@@ -2166,6 +2615,225 @@
                     handleImageUpload(input, type);
                 }
             });
+        });
+
+        // ==================== Supabase Client ====================
+        const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
+        const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';
+        let supabaseClient = null;
+        try {
+            if (window.supabase && SUPABASE_URL !== 'https://YOUR_PROJECT_ID.supabase.co') {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            }
+        } catch(e) { console.warn('Supabase init skipped:', e.message); }
+
+        // ==================== Customer Intake Form ====================
+        let intakeCurrentStep = 1;
+        const intakeTotalSteps = 3;
+
+        function openIntakeForm() {
+            document.getElementById('intakeOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            intakeCurrentStep = 1;
+            updateIntakeUI();
+            updateIntakePlaceholders();
+            switchLanguage(currentLang);
+        }
+
+        function closeIntakeForm() {
+            document.getElementById('intakeOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+            setTimeout(() => { resetIntakeForm(); }, 300);
+        }
+
+        function resetIntakeForm() {
+            intakeCurrentStep = 1;
+            document.getElementById('intakeForm').reset();
+            document.querySelectorAll('.intake-radio-item.selected, .intake-checkbox-item.selected').forEach(el => el.classList.remove('selected'));
+            document.querySelectorAll('.intake-input.error, .intake-select.error').forEach(el => el.classList.remove('error'));
+            document.getElementById('intakeFooter').style.display = 'flex';
+            document.getElementById('intakeProgress').style.display = 'flex';
+            updateIntakeUI();
+        }
+
+        function updateIntakeUI() {
+            document.querySelectorAll('.intake-step-content').forEach(el => el.classList.remove('active'));
+            const current = document.querySelector('.intake-step-content[data-step="' + intakeCurrentStep + '"]');
+            if (current) current.classList.add('active');
+
+            document.querySelectorAll('.intake-step-indicator').forEach(el => {
+                const step = parseInt(el.dataset.step);
+                const dot = el.querySelector('.intake-step-dot');
+                el.classList.remove('active', 'completed');
+                dot.classList.remove('active', 'completed');
+                if (step === intakeCurrentStep) {
+                    el.classList.add('active'); dot.classList.add('active'); dot.innerHTML = step;
+                } else if (step < intakeCurrentStep) {
+                    el.classList.add('completed'); dot.classList.add('completed');
+                    dot.innerHTML = '<i class="fas fa-check" style="font-size:0.7rem"></i>';
+                } else { dot.innerHTML = step; }
+            });
+
+            document.querySelectorAll('.intake-step-line').forEach(el => {
+                el.classList.toggle('completed', parseInt(el.dataset.line) < intakeCurrentStep);
+            });
+
+            document.getElementById('intakePrevBtn').style.visibility = intakeCurrentStep > 1 ? 'visible' : 'hidden';
+
+            const nextBtn = document.getElementById('intakeNextBtn');
+            const nextLabel = nextBtn.querySelector('.lang-text');
+            const nextIcon = nextBtn.querySelector('i');
+            if (intakeCurrentStep === intakeTotalSteps) {
+                nextLabel.setAttribute('data-zh', '提交'); nextLabel.setAttribute('data-en', 'Submit');
+                nextLabel.textContent = currentLang === 'zh' ? '提交' : 'Submit';
+                nextIcon.className = 'fas fa-paper-plane';
+            } else {
+                nextLabel.setAttribute('data-zh', '下一步'); nextLabel.setAttribute('data-en', 'Next');
+                nextLabel.textContent = currentLang === 'zh' ? '下一步' : 'Next';
+                nextIcon.className = 'fas fa-arrow-right';
+            }
+
+            const stepInfo = document.getElementById('intakeStepInfo');
+            stepInfo.setAttribute('data-zh', '第 ' + intakeCurrentStep + ' 步，共 ' + intakeTotalSteps + ' 步');
+            stepInfo.setAttribute('data-en', 'Step ' + intakeCurrentStep + ' of ' + intakeTotalSteps);
+            stepInfo.textContent = currentLang === 'zh' ? '第 ' + intakeCurrentStep + ' 步，共 ' + intakeTotalSteps + ' 步' : 'Step ' + intakeCurrentStep + ' of ' + intakeTotalSteps;
+
+            document.querySelector('.intake-modal').scrollTop = 0;
+        }
+
+        function intakeNextStep() {
+            if (intakeCurrentStep < intakeTotalSteps) {
+                if (!validateIntakeStep(intakeCurrentStep)) return;
+                intakeCurrentStep++;
+                updateIntakeUI();
+            } else {
+                if (!validateIntakeStep(intakeCurrentStep)) return;
+                submitIntakeForm();
+            }
+        }
+
+        function intakePrevStep() {
+            if (intakeCurrentStep > 1) { intakeCurrentStep--; updateIntakeUI(); }
+        }
+
+        function validateIntakeStep(step) {
+            let isValid = true;
+            if (step === 1) {
+                const fields = [
+                    document.getElementById('intake_name'),
+                    document.getElementById('intake_email'),
+                    document.getElementById('intake_phone'),
+                    document.getElementById('intake_project_type')
+                ];
+                fields.forEach(f => f.classList.remove('error'));
+                if (!fields[0].value.trim()) { fields[0].classList.add('error'); isValid = false; }
+                if (!fields[1].value.trim() || !fields[1].value.includes('@')) { fields[1].classList.add('error'); isValid = false; }
+                if (!fields[2].value.trim()) { fields[2].classList.add('error'); isValid = false; }
+                if (!fields[3].value) { fields[3].classList.add('error'); isValid = false; }
+            }
+            if (step === 2) {
+                if (!document.querySelector('input[name="budget_range"]:checked')) {
+                    showNotification(currentLang === 'zh' ? '请选择预算范围' : 'Please select a budget range', 'error');
+                    isValid = false;
+                }
+            }
+            return isValid;
+        }
+
+        function selectRadio(element) {
+            element.closest('.intake-radio-group').querySelectorAll('.intake-radio-item').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+
+        function toggleCheckbox(element) {
+            element.classList.toggle('selected');
+        }
+
+        function collectIntakeData() {
+            const fd = new FormData(document.getElementById('intakeForm'));
+            return {
+                client_name: fd.get('client_name') || '',
+                email: fd.get('email') || '',
+                phone: fd.get('phone') || '',
+                project_address: fd.get('project_address') || '',
+                project_type: fd.get('project_type') || '',
+                communication_preference: fd.get('communication_preference') || '',
+                budget_range: fd.get('budget_range') || '',
+                start_date: fd.get('start_date') || '',
+                completion_date: fd.get('completion_date') || '',
+                household_size: fd.get('household_size') || '',
+                entertaining_frequency: fd.get('entertaining_frequency') || '',
+                space_needs: fd.getAll('space_needs'),
+                project_goals: fd.get('project_goals') || '',
+                style_preferences: fd.getAll('style_pref'),
+                pain_points: fd.getAll('pain_points'),
+                sustainability: fd.getAll('sustainability'),
+                materials_colors: fd.get('materials_colors') || '',
+                additional_comments: fd.get('additional_comments') || '',
+                submitted_at: new Date().toISOString(),
+                language: currentLang
+            };
+        }
+
+        function submitIntakeForm() {
+            const data = collectIntakeData();
+            console.log('Intake form submitted:', data);
+
+            // Show success state immediately (optimistic UI)
+            intakeCurrentStep = 'success';
+            document.querySelectorAll('.intake-step-content').forEach(el => el.classList.remove('active'));
+            document.getElementById('intakeSuccess').classList.add('active');
+            document.getElementById('intakeFooter').style.display = 'none';
+            document.getElementById('intakeProgress').style.display = 'none';
+
+            showNotification(currentLang === 'zh' ? '需求问卷提交成功！' : 'Intake form submitted successfully!', 'success');
+
+            // Persist to Supabase (non-blocking)
+            if (supabaseClient) {
+                const dbPayload = {
+                    client_name: data.client_name,
+                    email: data.email,
+                    phone: data.phone,
+                    project_address: data.project_address || null,
+                    project_type: data.project_type,
+                    communication_preference: data.communication_preference || '',
+                    budget_range: data.budget_range,
+                    start_date: data.start_date || null,
+                    completion_date: data.completion_date || null,
+                    household_size: data.household_size ? parseInt(data.household_size) : null,
+                    entertaining_frequency: data.entertaining_frequency || '',
+                    space_needs: data.space_needs,
+                    project_goals: data.project_goals || null,
+                    style_preferences: data.style_preferences,
+                    pain_points: data.pain_points,
+                    sustainability: data.sustainability,
+                    materials_colors: data.materials_colors || null,
+                    additional_comments: data.additional_comments || null,
+                    language: data.language
+                };
+                supabaseClient.from('customer_intakes').insert([dbPayload])
+                    .then(({ error }) => {
+                        if (error) {
+                            console.error('Supabase insert error:', error);
+                        } else {
+                            console.log('Intake saved to Supabase');
+                        }
+                    });
+            } else {
+                console.log('Supabase not configured — data logged to console only');
+            }
+        }
+
+        function updateIntakePlaceholders() {
+            document.querySelectorAll('#intakeForm [data-placeholder-zh]').forEach(el => {
+                el.placeholder = currentLang === 'zh' ? el.getAttribute('data-placeholder-zh') : el.getAttribute('data-placeholder-en');
+            });
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && document.getElementById('intakeOverlay').classList.contains('active')) {
+                closeIntakeForm();
+            }
         });
     </script>
 </body>

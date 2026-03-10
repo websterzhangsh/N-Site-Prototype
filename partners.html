@@ -316,21 +316,25 @@
                 <!-- Step 4 -->
                 <div class="tl-item">
                     <div class="tl-node bg-[--light-text] text-white">4</div>
-                    <div class="tl-card">
+                    <div class="tl-card cursor-pointer" onclick="toggleAIDesignTool()" id="step4Card">
                         <div class="flex items-start gap-3">
                             <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0">
                                 <i class="fas fa-image text-[--light-text]"></i>
                             </div>
-                            <div>
-                                <h4 class="font-bold text-[--light-text] mb-1 lang-text" data-zh="实景融合" data-en="Real Scene Integration">实景融合</h4>
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="font-bold text-[--light-text] mb-1 lang-text" data-zh="实景融合" data-en="Real Scene Integration">实景融合</h4>
+                                    <i class="fas fa-chevron-down text-[--light-accent] transition-transform duration-300" id="aiToolToggleIcon"></i>
+                                </div>
                                 <p class="text-[--light-accent] text-sm lang-text" data-zh="将客户实景照片与选定产品进行AI融合，生成实景效果图" data-en="AI integration of client photos with selected products for realistic renderings">将客户实景照片与选定产品进行AI融合，生成实景效果图</p>
+                                <p class="text-[--light-text] text-xs mt-2 font-medium lang-text" data-zh="点击展开 AI 设计工具 →" data-en="Click to expand AI Design Tool →">点击展开 AI 设计工具 →</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- AI Design Tool Section -->
-                <div class="col-span-full mt-8">
+                <!-- AI Design Tool Section (Hidden by default) -->
+                <div class="col-span-full mt-8 hidden" id="aiDesignToolSection">
                     <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
                         <h3 class="text-xl font-semibold text-[--light-text] mb-4 flex items-center">
                             <i class="fas fa-magic mr-2 text-[--light-accent]"></i>
@@ -816,6 +820,38 @@
     </footer>
 
     <script>
+        // AI Design Tool Toggle
+        let aiToolVisible = false;
+
+        function toggleAIDesignTool() {
+            const section = document.getElementById('aiDesignToolSection');
+            const icon = document.getElementById('aiToolToggleIcon');
+            const card = document.getElementById('step4Card');
+            
+            aiToolVisible = !aiToolVisible;
+            
+            if (aiToolVisible) {
+                section.classList.remove('hidden');
+                section.style.animation = 'fadeInSlide 0.4s ease';
+                icon.style.transform = 'rotate(180deg)';
+                card.classList.add('border-[--light-text]', 'bg-gray-50');
+            } else {
+                section.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+                card.classList.remove('border-[--light-text]', 'bg-gray-50');
+            }
+        }
+
+        // Add fadeInSlide animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInSlide {
+                from { opacity: 0; transform: translateY(-10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        `;
+        document.head.appendChild(style);
+
         // Language Switcher
         let currentLang = 'en';
 
