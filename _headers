@@ -6,3 +6,6 @@
 
 /partners.html
   Cache-Control: no-cache, no-store, must-revalidate
+
+/register.html
+  Cache-Control: no-cache, no-store, must-revalidate
