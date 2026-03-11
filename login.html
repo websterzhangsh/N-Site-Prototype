@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title class="tenant-title">登录</title>
-    <meta name="description" content="合作伙伴登录">
+    <title class="tenant-title">Sign In</title>
+    <meta name="description" content="Partner Sign In">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -314,7 +314,7 @@
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-content">
             <div class="loading-spinner"></div>
-            <p class="loading-text">正在加载...</p>
+            <p class="loading-text">Loading...</p>
         </div>
     </div>
 
@@ -324,8 +324,8 @@
             <img src="" alt="Logo" class="tenant-logo" id="tenantLogo">
             
             <!-- Tenant Name -->
-            <h1 class="tenant-name" id="tenantName">加载中...</h1>
-            <p class="tenant-subtitle" id="tenantSubtitle">合作伙伴登录</p>
+            <h1 class="tenant-name" id="tenantName">Loading...</h1>
+            <p class="tenant-subtitle" id="tenantSubtitle">Partner Sign In</p>
 
             <!-- Error Message -->
             <div class="error-message" id="errorMessage">
@@ -336,14 +336,14 @@
             <!-- Login Form -->
             <form id="loginForm">
                 <div class="form-group">
-                    <label class="form-label" for="email">邮箱地址</label>
+                    <label class="form-label" for="email">Email Address</label>
                     <div class="input-wrapper">
                         <i class="fas fa-envelope input-icon"></i>
                         <input 
                             type="email" 
                             id="email" 
                             class="form-input input-with-icon" 
-                            placeholder="请输入邮箱地址"
+                            placeholder="Enter your email"
                             required
                             autocomplete="email"
                         >
@@ -351,14 +351,14 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="password">密码</label>
+                    <label class="form-label" for="password">Password</label>
                     <div class="input-wrapper">
                         <i class="fas fa-lock input-icon"></i>
                         <input 
                             type="password" 
                             id="password" 
                             class="form-input input-with-icon" 
-                            placeholder="请输入密码"
+                            placeholder="Enter your password"
                             required
                             autocomplete="current-password"
                         >
@@ -369,27 +369,27 @@
                 <div class="form-options">
                     <label class="remember-me">
                         <input type="checkbox" id="rememberMe">
-                        <span>记住我</span>
+                        <span>Remember me</span>
                     </label>
-                    <a href="#" class="forgot-password" id="forgotPassword">忘记密码？</a>
+                    <a href="#" class="forgot-password" id="forgotPassword">Forgot password?</a>
                 </div>
 
                 <button type="submit" class="btn-login" id="loginBtn">
                     <div class="spinner"></div>
-                    <span class="btn-text">登录</span>
+                    <span class="btn-text">Sign In</span>
                 </button>
             </form>
 
             <div class="back-link">
                 <a href="index.html">
                     <i class="fas fa-arrow-left"></i>
-                    <span>返回首页</span>
+                    <span>Back to Home</span>
                 </a>
             </div>
 
             <div class="powered-by">
                 <p class="powered-by-text">Powered by</p>
-                <p class="powered-by-brand">庭院定制专家</p>
+                <p class="powered-by-brand">Outdoor Living Expert</p>
             </div>
         </div>
     </div>
@@ -434,25 +434,25 @@
                 // For demo, using mock data
                 const tenants = {
                     'partner1': {
-                        name: '阳光建筑合作伙伴',
+                        name: 'Sunshine Construction Partner',
                         slug: 'partner1',
                         logo: 'https://via.placeholder.com/80x80/222222/FFFFFF?text=P1',
                         primaryColor: '#222222',
-                        subtitle: '专业阳光房定制服务'
+                        subtitle: 'Professional Sunroom Solutions'
                     },
                     'partner2': {
-                        name: '绿意庭院设计',
+                        name: 'Green Garden Design',
                         slug: 'partner2',
                         logo: 'https://via.placeholder.com/80x80/2d5a27/FFFFFF?text=P2',
                         primaryColor: '#2d5a27',
-                        subtitle: '生态庭院解决方案'
+                        subtitle: 'Eco Garden Solutions'
                     },
                     'default': {
-                        name: '庭院定制专家',
+                        name: 'Outdoor Living Expert',
                         slug: 'default',
                         logo: 'https://via.placeholder.com/80x80/222222/FFFFFF?text=NE',
                         primaryColor: '#222222',
-                        subtitle: '合作伙伴登录'
+                        subtitle: 'Partner Sign In'
                     }
                 };
                 
@@ -461,7 +461,7 @@
                 
             } catch (error) {
                 console.error('Failed to load tenant config:', error);
-                showError('加载租户配置失败，请刷新重试');
+                showError('Failed to load tenant config. Please refresh.');
             }
         }
 
@@ -473,7 +473,7 @@
             document.getElementById('tenantLogo').src = tenant.logo;
             document.getElementById('tenantName').textContent = tenant.name;
             document.getElementById('tenantSubtitle').textContent = tenant.subtitle;
-            document.title = `${tenant.name} - 登录`;
+            document.title = `${tenant.name} - Sign In`;
             
             // Hide loading
             document.getElementById('loadingOverlay').classList.remove('show');
@@ -519,7 +519,7 @@
             
             // Validate
             if (!email || !password) {
-                showError('请填写邮箱和密码');
+                showError('Please enter email and password');
                 return;
             }
             
@@ -559,7 +559,7 @@
                 
             } catch (error) {
                 console.error('Login failed:', error);
-                showError('登录失败，请检查邮箱和密码');
+                showError('Sign in failed. Please check your email and password.');
                 loginBtn.classList.remove('loading');
                 loginBtn.disabled = false;
             }
@@ -568,7 +568,7 @@
         // Handle forgot password
         document.getElementById('forgotPassword').addEventListener('click', function(e) {
             e.preventDefault();
-            alert('密码重置功能即将上线');
+            alert('Password reset feature coming soon');
         });
 
         // Initialize
