@@ -826,6 +826,7 @@ member      → 本租户，仅自己的数据
 |------|------|
 | `supabase/schema.sql` | **规范来源** - 含 RLS / 触发器 / 审计 (Supabase 部署) |
 | `database/schema.sql` | 镜像文件 - 适用于非 Supabase 部署 (Aliyun RDS 等) |
+| `supabase/seed_data.sql` | **测试数据** - 合成数据，遵循多租户 Schema 设计 |
 | `DATABASE_SCHEMA.md` | 本文档 |
 | `docs/multi-tenant-architecture.md` | 多租户架构详细设计 |
 
