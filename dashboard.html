@@ -2211,6 +2211,344 @@
                     </div>
                 </div>
 
+                <!-- ===== Customer Service Executive Page ===== -->
+                <div class="page-content" id="page-customer-service-agent">
+                    <!-- CS Agent Header -->
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900">Customer Service Executive</h2>
+                            <p class="text-gray-500 mt-1">AI-powered customer communication & satisfaction tracking</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <button class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition flex items-center gap-2">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>Analytics</span>
+                            </button>
+                            <button class="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition flex items-center gap-2">
+                                <i class="fas fa-plus"></i>
+                                <span>New Ticket</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Main Grid: Conversations + Detail -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                        <!-- ========== LEFT: Conversations & Input ========== -->
+                        <div class="space-y-6">
+                            <!-- Customer Overview Stats -->
+                            <div class="grid grid-cols-4 gap-3">
+                                <div class="bg-white rounded-xl border border-gray-200 p-3 text-center">
+                                    <div class="text-xl font-bold text-blue-600">24</div>
+                                    <div class="text-xs text-gray-500">Active</div>
+                                </div>
+                                <div class="bg-white rounded-xl border border-gray-200 p-3 text-center">
+                                    <div class="text-xl font-bold text-amber-600">5</div>
+                                    <div class="text-xs text-gray-500">Pending</div>
+                                </div>
+                                <div class="bg-white rounded-xl border border-gray-200 p-3 text-center">
+                                    <div class="text-xl font-bold text-green-600">89%</div>
+                                    <div class="text-xs text-gray-500">Satisfaction</div>
+                                </div>
+                                <div class="bg-white rounded-xl border border-gray-200 p-3 text-center">
+                                    <div class="text-xl font-bold text-purple-600">2.4h</div>
+                                    <div class="text-xs text-gray-500">Avg Response</div>
+                                </div>
+                            </div>
+
+                            <!-- Conversations List -->
+                            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                                <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+                                    <h3 class="font-semibold text-gray-900">Conversations</h3>
+                                    <div class="flex gap-2">
+                                        <button class="cs-filter-btn px-3 py-1 bg-gray-900 text-white text-xs rounded-full" data-filter="all">All</button>
+                                        <button class="cs-filter-btn px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50" data-filter="open">Open</button>
+                                        <button class="cs-filter-btn px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50" data-filter="resolved">Resolved</button>
+                                    </div>
+                                </div>
+
+                                <div id="conversationsList" class="divide-y divide-gray-100 max-h-96 overflow-y-auto">
+                                    <!-- Conversation 1 - Active -->
+                                    <div class="cs-conversation p-4 hover:bg-gray-50 cursor-pointer bg-blue-50/50 border-l-4 border-blue-500" data-conv="conv-001">
+                                        <div class="flex items-start gap-3">
+                                            <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">J</div>
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-center justify-between">
+                                                    <span class="font-medium text-gray-900">Mr. Johnson</span>
+                                                    <span class="text-xs text-gray-500">10 min ago</span>
+                                                </div>
+                                                <p class="text-sm text-gray-600 truncate">When will the sunroom installation be scheduled? I'd like to...</p>
+                                                <div class="flex items-center gap-2 mt-1">
+                                                    <span class="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full">Installation</span>
+                                                    <span class="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs rounded-full">Urgent</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Conversation 2 -->
+                                    <div class="cs-conversation p-4 hover:bg-gray-50 cursor-pointer" data-conv="conv-002">
+                                        <div class="flex items-start gap-3">
+                                            <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">C</div>
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-center justify-between">
+                                                    <span class="font-medium text-gray-900">Ms. Chen</span>
+                                                    <span class="text-xs text-gray-500">1 hr ago</span>
+                                                </div>
+                                                <p class="text-sm text-gray-600 truncate">Can we discuss the ADU permit status? I noticed the...</p>
+                                                <div class="flex items-center gap-2 mt-1">
+                                                    <span class="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs rounded-full">Permit</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Conversation 3 -->
+                                    <div class="cs-conversation p-4 hover:bg-gray-50 cursor-pointer" data-conv="conv-003">
+                                        <div class="flex items-start gap-3">
+                                            <div class="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">W</div>
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-center justify-between">
+                                                    <span class="font-medium text-gray-900">Mr. Williams</span>
+                                                    <span class="text-xs text-gray-500">3 hrs ago</span>
+                                                </div>
+                                                <p class="text-sm text-gray-600 truncate">I love the pavilion design! Quick question about the warranty...</p>
+                                                <div class="flex items-center gap-2 mt-1">
+                                                    <span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full">Warranty</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Conversation 4 -->
+                                    <div class="cs-conversation p-4 hover:bg-gray-50 cursor-pointer" data-conv="conv-004">
+                                        <div class="flex items-start gap-3">
+                                            <div class="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">D</div>
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-center justify-between">
+                                                    <span class="font-medium text-gray-900">Mrs. Davis</span>
+                                                    <span class="text-xs text-gray-500">Yesterday</span>
+                                                </div>
+                                                <p class="text-sm text-gray-600 truncate">Thank you for the zip blinds installation. Everything looks great!</p>
+                                                <div class="flex items-center gap-2 mt-1">
+                                                    <span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full">Resolved</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Conversation 5 -->
+                                    <div class="cs-conversation p-4 hover:bg-gray-50 cursor-pointer" data-conv="conv-005">
+                                        <div class="flex items-start gap-3">
+                                            <div class="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">M</div>
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-center justify-between">
+                                                    <span class="font-medium text-gray-900">Mr. Martinez</span>
+                                                    <span class="text-xs text-gray-500">Yesterday</span>
+                                                </div>
+                                                <p class="text-sm text-gray-600 truncate">I'm having an issue with the door alignment on the sunroom...</p>
+                                                <div class="flex items-center gap-2 mt-1">
+                                                    <span class="px-2 py-0.5 bg-red-100 text-red-700 text-xs rounded-full">Issue</span>
+                                                    <span class="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs rounded-full">Urgent</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Reply Composer -->
+                            <div class="bg-white rounded-xl border border-gray-200 p-5">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h3 class="font-semibold text-gray-900">Reply</h3>
+                                    <div class="flex gap-2">
+                                        <button class="cs-channel-btn px-3 py-1 bg-blue-100 text-blue-700 text-xs rounded-full font-medium" data-channel="email">
+                                            <i class="fas fa-envelope mr-1"></i>Email
+                                        </button>
+                                        <button class="cs-channel-btn px-3 py-1 bg-white border text-gray-600 text-xs rounded-full" data-channel="sms">
+                                            <i class="fas fa-sms mr-1"></i>SMS
+                                        </button>
+                                        <button class="cs-channel-btn px-3 py-1 bg-white border text-gray-600 text-xs rounded-full" data-channel="phone">
+                                            <i class="fas fa-phone mr-1"></i>Call
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <textarea id="csReplyInput" rows="4" placeholder="Type your reply... or use AI suggestion below" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 text-sm resize-none"></textarea>
+
+                                <div class="flex items-center justify-between mt-3">
+                                    <div class="flex gap-2">
+                                        <button class="p-2 text-gray-400 hover:text-gray-600 transition" title="Attach file">
+                                            <i class="fas fa-paperclip"></i>
+                                        </button>
+                                        <button class="p-2 text-gray-400 hover:text-gray-600 transition" title="Template">
+                                            <i class="fas fa-file-alt"></i>
+                                        </button>
+                                    </div>
+                                    <button id="sendReplyBtn" class="px-6 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg font-medium hover:from-orange-600 hover:to-orange-700 transition shadow-lg shadow-orange-500/25 flex items-center gap-2">
+                                        <i class="fas fa-paper-plane"></i>
+                                        <span>Send Reply</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ========== RIGHT: Detail & AI ========== -->
+                        <div class="space-y-6">
+                            <!-- Customer Profile -->
+                            <div class="bg-white rounded-xl border border-gray-200 p-5">
+                                <div class="flex items-start gap-4">
+                                    <div id="csCustomerAvatar" class="w-14 h-14 bg-blue-500 rounded-full flex items-center justify-center text-white text-xl font-semibold flex-shrink-0">J</div>
+                                    <div class="flex-1">
+                                        <h3 id="csCustomerName" class="font-semibold text-gray-900 text-lg">Mr. Johnson</h3>
+                                        <p id="csCustomerProject" class="text-sm text-gray-500">Sunshine Villa - Sunroom</p>
+                                        <div class="flex items-center gap-4 mt-2">
+                                            <span class="text-sm text-gray-500"><i class="fas fa-envelope mr-1"></i><span id="csCustomerEmail">johnson@email.com</span></span>
+                                            <span class="text-sm text-gray-500"><i class="fas fa-phone mr-1"></i><span id="csCustomerPhone">(310) 555-0101</span></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Satisfaction Score -->
+                                <div class="mt-4 p-3 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-sm font-medium text-gray-700">Satisfaction Score</span>
+                                        <span id="csSatScore" class="text-sm font-bold text-green-600">92/100</span>
+                                    </div>
+                                    <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                                        <div id="csSatBar" class="h-full bg-gradient-to-r from-green-400 to-green-500 rounded-full" style="width: 92%"></div>
+                                    </div>
+                                    <div class="flex gap-3 mt-2 text-xs text-gray-500">
+                                        <span><i class="fas fa-clock mr-1"></i>Response: 1.2h avg</span>
+                                        <span><i class="fas fa-comments mr-1"></i>8 interactions</span>
+                                        <span><i class="fas fa-star mr-1 text-amber-400"></i>Loyal customer</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Conversation Thread -->
+                            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                                <div class="p-4 border-b border-gray-200">
+                                    <div class="flex items-center justify-between">
+                                        <h3 class="font-semibold text-gray-900">Conversation</h3>
+                                        <span id="csConvStatus" class="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
+                                            <i class="fas fa-circle text-xs mr-1"></i>Open
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div id="csConversationThread" class="p-4 space-y-4 max-h-72 overflow-y-auto">
+                                    <!-- Customer message -->
+                                    <div class="flex gap-3">
+                                        <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium flex-shrink-0">J</div>
+                                        <div class="flex-1">
+                                            <div class="bg-gray-100 rounded-lg rounded-tl-none p-3">
+                                                <p class="text-sm text-gray-700">Hi, when will the sunroom installation be scheduled? I'd like to prepare the backyard area beforehand. Also, do I need to clear any furniture near the installation zone?</p>
+                                            </div>
+                                            <span class="text-xs text-gray-400 mt-1 block">Today, 2:30 PM</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Agent response -->
+                                    <div class="flex gap-3 justify-end">
+                                        <div class="flex-1">
+                                            <div class="bg-blue-600 rounded-lg rounded-tr-none p-3 ml-8">
+                                                <p class="text-sm text-white">Hello Mr. Johnson! Your sunroom installation is tentatively scheduled for next week (March 18-20). We'll confirm the exact date by Friday. Yes, please clear a 10-foot perimeter around the installation area. Our team will handle the rest!</p>
+                                            </div>
+                                            <span class="text-xs text-gray-400 mt-1 block text-right">Today, 2:35 PM - via Email</span>
+                                        </div>
+                                        <div class="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center text-white text-sm font-medium flex-shrink-0">A</div>
+                                    </div>
+
+                                    <!-- Customer follow-up -->
+                                    <div class="flex gap-3">
+                                        <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium flex-shrink-0">J</div>
+                                        <div class="flex-1">
+                                            <div class="bg-gray-100 rounded-lg rounded-tl-none p-3">
+                                                <p class="text-sm text-gray-700">Perfect, thank you! One more thing - will the electrician come on the same day? I need to arrange for someone to be home.</p>
+                                            </div>
+                                            <span class="text-xs text-gray-400 mt-1 block">Today, 3:10 PM</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- AI Suggested Responses -->
+                            <div class="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl border border-orange-200 p-5">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="font-semibold text-gray-900"><i class="fas fa-robot text-orange-500 mr-2"></i>AI Suggested Replies</h3>
+                                    <button id="refreshSuggestionsBtn" class="text-sm text-orange-600 hover:text-orange-700">
+                                        <i class="fas fa-sync-alt mr-1"></i>Refresh
+                                    </button>
+                                </div>
+
+                                <div class="space-y-3">
+                                    <div class="cs-suggestion p-3 bg-white rounded-lg border border-orange-200 cursor-pointer hover:border-orange-400 hover:shadow-sm transition" data-suggestion="professional">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span class="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded">Professional</span>
+                                        </div>
+                                        <p class="text-sm text-gray-700">Yes, the electrician will be coordinated to arrive on the same day as installation. We typically schedule electrical work in the morning (8-10 AM) and main installation follows. I'll confirm the complete schedule by Friday.</p>
+                                    </div>
+
+                                    <div class="cs-suggestion p-3 bg-white rounded-lg border border-orange-200 cursor-pointer hover:border-orange-400 hover:shadow-sm transition" data-suggestion="friendly">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded">Friendly</span>
+                                        </div>
+                                        <p class="text-sm text-gray-700">Great question! Yes, our electrician will be there the same day. We like to keep things efficient so you only need to arrange one day at home. I'll send you the full timeline by Friday with exact times!</p>
+                                    </div>
+
+                                    <div class="cs-suggestion p-3 bg-white rounded-lg border border-orange-200 cursor-pointer hover:border-orange-400 hover:shadow-sm transition" data-suggestion="detailed">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span class="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs font-medium rounded">Detailed</span>
+                                        </div>
+                                        <p class="text-sm text-gray-700">The electrician will arrive at 8 AM to run the wiring and install outlets before the main sunroom installation begins at 10 AM. The full schedule: Day 1 - electrical + frame; Day 2 - glass panels + sealing; Day 3 - final inspection. Someone should be available from 8 AM-5 PM on installation days.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Quick Actions -->
+                            <div class="bg-white rounded-xl border border-gray-200 p-5">
+                                <h3 class="font-semibold text-gray-900 mb-3">Quick Actions</h3>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button class="cs-action-btn p-3 bg-gray-50 rounded-lg text-left hover:bg-gray-100 transition">
+                                        <i class="fas fa-calendar-alt text-blue-500 mr-2"></i>
+                                        <span class="text-sm text-gray-700">Schedule Follow-up</span>
+                                    </button>
+                                    <button class="cs-action-btn p-3 bg-gray-50 rounded-lg text-left hover:bg-gray-100 transition">
+                                        <i class="fas fa-tag text-green-500 mr-2"></i>
+                                        <span class="text-sm text-gray-700">Add Tag</span>
+                                    </button>
+                                    <button class="cs-action-btn p-3 bg-gray-50 rounded-lg text-left hover:bg-gray-100 transition">
+                                        <i class="fas fa-user-friends text-purple-500 mr-2"></i>
+                                        <span class="text-sm text-gray-700">Assign to Team</span>
+                                    </button>
+                                    <button class="cs-action-btn p-3 bg-gray-50 rounded-lg text-left hover:bg-gray-100 transition">
+                                        <i class="fas fa-check-circle text-amber-500 mr-2"></i>
+                                        <span class="text-sm text-gray-700">Mark Resolved</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="grid grid-cols-2 gap-3">
+                                <button class="py-3 bg-white border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition flex items-center justify-center gap-2">
+                                    <i class="fas fa-file-export"></i>
+                                    <span>Export Thread</span>
+                                </button>
+                                <button class="py-3 bg-white border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition flex items-center justify-center gap-2">
+                                    <i class="fas fa-star"></i>
+                                    <span>Request Review</span>
+                                </button>
+                            </div>
+
+                            <button id="escalateTicketBtn" class="w-full py-4 bg-gray-900 text-white rounded-xl font-semibold hover:bg-gray-800 transition flex items-center justify-center gap-3">
+                                <i class="fas fa-level-up-alt"></i>
+                                <span>Escalate to Manager</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </main>
     </div>
@@ -3235,6 +3573,321 @@
             }, 2000);
         }
 
+        // ===== Customer Service Executive Page Functions =====
+        const csState = {
+            selectedConversation: 'conv-001',
+            replyChannel: 'email',
+            filter: 'all'
+        };
+
+        // Dummy conversation data
+        const dummyConversations = {
+            'conv-001': {
+                customer: 'Mr. Johnson',
+                initials: 'J',
+                color: 'bg-blue-500',
+                project: 'Sunshine Villa - Sunroom',
+                email: 'johnson@email.com',
+                phone: '(310) 555-0101',
+                satisfaction: 92,
+                responseTime: '1.2h',
+                interactions: 8,
+                status: 'open',
+                messages: [
+                    { from: 'customer', text: 'Hi, when will the sunroom installation be scheduled? I\'d like to prepare the backyard area beforehand. Also, do I need to clear any furniture near the installation zone?', time: 'Today, 2:30 PM' },
+                    { from: 'agent', text: 'Hello Mr. Johnson! Your sunroom installation is tentatively scheduled for next week (March 18-20). We\'ll confirm the exact date by Friday. Yes, please clear a 10-foot perimeter around the installation area. Our team will handle the rest!', time: 'Today, 2:35 PM - via Email' },
+                    { from: 'customer', text: 'Perfect, thank you! One more thing - will the electrician come on the same day? I need to arrange for someone to be home.', time: 'Today, 3:10 PM' }
+                ]
+            },
+            'conv-002': {
+                customer: 'Ms. Chen',
+                initials: 'C',
+                color: 'bg-green-500',
+                project: 'Riverside Estate - ADU',
+                email: 'chen@email.com',
+                phone: '(408) 555-0202',
+                satisfaction: 85,
+                responseTime: '2.1h',
+                interactions: 12,
+                status: 'open',
+                messages: [
+                    { from: 'customer', text: 'Can we discuss the ADU permit status? I noticed the application was submitted 2 weeks ago but haven\'t heard anything from the county.', time: 'Today, 1:15 PM' },
+                    { from: 'agent', text: 'Hi Ms. Chen! I checked with the county office today - your ADU permit is currently in the plan review stage. Santa Clara County typically takes 3-4 weeks. We\'re right on track!', time: 'Today, 1:45 PM - via Email' }
+                ]
+            },
+            'conv-003': {
+                customer: 'Mr. Williams',
+                initials: 'W',
+                color: 'bg-purple-500',
+                project: 'Oak Garden - Pavilion',
+                email: 'williams@email.com',
+                phone: '(619) 555-0303',
+                satisfaction: 95,
+                responseTime: '0.8h',
+                interactions: 5,
+                status: 'open',
+                messages: [
+                    { from: 'customer', text: 'I love the pavilion design! Quick question about the warranty - does it cover weather damage?', time: 'Today, 11:00 AM' },
+                    { from: 'agent', text: 'Thank you Mr. Williams! Yes, our standard warranty covers structural defects for 10 years and includes weather damage from normal conditions. Extreme events (hurricanes, earthquakes) are covered under extended warranty.', time: 'Today, 11:30 AM - via Email' },
+                    { from: 'customer', text: 'That sounds great. What\'s the cost for the extended warranty?', time: 'Today, 12:15 PM' }
+                ]
+            },
+            'conv-004': {
+                customer: 'Mrs. Davis',
+                initials: 'D',
+                color: 'bg-amber-500',
+                project: 'Lakeside Retreat - Zip Blinds',
+                email: 'davis@email.com',
+                phone: '(916) 555-0404',
+                satisfaction: 98,
+                responseTime: '0.5h',
+                interactions: 6,
+                status: 'resolved',
+                messages: [
+                    { from: 'customer', text: 'Thank you for the zip blinds installation. Everything looks great!', time: 'Yesterday, 4:00 PM' },
+                    { from: 'agent', text: 'Wonderful to hear, Mrs. Davis! We\'re glad you\'re happy with the zip blinds. Don\'t hesitate to reach out if you need anything. We\'ll send a follow-up satisfaction survey in a few days.', time: 'Yesterday, 4:15 PM - via Email' }
+                ]
+            },
+            'conv-005': {
+                customer: 'Mr. Martinez',
+                initials: 'M',
+                color: 'bg-red-500',
+                project: 'Desert View - Sunroom',
+                email: 'martinez@email.com',
+                phone: '(213) 555-0505',
+                satisfaction: 65,
+                responseTime: '3.5h',
+                interactions: 10,
+                status: 'open',
+                messages: [
+                    { from: 'customer', text: 'I\'m having an issue with the door alignment on the sunroom. It doesn\'t close properly and there\'s a gap letting in cold air.', time: 'Yesterday, 10:00 AM' },
+                    { from: 'agent', text: 'I\'m sorry to hear about the door alignment issue, Mr. Martinez. This is covered under warranty. I\'ve scheduled a service technician for this Thursday (March 14) between 9 AM - 12 PM. Does that work for you?', time: 'Yesterday, 11:30 AM - via Phone' },
+                    { from: 'customer', text: 'Thursday works. Please make sure they bring the right parts this time. Last service visit they had to come back.', time: 'Yesterday, 12:00 PM' }
+                ]
+            }
+        };
+
+        function initCSAgentPage() {
+            // Conversation selection
+            document.querySelectorAll('.cs-conversation').forEach(conv => {
+                conv.addEventListener('click', function() {
+                    const convId = this.dataset.conv;
+                    csState.selectedConversation = convId;
+
+                    // Update active state
+                    document.querySelectorAll('.cs-conversation').forEach(c => {
+                        c.classList.remove('bg-blue-50/50', 'border-l-4', 'border-blue-500');
+                    });
+                    this.classList.add('bg-blue-50/50', 'border-l-4', 'border-blue-500');
+
+                    updateCSDetail(convId);
+                });
+            });
+
+            // Filter buttons
+            document.querySelectorAll('.cs-filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.cs-filter-btn').forEach(b => {
+                        b.classList.remove('bg-gray-900', 'text-white');
+                        b.classList.add('bg-white', 'border', 'text-gray-600');
+                    });
+                    this.classList.remove('bg-white', 'border', 'text-gray-600');
+                    this.classList.add('bg-gray-900', 'text-white');
+
+                    csState.filter = this.dataset.filter;
+                    filterConversations(this.dataset.filter);
+                });
+            });
+
+            // Channel selection
+            document.querySelectorAll('.cs-channel-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.cs-channel-btn').forEach(b => {
+                        b.classList.remove('bg-blue-100', 'text-blue-700', 'font-medium');
+                        b.classList.add('bg-white', 'border', 'text-gray-600');
+                    });
+                    this.classList.remove('bg-white', 'border', 'text-gray-600');
+                    this.classList.add('bg-blue-100', 'text-blue-700', 'font-medium');
+                    csState.replyChannel = this.dataset.channel;
+                });
+            });
+
+            // AI Suggestion click to fill reply
+            document.querySelectorAll('.cs-suggestion').forEach(suggestion => {
+                suggestion.addEventListener('click', function() {
+                    const text = this.querySelector('p').textContent;
+                    document.getElementById('csReplyInput').value = text;
+
+                    document.querySelectorAll('.cs-suggestion').forEach(s => {
+                        s.classList.remove('border-orange-400', 'shadow-sm');
+                    });
+                    this.classList.add('border-orange-400', 'shadow-sm');
+
+                    showToast('AI suggestion loaded into reply', 'info');
+                });
+            });
+
+            // Send reply button
+            const sendBtn = document.getElementById('sendReplyBtn');
+            if (sendBtn) {
+                sendBtn.addEventListener('click', handleSendReply);
+            }
+
+            // Refresh suggestions
+            const refreshBtn = document.getElementById('refreshSuggestionsBtn');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', () => {
+                    refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>Loading...';
+                    setTimeout(() => {
+                        refreshBtn.innerHTML = '<i class="fas fa-sync-alt mr-1"></i>Refresh';
+                        showToast('AI suggestions refreshed', 'success');
+                    }, 1000);
+                });
+            }
+
+            // Quick action buttons
+            document.querySelectorAll('.cs-action-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const action = this.querySelector('span').textContent;
+                    showToast(action + ' - feature coming soon', 'info');
+                });
+            });
+
+            // Escalate button
+            const escalateBtn = document.getElementById('escalateTicketBtn');
+            if (escalateBtn) {
+                escalateBtn.addEventListener('click', () => {
+                    showToast('Ticket escalated to manager. They will be notified immediately.', 'info');
+                });
+            }
+        }
+
+        function updateCSDetail(convId) {
+            const conv = dummyConversations[convId];
+            if (!conv) return;
+
+            // Update customer profile
+            const avatar = document.getElementById('csCustomerAvatar');
+            if (avatar) {
+                avatar.textContent = conv.initials;
+                avatar.className = `w-14 h-14 ${conv.color} rounded-full flex items-center justify-center text-white text-xl font-semibold flex-shrink-0`;
+            }
+            document.getElementById('csCustomerName').textContent = conv.customer;
+            document.getElementById('csCustomerProject').textContent = conv.project;
+            document.getElementById('csCustomerEmail').textContent = conv.email;
+            document.getElementById('csCustomerPhone').textContent = conv.phone;
+
+            // Update satisfaction
+            document.getElementById('csSatScore').textContent = conv.satisfaction + '/100';
+            document.getElementById('csSatBar').style.width = conv.satisfaction + '%';
+
+            const satScore = document.getElementById('csSatScore');
+            if (conv.satisfaction >= 80) {
+                satScore.className = 'text-sm font-bold text-green-600';
+                document.getElementById('csSatBar').className = 'h-full bg-gradient-to-r from-green-400 to-green-500 rounded-full';
+            } else if (conv.satisfaction >= 60) {
+                satScore.className = 'text-sm font-bold text-amber-600';
+                document.getElementById('csSatBar').className = 'h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full';
+            } else {
+                satScore.className = 'text-sm font-bold text-red-600';
+                document.getElementById('csSatBar').className = 'h-full bg-gradient-to-r from-red-400 to-red-500 rounded-full';
+            }
+
+            // Update conversation status
+            const statusEl = document.getElementById('csConvStatus');
+            if (conv.status === 'resolved') {
+                statusEl.className = 'px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full';
+                statusEl.innerHTML = '<i class="fas fa-check-circle text-xs mr-1"></i>Resolved';
+            } else {
+                statusEl.className = 'px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full';
+                statusEl.innerHTML = '<i class="fas fa-circle text-xs mr-1"></i>Open';
+            }
+
+            // Update conversation thread
+            const thread = document.getElementById('csConversationThread');
+            thread.innerHTML = conv.messages.map(msg => {
+                if (msg.from === 'customer') {
+                    return `
+                        <div class="flex gap-3">
+                            <div class="w-8 h-8 ${conv.color} rounded-full flex items-center justify-center text-white text-sm font-medium flex-shrink-0">${conv.initials}</div>
+                            <div class="flex-1">
+                                <div class="bg-gray-100 rounded-lg rounded-tl-none p-3">
+                                    <p class="text-sm text-gray-700">${msg.text}</p>
+                                </div>
+                                <span class="text-xs text-gray-400 mt-1 block">${msg.time}</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    return `
+                        <div class="flex gap-3 justify-end">
+                            <div class="flex-1">
+                                <div class="bg-blue-600 rounded-lg rounded-tr-none p-3 ml-8">
+                                    <p class="text-sm text-white">${msg.text}</p>
+                                </div>
+                                <span class="text-xs text-gray-400 mt-1 block text-right">${msg.time}</span>
+                            </div>
+                            <div class="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center text-white text-sm font-medium flex-shrink-0">A</div>
+                        </div>
+                    `;
+                }
+            }).join('');
+
+            // Scroll to bottom
+            thread.scrollTop = thread.scrollHeight;
+        }
+
+        function filterConversations(filter) {
+            document.querySelectorAll('.cs-conversation').forEach(conv => {
+                const convId = conv.dataset.conv;
+                const data = dummyConversations[convId];
+                if (!data) return;
+
+                if (filter === 'all') {
+                    conv.style.display = '';
+                } else if (filter === 'open' && data.status === 'open') {
+                    conv.style.display = '';
+                } else if (filter === 'resolved' && data.status === 'resolved') {
+                    conv.style.display = '';
+                } else {
+                    conv.style.display = 'none';
+                }
+            });
+        }
+
+        function handleSendReply() {
+            const replyInput = document.getElementById('csReplyInput');
+            const text = replyInput.value.trim();
+
+            if (!text) {
+                showToast('Please type a reply or select an AI suggestion', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('sendReplyBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>Sending...';
+
+            setTimeout(() => {
+                // Add message to thread
+                const conv = dummyConversations[csState.selectedConversation];
+                const channelName = csState.replyChannel.charAt(0).toUpperCase() + csState.replyChannel.slice(1);
+                const now = new Date();
+                const timeStr = 'Just now - via ' + channelName;
+
+                conv.messages.push({ from: 'agent', text: text, time: timeStr });
+                updateCSDetail(csState.selectedConversation);
+
+                // Clear input
+                replyInput.value = '';
+
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-paper-plane mr-1"></i>Send Reply';
+
+                showToast('Reply sent via ' + channelName + '!', 'success');
+            }, 1000);
+        }
+
         // ===== Initialize =====
         document.addEventListener('DOMContentLoaded', function() {
             if (checkAuth()) {
@@ -3242,6 +3895,7 @@
                 initAIDesignerPage();
                 initPricingAgentPage();
                 initCompliancePage();
+                initCSAgentPage();
             }
         });
     </script>
