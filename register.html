@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>注册成为合作伙伴 | 庭院定制专家</title>
-    <meta name="description" content="注册成为我们的合作伙伴，获取专属B2B定制服务支持">
+    <title>Partner Registration | Outdoor Living Expert</title>
+    <meta name="description" content="Register as a partner to access exclusive B2B customization services and support">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -403,6 +403,7 @@
             align-items: center;
             gap: 8px;
             border: none;
+            text-decoration: none;
         }
 
         .btn-primary {
@@ -557,11 +558,11 @@
                 <div class="logo-icon">
                     <i class="fas fa-sun"></i>
                 </div>
-                <span class="logo-text">庭院定制专家</span>
+                <span class="logo-text">Outdoor Living Expert</span>
             </a>
             <div class="header-links">
-                <span style="font-size: 14px; color: #666;">已有账号？</span>
-                <a href="login.html" class="header-link" style="color: var(--primary); font-weight: 500;">立即登录</a>
+                <span style="font-size: 14px; color: #666;">Already have an account?</span>
+                <a href="login.html" class="header-link" style="color: var(--primary); font-weight: 500;">Sign In</a>
             </div>
         </div>
     </header>
@@ -572,17 +573,17 @@
         <div class="progress-steps">
             <div class="step active" data-step="1">
                 <div class="step-number">1</div>
-                <span class="step-title">公司信息</span>
+                <span class="step-title">Company Info</span>
             </div>
             <div class="step-line"></div>
             <div class="step" data-step="2">
                 <div class="step-number">2</div>
-                <span class="step-title">管理员账号</span>
+                <span class="step-title">Admin Account</span>
             </div>
             <div class="step-line"></div>
             <div class="step" data-step="3">
                 <div class="step-number">3</div>
-                <span class="step-title">完成注册</span>
+                <span class="step-title">Complete</span>
             </div>
         </div>
 
@@ -591,8 +592,8 @@
             <!-- Step 1: Company Info -->
             <div id="step1Content">
                 <div class="card-header">
-                    <h1 class="card-title">注册合作伙伴</h1>
-                    <p class="card-subtitle">填写公司基本信息，开启您的专属B2B服务</p>
+                    <h1 class="card-title">Partner Registration</h1>
+                    <p class="card-subtitle">Enter your company information to get started with B2B services</p>
                 </div>
                 <div class="card-body">
                     <form id="companyForm">
@@ -600,40 +601,105 @@
                         <div class="form-section">
                             <h3 class="section-title">
                                 <i class="fas fa-building"></i>
-                                公司信息
+                                Company Information
                             </h3>
                             <div class="form-grid">
                                 <div class="form-group full-width">
-                                    <label class="form-label">公司名称 <span class="required">*</span></label>
-                                    <input type="text" class="form-input" id="companyName" name="companyName" placeholder="请输入公司全称" required>
-                                    <span class="input-error" id="companyNameError">请输入公司名称</span>
+                                    <label class="form-label">Company Name <span class="required">*</span></label>
+                                    <input type="text" class="form-input" id="companyName" name="companyName" placeholder="Enter legal company name" required>
+                                    <span class="input-error" id="companyNameError">Please enter company name</span>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">公司简称</label>
-                                    <input type="text" class="form-input" id="companyShortName" name="companyShortName" placeholder="用于显示的名称">
+                                    <label class="form-label">DBA (Doing Business As)</label>
+                                    <input type="text" class="form-input" id="dbaName" name="dbaName" placeholder="Trading name (if different)">
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">统一社会信用代码</label>
-                                    <input type="text" class="form-input" id="businessLicense" name="businessLicense" placeholder="18位信用代码">
+                                    <label class="form-label">EIN / Tax ID</label>
+                                    <input type="text" class="form-input" id="ein" name="ein" placeholder="XX-XXXXXXX">
+                                    <p class="input-hint">Employer Identification Number (optional)</p>
                                 </div>
                                 <div class="form-group full-width">
-                                    <label class="form-label">公司地址 <span class="required">*</span></label>
-                                    <input type="text" class="form-input" id="companyAddress" name="companyAddress" placeholder="请输入公司详细地址" required>
+                                    <label class="form-label">Business Address <span class="required">*</span></label>
+                                    <input type="text" class="form-input" id="streetAddress" name="streetAddress" placeholder="Street address" required>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">联系人姓名 <span class="required">*</span></label>
-                                    <input type="text" class="form-input" id="contactName" name="contactName" placeholder="请输入联系人姓名" required>
+                                    <label class="form-label">City <span class="required">*</span></label>
+                                    <input type="text" class="form-input" id="city" name="city" placeholder="City" required>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">联系电话 <span class="required">*</span></label>
-                                    <input type="tel" class="form-input" id="contactPhone" name="contactPhone" placeholder="请输入联系电话" required>
+                                    <label class="form-label">State <span class="required">*</span></label>
+                                    <select class="form-select" id="state" name="state" required>
+                                        <option value="">Select State</option>
+                                        <option value="AL">Alabama</option>
+                                        <option value="AK">Alaska</option>
+                                        <option value="AZ">Arizona</option>
+                                        <option value="AR">Arkansas</option>
+                                        <option value="CA">California</option>
+                                        <option value="CO">Colorado</option>
+                                        <option value="CT">Connecticut</option>
+                                        <option value="DE">Delaware</option>
+                                        <option value="FL">Florida</option>
+                                        <option value="GA">Georgia</option>
+                                        <option value="HI">Hawaii</option>
+                                        <option value="ID">Idaho</option>
+                                        <option value="IL">Illinois</option>
+                                        <option value="IN">Indiana</option>
+                                        <option value="IA">Iowa</option>
+                                        <option value="KS">Kansas</option>
+                                        <option value="KY">Kentucky</option>
+                                        <option value="LA">Louisiana</option>
+                                        <option value="ME">Maine</option>
+                                        <option value="MD">Maryland</option>
+                                        <option value="MA">Massachusetts</option>
+                                        <option value="MI">Michigan</option>
+                                        <option value="MN">Minnesota</option>
+                                        <option value="MS">Mississippi</option>
+                                        <option value="MO">Missouri</option>
+                                        <option value="MT">Montana</option>
+                                        <option value="NE">Nebraska</option>
+                                        <option value="NV">Nevada</option>
+                                        <option value="NH">New Hampshire</option>
+                                        <option value="NJ">New Jersey</option>
+                                        <option value="NM">New Mexico</option>
+                                        <option value="NY">New York</option>
+                                        <option value="NC">North Carolina</option>
+                                        <option value="ND">North Dakota</option>
+                                        <option value="OH">Ohio</option>
+                                        <option value="OK">Oklahoma</option>
+                                        <option value="OR">Oregon</option>
+                                        <option value="PA">Pennsylvania</option>
+                                        <option value="RI">Rhode Island</option>
+                                        <option value="SC">South Carolina</option>
+                                        <option value="SD">South Dakota</option>
+                                        <option value="TN">Tennessee</option>
+                                        <option value="TX">Texas</option>
+                                        <option value="UT">Utah</option>
+                                        <option value="VT">Vermont</option>
+                                        <option value="VA">Virginia</option>
+                                        <option value="WA">Washington</option>
+                                        <option value="WV">West Virginia</option>
+                                        <option value="WI">Wisconsin</option>
+                                        <option value="WY">Wyoming</option>
+                                    </select>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">联系邮箱 <span class="required">*</span></label>
-                                    <input type="email" class="form-input" id="contactEmail" name="contactEmail" placeholder="请输入联系邮箱" required>
+                                    <label class="form-label">ZIP Code <span class="required">*</span></label>
+                                    <input type="text" class="form-input" id="zipCode" name="zipCode" placeholder="XXXXX or XXXXX-XXXX" required>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">公司网站</label>
+                                    <label class="form-label">Contact Name <span class="required">*</span></label>
+                                    <input type="text" class="form-input" id="contactName" name="contactName" placeholder="Full name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Phone <span class="required">*</span></label>
+                                    <input type="tel" class="form-input" id="contactPhone" name="contactPhone" placeholder="(XXX) XXX-XXXX" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Email <span class="required">*</span></label>
+                                    <input type="email" class="form-input" id="contactEmail" name="contactEmail" placeholder="email@company.com" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Website</label>
                                     <input type="url" class="form-input" id="companyWebsite" name="companyWebsite" placeholder="https://www.example.com">
                                 </div>
                             </div>
@@ -643,34 +709,36 @@
                         <div class="form-section">
                             <h3 class="section-title">
                                 <i class="fas fa-briefcase"></i>
-                                业务信息
+                                Business Details
                             </h3>
                             <div class="form-grid">
                                 <div class="form-group">
-                                    <label class="form-label">主营业务 <span class="required">*</span></label>
+                                    <label class="form-label">Business Type <span class="required">*</span></label>
                                     <select class="form-select" id="businessType" name="businessType" required>
-                                        <option value="">请选择主营业务</option>
-                                        <option value="design">庭院设计</option>
-                                        <option value="construction">建筑施工</option>
-                                        <option value="landscape">景观绿化</option>
-                                        <option value="interior">室内装饰</option>
-                                        <option value="trading">建材贸易</option>
-                                        <option value="other">其他</option>
+                                        <option value="">Select business type</option>
+                                        <option value="contractor">General Contractor</option>
+                                        <option value="landscape">Landscape Design</option>
+                                        <option value="architecture">Architecture Firm</option>
+                                        <option value="interior">Interior Design</option>
+                                        <option value="construction">Construction Company</option>
+                                        <option value="distributor">Material Distributor</option>
+                                        <option value="retailer">Retailer</option>
+                                        <option value="other">Other</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">公司规模</label>
+                                    <label class="form-label">Company Size</label>
                                     <select class="form-select" id="companySize" name="companySize">
-                                        <option value="">请选择公司规模</option>
-                                        <option value="1-10">1-10人</option>
-                                        <option value="11-50">11-50人</option>
-                                        <option value="51-200">51-200人</option>
-                                        <option value="200+">200人以上</option>
+                                        <option value="">Select company size</option>
+                                        <option value="1-10">1-10 employees</option>
+                                        <option value="11-50">11-50 employees</option>
+                                        <option value="51-200">51-200 employees</option>
+                                        <option value="200+">200+ employees</option>
                                     </select>
                                 </div>
                                 <div class="form-group full-width">
-                                    <label class="form-label">公司简介</label>
-                                    <textarea class="form-textarea" id="companyDescription" name="companyDescription" placeholder="请简要介绍您的公司业务范围和优势..."></textarea>
+                                    <label class="form-label">About Your Business</label>
+                                    <textarea class="form-textarea" id="companyDescription" name="companyDescription" placeholder="Briefly describe your business, services, and what you're looking for in a partnership..."></textarea>
                                 </div>
                             </div>
                         </div>
@@ -679,41 +747,41 @@
                         <div class="form-section">
                             <h3 class="section-title">
                                 <i class="fas fa-star"></i>
-                                选择服务方案
+                                Choose Your Plan
                             </h3>
                             <div class="plan-grid">
                                 <div class="plan-card" data-plan="basic">
-                                    <div class="plan-name">基础版</div>
-                                    <div class="plan-price">免费 <span>/ 月</span></div>
+                                    <div class="plan-name">Starter</div>
+                                    <div class="plan-price">$0 <span>/ month</span></div>
                                     <ul class="plan-features">
-                                        <li><i class="fas fa-check"></i> 最多 5 个项目</li>
-                                        <li><i class="fas fa-check"></i> 2 个团队成员</li>
-                                        <li><i class="fas fa-check"></i> 基础 AI 设计</li>
-                                        <li><i class="fas fa-check"></i> 邮件支持</li>
+                                        <li><i class="fas fa-check"></i> Up to 5 projects</li>
+                                        <li><i class="fas fa-check"></i> 2 team members</li>
+                                        <li><i class="fas fa-check"></i> Basic AI design tools</li>
+                                        <li><i class="fas fa-check"></i> Email support</li>
                                     </ul>
                                 </div>
                                 <div class="plan-card recommended selected" data-plan="pro">
-                                    <div class="plan-badge">推荐</div>
-                                    <div class="plan-name">专业版</div>
-                                    <div class="plan-price">¥299 <span>/ 月</span></div>
+                                    <div class="plan-badge">Recommended</div>
+                                    <div class="plan-name">Professional</div>
+                                    <div class="plan-price">$49 <span>/ month</span></div>
                                     <ul class="plan-features">
-                                        <li><i class="fas fa-check"></i> 最多 50 个项目</li>
-                                        <li><i class="fas fa-check"></i> 10 个团队成员</li>
-                                        <li><i class="fas fa-check"></i> 高级 AI 设计</li>
-                                        <li><i class="fas fa-check"></i> 优先技术支持</li>
-                                        <li><i class="fas fa-check"></i> 数据分析报表</li>
+                                        <li><i class="fas fa-check"></i> Up to 50 projects</li>
+                                        <li><i class="fas fa-check"></i> 10 team members</li>
+                                        <li><i class="fas fa-check"></i> Advanced AI design</li>
+                                        <li><i class="fas fa-check"></i> Priority support</li>
+                                        <li><i class="fas fa-check"></i> Analytics dashboard</li>
                                     </ul>
                                 </div>
                                 <div class="plan-card" data-plan="enterprise">
-                                    <div class="plan-name">企业版</div>
-                                    <div class="plan-price">定制 <span>报价</span></div>
+                                    <div class="plan-name">Enterprise</div>
+                                    <div class="plan-price">Custom</div>
                                     <ul class="plan-features">
-                                        <li><i class="fas fa-check"></i> 无限项目</li>
-                                        <li><i class="fas fa-check"></i> 无限团队成员</li>
-                                        <li><i class="fas fa-check"></i> 专属 AI 模型</li>
-                                        <li><i class="fas fa-check"></i> 7x24 专属客服</li>
-                                        <li><i class="fas fa-check"></i> API 接口接入</li>
-                                        <li><i class="fas fa-check"></i> 私有化部署</li>
+                                        <li><i class="fas fa-check"></i> Unlimited projects</li>
+                                        <li><i class="fas fa-check"></i> Unlimited team members</li>
+                                        <li><i class="fas fa-check"></i> Custom AI models</li>
+                                        <li><i class="fas fa-check"></i> 24/7 dedicated support</li>
+                                        <li><i class="fas fa-check"></i> API access</li>
+                                        <li><i class="fas fa-check"></i> On-premise deployment</li>
                                     </ul>
                                 </div>
                             </div>
@@ -723,7 +791,7 @@
                         <div class="checkbox-group">
                             <input type="checkbox" class="checkbox-input" id="agreeTerms" required>
                             <label class="checkbox-label" for="agreeTerms">
-                                我已阅读并同意 <a href="#" target="_blank">《服务协议》</a> 和 <a href="#" target="_blank">《隐私政策》</a>，确认提交的信息真实有效。
+                                I have read and agree to the <a href="#" target="_blank">Terms of Service</a> and <a href="#" target="_blank">Privacy Policy</a>. I confirm that the information provided is accurate.
                             </label>
                         </div>
 
@@ -731,10 +799,10 @@
                         <div class="form-actions">
                             <button type="button" class="btn btn-text" onclick="window.location.href='index.html'">
                                 <i class="fas fa-arrow-left"></i>
-                                返回首页
+                                Back to Home
                             </button>
                             <button type="submit" class="btn btn-primary" id="submitBtn">
-                                下一步：创建管理员账号
+                                Continue: Create Admin Account
                                 <i class="fas fa-arrow-right"></i>
                             </button>
                         </div>
@@ -745,37 +813,37 @@
             <!-- Step 2: Admin Account -->
             <div id="step2Content" class="hidden">
                 <div class="card-header">
-                    <h1 class="card-title">创建管理员账号</h1>
-                    <p class="card-subtitle">设置您的管理员登录信息</p>
+                    <h1 class="card-title">Create Admin Account</h1>
+                    <p class="card-subtitle">Set up your administrator login credentials</p>
                 </div>
                 <div class="card-body">
                     <form id="adminForm">
                         <div class="form-section">
                             <h3 class="section-title">
                                 <i class="fas fa-user-shield"></i>
-                                管理员信息
+                                Administrator Information
                             </h3>
                             <div class="form-grid">
                                 <div class="form-group">
-                                    <label class="form-label">姓名 <span class="required">*</span></label>
-                                    <input type="text" class="form-input" id="adminName" name="adminName" placeholder="请输入您的姓名" required>
+                                    <label class="form-label">Full Name <span class="required">*</span></label>
+                                    <input type="text" class="form-input" id="adminName" name="adminName" placeholder="Your full name" required>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">职位</label>
-                                    <input type="text" class="form-input" id="adminTitle" name="adminTitle" placeholder="如：总经理、技术总监">
+                                    <label class="form-label">Job Title</label>
+                                    <input type="text" class="form-input" id="adminTitle" name="adminTitle" placeholder="e.g., Owner, Project Manager">
                                 </div>
                                 <div class="form-group full-width">
-                                    <label class="form-label">登录邮箱 <span class="required">*</span></label>
-                                    <input type="email" class="form-input" id="adminEmail" name="adminEmail" placeholder="此邮箱将用于登录系统" required>
-                                    <p class="input-hint">此邮箱将作为您的登录账号，请确保可以正常接收邮件</p>
+                                    <label class="form-label">Login Email <span class="required">*</span></label>
+                                    <input type="email" class="form-input" id="adminEmail" name="adminEmail" placeholder="This email will be used for login" required>
+                                    <p class="input-hint">This email will be your login username. Make sure you can receive emails at this address.</p>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">登录密码 <span class="required">*</span></label>
-                                    <input type="password" class="form-input" id="adminPassword" name="adminPassword" placeholder="至少8位，包含字母和数字" required>
+                                    <label class="form-label">Password <span class="required">*</span></label>
+                                    <input type="password" class="form-input" id="adminPassword" name="adminPassword" placeholder="Min 8 characters, letters & numbers" required>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">确认密码 <span class="required">*</span></label>
-                                    <input type="password" class="form-input" id="adminPasswordConfirm" name="adminPasswordConfirm" placeholder="请再次输入密码" required>
+                                    <label class="form-label">Confirm Password <span class="required">*</span></label>
+                                    <input type="password" class="form-input" id="adminPasswordConfirm" name="adminPasswordConfirm" placeholder="Re-enter password" required>
                                 </div>
                             </div>
                         </div>
@@ -783,10 +851,10 @@
                         <div class="form-actions">
                             <button type="button" class="btn btn-secondary" onclick="goToStep(1)">
                                 <i class="fas fa-arrow-left"></i>
-                                上一步
+                                Previous
                             </button>
                             <button type="submit" class="btn btn-primary" id="createAccountBtn">
-                                创建账号
+                                Create Account
                                 <i class="fas fa-check"></i>
                             </button>
                         </div>
@@ -800,36 +868,36 @@
                     <div class="success-icon">
                         <i class="fas fa-check"></i>
                     </div>
-                    <h2 class="success-title">注册成功！</h2>
+                    <h2 class="success-title">Registration Successful!</h2>
                     <p class="success-message">
-                        您的合作伙伴账号已创建成功。<br>
-                        我们已发送验证邮件到您的邮箱，请查收并完成验证。
+                        Your partner account has been created.<br>
+                        We've sent a verification email to your inbox. Please check and verify your email address.
                     </p>
                     <div class="success-details">
                         <div class="detail-row">
-                            <span class="detail-label">公司名称</span>
+                            <span class="detail-label">Company Name</span>
                             <span class="detail-value" id="successCompanyName">-</span>
                         </div>
                         <div class="detail-row">
-                            <span class="detail-label">管理员账号</span>
+                            <span class="detail-label">Admin Account</span>
                             <span class="detail-value" id="successAdminEmail">-</span>
                         </div>
                         <div class="detail-row">
-                            <span class="detail-label">专属登录地址</span>
+                            <span class="detail-label">Your Portal URL</span>
                             <span class="detail-value" id="successLoginUrl">-</span>
                         </div>
                         <div class="detail-row">
-                            <span class="detail-label">服务方案</span>
+                            <span class="detail-label">Selected Plan</span>
                             <span class="detail-value" id="successPlan">-</span>
                         </div>
                     </div>
                     <div style="display: flex; gap: 16px; justify-content: center;">
                         <a href="login.html" class="btn btn-primary">
                             <i class="fas fa-sign-in-alt"></i>
-                            立即登录
+                            Sign In Now
                         </a>
                         <a href="index.html" class="btn btn-secondary">
-                            返回首页
+                            Back to Home
                         </a>
                     </div>
                 </div>
@@ -882,16 +950,19 @@
             
             // Validate
             if (!document.getElementById('agreeTerms').checked) {
-                alert('请阅读并同意服务协议');
+                alert('Please read and agree to the Terms of Service');
                 return;
             }
 
             // Collect data
             formData.company = {
                 name: document.getElementById('companyName').value,
-                shortName: document.getElementById('companyShortName').value,
-                businessLicense: document.getElementById('businessLicense').value,
-                address: document.getElementById('companyAddress').value,
+                dbaName: document.getElementById('dbaName').value,
+                ein: document.getElementById('ein').value,
+                streetAddress: document.getElementById('streetAddress').value,
+                city: document.getElementById('city').value,
+                state: document.getElementById('state').value,
+                zipCode: document.getElementById('zipCode').value,
                 contactName: document.getElementById('contactName').value,
                 contactPhone: document.getElementById('contactPhone').value,
                 contactEmail: document.getElementById('contactEmail').value,
@@ -915,12 +986,12 @@
             const passwordConfirm = document.getElementById('adminPasswordConfirm').value;
             
             if (password !== passwordConfirm) {
-                alert('两次输入的密码不一致');
+                alert('Passwords do not match');
                 return;
             }
 
             if (password.length < 8) {
-                alert('密码至少需要8位');
+                alert('Password must be at least 8 characters');
                 return;
             }
 
@@ -935,7 +1006,7 @@
             // Show loading
             const btn = document.getElementById('createAccountBtn');
             btn.disabled = true;
-            btn.innerHTML = '<div class="spinner"></div> 创建中...';
+            btn.innerHTML = '<div class="spinner"></div> Creating...';
 
             try {
                 // In production, this would be an API call
@@ -950,25 +1021,25 @@
                 
                 // Generate tenant slug
                 const tenantSlug = formData.company.name.toLowerCase()
-                    .replace(/[^a-z0-9\u4e00-\u9fa5]/g, '-')
+                    .replace(/[^a-z0-9]/g, '-')
                     .replace(/-+/g, '-')
                     .substring(0, 20);
 
                 // Show success
                 document.getElementById('successCompanyName').textContent = formData.company.name;
                 document.getElementById('successAdminEmail').textContent = formData.admin.email;
-                document.getElementById('successLoginUrl').textContent = `${tenantSlug}.nestopia.com`;
+                document.getElementById('successLoginUrl').textContent = `${tenantSlug}.outdoorliving.expert`;
                 document.getElementById('successPlan').textContent = 
-                    formData.plan === 'basic' ? '基础版（免费）' :
-                    formData.plan === 'pro' ? '专业版' : '企业版';
+                    formData.plan === 'basic' ? 'Starter (Free)' :
+                    formData.plan === 'pro' ? 'Professional ($49/mo)' : 'Enterprise (Custom)';
 
                 goToStep(3);
 
             } catch (error) {
                 console.error('Registration failed:', error);
-                alert('注册失败，请稍后重试');
+                alert('Registration failed. Please try again.');
                 btn.disabled = false;
-                btn.innerHTML = '创建账号 <i class="fas fa-check"></i>';
+                btn.innerHTML = 'Create Account <i class="fas fa-check"></i>';
             }
         });
     </script>
