@@ -671,3 +671,17 @@ portal.partner1.com       → partner1.nestopia.com
 ---
 
 *本文档为多租户系统架构设计，后续可根据实际需求调整。*
+
+---
+
+## 附录：Schema 文件说明
+
+**当前规范来源**: `supabase/schema.sql` (v2.0, 2026-03-11)
+
+| 文件 | 状态 | 说明 |
+|------|------|------|
+| `supabase/schema.sql` | ✅ 主用 | 完整多租户 Schema (18 表 + RLS + 审计触发器) |
+| `database/schema.sql` | ✅ 同步 | 镜像文件，用于非 Supabase 部署 |
+| `supabase/customer_intake_form_schema.sql` | ⚠️ 独立 | 客户设计申请表单 Schema (待整合到主 schema) |
+
+> **历史遗留**: 旧版不含多租户的 schema 已全部废弃，请勿使用。

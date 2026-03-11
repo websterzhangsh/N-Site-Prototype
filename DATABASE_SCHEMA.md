@@ -4,7 +4,19 @@
 **版本**: 2.0.0  
 **最后更新**: 2026-03-11  
 **维护者**: websterzhangsh  
-**规范来源**: `supabase/schema.sql`
+
+---
+
+## 📁 文件说明 (File Structure)
+
+| 文件 | 用途 | 状态 |
+|------|------|------|
+| `supabase/schema.sql` | **规范来源** - 完整多租户 Schema (18 表 + RLS + 触发器) | ✅ 主用 |
+| `database/schema.sql` | 镜像文件 - 用于非 Supabase 部署 (Aliyun RDS 等) | ✅ 同步 |
+| `supabase/customer_intake_form_schema.sql` | 客户设计申请表单 (独立功能，不含多租户) | ⚠️ 待整合 |
+| `DATABASE_SCHEMA.md` | 本文档 | ✅ |
+
+> **注意**: 历史上曾有无多租户的旧 schema，已全部废弃。当前唯一规范来源是 `supabase/schema.sql`。
 
 ---
 
