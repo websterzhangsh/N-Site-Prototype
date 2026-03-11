@@ -1,8 +1,10 @@
 # 多租户系统架构设计 (Multi-Tenant Architecture)
 
-> 版本: v1.0
-> 日期: 2026-03-09
+> 版本: v2.0
+> 日期: 2026-03-11 (updated)
 > 目标: 支持多租户合作伙伴平台，每个租户拥有独立数据和可定制UI
+> 
+> **数据库Schema**: `supabase/schema.sql` (规范来源) | **详细文档**: `DATABASE_SCHEMA.md`
 
 ---
 
@@ -92,163 +94,67 @@ interface UIConfig {
 
 ## 三、数据库设计
 
+> **完整 Schema 请参考**: `supabase/schema.sql` (规范来源) 和 `DATABASE_SCHEMA.md` (详细文档)
+
 ### 3.1 共享数据库 + 行级安全 (RLS) 方案
 
-采用 **Shared Database, Separate Schema** 或 **Shared Schema, Row-Level Security**
+采用 **Shared Database + Row-Level Security** 方案，所有 18 张表共享一个 PostgreSQL 实例，通过 `tenant_id` 和 RLS 策略实现数据隔离。
+
+#### 完整表清单 (v2.0.0, 2026-03-11 更新)
+
+| # | 表名 | 类型 | tenant_id | 说明 |
+|---|------|------|-----------|------|
+| A1 | `tenants` | 平台 | — | 租户元数据、UI配置、功能开关、配额 |
+| A2 | `users` | 基础 | ✅ | 用户/角色 (super_admin/admin/manager/sales/member) |
+| A3 | `user_sessions` | 基础 | ✅ | JWT会话、refresh token、设备信息 |
+| A4 | `audit_logs` | 基础 | ✅ | 审计日志 (old/new values) |
+| A5 | `system_configs` | 基础 | ✅ | 租户配置 (UNIQUE tenant_id+key) |
+| B1 | `partners` | 业务 | ✅ | 合作伙伴/渠道商 |
+| B2 | `customers` | 业务 | ✅ | 客户管理 (含场地信息、标签、获客来源) |
+| C1 | `product_categories` | 业务 | ✅ | 产品分类 (嵌套) |
+| C2 | `products` | 业务 | ✅ | 产品目录 (SKU租户内唯一) |
+| C3 | `product_files` | 业务 | ✅ | 产品文件 (图片/CAD/3D/PDF) |
+| C4 | `pricing` | 业务 | ✅ | 定价规则 (分层/选项/折扣) |
+| C5 | `cost_components` | 业务 | ✅ | 成本构成 (供Pricing Agent使用) |
+| D1 | `projects` | 业务 | ✅ | 项目管理 |
+| D2 | `designs` | 业务 | ✅ | 设计方案 (AI渲染+合规检查) |
+| E1 | `orders` | 业务 | ✅ | 订单 (13状态流转, 3阶段付款) |
+| E2 | `order_items` | 业务 | ✅ | 订单明细 (产品快照) |
+| E3 | `payments` | 业务 | ✅ | 支付记录 (多阶段付款+退款) |
+| F1 | `documents` | 业务 | ✅ | 文档管理 (多态关联) |
+
+#### 复合唯一约束 (租户级唯一)
 
 ```sql
--- 主租户表
-CREATE TABLE tenants (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    slug VARCHAR(50) UNIQUE NOT NULL,        -- 唯一标识，用于URL
-    name VARCHAR(100) NOT NULL,              -- 显示名称
-    status VARCHAR(20) DEFAULT 'active',     -- active, suspended, deleted
-    plan VARCHAR(20) DEFAULT 'basic',        -- 套餐级别
-    
-    -- 联系信息
-    contact_email VARCHAR(100),
-    contact_phone VARCHAR(20),
-    address TEXT,
-    
-    -- UI 定制配置 (JSON)
-    ui_config JSONB DEFAULT '{}',
-    
-    -- 功能开关
-    features JSONB DEFAULT '[]',
-    
-    -- 配额限制
-    max_projects INTEGER DEFAULT 10,
-    max_users INTEGER DEFAULT 5,
-    storage_quota_mb INTEGER DEFAULT 1024,
-    
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
-);
-
--- 用户表 (跨租户，通过 tenant_id 关联)
-CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id UUID REFERENCES tenants(id) ON DELETE CASCADE,
-    
-    -- 认证信息
-    email VARCHAR(100) NOT NULL,
-    password_hash VARCHAR(255),              -- bcrypt hash
-    
-    -- 用户信息
-    first_name VARCHAR(50),
-    last_name VARCHAR(50),
-    phone VARCHAR(20),
-    avatar_url TEXT,
-    
-    -- 角色权限
-    role VARCHAR(20) DEFAULT 'member',       -- super_admin, admin, manager, member
-    permissions JSONB DEFAULT '[]',
-    
-    -- 状态
-    status VARCHAR(20) DEFAULT 'active',     -- active, inactive, pending
-    email_verified BOOLEAN DEFAULT FALSE,
-    last_login_at TIMESTAMP,
-    
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW(),
-    
-    UNIQUE(tenant_id, email)
-);
-
--- 登录会话表
-CREATE TABLE user_sessions (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    tenant_id UUID REFERENCES tenants(id) ON DELETE CASCADE,
-    token_hash VARCHAR(255) NOT NULL,        -- JWT token hash
-    expires_at TIMESTAMP NOT NULL,
-    ip_address INET,
-    user_agent TEXT,
-    created_at TIMESTAMP DEFAULT NOW()
-);
-
--- 业务数据表 (示例：项目表)
-CREATE TABLE projects (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id UUID REFERENCES tenants(id) ON DELETE CASCADE,
-    
-    -- 项目信息
-    title VARCHAR(200) NOT NULL,
-    description TEXT,
-    status VARCHAR(20) DEFAULT 'draft',      -- draft, in_progress, completed, cancelled
-    
-    -- 客户信息
-    client_name VARCHAR(100),
-    client_email VARCHAR(100),
-    client_phone VARCHAR(20),
-    
-    -- 项目详情
-    project_type VARCHAR(50),                -- sunroom, pavilion, shutter
-    budget_range VARCHAR(50),
-    preferred_timeline VARCHAR(50),
-    
-    -- 附件
-    attachments JSONB DEFAULT '[]',
-    
-    -- 元数据
-    assigned_to UUID REFERENCES users(id),
-    created_by UUID REFERENCES users(id),
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
-);
-
--- 订单表
-CREATE TABLE orders (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id UUID REFERENCES tenants(id) ON DELETE CASCADE,
-    project_id UUID REFERENCES projects(id),
-    
-    order_number VARCHAR(50) UNIQUE NOT NULL,
-    status VARCHAR(20) DEFAULT 'pending',    -- pending, confirmed, in_production, shipped, installed, completed
-    
-    -- 金额信息
-    total_amount DECIMAL(12, 2),
-    currency VARCHAR(3) DEFAULT 'CNY',
-    
-    -- 付款阶段
-    deposit_paid BOOLEAN DEFAULT FALSE,
-    deposit_amount DECIMAL(12, 2),
-    second_payment_paid BOOLEAN DEFAULT FALSE,
-    second_payment_amount DECIMAL(12, 2),
-    final_payment_paid BOOLEAN DEFAULT FALSE,
-    final_payment_amount DECIMAL(12, 2),
-    
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
-);
+UNIQUE(tenant_id, email)            -- users
+UNIQUE(tenant_id, customer_number)  -- customers
+UNIQUE(tenant_id, sku)              -- products
+UNIQUE(tenant_id, order_number)     -- orders
+UNIQUE(tenant_id, payment_number)   -- payments
+UNIQUE(tenant_id, config_key)       -- system_configs
+UNIQUE(tenant_id, product_id, component_name) -- cost_components
 ```
 
 ### 3.2 行级安全策略 (RLS)
 
+所有 18 张表均启用 RLS，统一策略模式：
+
 ```sql
--- 启用 RLS
-ALTER TABLE users ENABLE ROW LEVEL SECURITY;
-ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
-ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
+-- Helper functions
+CREATE FUNCTION get_current_tenant_id() RETURNS UUID ...
+CREATE FUNCTION is_super_admin() RETURNS BOOLEAN ...
 
--- 用户只能看到同租户的数据
-CREATE POLICY tenant_isolation_users ON users
-    FOR ALL
-    USING (tenant_id = current_setting('app.current_tenant')::UUID);
+-- 所有业务表使用统一策略模板
+CREATE POLICY rls_{table} ON {table} FOR ALL
+    USING (
+        tenant_id = get_current_tenant_id()
+        OR is_super_admin()
+    );
 
-CREATE POLICY tenant_isolation_projects ON projects
-    FOR ALL
-    USING (tenant_id = current_setting('app.current_tenant')::UUID);
-
-CREATE POLICY tenant_isolation_orders ON orders
-    FOR ALL
-    USING (tenant_id = current_setting('app.current_tenant')::UUID);
-
--- 超级管理员可以看到所有数据
-CREATE POLICY super_admin_all_users ON users
-    FOR ALL
-    TO authenticated
-    USING (auth.jwt() ->> 'role' = 'super_admin');
+-- 租户上下文由 Edge Function / API 中间件设置
+SET LOCAL app.current_tenant_id = '{tenant-uuid}';
+SET LOCAL app.current_user_id = '{user-uuid}';
+SET LOCAL app.is_super_admin = 'false';
 ```
 
 ---
@@ -396,13 +302,130 @@ interface CreateUserRequest {
   firstName: string;
   lastName: string;
   phone?: string;
-  role: 'admin' | 'manager' | 'member';
+  role: 'admin' | 'manager' | 'sales' | 'member';
   sendInvite: boolean;
 }
 
 // GET /api/users/:id
 // PUT /api/users/:id
 // DELETE /api/users/:id
+```
+
+### 5.4 客户管理 API (tenant-scoped)
+
+```typescript
+// GET /api/customers              — 列表 (支持 ?status=active&type=vip&search=)
+// POST /api/customers             — 创建客户
+interface CreateCustomerRequest {
+  name: string;
+  phone: string;
+  email?: string;
+  company?: string;
+  wechat?: string;
+  province?: string;
+  city?: string;
+  address?: string;
+  siteType?: 'villa' | 'townhouse' | 'apartment' | 'commercial' | 'other';
+  siteArea?: number;
+  source?: string;
+  partnerId?: string;
+  assignedSales?: string;
+  customerType?: 'standard' | 'vip' | 'enterprise';
+  tags?: string[];
+}
+
+// GET /api/customers/:id          — 详情 (含统计: 订单数/总消费/项目数)
+// PUT /api/customers/:id          — 更新
+// DELETE /api/customers/:id       — 软删除
+// GET /api/customers/:id/orders   — 客户订单
+// GET /api/customers/:id/projects — 客户项目
+```
+
+### 5.5 产品管理 API (tenant-scoped)
+
+```typescript
+// GET /api/products               — 列表 (支持 ?category=&status=&search=)
+// POST /api/products              — 创建产品
+interface CreateProductRequest {
+  sku: string;
+  name: string;
+  nameEn?: string;
+  categoryId?: string;
+  description?: string;
+  specs?: Record<string, any>;
+  isCustomizable?: boolean;
+}
+
+// GET /api/products/:id           — 详情 (含文件列表/定价/成本)
+// PUT /api/products/:id           — 更新
+// DELETE /api/products/:id        — 软删除
+
+// POST /api/products/:id/files    — 上传文件 (支持: image/pdf/dwg/dxf/skp/obj/step/stl)
+// GET /api/products/:id/files     — 文件列表
+// DELETE /api/products/:id/files/:fileId — 删除文件
+```
+
+### 5.6 定价管理 API (tenant-scoped)
+
+```typescript
+// GET /api/pricing                — 列表 (支持 ?productId=&active=true)
+// POST /api/pricing               — 创建定价规则
+interface CreatePricingRequest {
+  productId: string;
+  pricingName?: string;
+  pricingType?: 'standard' | 'promotional' | 'partner' | 'volume' | 'custom';
+  basePrice: number;
+  priceUnit?: 'per_sqm' | 'per_unit' | 'per_set' | 'per_linear_m';
+  currency?: string;
+  areaTiers?: Array<{ minSqm: number; maxSqm: number; multiplier: number; label: string }>;
+  optionPrices?: Record<string, { price: number; unit: string; label: string }>;
+  discountRules?: Record<string, any>;
+  effectiveFrom: string;  // ISO date
+  effectiveTo?: string;
+}
+
+// PUT /api/pricing/:id            — 更新
+// DELETE /api/pricing/:id         — 删除
+
+// GET /api/cost-components?productId=  — 成本构成列表
+// POST /api/cost-components       — 创建成本项
+// PUT /api/cost-components/:id    — 更新
+```
+
+### 5.7 订单管理 API (tenant-scoped)
+
+```typescript
+// GET /api/orders                 — 列表 (支持 ?status=&customerId=&dateFrom=&dateTo=)
+// POST /api/orders                — 创建订单
+interface CreateOrderRequest {
+  customerId: string;
+  projectId?: string;
+  designId?: string;
+  items: Array<{
+    productId: string;
+    quantity: number;
+    unitPrice: number;
+    customization?: Record<string, any>;
+    dimensions?: { widthMm: number; depthMm: number; heightMm: number };
+  }>;
+  discountAmount?: number;
+  discountReason?: string;
+  shippingAddress?: Record<string, any>;
+  shippingMethod?: string;
+  shippingFee?: number;
+  installationAddress?: Record<string, any>;
+  paymentPlan?: Record<string, any>;
+  salesRepId?: string;
+  partnerId?: string;
+}
+
+// GET /api/orders/:id             — 详情 (含明细/支付记录)
+// PUT /api/orders/:id             — 更新
+// PUT /api/orders/:id/status      — 状态变更
+// DELETE /api/orders/:id          — 软删除
+
+// POST /api/orders/:id/payments   — 创建支付记录
+// GET /api/orders/:id/payments    — 支付记录列表
 ```
 
 ---

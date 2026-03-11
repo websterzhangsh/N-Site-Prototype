@@ -1,28 +1,45 @@
 -- ============================================================
--- 多租户系统数据库 Schema
--- 适用于 Supabase PostgreSQL
+-- Nestopia Platform - Multi-Tenant Database Schema (Canonical)
+-- Target: Supabase PostgreSQL
+-- Version: 2.0.0
+-- Updated: 2026-03-11
+-- 
+-- Design Principles:
+--   1. Every business table has tenant_id (FK → tenants)
+--   2. RLS enforces tenant isolation at database level
+--   3. Composite UNIQUE constraints include tenant_id
+--   4. Soft-delete via is_deleted flag; audit via triggers
+--   5. TIMESTAMPTZ for all timestamps (timezone-aware)
+--   6. JSONB for flexible structured data
 -- ============================================================
 
--- 启用 UUID 扩展
+-- Enable extensions
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- ============================================================
--- 1. 租户表 (Tenants)
+-- SECTION A: PLATFORM INFRASTRUCTURE
+-- ============================================================
+
+-- ============================================================
+-- A1. Tenants (Platform-level, no tenant_id)
 -- ============================================================
 CREATE TABLE tenants (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    slug VARCHAR(50) UNIQUE NOT NULL,
-    name VARCHAR(100) NOT NULL,
-    status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'suspended', 'deleted')),
-    plan VARCHAR(20) DEFAULT 'basic' CHECK (plan IN ('basic', 'pro', 'enterprise')),
+    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    slug            VARCHAR(50) UNIQUE NOT NULL,
+    name            VARCHAR(100) NOT NULL,
+    status          VARCHAR(20) DEFAULT 'active'
+                    CHECK (status IN ('active', 'suspended', 'deleted')),
+    plan            VARCHAR(20) DEFAULT 'basic'
+                    CHECK (plan IN ('basic', 'pro', 'enterprise')),
 
-    -- 联系信息
-    contact_email VARCHAR(100),
-    contact_phone VARCHAR(20),
-    address TEXT,
+    -- Contact
+    contact_email   VARCHAR(100),
+    contact_phone   VARCHAR(20),
+    address         TEXT,
 
-    -- UI 定制配置
-    ui_config JSONB DEFAULT '{
+    -- UI customisation (per-tenant branding)
+    ui_config       JSONB DEFAULT '{
         "primaryColor": "#222222",
         "logoUrl": null,
         "faviconUrl": null,
@@ -31,183 +48,622 @@ CREATE TABLE tenants (
         "customSections": []
     }'::jsonb,
 
-    -- 功能开关
-    features JSONB DEFAULT '["projects", "orders", "customers", "ai_design"]'::jsonb,
+    -- Feature flags
+    features        JSONB DEFAULT '["projects","orders","customers","products","ai_design","pricing","compliance","customer_service"]'::jsonb,
 
-    -- 配额限制
-    max_projects INTEGER DEFAULT 10,
-    max_users INTEGER DEFAULT 5,
+    -- Quotas
+    max_projects    INTEGER DEFAULT 10,
+    max_users       INTEGER DEFAULT 5,
+    max_products    INTEGER DEFAULT 100,
     storage_quota_mb INTEGER DEFAULT 1024,
 
-    -- 自定义域名 (可选)
-    custom_domain VARCHAR(100),
+    -- Custom domain
+    custom_domain   VARCHAR(100),
 
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
+    created_at      TIMESTAMPTZ DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 租户 slug 索引
 CREATE INDEX idx_tenants_slug ON tenants(slug);
 CREATE INDEX idx_tenants_status ON tenants(status);
 CREATE INDEX idx_tenants_custom_domain ON tenants(custom_domain) WHERE custom_domain IS NOT NULL;
 
+COMMENT ON TABLE tenants IS '租户表 - 平台级，每个合作伙伴/品牌一个租户';
+
 -- ============================================================
--- 2. 用户表 (Users)
+-- A2. Users (tenant-scoped)
 -- ============================================================
 CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id       UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
 
-    -- 认证信息
-    email VARCHAR(100) NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,  -- bcrypt hash
+    -- Auth
+    email           VARCHAR(100) NOT NULL,
+    password_hash   VARCHAR(255) NOT NULL,
 
-    -- 个人信息
-    first_name VARCHAR(50),
-    last_name VARCHAR(50),
-    phone VARCHAR(20),
-    avatar_url TEXT,
+    -- Profile
+    first_name      VARCHAR(50),
+    last_name       VARCHAR(50),
+    phone           VARCHAR(20),
+    avatar_url      TEXT,
 
-    -- 角色权限
-    role VARCHAR(20) DEFAULT 'member' CHECK (role IN ('super_admin', 'admin', 'manager', 'member')),
-    permissions JSONB DEFAULT '[]'::jsonb,
+    -- Role & permissions
+    role            VARCHAR(20) DEFAULT 'member'
+                    CHECK (role IN ('super_admin', 'admin', 'manager', 'sales', 'member')),
+    permissions     JSONB DEFAULT '[]'::jsonb,
 
-    -- 状态
-    status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'inactive', 'pending')),
-    email_verified BOOLEAN DEFAULT FALSE,
+    -- Status
+    status          VARCHAR(20) DEFAULT 'active'
+                    CHECK (status IN ('active', 'inactive', 'pending')),
+    email_verified  BOOLEAN DEFAULT FALSE,
     email_verified_at TIMESTAMPTZ,
 
-    -- 登录记录
-    last_login_at TIMESTAMPTZ,
-    last_login_ip INET,
-    login_count INTEGER DEFAULT 0,
+    -- Login audit
+    last_login_at   TIMESTAMPTZ,
+    last_login_ip   INET,
+    login_count     INTEGER DEFAULT 0,
 
-    -- 密码重置
-    reset_token VARCHAR(255),
+    -- Password reset
+    reset_token     VARCHAR(255),
     reset_token_expires_at TIMESTAMPTZ,
 
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    created_at      TIMESTAMPTZ DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ DEFAULT NOW(),
+    is_deleted      BOOLEAN DEFAULT FALSE,
 
     UNIQUE(tenant_id, email)
 );
 
--- 用户索引
-CREATE INDEX idx_users_tenant_id ON users(tenant_id);
+CREATE INDEX idx_users_tenant ON users(tenant_id);
 CREATE INDEX idx_users_email ON users(email);
-CREATE INDEX idx_users_status ON users(status);
 CREATE INDEX idx_users_role ON users(role);
+CREATE INDEX idx_users_status ON users(status);
+
+COMMENT ON TABLE users IS '用户表 - 租户隔离，支持多角色';
+COMMENT ON COLUMN users.role IS 'super_admin=超管(跨租户), admin=管理员, manager=经理, sales=销售, member=普通';
 
 -- ============================================================
--- 3. 登录会话表 (User Sessions)
+-- A3. User Sessions
 -- ============================================================
 CREATE TABLE user_sessions (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id         UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    tenant_id       UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
 
-    token_hash VARCHAR(255) NOT NULL,  -- JWT token hash
+    token_hash      VARCHAR(255) NOT NULL,
     refresh_token_hash VARCHAR(255),
 
-    expires_at TIMESTAMPTZ NOT NULL,
+    expires_at      TIMESTAMPTZ NOT NULL,
     refresh_expires_at TIMESTAMPTZ,
 
-    ip_address INET,
-    user_agent TEXT,
-    device_info JSONB,
+    ip_address      INET,
+    user_agent      TEXT,
+    device_info     JSONB,
 
-    is_valid BOOLEAN DEFAULT TRUE,
-    revoked_at TIMESTAMPTZ,
-    revoked_reason VARCHAR(100),
+    is_valid        BOOLEAN DEFAULT TRUE,
+    revoked_at      TIMESTAMPTZ,
+    revoked_reason  VARCHAR(100),
 
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    last_used_at TIMESTAMPTZ DEFAULT NOW()
+    created_at      TIMESTAMPTZ DEFAULT NOW(),
+    last_used_at    TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_sessions_user_id ON user_sessions(user_id);
-CREATE INDEX idx_sessions_tenant_id ON user_sessions(tenant_id);
-CREATE INDEX idx_sessions_token_hash ON user_sessions(token_hash);
-CREATE INDEX idx_sessions_expires_at ON user_sessions(expires_at) WHERE is_valid = TRUE;
+CREATE INDEX idx_sessions_user ON user_sessions(user_id);
+CREATE INDEX idx_sessions_tenant ON user_sessions(tenant_id);
+CREATE INDEX idx_sessions_token ON user_sessions(token_hash);
+CREATE INDEX idx_sessions_valid ON user_sessions(expires_at) WHERE is_valid = TRUE;
 
 -- ============================================================
--- 4. 审计日志表 (Audit Logs)
+-- A4. Audit Logs
 -- ============================================================
 CREATE TABLE audit_logs (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    tenant_id UUID REFERENCES tenants(id) ON DELETE SET NULL,
-    user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id       UUID REFERENCES tenants(id) ON DELETE SET NULL,
+    user_id         UUID REFERENCES users(id) ON DELETE SET NULL,
 
-    action VARCHAR(50) NOT NULL,  -- login, logout, create, update, delete, etc.
-    resource_type VARCHAR(50),    -- project, order, user, etc.
-    resource_id UUID,
+    action          VARCHAR(50) NOT NULL,
+    resource_type   VARCHAR(50),
+    resource_id     UUID,
 
-    details JSONB,                -- 变更详情
-    old_values JSONB,             -- 变更前的值
-    new_values JSONB,             -- 变更后的值
+    details         JSONB,
+    old_values      JSONB,
+    new_values      JSONB,
 
-    ip_address INET,
-    user_agent TEXT,
+    ip_address      INET,
+    user_agent      TEXT,
 
-    created_at TIMESTAMPTZ DEFAULT NOW()
+    created_at      TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_audit_logs_tenant_id ON audit_logs(tenant_id);
-CREATE INDEX idx_audit_logs_user_id ON audit_logs(user_id);
-CREATE INDEX idx_audit_logs_action ON audit_logs(action);
-CREATE INDEX idx_audit_logs_created_at ON audit_logs(created_at);
+CREATE INDEX idx_audit_tenant ON audit_logs(tenant_id);
+CREATE INDEX idx_audit_user ON audit_logs(user_id);
+CREATE INDEX idx_audit_action ON audit_logs(action);
+CREATE INDEX idx_audit_resource ON audit_logs(resource_type, resource_id);
+CREATE INDEX idx_audit_created ON audit_logs(created_at);
+
+COMMENT ON TABLE audit_logs IS '审计日志 - 记录所有数据变更';
 
 -- ============================================================
--- 5. 业务数据表 - 项目 (Projects)
+-- A5. System Configs (tenant-scoped)
+-- ============================================================
+CREATE TABLE system_configs (
+    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id       UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+
+    config_key      VARCHAR(100) NOT NULL,
+    config_value    JSONB NOT NULL,
+    description     TEXT,
+    is_public       BOOLEAN DEFAULT FALSE,
+
+    created_at      TIMESTAMPTZ DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ DEFAULT NOW(),
+
+    UNIQUE(tenant_id, config_key)
+);
+
+CREATE INDEX idx_sysconfig_tenant ON system_configs(tenant_id);
+
+COMMENT ON TABLE system_configs IS '系统配置 - 每租户独立配置';
+
+-- ============================================================
+-- SECTION B: BUSINESS ENTITIES
+-- ============================================================
+
+-- ============================================================
+-- B1. Partners (tenant-scoped)
+-- ============================================================
+CREATE TABLE partners (
+    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id       UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    user_id         UUID REFERENCES users(id),
+
+    company_name    VARCHAR(200) NOT NULL,
+    contact_name    VARCHAR(100),
+    email           VARCHAR(255),
+    phone           VARCHAR(20),
+
+    province        VARCHAR(50),
+    city            VARCHAR(50),
+    address         TEXT,
+
+    partner_type    VARCHAR(50)
+                    CHECK (partner_type IN ('distributor', 'agent', 'dealer', 'referral')),
+    commission_rate DECIMAL(5,2),
+    contract_start  DATE,
+    contract_end    DATE,
+
+    status          VARCHAR(20) DEFAULT 'active'
+                    CHECK (status IN ('active', 'inactive', 'suspended', 'terminated')),
+
+    created_at      TIMESTAMPTZ DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ DEFAULT NOW(),
+    is_deleted      BOOLEAN DEFAULT FALSE
+);
+
+CREATE INDEX idx_partners_tenant ON partners(tenant_id);
+CREATE INDEX idx_partners_user ON partners(user_id);
+CREATE INDEX idx_partners_status ON partners(tenant_id, status);
+
+COMMENT ON TABLE partners IS '合作伙伴/渠道商表 - 租户隔离';
+
+-- ============================================================
+-- B2. Customers (tenant-scoped)
+-- ============================================================
+CREATE TABLE customers (
+    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id       UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    user_id         UUID REFERENCES users(id),
+
+    -- Identity
+    customer_number VARCHAR(50),
+    name            VARCHAR(100) NOT NULL,
+    company         VARCHAR(200),
+    email           VARCHAR(255),
+    phone           VARCHAR(20) NOT NULL,
+    wechat          VARCHAR(50),
+
+    -- Address
+    province        VARCHAR(50),
+    city            VARCHAR(50),
+    district        VARCHAR(50),
+    address         TEXT,
+    postal_code     VARCHAR(10),
+
+    -- Site information
+    site_type       VARCHAR(50)
+                    CHECK (site_type IN ('villa', 'townhouse', 'apartment', 'commercial', 'other')),
+    site_area       DECIMAL(10,2),
+    site_photos     JSONB DEFAULT '[]'::jsonb,
+    site_notes      TEXT,
+
+    -- Acquisition
+    source          VARCHAR(50)
+                    CHECK (source IN ('website', 'referral', 'partner', 'exhibition', 'social_media', 'phone', 'walk_in', 'other')),
+    partner_id      UUID REFERENCES partners(id),
+    assigned_sales  UUID REFERENCES users(id),
+
+    -- Classification
+    customer_type   VARCHAR(20) DEFAULT 'standard'
+                    CHECK (customer_type IN ('standard', 'vip', 'enterprise')),
+    tags            JSONB DEFAULT '[]'::jsonb,
+    notes           TEXT,
+
+    -- Satisfaction
+    satisfaction_score DECIMAL(3,1),
+
+    -- Status
+    status          VARCHAR(20) DEFAULT 'active'
+                    CHECK (status IN ('active', 'inactive', 'prospect', 'churned')),
+
+    created_at      TIMESTAMPTZ DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ DEFAULT NOW(),
+    is_deleted      BOOLEAN DEFAULT FALSE,
+
+    UNIQUE(tenant_id, customer_number)
+);
+
+CREATE INDEX idx_customers_tenant ON customers(tenant_id);
+CREATE INDEX idx_customers_phone ON customers(tenant_id, phone);
+CREATE INDEX idx_customers_email ON customers(tenant_id, email);
+CREATE INDEX idx_customers_user ON customers(user_id);
+CREATE INDEX idx_customers_partner ON customers(partner_id);
+CREATE INDEX idx_customers_assigned ON customers(assigned_sales);
+CREATE INDEX idx_customers_status ON customers(tenant_id, status);
+CREATE INDEX idx_customers_type ON customers(tenant_id, customer_type);
+CREATE INDEX idx_customers_tags ON customers USING gin(tags);
+
+COMMENT ON TABLE customers IS '客户表 - 租户隔离，含场地信息和来源追踪';
+
+-- Customer number generation
+CREATE OR REPLACE FUNCTION generate_customer_number()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.customer_number IS NULL THEN
+        NEW.customer_number = 'CUS-' || TO_CHAR(NOW(), 'YYYYMMDD') || '-' || SUBSTRING(MD5(NEW.id::text), 1, 6);
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER set_customer_number
+    BEFORE INSERT ON customers
+    FOR EACH ROW
+    EXECUTE FUNCTION generate_customer_number();
+
+-- ============================================================
+-- SECTION C: PRODUCT CATALOG & PRICING
+-- ============================================================
+
+-- ============================================================
+-- C1. Product Categories (tenant-scoped)
+-- ============================================================
+CREATE TABLE product_categories (
+    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id       UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+
+    name            VARCHAR(100) NOT NULL,
+    name_en         VARCHAR(100),
+    description     TEXT,
+    parent_id       UUID REFERENCES product_categories(id),
+    sort_order      INTEGER DEFAULT 0,
+    is_active       BOOLEAN DEFAULT TRUE,
+
+    created_at      TIMESTAMPTZ DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ DEFAULT NOW(),
+
+    UNIQUE(tenant_id, name, parent_id)
+);
+
+CREATE INDEX idx_prodcat_tenant ON product_categories(tenant_id);
+CREATE INDEX idx_prodcat_parent ON product_categories(parent_id);
+
+COMMENT ON TABLE product_categories IS '产品分类 - 支持嵌套分类，租户隔离';
+
+-- ============================================================
+-- C2. Products (tenant-scoped)
+-- ============================================================
+CREATE TABLE products (
+    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id       UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    category_id     UUID REFERENCES product_categories(id),
+
+    -- Identity
+    sku             VARCHAR(50) NOT NULL,
+    name            VARCHAR(200) NOT NULL,
+    name_en         VARCHAR(200),
+    description     TEXT,
+    description_en  TEXT,
+
+    -- Specifications
+    specs           JSONB DEFAULT '{}'::jsonb,
+    /*
+    specs example:
+    {
+        "material": "aluminum_alloy",
+        "glass_type": "tempered_double",
+        "frame_colors": ["white", "black", "gray"],
+        "min_width_mm": 2000,
+        "max_width_mm": 8000,
+        "min_depth_mm": 2000,
+        "max_depth_mm": 6000,
+        "min_height_mm": 2500,
+        "max_height_mm": 4000,
+        "weight_per_sqm_kg": 25
+    }
+    */
+
+    -- Media (URLs managed via product_files table, summary here for quick access)
+    thumbnail_url   TEXT,
+    images          JSONB DEFAULT '[]'::jsonb,
+    videos          JSONB DEFAULT '[]'::jsonb,
+
+    -- Status
+    status          VARCHAR(20) DEFAULT 'active'
+                    CHECK (status IN ('active', 'inactive', 'discontinued', 'draft')),
+    is_customizable BOOLEAN DEFAULT TRUE,
+
+    -- SEO
+    meta_title      VARCHAR(200),
+    meta_description TEXT,
+
+    -- Audit
+    created_by      UUID REFERENCES users(id),
+    created_at      TIMESTAMPTZ DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ DEFAULT NOW(),
+    is_deleted      BOOLEAN DEFAULT FALSE,
+
+    UNIQUE(tenant_id, sku)
+);
+
+CREATE INDEX idx_products_tenant ON products(tenant_id);
+CREATE INDEX idx_products_sku ON products(tenant_id, sku);
+CREATE INDEX idx_products_category ON products(category_id);
+CREATE INDEX idx_products_status ON products(tenant_id, status);
+CREATE INDEX idx_products_specs ON products USING gin(specs);
+
+COMMENT ON TABLE products IS '产品目录 - 租户隔离，SKU在租户内唯一';
+
+-- ============================================================
+-- C3. Product Files (tenant-scoped)
+--     Stores uploaded files: images, PDFs, DWG, DXF, SKP, OBJ, etc.
+-- ============================================================
+CREATE TABLE product_files (
+    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id       UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    product_id      UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+
+    -- File info
+    file_name       VARCHAR(255) NOT NULL,
+    file_type       VARCHAR(20) NOT NULL
+                    CHECK (file_type IN ('image', 'pdf', 'dwg', 'dxf', 'skp', 'obj', 'step', 'stl', 'video', 'document', 'other')),
+    mime_type       VARCHAR(100),
+    file_size_bytes BIGINT,
+    file_url        TEXT NOT NULL,
+    storage_path    TEXT,
+
+    -- Classification
+    category        VARCHAR(50) DEFAULT 'general'
+                    CHECK (category IN ('general', 'thumbnail', 'gallery', 'technical_drawing', 'cad_model', '3d_model', 'brochure', 'installation_guide', 'certification')),
+
+    -- Metadata
+    dimensions      JSONB,   -- {width, height} for images; {pages} for PDF
+    metadata        JSONB DEFAULT '{}'::jsonb,
+
+    -- Versioning
+    version         INTEGER DEFAULT 1,
+    is_latest       BOOLEAN DEFAULT TRUE,
+
+    -- Status
+    status          VARCHAR(20) DEFAULT 'active'
+                    CHECK (status IN ('active', 'processing', 'failed', 'archived')),
+    processing_info JSONB,   -- conversion status for CAD files etc.
+
+    uploaded_by     UUID REFERENCES users(id),
+    created_at      TIMESTAMPTZ DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ DEFAULT NOW(),
+    is_deleted      BOOLEAN DEFAULT FALSE
+);
+
+CREATE INDEX idx_prodfiles_tenant ON product_files(tenant_id);
+CREATE INDEX idx_prodfiles_product ON product_files(product_id);
+CREATE INDEX idx_prodfiles_type ON product_files(file_type);
+CREATE INDEX idx_prodfiles_category ON product_files(category);
+
+COMMENT ON TABLE product_files IS '产品文件 - 支持图片/PDF/CAD/3D模型上传和版本管理';
+
+-- ============================================================
+-- C4. Pricing Rules (tenant-scoped)
+-- ============================================================
+CREATE TABLE pricing (
+    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id       UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    product_id      UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+
+    -- Price identity
+    pricing_name    VARCHAR(100),
+    pricing_type    VARCHAR(30) DEFAULT 'standard'
+                    CHECK (pricing_type IN ('standard', 'promotional', 'partner', 'volume', 'custom')),
+
+    -- Base pricing
+    base_price      DECIMAL(12,2) NOT NULL,
+    price_unit      VARCHAR(20) DEFAULT 'per_sqm'
+                    CHECK (price_unit IN ('per_sqm', 'per_unit', 'per_set', 'per_linear_m')),
+    currency        VARCHAR(3) DEFAULT 'CNY',
+
+    -- Area constraints
+    min_area        DECIMAL(10,2),
+    max_area        DECIMAL(10,2),
+
+    -- Tiered pricing rules
+    area_tiers      JSONB DEFAULT '[]'::jsonb,
+    /*
+    area_tiers example:
+    [
+        {"min_sqm": 0,  "max_sqm": 15, "multiplier": 1.2, "label": "小面积"},
+        {"min_sqm": 15, "max_sqm": 25, "multiplier": 1.0, "label": "标准"},
+        {"min_sqm": 25, "max_sqm": 999, "multiplier": 0.9, "label": "大面积优惠"}
+    ]
+    */
+
+    -- Option add-ons pricing
+    option_prices   JSONB DEFAULT '{}'::jsonb,
+    /*
+    option_prices example:
+    {
+        "premium_glass":    {"price": 200, "unit": "per_sqm", "label": "高级玻璃"},
+        "smart_shading":    {"price": 500, "unit": "per_sqm", "label": "智能遮阳"},
+        "heating_system":   {"price": 800, "unit": "per_unit", "label": "加热系统"},
+        "led_lighting":     {"price": 150, "unit": "per_linear_m", "label": "LED灯带"}
+    }
+    */
+
+    -- Discount rules
+    discount_rules  JSONB DEFAULT '{}'::jsonb,
+    /*
+    discount_rules example:
+    {
+        "early_bird":       {"percent": 5, "valid_until": "2026-06-01"},
+        "repeat_customer":  {"percent": 3},
+        "partner_discount": {"percent": 10, "partner_types": ["distributor"]}
+    }
+    */
+
+    -- Validity
+    effective_from  DATE NOT NULL,
+    effective_to    DATE,
+    is_active       BOOLEAN DEFAULT TRUE,
+
+    -- Audit
+    created_by      UUID REFERENCES users(id),
+    created_at      TIMESTAMPTZ DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_pricing_tenant ON pricing(tenant_id);
+CREATE INDEX idx_pricing_product ON pricing(tenant_id, product_id);
+CREATE INDEX idx_pricing_active ON pricing(tenant_id, is_active, effective_from);
+CREATE INDEX idx_pricing_type ON pricing(pricing_type);
+
+COMMENT ON TABLE pricing IS '产品定价规则 - 支持分层定价/选项加价/折扣规则';
+
+-- ============================================================
+-- C5. Cost Components (tenant-scoped)
+--     Used by Pricing & Cost Controller Agent for cost breakdown
+-- ============================================================
+CREATE TABLE cost_components (
+    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id       UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    product_id      UUID REFERENCES products(id) ON DELETE CASCADE,
+
+    -- Component identity
+    component_name  VARCHAR(100) NOT NULL,
+    component_type  VARCHAR(30) NOT NULL
+                    CHECK (component_type IN ('material', 'labor', 'shipping', 'installation', 'permit', 'overhead', 'warranty', 'tax', 'other')),
+
+    -- Cost
+    unit_cost       DECIMAL(12,2) NOT NULL,
+    cost_unit       VARCHAR(20) DEFAULT 'per_sqm'
+                    CHECK (cost_unit IN ('per_sqm', 'per_unit', 'per_set', 'per_hour', 'per_trip', 'fixed')),
+    currency        VARCHAR(3) DEFAULT 'CNY',
+
+    -- Multiplier rules
+    quantity_formula JSONB,
+    /*
+    quantity_formula example:
+    {
+        "type": "area_based",        -- area_based | fixed | dimension_based
+        "factor": 1.1,               -- 10% waste allowance
+        "min_quantity": 1
+    }
+    */
+
+    -- Cost variability
+    is_variable     BOOLEAN DEFAULT TRUE,
+    margin_percent  DECIMAL(5,2) DEFAULT 0,
+
+    -- Vendor info
+    supplier_name   VARCHAR(200),
+    supplier_sku    VARCHAR(100),
+    lead_time_days  INTEGER,
+
+    -- Validity
+    effective_from  DATE NOT NULL DEFAULT CURRENT_DATE,
+    effective_to    DATE,
+    is_active       BOOLEAN DEFAULT TRUE,
+
+    created_at      TIMESTAMPTZ DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ DEFAULT NOW(),
+
+    UNIQUE(tenant_id, product_id, component_name)
+);
+
+CREATE INDEX idx_costcomp_tenant ON cost_components(tenant_id);
+CREATE INDEX idx_costcomp_product ON cost_components(tenant_id, product_id);
+CREATE INDEX idx_costcomp_type ON cost_components(component_type);
+
+COMMENT ON TABLE cost_components IS '成本构成 - 用于Pricing Agent成本分析和利润计算';
+
+-- ============================================================
+-- SECTION D: DESIGN & PROJECT MANAGEMENT
+-- ============================================================
+
+-- ============================================================
+-- D1. Projects (tenant-scoped)
 -- ============================================================
 CREATE TABLE projects (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id       UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
 
-    -- 项目信息
-    project_number VARCHAR(50) UNIQUE,
-    title VARCHAR(200) NOT NULL,
-    description TEXT,
-    status VARCHAR(20) DEFAULT 'draft' CHECK (status IN ('draft', 'pending', 'in_progress', 'on_hold', 'completed', 'cancelled')),
+    project_number  VARCHAR(50),
+    title           VARCHAR(200) NOT NULL,
+    description     TEXT,
+    status          VARCHAR(20) DEFAULT 'draft'
+                    CHECK (status IN ('draft', 'pending', 'in_progress', 'on_hold', 'completed', 'cancelled')),
 
-    -- 项目类型
-    project_type VARCHAR(50),  -- sunroom, pavilion, shutter
-    project_subtype VARCHAR(50),  -- residential, commercial, pool, etc.
+    -- Type
+    project_type    VARCHAR(50),
+    project_subtype VARCHAR(50),
 
-    -- 客户信息
-    client_name VARCHAR(100),
-    client_email VARCHAR(100),
-    client_phone VARCHAR(20),
-    client_address TEXT,
+    -- Client link
+    customer_id     UUID REFERENCES customers(id),
+    client_name     VARCHAR(100),
+    client_email    VARCHAR(100),
+    client_phone    VARCHAR(20),
+    client_address  TEXT,
 
-    -- 项目详情
-    budget_range VARCHAR(50),
+    -- Details
+    budget_range    VARCHAR(50),
     preferred_timeline VARCHAR(50),
-    square_meters DECIMAL(10, 2),
+    square_meters   DECIMAL(10,2),
 
-    -- 附件
-    attachments JSONB DEFAULT '[]'::jsonb,
+    -- Attachments
+    attachments     JSONB DEFAULT '[]'::jsonb,
 
-    -- 分配
-    assigned_to UUID REFERENCES users(id),
-    created_by UUID NOT NULL REFERENCES users(id),
+    -- Assignment
+    assigned_to     UUID REFERENCES users(id),
+    created_by      UUID NOT NULL REFERENCES users(id),
 
-    -- 时间戳
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW(),
-    completed_at TIMESTAMPTZ
+    created_at      TIMESTAMPTZ DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ DEFAULT NOW(),
+    completed_at    TIMESTAMPTZ,
+    is_deleted      BOOLEAN DEFAULT FALSE,
+
+    UNIQUE(tenant_id, project_number)
 );
 
-CREATE INDEX idx_projects_tenant_id ON projects(tenant_id);
-CREATE INDEX idx_projects_status ON projects(status);
-CREATE INDEX idx_projects_assigned_to ON projects(assigned_to);
-CREATE INDEX idx_projects_created_by ON projects(created_by);
-CREATE INDEX idx_projects_project_type ON projects(project_type);
+CREATE INDEX idx_projects_tenant ON projects(tenant_id);
+CREATE INDEX idx_projects_status ON projects(tenant_id, status);
+CREATE INDEX idx_projects_customer ON projects(customer_id);
+CREATE INDEX idx_projects_assigned ON projects(assigned_to);
+CREATE INDEX idx_projects_type ON projects(project_type);
 
--- 项目编号生成函数
+-- Project number generation
 CREATE OR REPLACE FUNCTION generate_project_number()
 RETURNS TRIGGER AS $$
 BEGIN
-    NEW.project_number = 'PRJ-' || TO_CHAR(NOW(), 'YYYYMMDD') || '-' || SUBSTRING(MD5(NEW.id::text), 1, 6);
+    IF NEW.project_number IS NULL THEN
+        NEW.project_number = 'PRJ-' || TO_CHAR(NOW(), 'YYYYMMDD') || '-' || SUBSTRING(MD5(NEW.id::text), 1, 6);
+    END IF;
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -217,64 +673,226 @@ CREATE TRIGGER set_project_number
     FOR EACH ROW
     EXECUTE FUNCTION generate_project_number();
 
+COMMENT ON TABLE projects IS '项目表 - 租户隔离，关联客户';
+
 -- ============================================================
--- 6. 业务数据表 - 订单 (Orders)
+-- D2. Designs (tenant-scoped)
 -- ============================================================
-CREATE TABLE orders (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
-    project_id UUID REFERENCES projects(id),
+CREATE TABLE designs (
+    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id       UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    customer_id     UUID NOT NULL REFERENCES customers(id),
+    project_id      UUID REFERENCES projects(id),
+    product_id      UUID REFERENCES products(id),
 
-    order_number VARCHAR(50) UNIQUE,
+    -- Identity
+    design_number   VARCHAR(50),
+    name            VARCHAR(200),
+    version         INTEGER DEFAULT 1,
 
-    -- 订单状态
-    status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'confirmed', 'in_production', 'quality_check', 'shipped', 'delivered', 'installed', 'completed', 'cancelled')),
+    -- Dimensions (mm)
+    width           DECIMAL(10,2),
+    depth           DECIMAL(10,2),
+    height          DECIMAL(10,2),
+    area            DECIMAL(10,2),
 
-    -- 金额信息
-    total_amount DECIMAL(12, 2),
-    currency VARCHAR(3) DEFAULT 'CNY',
+    -- Configuration options
+    options         JSONB DEFAULT '{}'::jsonb,
+    /*
+    {
+        "frame_color": "white",
+        "glass_type": "low_e",
+        "shading": true,
+        "heating": false,
+        "lighting": true
+    }
+    */
 
-    -- 付款阶段
-    deposit_amount DECIMAL(12, 2),
-    deposit_paid BOOLEAN DEFAULT FALSE,
-    deposit_paid_at TIMESTAMPTZ,
+    -- Design documents
+    documents       JSONB DEFAULT '{}'::jsonb,
+    /*
+    {
+        "floor_plan": "url",
+        "renderings": ["url1", "url2"],
+        "structural_drawing": "url",
+        "installation_guide": "url"
+    }
+    */
 
-    second_payment_amount DECIMAL(12, 2),
-    second_payment_paid BOOLEAN DEFAULT FALSE,
-    second_payment_paid_at TIMESTAMPTZ,
+    -- AI rendering
+    ai_prompt       TEXT,
+    ai_renders      JSONB DEFAULT '[]'::jsonb,
+    ai_model_version VARCHAR(50),
 
-    final_payment_amount DECIMAL(12, 2),
-    final_payment_paid BOOLEAN DEFAULT FALSE,
-    final_payment_paid_at TIMESTAMPTZ,
+    -- Quotation
+    quoted_price    DECIMAL(12,2),
+    price_breakdown JSONB,
+    /*
+    {
+        "material_cost": 15000,
+        "labor_cost": 5000,
+        "shipping_cost": 2000,
+        "installation_cost": 3000,
+        "margin": 6000,
+        "total": 31000
+    }
+    */
 
-    -- 生产信息
-    production_started_at TIMESTAMPTZ,
-    production_completed_at TIMESTAMPTZ,
+    -- Status workflow
+    status          VARCHAR(30) DEFAULT 'draft'
+                    CHECK (status IN ('draft', 'submitted', 'reviewing', 'approved', 'rejected', 'revised', 'archived')),
+    submitted_at    TIMESTAMPTZ,
+    reviewed_by     UUID REFERENCES users(id),
+    reviewed_at     TIMESTAMPTZ,
+    review_notes    TEXT,
 
-    -- 物流信息
-    shipped_at TIMESTAMPTZ,
-    tracking_number VARCHAR(100),
-    delivered_at TIMESTAMPTZ,
+    -- Compliance check (by Compliance Agent)
+    compliance_status VARCHAR(20) DEFAULT 'unchecked'
+                    CHECK (compliance_status IN ('unchecked', 'checking', 'passed', 'failed', 'warning')),
+    compliance_notes JSONB,
 
-    -- 安装信息
-    installed_at TIMESTAMPTZ,
-    installation_notes TEXT,
+    -- Audit
+    created_by      UUID REFERENCES users(id),
+    created_at      TIMESTAMPTZ DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ DEFAULT NOW(),
+    is_deleted      BOOLEAN DEFAULT FALSE,
 
-    created_by UUID NOT NULL REFERENCES users(id),
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
+    UNIQUE(tenant_id, design_number)
 );
 
-CREATE INDEX idx_orders_tenant_id ON orders(tenant_id);
-CREATE INDEX idx_orders_project_id ON orders(project_id);
-CREATE INDEX idx_orders_status ON orders(status);
-CREATE INDEX idx_orders_created_by ON orders(created_by);
+CREATE INDEX idx_designs_tenant ON designs(tenant_id);
+CREATE INDEX idx_designs_customer ON designs(customer_id);
+CREATE INDEX idx_designs_project ON designs(project_id);
+CREATE INDEX idx_designs_status ON designs(tenant_id, status);
+CREATE INDEX idx_designs_number ON designs(design_number);
 
--- 订单编号生成函数
+-- Design number generation
+CREATE OR REPLACE FUNCTION generate_design_number()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.design_number IS NULL THEN
+        NEW.design_number = 'DSN-' || TO_CHAR(NOW(), 'YYYYMMDD') || '-' || SUBSTRING(MD5(NEW.id::text), 1, 6);
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER set_design_number
+    BEFORE INSERT ON designs
+    FOR EACH ROW
+    EXECUTE FUNCTION generate_design_number();
+
+COMMENT ON TABLE designs IS '设计方案 - 关联客户/项目/产品，含AI渲染和合规检查';
+
+-- ============================================================
+-- SECTION E: ORDERS & PAYMENTS
+-- ============================================================
+
+-- ============================================================
+-- E1. Orders (tenant-scoped)
+-- ============================================================
+CREATE TABLE orders (
+    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id       UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    customer_id     UUID NOT NULL REFERENCES customers(id),
+    project_id      UUID REFERENCES projects(id),
+    design_id       UUID REFERENCES designs(id),
+
+    -- Identity
+    order_number    VARCHAR(50),
+
+    -- Financials
+    subtotal        DECIMAL(12,2) NOT NULL,
+    discount_amount DECIMAL(12,2) DEFAULT 0,
+    discount_reason TEXT,
+    tax_amount      DECIMAL(12,2) DEFAULT 0,
+    shipping_fee    DECIMAL(10,2) DEFAULT 0,
+    total           DECIMAL(12,2) NOT NULL,
+    currency        VARCHAR(3) DEFAULT 'CNY',
+
+    -- Payment plan (3-phase)
+    payment_plan    JSONB DEFAULT '{}'::jsonb,
+    /*
+    {
+        "deposit":  {"percent": 30, "amount": 9300, "due_date": "2026-02-01", "status": "paid"},
+        "second":   {"percent": 40, "amount": 12400, "due_date": "2026-03-01", "status": "pending"},
+        "final":    {"percent": 30, "amount": 9300, "due_date": "2026-04-01", "status": "pending"}
+    }
+    */
+
+    -- Shipping
+    shipping_address JSONB,
+    shipping_method VARCHAR(50),
+    tracking_number VARCHAR(100),
+
+    -- Installation
+    installation_address JSONB,
+    installation_date DATE,
+    installation_notes TEXT,
+    installation_team VARCHAR(100),
+
+    -- Contract
+    contract_number VARCHAR(50),
+    contract_url    VARCHAR(500),
+    contract_signed_at TIMESTAMPTZ,
+
+    -- Status workflow
+    status          VARCHAR(30) DEFAULT 'pending'
+                    CHECK (status IN (
+                        'pending', 'confirmed', 'deposit_paid',
+                        'in_production', 'quality_check',
+                        'shipped', 'delivered',
+                        'installing', 'installed',
+                        'completed', 'cancelled', 'refunding', 'refunded'
+                    )),
+
+    -- Timeline milestones
+    confirmed_at            TIMESTAMPTZ,
+    deposit_paid_at         TIMESTAMPTZ,
+    production_started_at   TIMESTAMPTZ,
+    production_completed_at TIMESTAMPTZ,
+    quality_checked_at      TIMESTAMPTZ,
+    shipped_at              TIMESTAMPTZ,
+    delivered_at            TIMESTAMPTZ,
+    installed_at            TIMESTAMPTZ,
+    completed_at            TIMESTAMPTZ,
+    cancelled_at            TIMESTAMPTZ,
+    cancel_reason           TEXT,
+
+    -- Assignment
+    sales_rep_id    UUID REFERENCES users(id),
+    partner_id      UUID REFERENCES partners(id),
+    commission_rate DECIMAL(5,2),
+
+    -- Notes
+    internal_notes  TEXT,
+    customer_notes  TEXT,
+
+    -- Audit
+    created_by      UUID NOT NULL REFERENCES users(id),
+    created_at      TIMESTAMPTZ DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ DEFAULT NOW(),
+    is_deleted      BOOLEAN DEFAULT FALSE,
+
+    UNIQUE(tenant_id, order_number)
+);
+
+CREATE INDEX idx_orders_tenant ON orders(tenant_id);
+CREATE INDEX idx_orders_customer ON orders(tenant_id, customer_id);
+CREATE INDEX idx_orders_project ON orders(project_id);
+CREATE INDEX idx_orders_status ON orders(tenant_id, status);
+CREATE INDEX idx_orders_number ON orders(order_number);
+CREATE INDEX idx_orders_sales ON orders(sales_rep_id);
+CREATE INDEX idx_orders_partner ON orders(partner_id);
+CREATE INDEX idx_orders_created ON orders(tenant_id, created_at);
+
+-- Order number generation
 CREATE OR REPLACE FUNCTION generate_order_number()
 RETURNS TRIGGER AS $$
 BEGIN
-    NEW.order_number = 'ORD-' || TO_CHAR(NOW(), 'YYYYMMDD') || '-' || SUBSTRING(MD5(NEW.id::text), 1, 6);
+    IF NEW.order_number IS NULL THEN
+        NEW.order_number = 'ORD-' || TO_CHAR(NOW(), 'YYYYMMDD') || '-' || SUBSTRING(MD5(NEW.id::text), 1, 6);
+    END IF;
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -284,19 +902,206 @@ CREATE TRIGGER set_order_number
     FOR EACH ROW
     EXECUTE FUNCTION generate_order_number();
 
+COMMENT ON TABLE orders IS '订单主表 - 租户隔离，含3阶段付款和完整状态流';
+
 -- ============================================================
--- 7. 行级安全策略 (RLS)
+-- E2. Order Items (tenant-scoped)
+-- ============================================================
+CREATE TABLE order_items (
+    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id       UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    order_id        UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+    product_id      UUID NOT NULL REFERENCES products(id),
+
+    -- Snapshot (frozen at order time)
+    product_snapshot JSONB NOT NULL,
+    /*
+    {
+        "sku": "SR-R-001",
+        "name": "可伸缩阳光房 A系列",
+        "specs": {...},
+        "base_price": 1500
+    }
+    */
+
+    -- Quantity & pricing
+    quantity        INTEGER DEFAULT 1 CHECK (quantity > 0),
+    unit_price      DECIMAL(12,2) NOT NULL,
+    subtotal        DECIMAL(12,2) NOT NULL,
+
+    -- Customisation
+    customization   JSONB DEFAULT '{}'::jsonb,
+    dimensions      JSONB,   -- {width_mm, depth_mm, height_mm, area_sqm}
+
+    -- Notes
+    notes           TEXT,
+
+    created_at      TIMESTAMPTZ DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_orderitems_tenant ON order_items(tenant_id);
+CREATE INDEX idx_orderitems_order ON order_items(order_id);
+CREATE INDEX idx_orderitems_product ON order_items(product_id);
+
+COMMENT ON TABLE order_items IS '订单明细 - 含产品快照，防止价格变更影响历史订单';
+
+-- ============================================================
+-- E3. Payments (tenant-scoped)
+-- ============================================================
+CREATE TABLE payments (
+    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id       UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    order_id        UUID NOT NULL REFERENCES orders(id),
+    customer_id     UUID NOT NULL REFERENCES customers(id),
+
+    -- Identity
+    payment_number  VARCHAR(50),
+
+    -- Payment info
+    payment_type    VARCHAR(30) NOT NULL
+                    CHECK (payment_type IN ('deposit', 'second_payment', 'final_payment', 'full_payment', 'refund', 'adjustment')),
+    amount          DECIMAL(12,2) NOT NULL,
+    currency        VARCHAR(3) DEFAULT 'CNY',
+
+    -- Method
+    payment_method  VARCHAR(30)
+                    CHECK (payment_method IN ('alipay', 'wechat_pay', 'bank_transfer', 'credit_card', 'cash', 'other')),
+    transaction_id  VARCHAR(100),
+    payment_gateway VARCHAR(50),
+    gateway_response JSONB,
+
+    -- Status
+    status          VARCHAR(20) DEFAULT 'pending'
+                    CHECK (status IN ('pending', 'processing', 'completed', 'failed', 'refunded', 'cancelled')),
+    due_date        DATE,
+    paid_at         TIMESTAMPTZ,
+
+    -- Refund
+    refund_amount   DECIMAL(12,2),
+    refund_reason   TEXT,
+    refunded_at     TIMESTAMPTZ,
+
+    -- Invoice
+    invoice_requested BOOLEAN DEFAULT FALSE,
+    invoice_info    JSONB,
+    invoice_url     VARCHAR(500),
+
+    -- Notes
+    notes           TEXT,
+
+    -- Audit
+    created_by      UUID REFERENCES users(id),
+    created_at      TIMESTAMPTZ DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ DEFAULT NOW(),
+
+    UNIQUE(tenant_id, payment_number)
+);
+
+CREATE INDEX idx_payments_tenant ON payments(tenant_id);
+CREATE INDEX idx_payments_order ON payments(order_id);
+CREATE INDEX idx_payments_customer ON payments(customer_id);
+CREATE INDEX idx_payments_status ON payments(tenant_id, status);
+CREATE INDEX idx_payments_number ON payments(payment_number);
+
+-- Payment number generation
+CREATE OR REPLACE FUNCTION generate_payment_number()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.payment_number IS NULL THEN
+        NEW.payment_number = 'PAY-' || TO_CHAR(NOW(), 'YYYYMMDD') || '-' || SUBSTRING(MD5(NEW.id::text), 1, 6);
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER set_payment_number
+    BEFORE INSERT ON payments
+    FOR EACH ROW
+    EXECUTE FUNCTION generate_payment_number();
+
+COMMENT ON TABLE payments IS '支付记录 - 支持多阶段付款和退款';
+
+-- ============================================================
+-- SECTION F: DOCUMENT MANAGEMENT
 -- ============================================================
 
--- 启用 RLS
+-- ============================================================
+-- F1. Documents (tenant-scoped, polymorphic)
+-- ============================================================
+CREATE TABLE documents (
+    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id       UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+
+    -- Polymorphic relation
+    entity_type     VARCHAR(50) NOT NULL
+                    CHECK (entity_type IN ('customer', 'design', 'order', 'product', 'project', 'partner')),
+    entity_id       UUID NOT NULL,
+
+    -- Document info
+    doc_type        VARCHAR(50) NOT NULL
+                    CHECK (doc_type IN (
+                        'floor_plan', 'rendering', 'structural_drawing',
+                        'installation_guide', 'contract', 'invoice',
+                        'site_photo', 'completion_photo', 'certificate',
+                        'brochure', 'quotation', 'other'
+                    )),
+    name            VARCHAR(200) NOT NULL,
+    description     TEXT,
+
+    -- File
+    file_url        TEXT NOT NULL,
+    file_type       VARCHAR(20),
+    file_size_bytes BIGINT,
+
+    -- Versioning
+    version         INTEGER DEFAULT 1,
+    is_latest       BOOLEAN DEFAULT TRUE,
+
+    -- Status
+    status          VARCHAR(20) DEFAULT 'active'
+                    CHECK (status IN ('active', 'archived', 'deleted')),
+
+    -- Audit
+    uploaded_by     UUID REFERENCES users(id),
+    created_at      TIMESTAMPTZ DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ DEFAULT NOW(),
+    is_deleted      BOOLEAN DEFAULT FALSE
+);
+
+CREATE INDEX idx_docs_tenant ON documents(tenant_id);
+CREATE INDEX idx_docs_entity ON documents(entity_type, entity_id);
+CREATE INDEX idx_docs_type ON documents(doc_type);
+
+COMMENT ON TABLE documents IS '通用文档管理 - 多态关联到各业务实体';
+
+-- ============================================================
+-- SECTION G: ROW LEVEL SECURITY (RLS)
+-- ============================================================
+
+-- Enable RLS on all tables
 ALTER TABLE tenants ENABLE ROW LEVEL SECURITY;
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE system_configs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE partners ENABLE ROW LEVEL SECURITY;
+ALTER TABLE customers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE product_categories ENABLE ROW LEVEL SECURITY;
+ALTER TABLE products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE product_files ENABLE ROW LEVEL SECURITY;
+ALTER TABLE pricing ENABLE ROW LEVEL SECURITY;
+ALTER TABLE cost_components ENABLE ROW LEVEL SECURITY;
 ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
+ALTER TABLE designs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
+ALTER TABLE order_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE documents ENABLE ROW LEVEL SECURITY;
 
--- 创建应用当前租户函数
+-- --------------------------------------------------------
+-- Helper functions
+-- --------------------------------------------------------
 CREATE OR REPLACE FUNCTION get_current_tenant_id()
 RETURNS UUID AS $$
 BEGIN
@@ -306,7 +1111,6 @@ EXCEPTION
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- 创建检查是否为超管函数
 CREATE OR REPLACE FUNCTION is_super_admin()
 RETURNS BOOLEAN AS $$
 BEGIN
@@ -316,61 +1120,90 @@ EXCEPTION
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Users 表 RLS 策略
-CREATE POLICY tenant_users_isolation ON users
-    FOR ALL
-    USING (
-        tenant_id = get_current_tenant_id()
-        OR is_super_admin()
-    );
+-- --------------------------------------------------------
+-- RLS Policies (tenant isolation + super_admin bypass)
+-- --------------------------------------------------------
 
--- Projects 表 RLS 策略
-CREATE POLICY tenant_projects_isolation ON projects
-    FOR ALL
-    USING (
-        tenant_id = get_current_tenant_id()
-        OR is_super_admin()
-    );
-
--- Orders 表 RLS 策略
-CREATE POLICY tenant_orders_isolation ON orders
-    FOR ALL
-    USING (
-        tenant_id = get_current_tenant_id()
-        OR is_super_admin()
-    );
-
--- Sessions 表 RLS 策略
-CREATE POLICY tenant_sessions_isolation ON user_sessions
-    FOR ALL
-    USING (
-        tenant_id = get_current_tenant_id()
-        OR is_super_admin()
-    );
-
--- Audit Logs 表 RLS 策略
-CREATE POLICY tenant_audit_logs_isolation ON audit_logs
-    FOR ALL
-    USING (
-        tenant_id = get_current_tenant_id()
-        OR is_super_admin()
-    );
-
--- Tenants 表策略 (仅超管可管理，租户只能看自己的)
-CREATE POLICY tenant_tenants_view ON tenants
-    FOR SELECT
-    USING (
-        id = get_current_tenant_id()
-        OR is_super_admin()
-    );
-
-CREATE POLICY tenant_tenants_manage ON tenants
-    FOR ALL
+-- Tenants: tenant sees own, super_admin sees all
+CREATE POLICY tenant_self_view ON tenants FOR SELECT
+    USING (id = get_current_tenant_id() OR is_super_admin());
+CREATE POLICY tenant_manage ON tenants FOR ALL
     USING (is_super_admin());
 
+-- Generic macro: all business tables follow same pattern
+-- Users
+CREATE POLICY rls_users ON users FOR ALL
+    USING (tenant_id = get_current_tenant_id() OR is_super_admin());
+
+-- Sessions
+CREATE POLICY rls_sessions ON user_sessions FOR ALL
+    USING (tenant_id = get_current_tenant_id() OR is_super_admin());
+
+-- Audit logs
+CREATE POLICY rls_audit ON audit_logs FOR ALL
+    USING (tenant_id = get_current_tenant_id() OR is_super_admin());
+
+-- System configs
+CREATE POLICY rls_sysconfig ON system_configs FOR ALL
+    USING (tenant_id = get_current_tenant_id() OR is_super_admin());
+
+-- Partners
+CREATE POLICY rls_partners ON partners FOR ALL
+    USING (tenant_id = get_current_tenant_id() OR is_super_admin());
+
+-- Customers
+CREATE POLICY rls_customers ON customers FOR ALL
+    USING (tenant_id = get_current_tenant_id() OR is_super_admin());
+
+-- Product categories
+CREATE POLICY rls_prodcat ON product_categories FOR ALL
+    USING (tenant_id = get_current_tenant_id() OR is_super_admin());
+
+-- Products
+CREATE POLICY rls_products ON products FOR ALL
+    USING (tenant_id = get_current_tenant_id() OR is_super_admin());
+
+-- Product files
+CREATE POLICY rls_prodfiles ON product_files FOR ALL
+    USING (tenant_id = get_current_tenant_id() OR is_super_admin());
+
+-- Pricing
+CREATE POLICY rls_pricing ON pricing FOR ALL
+    USING (tenant_id = get_current_tenant_id() OR is_super_admin());
+
+-- Cost components
+CREATE POLICY rls_costcomp ON cost_components FOR ALL
+    USING (tenant_id = get_current_tenant_id() OR is_super_admin());
+
+-- Projects
+CREATE POLICY rls_projects ON projects FOR ALL
+    USING (tenant_id = get_current_tenant_id() OR is_super_admin());
+
+-- Designs
+CREATE POLICY rls_designs ON designs FOR ALL
+    USING (tenant_id = get_current_tenant_id() OR is_super_admin());
+
+-- Orders
+CREATE POLICY rls_orders ON orders FOR ALL
+    USING (tenant_id = get_current_tenant_id() OR is_super_admin());
+
+-- Order items
+CREATE POLICY rls_orderitems ON order_items FOR ALL
+    USING (tenant_id = get_current_tenant_id() OR is_super_admin());
+
+-- Payments
+CREATE POLICY rls_payments ON payments FOR ALL
+    USING (tenant_id = get_current_tenant_id() OR is_super_admin());
+
+-- Documents
+CREATE POLICY rls_documents ON documents FOR ALL
+    USING (tenant_id = get_current_tenant_id() OR is_super_admin());
+
 -- ============================================================
--- 8. 自动更新时间戳函数
+-- SECTION H: TRIGGERS & FUNCTIONS
 -- ============================================================
+
+-- Auto-update updated_at
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -379,93 +1212,214 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- 为所有表添加自动更新时间戳触发器
-CREATE TRIGGER update_tenants_updated_at BEFORE UPDATE ON tenants
+-- Apply to all tables with updated_at
+CREATE TRIGGER trg_tenants_updated BEFORE UPDATE ON tenants
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER trg_users_updated BEFORE UPDATE ON users
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER trg_sysconfig_updated BEFORE UPDATE ON system_configs
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER trg_partners_updated BEFORE UPDATE ON partners
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER trg_customers_updated BEFORE UPDATE ON customers
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER trg_prodcat_updated BEFORE UPDATE ON product_categories
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER trg_products_updated BEFORE UPDATE ON products
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER trg_prodfiles_updated BEFORE UPDATE ON product_files
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER trg_pricing_updated BEFORE UPDATE ON pricing
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER trg_costcomp_updated BEFORE UPDATE ON cost_components
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER trg_projects_updated BEFORE UPDATE ON projects
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER trg_designs_updated BEFORE UPDATE ON designs
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER trg_orders_updated BEFORE UPDATE ON orders
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER trg_orderitems_updated BEFORE UPDATE ON order_items
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER trg_payments_updated BEFORE UPDATE ON payments
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER trg_docs_updated BEFORE UPDATE ON documents
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
-CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TRIGGER update_projects_updated_at BEFORE UPDATE ON projects
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TRIGGER update_orders_updated_at BEFORE UPDATE ON orders
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
--- ============================================================
--- 9. 审计日志触发器
--- ============================================================
+-- --------------------------------------------------------
+-- Audit trigger function
+-- --------------------------------------------------------
 CREATE OR REPLACE FUNCTION log_audit()
 RETURNS TRIGGER AS $$
 DECLARE
-    v_old_values JSONB;
-    v_new_values JSONB;
+    v_old JSONB;
+    v_new JSONB;
 BEGIN
     IF TG_OP = 'DELETE' THEN
-        v_old_values = to_jsonb(OLD);
-        v_new_values = NULL;
+        v_old = to_jsonb(OLD); v_new = NULL;
     ELSIF TG_OP = 'INSERT' THEN
-        v_old_values = NULL;
-        v_new_values = to_jsonb(NEW);
+        v_old = NULL; v_new = to_jsonb(NEW);
     ELSE
-        v_old_values = to_jsonb(OLD);
-        v_new_values = to_jsonb(NEW);
+        v_old = to_jsonb(OLD); v_new = to_jsonb(NEW);
     END IF;
 
-    INSERT INTO audit_logs (
-        tenant_id,
-        user_id,
-        action,
-        resource_type,
-        resource_id,
-        old_values,
-        new_values,
-        ip_address,
-        user_agent
-    ) VALUES (
+    INSERT INTO audit_logs (tenant_id, user_id, action, resource_type, resource_id, old_values, new_values, ip_address, user_agent)
+    VALUES (
         get_current_tenant_id(),
         NULLIF(current_setting('app.current_user_id', TRUE), '')::UUID,
         TG_OP,
         TG_TABLE_NAME,
         COALESCE(NEW.id, OLD.id),
-        v_old_values,
-        v_new_values,
+        v_old, v_new,
         NULLIF(current_setting('app.client_ip', TRUE), '')::INET,
         current_setting('app.user_agent', TRUE)
     );
 
-    IF TG_OP = 'DELETE' THEN
-        RETURN OLD;
-    ELSE
-        RETURN NEW;
-    END IF;
+    RETURN CASE WHEN TG_OP = 'DELETE' THEN OLD ELSE NEW END;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- 为业务表添加审计触发器
+-- Apply audit triggers to key business tables
+CREATE TRIGGER audit_customers AFTER INSERT OR UPDATE OR DELETE ON customers
+    FOR EACH ROW EXECUTE FUNCTION log_audit();
+CREATE TRIGGER audit_products AFTER INSERT OR UPDATE OR DELETE ON products
+    FOR EACH ROW EXECUTE FUNCTION log_audit();
+CREATE TRIGGER audit_pricing AFTER INSERT OR UPDATE OR DELETE ON pricing
+    FOR EACH ROW EXECUTE FUNCTION log_audit();
 CREATE TRIGGER audit_projects AFTER INSERT OR UPDATE OR DELETE ON projects
     FOR EACH ROW EXECUTE FUNCTION log_audit();
-
+CREATE TRIGGER audit_designs AFTER INSERT OR UPDATE OR DELETE ON designs
+    FOR EACH ROW EXECUTE FUNCTION log_audit();
 CREATE TRIGGER audit_orders AFTER INSERT OR UPDATE OR DELETE ON orders
     FOR EACH ROW EXECUTE FUNCTION log_audit();
-
+CREATE TRIGGER audit_payments AFTER INSERT OR UPDATE OR DELETE ON payments
+    FOR EACH ROW EXECUTE FUNCTION log_audit();
 CREATE TRIGGER audit_users AFTER INSERT OR UPDATE OR DELETE ON users
     FOR EACH ROW EXECUTE FUNCTION log_audit();
 
 -- ============================================================
--- 10. 初始数据
+-- SECTION I: VIEWS
 -- ============================================================
 
--- 创建默认租户
-INSERT INTO tenants (slug, name, plan, contact_email, max_projects, max_users)
-VALUES ('default', '默认租户', 'basic', 'admin@example.com', 10, 5);
+-- Tenant dashboard stats
+CREATE VIEW v_tenant_stats AS
+SELECT
+    t.id AS tenant_id,
+    t.name,
+    t.slug,
+    t.plan,
+    t.status,
+    COUNT(DISTINCT u.id) FILTER (WHERE u.status = 'active' AND u.is_deleted = FALSE) AS active_users,
+    COUNT(DISTINCT c.id) FILTER (WHERE c.is_deleted = FALSE) AS total_customers,
+    COUNT(DISTINCT p.id) FILTER (WHERE p.is_deleted = FALSE) AS total_products,
+    COUNT(DISTINCT prj.id) FILTER (WHERE prj.is_deleted = FALSE) AS total_projects,
+    COUNT(DISTINCT o.id) FILTER (WHERE o.is_deleted = FALSE) AS total_orders,
+    COALESCE(SUM(o.total) FILTER (WHERE o.status NOT IN ('cancelled', 'refunded') AND o.is_deleted = FALSE), 0) AS total_revenue
+FROM tenants t
+LEFT JOIN users u ON u.tenant_id = t.id
+LEFT JOIN customers c ON c.tenant_id = t.id
+LEFT JOIN products p ON p.tenant_id = t.id
+LEFT JOIN projects prj ON prj.tenant_id = t.id
+LEFT JOIN orders o ON o.tenant_id = t.id
+GROUP BY t.id, t.name, t.slug, t.plan, t.status;
 
--- 创建超管用户 (密码: admin123，实际使用 bcrypt hash)
+-- Order summary view (tenant-aware)
+CREATE VIEW v_order_summary AS
+SELECT
+    o.id,
+    o.tenant_id,
+    o.order_number,
+    o.status,
+    o.total,
+    o.currency,
+    o.created_at,
+    o.confirmed_at,
+    o.shipped_at,
+    o.completed_at,
+    c.name AS customer_name,
+    c.phone AS customer_phone,
+    c.email AS customer_email,
+    pt.company_name AS partner_name,
+    u.first_name || ' ' || u.last_name AS sales_rep_name,
+    COALESCE(SUM(pay.amount) FILTER (WHERE pay.status = 'completed'), 0) AS paid_amount,
+    o.total - COALESCE(SUM(pay.amount) FILTER (WHERE pay.status = 'completed'), 0) AS balance
+FROM orders o
+JOIN customers c ON o.customer_id = c.id
+LEFT JOIN partners pt ON o.partner_id = pt.id
+LEFT JOIN users u ON o.sales_rep_id = u.id
+LEFT JOIN payments pay ON o.id = pay.order_id
+WHERE o.is_deleted = FALSE
+GROUP BY o.id, c.name, c.phone, c.email, pt.company_name, u.first_name, u.last_name;
+
+-- Customer stats view (tenant-aware)
+CREATE VIEW v_customer_stats AS
+SELECT
+    c.id,
+    c.tenant_id,
+    c.customer_number,
+    c.name,
+    c.phone,
+    c.email,
+    c.customer_type,
+    c.source,
+    c.status,
+    c.satisfaction_score,
+    COUNT(DISTINCT o.id) AS order_count,
+    COALESCE(SUM(o.total) FILTER (WHERE o.status NOT IN ('cancelled', 'refunded')), 0) AS total_spent,
+    COUNT(DISTINCT prj.id) AS project_count,
+    MAX(o.created_at) AS last_order_at,
+    c.created_at AS registered_at
+FROM customers c
+LEFT JOIN orders o ON c.id = o.customer_id AND o.is_deleted = FALSE
+LEFT JOIN projects prj ON c.id = prj.customer_id AND prj.is_deleted = FALSE
+WHERE c.is_deleted = FALSE
+GROUP BY c.id;
+
+-- Product pricing view (tenant-aware)
+CREATE VIEW v_product_pricing AS
+SELECT
+    p.id AS product_id,
+    p.tenant_id,
+    p.sku,
+    p.name,
+    p.status AS product_status,
+    pc.name AS category_name,
+    pr.id AS pricing_id,
+    pr.pricing_name,
+    pr.pricing_type,
+    pr.base_price,
+    pr.price_unit,
+    pr.currency,
+    pr.area_tiers,
+    pr.option_prices,
+    pr.discount_rules,
+    pr.effective_from,
+    pr.effective_to,
+    pr.is_active AS pricing_active,
+    COUNT(pf.id) AS file_count
+FROM products p
+LEFT JOIN product_categories pc ON p.category_id = pc.id
+LEFT JOIN pricing pr ON p.id = pr.product_id AND pr.is_active = TRUE
+    AND pr.effective_from <= CURRENT_DATE
+    AND (pr.effective_to IS NULL OR pr.effective_to >= CURRENT_DATE)
+LEFT JOIN product_files pf ON p.id = pf.product_id AND pf.is_deleted = FALSE
+WHERE p.is_deleted = FALSE
+GROUP BY p.id, pc.name, pr.id;
+
+-- ============================================================
+-- SECTION J: SEED DATA
+-- ============================================================
+
+-- Default tenant
+INSERT INTO tenants (slug, name, plan, contact_email, max_projects, max_users, max_products)
+VALUES ('default', '默认租户', 'basic', 'admin@nestopia.com', 10, 5, 100);
+
+-- Super admin user
 INSERT INTO users (tenant_id, email, password_hash, first_name, last_name, role, status, email_verified)
 VALUES (
     (SELECT id FROM tenants WHERE slug = 'default'),
     'admin@nestopia.com',
-    '$2b$10$YourBcryptHashHere',  -- 请替换为实际的 bcrypt hash
+    crypt('admin123', gen_salt('bf')),
     '超级',
     '管理员',
     'super_admin',
@@ -473,42 +1427,21 @@ VALUES (
     TRUE
 );
 
--- ============================================================
--- 11. 常用查询视图
--- ============================================================
+-- Default product categories
+INSERT INTO product_categories (tenant_id, name, name_en, sort_order) VALUES
+((SELECT id FROM tenants WHERE slug = 'default'), '可伸缩阳光房', 'Retractable Sunroom', 1),
+((SELECT id FROM tenants WHERE slug = 'default'), '固定阳光房', 'Fixed Sunroom', 2),
+((SELECT id FROM tenants WHERE slug = 'default'), '智能阳光房', 'Smart Sunroom', 3),
+((SELECT id FROM tenants WHERE slug = 'default'), '配件与附件', 'Accessories', 4);
 
--- 租户统计视图
-CREATE VIEW tenant_stats AS
-SELECT
-    t.id,
-    t.name,
-    t.slug,
-    t.plan,
-    t.status,
-    COUNT(DISTINCT u.id) AS user_count,
-    COUNT(DISTINCT p.id) AS project_count,
-    COUNT(DISTINCT o.id) AS order_count,
-    COALESCE(SUM(o.total_amount), 0) AS total_revenue
-FROM tenants t
-LEFT JOIN users u ON u.tenant_id = t.id AND u.status = 'active'
-LEFT JOIN projects p ON p.tenant_id = t.id
-LEFT JOIN orders o ON o.tenant_id = t.id AND o.status NOT IN ('cancelled')
-GROUP BY t.id, t.name, t.slug, t.plan, t.status;
-
--- 项目完整信息视图
-CREATE VIEW project_details AS
-SELECT
-    p.*,
-    t.name AS tenant_name,
-    creator.first_name AS creator_first_name,
-    creator.last_name AS creator_last_name,
-    assignee.first_name AS assignee_first_name,
-    assignee.last_name AS assignee_last_name
-FROM projects p
-JOIN tenants t ON t.id = p.tenant_id
-LEFT JOIN users creator ON creator.id = p.created_by
-LEFT JOIN users assignee ON assignee.id = p.assigned_to;
+-- Default system configs
+INSERT INTO system_configs (tenant_id, config_key, config_value, description, is_public) VALUES
+((SELECT id FROM tenants WHERE slug = 'default'), 'company_info', '{"name": "Nestopia", "phone": "400-888-9999", "email": "info@nestopia.com"}'::jsonb, '公司信息', TRUE),
+((SELECT id FROM tenants WHERE slug = 'default'), 'payment_methods', '["alipay", "wechat_pay", "bank_transfer"]'::jsonb, '支持的支付方式', TRUE),
+((SELECT id FROM tenants WHERE slug = 'default'), 'order_status_flow', '["pending","confirmed","deposit_paid","in_production","quality_check","shipped","delivered","installing","installed","completed"]'::jsonb, '订单状态流程', FALSE),
+((SELECT id FROM tenants WHERE slug = 'default'), 'supported_file_types', '{"products": ["image","pdf","dwg","dxf","skp","obj","step","stl"], "max_size_mb": 50}'::jsonb, '支持的上传文件类型', TRUE);
 
 -- ============================================================
--- 完成
+-- END OF SCHEMA
+-- Version: 2.0.0 | Tables: 18 | Views: 4 | RLS Policies: 18
 -- ============================================================
