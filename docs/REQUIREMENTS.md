@@ -406,16 +406,77 @@ Nestopia AI Agents are **not traditional SaaS tools**. They are autonomous "supe
 - **Scene B: Permit Application** — AI generates complete application package → partner one-click print/e-submit → track approval progress → auto-remind for supplementary materials
 - **Scene C: Risk Alert** — AI monitors new local environmental restriction → auto-alert "3 active projects may be affected" → provide adjustment suggestions
 
-#### 7.4.3 Fine-tune Training Strategy
+#### 7.4.3 US Regional Compliance Requirements (Critical for Market Entry)
+
+The Compliance Manager must handle the complex US regulatory landscape: **Federal baseline + State amendments + Local ordinances + HOA restrictions**.
+
+**Federal Level Requirements:**
+- **IRC 2024** (International Residential Code): Baseline for residential structures
+- **IBC** (International Building Code): For commercial/multi-family applications
+- **IECC** (International Energy Conservation Code): Energy efficiency requirements
+- **ADA** (Americans with Disabilities Act): Accessibility requirements for public-facing structures
+
+**State-Specific Requirements:**
+
+| State | Key Requirements | Unique Challenges |
+|-------|------------------|-------------------|
+| **California** | CBC (California Building Code), Title 24 Energy, Seismic Design Cat D/E | ADU laws (SB9/SB897), strict energy codes, earthquake requirements |
+| **Florida** | FBC (Florida Building Code), Wind load 115-180+ mph | Hurricane zones, Large Missile Impact Test for glass, flood zones (FEMA) |
+| **Texas** | Varies by city (Houston no zoning, Dallas/Austin have zoning) | Clay soil expansion, tornado risk, flood zones (Harvey aftermath) |
+| **Arizona** | CBC-based, extreme heat requirements | Thermal performance, dust/wind considerations |
+| **Nevada** | CBC-based, desert climate | Similar to AZ, Las Vegas specific requirements |
+
+**California Detailed Requirements:**
+- **ADU (SB9/SB897)**: Max 800-1200 sq ft, height 16-25 ft, setbacks 4-5 ft side, 60-day approval mandate
+- **Title 24**: Glass U-value ≤0.30, Solar Reflectance Index requirements
+- **Seismic**: Engineer-stamped structural design required for most structures
+- **Permit costs**: $1,000-$5,000 depending on city and scope
+
+**Florida Detailed Requirements:**
+- **Wind zones**: Inland 115-130 mph, Coast 140-180 mph, High-velocity >180 mph
+- **AAMA 2100 Categories**: Category I-IV with increasing structural requirements
+- **NOA (Notice of Acceptance)**: Product certification required for state approval
+- **Flood zones**: BFE (Base Flood Elevation) compliance required in most areas
+
+**HOA (Homeowners Association) Requirements:**
+- **Coverage**: ~60% of US single-family homes under HOA jurisdiction
+- **Approval process**: Architectural Review Committee, 30-60 day timeline
+- **Common restrictions**: Style coordination, color palettes, material specifications, height limits, view/sunlight obstruction
+- **Key insight**: HOA approval is SEPARATE from government permits and can be more restrictive
+
+**Permit Types by Product:**
+
+| Product | Building Permit | Electrical | Plumbing | HOA | Special |
+|---------|----------------|------------|----------|-----|---------|
+| Sunroom | ✅ Required | ⚠️ If outlets/lighting | ⚠️ If plumbing | ⚠️ Usually | Seismic (CA), Wind (FL) |
+| ADU | ✅ Required | ✅ Required | ✅ Required | ⚠️ CA limited | Full residential code |
+| Pavilion (<200 sq ft) | ⚠️ Varies | ⚠️ If electrical | ❌ No | ⚠️ Usually | Setback compliance |
+| Pavilion (>200 sq ft) | ✅ Required | ⚠️ If electrical | ❌ No | ⚠️ Usually | Structural engineering |
+| Windproof Blinds | ❌ Usually no | ❌ No | ❌ No | ⚠️ Often | Wind rating (FL) |
+
+#### 7.4.4 Fine-tune Training Strategy
 
 | Data Source | Target Volume | Purpose |
 |------------|---------------|---------|
-| Building regulations | All 50 US states + major counties | HOA rules, environmental limits, building codes |
-| Permit process database | Per government office | Application workflows, material checklists, approval timelines |
-| Case law library | Real project compliance/violation cases | Train risk identification capability |
-| Dynamic update feeds | Government website monitoring | Keep regulation database real-time |
+| Building regulations | All 50 US states + major counties | IRC, state amendments, local ordinances |
+| HOA databases | Top 1000 HOAs by population | Architectural guidelines, approval processes |
+| Permit process database | Per government office | Application workflows, material checklists, timelines, fees |
+| Case law library | Real project compliance/violation cases | Train risk identification, common pitfalls |
+| Dynamic update feeds | Government website monitoring | Real-time regulation changes, new legislation |
+| FEMA flood maps | Nationwide coverage | Flood zone classification, BFE data |
+| Seismic zone maps | USGS data | Seismic design categories by location |
 
-**Competitive Moat**: Only Nestopia builds an "outdoor living industry-specific" regulatory knowledge graph — generic legal AI cannot understand industry-specific scenarios.
+**Data Sources:**
+- **Public**: ICC (IRC/IBC), State government websites, Municode, FEMA
+- **Commercial**: UpCodes API, BuildingAdvisor, HOA data services
+- **User-contributed**: Partner-uploaded HOA guidelines, local knowledge
+- **AI-extracted**: Automated parsing of PDF regulations
+
+**Competitive Moat**: Only Nestopia builds an "outdoor living industry-specific" regulatory knowledge graph with **US regional depth** — generic legal AI cannot understand:
+- Industry-specific scenarios (sunroom vs ADU vs pavilion)
+- Local nuances (CA Title 24 vs FL wind zones vs TX clay soil)
+- HOA aesthetic requirements alongside building codes
+- The interplay of federal/state/local/HOA四层审批
 
 ---
 
@@ -669,6 +730,8 @@ public/images/
 |----------|----------|-------------|
 | REQUIREMENTS.md | `docs/` | This document — project specification (v4.0.0) |
 | AI_Agents_Strategy_Whitepaper.docx | `docs/` | Four AI Agent differentiation strategy, fine-tune roadmap, co-working model |
+| AI_Designer_Feasibility_Study.docx | `docs/` | Market feasibility, use cases, UX design, technical feasibility, partnership strategy |
+| US_Regional_Compliance_Requirements.docx | `docs/` | US federal/state/local building codes, HOA requirements, Compliance Manager specs |
 | Gap_Analysis_Report.docx | `docs/` | Third-party proposal vs current implementation analysis |
 | 文案方案分析报告.docx | `docs/` | Chinese market proposal analysis |
 | business-workflow.md | `docs/` | 15-step business workflow documentation |
@@ -693,7 +756,7 @@ public/images/
 | 2.2.0 | 2026-03-03 | AI platform architecture doc | websterzhangsh |
 | 2.3.0 | 2026-03-09 | Multi-tenant architecture, business workflow docs | websterzhangsh |
 | 3.0.0 | 2026-03-11 | Reverse-engineered requirements reflecting actual implementation | websterzhangsh |
-| 4.0.0 | 2026-03-11 | Major update: Integrated AI Agent strategy (OUTPUT > HOW philosophy, 4 agent detailed specs, fine-tune roadmap, co-working model, digital measurement partnership, platform IP strategy); Added Phase I+/IV to roadmap; Moved to docs/ folder; Added documentation artifacts inventory | websterzhangsh |
+| 4.0.0 | 2026-03-11 | Major update: Integrated AI Agent strategy (OUTPUT > HOW philosophy, 4 agent detailed specs, fine-tune roadmap, co-working model, digital measurement partnership, platform IP strategy); Added comprehensive US regional compliance requirements (IRC, CA/FL/TX specifics, HOA coverage); Added Phase I+/IV to roadmap; Moved to docs/ folder; Added documentation artifacts inventory | websterzhangsh |
 
 ---
 
