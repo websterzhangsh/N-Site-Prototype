@@ -10,12 +10,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/min.css">
     <style>
         :root {
-            --primary: #1a1a1a;
+            --primary: #222222;
+            --primary-dark: #111111;
             --primary-hover: #333333;
-            --accent: #2563eb;
-            --bg-light: #f8f9fa;
-            --bg-dark: #0f0f0f;
+            --secondary: #888888;
+            --accent: #555555;
+            --bg-light: #f5f5f5;
+            --bg-dark: #1a1a1a;
+            --light-text: #1a1a1a;
+            --light-accent: #666666;
             --success: #10b981;
+            --gradient-primary: linear-gradient(135deg, #222222 0%, #444444 100%);
+            --shadow-elegant: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -280,7 +286,7 @@
         .benefit-icon {
             width: 64px;
             height: 64px;
-            background: linear-gradient(135deg, var(--accent), #3b82f6);
+            background: var(--gradient-primary);
             border-radius: 16px;
             display: flex;
             align-items: center;
@@ -514,7 +520,7 @@
             outline: none;
             border-color: var(--accent);
             background: white;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
         }
 
         .form-textarea {
@@ -551,7 +557,7 @@
 
         .plan-card.selected {
             border-color: var(--accent);
-            background: rgba(37, 99, 235, 0.05);
+            background: rgba(0, 0, 0, 0.02);
         }
 
         .plan-badge {
