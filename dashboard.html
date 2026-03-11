@@ -1762,6 +1762,455 @@
                     </div>
                 </div>
 
+                <!-- ===== Compliance Manager Page ===== -->
+                <div class="page-content" id="page-compliance-agent">
+                    <!-- Compliance Manager Header -->
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900">Compliance Manager</h2>
+                            <p class="text-gray-500 mt-1">Automated regulatory compliance & permit guidance</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <button class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition flex items-center gap-2">
+                                <i class="fas fa-history"></i>
+                                <span>History</span>
+                            </button>
+                            <button class="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition flex items-center gap-2">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>New Check</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Main Grid: Input + Output -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                        <!-- ========== INPUT SECTION ========== -->
+                        <div class="space-y-6">
+                            <!-- Step 1: Select Project -->
+                            <div class="bg-white rounded-xl border border-gray-200 p-6">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="w-8 h-8 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold text-sm">1</div>
+                                    <h3 class="font-semibold text-gray-900">Select Project</h3>
+                                </div>
+                                <select id="complianceProjectSelect" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700">
+                                    <option value="">-- Select a project --</option>
+                                    <option value="proj-001" selected>Sunshine Villa - Mr. Johnson (Sunroom)</option>
+                                    <option value="proj-002">Riverside Estate - Ms. Chen (ADU)</option>
+                                    <option value="proj-003">Oak Garden - Mr. Williams (Pavilion)</option>
+                                    <option value="proj-004">Lakeside Retreat - Mrs. Davis (Zip Blinds)</option>
+                                </select>
+
+                                <!-- Project Location Info -->
+                                <div id="complianceProjectInfo" class="mt-4 p-4 bg-gray-50 rounded-lg">
+                                    <div class="grid grid-cols-2 gap-4 text-sm">
+                                        <div>
+                                            <span class="text-gray-500">Address:</span>
+                                            <span class="font-medium text-gray-900 ml-2">123 Sunshine Ave, LA</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-gray-500">Product:</span>
+                                            <span class="font-medium text-gray-900 ml-2">Sunroom</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-gray-500">Jurisdiction:</span>
+                                            <span class="font-medium text-gray-900 ml-2">Los Angeles County</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-gray-500">HOA:</span>
+                                            <span class="font-medium text-amber-600 ml-2">Sunrise HOA</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 2: Project Specifications -->
+                            <div class="bg-white rounded-xl border border-gray-200 p-6">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="w-8 h-8 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold text-sm">2</div>
+                                    <h3 class="font-semibold text-gray-900">Project Specifications</h3>
+                                </div>
+
+                                <div class="space-y-4">
+                                    <!-- Structure Details -->
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="text-sm font-medium text-gray-700 mb-1 block">Structure Size</label>
+                                            <select id="structureSize" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-700">
+                                                <option value="small">Small (&lt;200 sq ft)</option>
+                                                <option value="medium" selected>Medium (200-400 sq ft)</option>
+                                                <option value="large">Large (&gt;400 sq ft)</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="text-sm font-medium text-gray-700 mb-1 block">Height (ft)</label>
+                                            <input type="number" id="structureHeight" value="12" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                                        </div>
+                                    </div>
+
+                                    <!-- Distance to Property Lines -->
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-700 mb-2 block">Distance to Property Lines (ft)</label>
+                                        <div class="grid grid-cols-4 gap-2">
+                                            <div>
+                                                <label class="text-xs text-gray-500">Front</label>
+                                                <input type="number" id="setbackFront" value="25" class="w-full px-2 py-1.5 border border-gray-300 rounded text-sm">
+                                            </div>
+                                            <div>
+                                                <label class="text-xs text-gray-500">Back</label>
+                                                <input type="number" id="setbackBack" value="15" class="w-full px-2 py-1.5 border border-gray-300 rounded text-sm">
+                                            </div>
+                                            <div>
+                                                <label class="text-xs text-gray-500">Left Side</label>
+                                                <input type="number" id="setbackLeft" value="8" class="w-full px-2 py-1.5 border border-gray-300 rounded text-sm">
+                                            </div>
+                                            <div>
+                                                <label class="text-xs text-gray-500">Right Side</label>
+                                                <input type="number" id="setbackRight" value="10" class="w-full px-2 py-1.5 border border-gray-300 rounded text-sm">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Foundation Type -->
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-700 mb-2 block">Foundation Type</label>
+                                        <div class="grid grid-cols-2 gap-2">
+                                            <div class="foundation-card selected cursor-pointer" data-foundation="concrete">
+                                                <div class="p-3 border-2 border-indigo-500 bg-indigo-50 rounded-lg">
+                                                    <div class="font-medium text-gray-900">Concrete Slab</div>
+                                                    <div class="text-xs text-gray-500">Standard foundation</div>
+                                                </div>
+                                            </div>
+                                            <div class="foundation-card cursor-pointer" data-foundation="pier">
+                                                <div class="p-3 border-2 border-gray-200 rounded-lg hover:border-gray-300">
+                                                    <div class="font-medium text-gray-900">Pier & Beam</div>
+                                                    <div class="text-xs text-gray-500">Elevated structure</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 3: Utilities & Connections -->
+                            <div class="bg-white rounded-xl border border-gray-200 p-6">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="w-8 h-8 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold text-sm">3</div>
+                                    <h3 class="font-semibold text-gray-900">Utilities & Connections</h3>
+                                </div>
+
+                                <div class="space-y-3">
+                                    <label class="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition">
+                                        <div class="flex items-center gap-3">
+                                            <input type="checkbox" id="utilElectrical" class="w-4 h-4 text-indigo-600 rounded" checked>
+                                            <span class="text-sm text-gray-700"><i class="fas fa-bolt text-yellow-500 mr-2"></i>Electrical Connection</span>
+                                        </div>
+                                        <span class="text-xs text-gray-500">Permit Required</span>
+                                    </label>
+                                    <label class="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition">
+                                        <div class="flex items-center gap-3">
+                                            <input type="checkbox" id="utilPlumbing" class="w-4 h-4 text-indigo-600 rounded">
+                                            <span class="text-sm text-gray-700"><i class="fas fa-tint text-blue-500 mr-2"></i>Plumbing Connection</span>
+                                        </div>
+                                        <span class="text-xs text-gray-500">Permit Required</span>
+                                    </label>
+                                    <label class="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition">
+                                        <div class="flex items-center gap-3">
+                                            <input type="checkbox" id="utilHVAC" class="w-4 h-4 text-indigo-600 rounded">
+                                            <span class="text-sm text-gray-700"><i class="fas fa-wind text-gray-500 mr-2"></i>HVAC System</span>
+                                        </div>
+                                        <span class="text-xs text-gray-500">May Require Permit</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Step 4: Special Considerations -->
+                            <div class="bg-white rounded-xl border border-gray-200 p-6">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="w-8 h-8 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold text-sm">4</div>
+                                    <h3 class="font-semibold text-gray-900">Special Considerations</h3>
+                                </div>
+
+                                <div class="space-y-3">
+                                    <label class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition">
+                                        <input type="checkbox" id="specialHistoric" class="w-4 h-4 text-indigo-600 rounded">
+                                        <span class="text-sm text-gray-700">Historic District Zone</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition">
+                                        <input type="checkbox" id="specialFlood" class="w-4 h-4 text-indigo-600 rounded">
+                                        <span class="text-sm text-gray-700">Flood Zone Area</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition">
+                                        <input type="checkbox" id="specialSeismic" class="w-4 h-4 text-indigo-600 rounded" checked>
+                                        <span class="text-sm text-gray-700">Seismic Zone (California)</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Check Compliance Button -->
+                            <button id="checkComplianceBtn" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-xl font-semibold text-lg hover:from-indigo-700 hover:to-indigo-800 transition shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-3">
+                                <i class="fas fa-shield-check"></i>
+                                <span>Check Compliance</span>
+                            </button>
+                        </div>
+
+                        <!-- ========== OUTPUT SECTION ========== -->
+                        <div class="space-y-6">
+                            <!-- Compliance Status Overview -->
+                            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                                <div class="p-4 border-b border-gray-200 bg-gradient-to-r from-indigo-50 to-purple-50">
+                                    <div class="flex items-center justify-between">
+                                        <h3 class="font-semibold text-gray-900">Compliance Status</h3>
+                                        <span id="complianceBadge" class="px-3 py-1 bg-amber-100 text-amber-700 text-sm font-medium rounded-full">
+                                            <i class="fas fa-exclamation-triangle mr-1"></i>Review Needed
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="p-5">
+                                    <!-- Progress Bar -->
+                                    <div class="mb-4">
+                                        <div class="flex justify-between text-sm mb-1">
+                                            <span class="text-gray-600">Overall Compliance</span>
+                                            <span class="font-medium text-gray-900">85%</span>
+                                        </div>
+                                        <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+                                            <div class="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full" style="width: 85%"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Quick Stats -->
+                                    <div class="grid grid-cols-4 gap-2 text-center">
+                                        <div class="p-2 bg-green-50 rounded-lg">
+                                            <div class="text-lg font-bold text-green-600">12</div>
+                                            <div class="text-xs text-gray-500">Passed</div>
+                                        </div>
+                                        <div class="p-2 bg-amber-50 rounded-lg">
+                                            <div class="text-lg font-bold text-amber-600">2</div>
+                                            <div class="text-xs text-gray-500">Warnings</div>
+                                        </div>
+                                        <div class="p-2 bg-red-50 rounded-lg">
+                                            <div class="text-lg font-bold text-red-600">0</div>
+                                            <div class="text-xs text-gray-500">Failed</div>
+                                        </div>
+                                        <div class="p-2 bg-blue-50 rounded-lg">
+                                            <div class="text-lg font-bold text-blue-600">3</div>
+                                            <div class="text-xs text-gray-500">Permits</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Regulatory Requirements by Level -->
+                            <div class="bg-white rounded-xl border border-gray-200 p-5">
+                                <h3 class="font-semibold text-gray-900 mb-4">Regulatory Requirements</h3>
+
+                                <!-- Federal Level -->
+                                <div class="mb-4">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded">Federal</span>
+                                        <span class="text-sm font-medium text-gray-700">IRC 2024 / IBC / IECC</span>
+                                    </div>
+                                    <div class="space-y-2 pl-2">
+                                        <div class="flex items-center gap-2 text-sm">
+                                            <i class="fas fa-check-circle text-green-500"></i>
+                                            <span class="text-gray-600">Egress requirements met (minimum 32" door)</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 text-sm">
+                                            <i class="fas fa-check-circle text-green-500"></i>
+                                            <span class="text-gray-600">Energy efficiency compliance (IECC 2024)</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 text-sm">
+                                            <i class="fas fa-check-circle text-green-500"></i>
+                                            <span class="text-gray-600">Structural load requirements satisfied</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- State Level -->
+                                <div class="mb-4">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs font-medium rounded">State</span>
+                                        <span class="text-sm font-medium text-gray-700">California CBC / Title 24</span>
+                                    </div>
+                                    <div class="space-y-2 pl-2">
+                                        <div class="flex items-center gap-2 text-sm">
+                                            <i class="fas fa-check-circle text-green-500"></i>
+                                            <span class="text-gray-600">Title 24 energy compliance required</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 text-sm">
+                                            <i class="fas fa-check-circle text-green-500"></i>
+                                            <span class="text-gray-600">Seismic design category D compliance</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 text-sm">
+                                            <i class="fas fa-exclamation-circle text-amber-500"></i>
+                                            <span class="text-gray-600">Fire sprinkler may be required (check local)</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Local Level -->
+                                <div class="mb-4">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded">Local</span>
+                                        <span class="text-sm font-medium text-gray-700">Los Angeles County</span>
+                                    </div>
+                                    <div class="space-y-2 pl-2">
+                                        <div class="flex items-center gap-2 text-sm">
+                                            <i class="fas fa-check-circle text-green-500"></i>
+                                            <span class="text-gray-600">Setback requirements: Front 20', Side 5', Rear 10'</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 text-sm">
+                                            <i class="fas fa-check-circle text-green-500"></i>
+                                            <span class="text-gray-600">Height limit: 15' max (proposed: 12')</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 text-sm">
+                                            <i class="fas fa-exclamation-circle text-amber-500"></i>
+                                            <span class="text-gray-600">LA County permit processing: 3-4 weeks avg</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- HOA Level -->
+                                <div>
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-medium rounded">HOA</span>
+                                        <span class="text-sm font-medium text-gray-700">Sunrise HOA</span>
+                                    </div>
+                                    <div class="space-y-2 pl-2">
+                                        <div class="flex items-center gap-2 text-sm">
+                                            <i class="fas fa-info-circle text-blue-500"></i>
+                                            <span class="text-gray-600">HOA architectural review required</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 text-sm">
+                                            <i class="fas fa-info-circle text-blue-500"></i>
+                                            <span class="text-gray-600">Submit to: architecture@sunrisehoa.org</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Required Permits -->
+                            <div class="bg-white rounded-xl border border-gray-200 p-5">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="font-semibold text-gray-900">Required Permits</h3>
+                                    <span class="text-sm text-gray-500">3 permits needed</span>
+                                </div>
+
+                                <div class="space-y-3">
+                                    <!-- Building Permit -->
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                                <i class="fas fa-building text-blue-600"></i>
+                                            </div>
+                                            <div>
+                                                <div class="font-medium text-gray-900">Building Permit</div>
+                                                <div class="text-xs text-gray-500">Los Angeles DBS</div>
+                                            </div>
+                                        </div>
+                                        <span class="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">Required</span>
+                                    </div>
+
+                                    <!-- Electrical Permit -->
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
+                                                <i class="fas fa-bolt text-yellow-600"></i>
+                                            </div>
+                                            <div>
+                                                <div class="font-medium text-gray-900">Electrical Permit</div>
+                                                <div class="text-xs text-gray-500">Los Angeles DBS</div>
+                                            </div>
+                                        </div>
+                                        <span class="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">Required</span>
+                                    </div>
+
+                                    <!-- HOA Approval -->
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                                <i class="fas fa-home text-purple-600"></i>
+                                            </div>
+                                            <div>
+                                                <div class="font-medium text-gray-900">HOA Architectural Approval</div>
+                                                <div class="text-xs text-gray-500">Sunrise HOA</div>
+                                            </div>
+                                        </div>
+                                        <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">Pending</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Permit Timeline -->
+                            <div class="bg-white rounded-xl border border-gray-200 p-5">
+                                <h3 class="font-semibold text-gray-900 mb-4">Permit Timeline Estimate</h3>
+
+                                <div class="relative">
+                                    <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200"></div>
+
+                                    <div class="relative flex items-start gap-4 mb-4">
+                                        <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center z-10">
+                                            <i class="fas fa-check text-white text-xs"></i>
+                                        </div>
+                                        <div class="flex-1 pt-1">
+                                            <div class="font-medium text-gray-900">Submit Application</div>
+                                            <div class="text-xs text-gray-500">Day 1-2</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="relative flex items-start gap-4 mb-4">
+                                        <div class="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center z-10">
+                                            <span class="text-white text-xs font-bold">2</span>
+                                        </div>
+                                        <div class="flex-1 pt-1">
+                                            <div class="font-medium text-gray-900">Plan Review</div>
+                                            <div class="text-xs text-gray-500">2-3 weeks</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="relative flex items-start gap-4 mb-4">
+                                        <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center z-10">
+                                            <span class="text-white text-xs font-bold">3</span>
+                                        </div>
+                                        <div class="flex-1 pt-1">
+                                            <div class="font-medium text-gray-900">Corrections (if any)</div>
+                                            <div class="text-xs text-gray-500">1 week</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="relative flex items-start gap-4">
+                                        <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center z-10">
+                                            <span class="text-white text-xs font-bold">4</span>
+                                        </div>
+                                        <div class="flex-1 pt-1">
+                                            <div class="font-medium text-gray-900">Permit Issuance</div>
+                                            <div class="text-xs text-gray-500">Total: 3-5 weeks</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="grid grid-cols-2 gap-3">
+                                <button class="py-3 bg-white border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition flex items-center justify-center gap-2">
+                                    <i class="fas fa-download"></i>
+                                    <span>Export Report</span>
+                                </button>
+                                <button class="py-3 bg-white border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition flex items-center justify-center gap-2">
+                                    <i class="fas fa-file-alt"></i>
+                                    <span>Permit Forms</span>
+                                </button>
+                            </div>
+
+                            <button id="startPermitProcessBtn" class="w-full py-4 bg-gray-900 text-white rounded-xl font-semibold hover:bg-gray-800 transition flex items-center justify-center gap-3">
+                                <i class="fas fa-clipboard-check"></i>
+                                <span>Start Permit Process</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </main>
     </div>
@@ -2523,12 +2972,276 @@
             }
         }
 
+        // ===== Compliance Manager Page Functions =====
+        const complianceState = {
+            selectedProject: 'proj-001',
+            structureSize: 'medium',
+            height: 12,
+            setbacks: { front: 25, back: 15, left: 8, right: 10 },
+            foundation: 'concrete',
+            utilities: { electrical: true, plumbing: false, hvac: false },
+            special: { historic: false, flood: false, seismic: true }
+        };
+
+        // Compliance rules database (dummy)
+        const complianceRules = {
+            'proj-001': {
+                jurisdiction: 'Los Angeles County',
+                hoa: 'Sunrise HOA',
+                hoaEmail: 'architecture@sunrisehoa.org',
+                setbacks: { front: 20, side: 5, rear: 10 },
+                heightLimit: 15,
+                seismicZone: true,
+                floodZone: false,
+                historicDistrict: false
+            },
+            'proj-002': {
+                jurisdiction: 'Santa Clara County',
+                hoa: 'Riverside Community HOA',
+                hoaEmail: 'arch@riversidehoa.org',
+                setbacks: { front: 25, side: 8, rear: 15 },
+                heightLimit: 16,
+                seismicZone: true,
+                floodZone: false,
+                historicDistrict: false
+            },
+            'proj-003': {
+                jurisdiction: 'San Diego County',
+                hoa: null,
+                hoaEmail: null,
+                setbacks: { front: 20, side: 5, rear: 10 },
+                heightLimit: 14,
+                seismicZone: true,
+                floodZone: false,
+                historicDistrict: false
+            },
+            'proj-004': {
+                jurisdiction: 'Sacramento County',
+                hoa: 'Lakeside Property Association',
+                hoaEmail: 'hoa@lakesideassoc.org',
+                setbacks: { front: 25, side: 6, rear: 12 },
+                heightLimit: 15,
+                seismicZone: false,
+                floodZone: true,
+                historicDistrict: false
+            }
+        };
+
+        // Initialize Compliance Manager page
+        function initCompliancePage() {
+            // Project selector
+            const projectSelect = document.getElementById('complianceProjectSelect');
+            if (projectSelect) {
+                projectSelect.addEventListener('change', function() {
+                    complianceState.selectedProject = this.value;
+                    updateComplianceProjectInfo(this.value);
+                });
+            }
+
+            // Structure size
+            const sizeSelect = document.getElementById('structureSize');
+            if (sizeSelect) {
+                sizeSelect.addEventListener('change', function() {
+                    complianceState.structureSize = this.value;
+                });
+            }
+
+            // Height input
+            const heightInput = document.getElementById('structureHeight');
+            if (heightInput) {
+                heightInput.addEventListener('input', function() {
+                    complianceState.height = parseFloat(this.value) || 0;
+                });
+            }
+
+            // Setback inputs
+            ['setbackFront', 'setbackBack', 'setbackLeft', 'setbackRight'].forEach(id => {
+                const input = document.getElementById(id);
+                if (input) {
+                    input.addEventListener('input', function() {
+                        const key = id.replace('setback', '').toLowerCase();
+                        complianceState.setbacks[key] = parseFloat(this.value) || 0;
+                    });
+                }
+            });
+
+            // Foundation selection
+            document.querySelectorAll('.foundation-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    document.querySelectorAll('.foundation-card > div').forEach(c => {
+                        c.classList.remove('border-indigo-500', 'bg-indigo-50');
+                        c.classList.add('border-gray-200');
+                    });
+                    this.querySelector('div').classList.remove('border-gray-200');
+                    this.querySelector('div').classList.add('border-indigo-500', 'bg-indigo-50');
+                    complianceState.foundation = this.dataset.foundation;
+                });
+            });
+
+            // Utility checkboxes
+            ['utilElectrical', 'utilPlumbing', 'utilHVAC'].forEach(id => {
+                const checkbox = document.getElementById(id);
+                if (checkbox) {
+                    checkbox.addEventListener('change', function() {
+                        const key = id.replace('util', '').toLowerCase();
+                        complianceState.utilities[key] = this.checked;
+                    });
+                }
+            });
+
+            // Special consideration checkboxes
+            ['specialHistoric', 'specialFlood', 'specialSeismic'].forEach(id => {
+                const checkbox = document.getElementById(id);
+                if (checkbox) {
+                    checkbox.addEventListener('change', function() {
+                        const key = id.replace('special', '').toLowerCase();
+                        complianceState.special[key] = this.checked;
+                    });
+                }
+            });
+
+            // Check compliance button
+            const checkBtn = document.getElementById('checkComplianceBtn');
+            if (checkBtn) {
+                checkBtn.addEventListener('click', handleCheckCompliance);
+            }
+
+            // Start permit process button
+            const permitBtn = document.getElementById('startPermitProcessBtn');
+            if (permitBtn) {
+                permitBtn.addEventListener('click', () => {
+                    showToast('Permit process initiation will be implemented. This will start the permit application workflow.', 'info');
+                });
+            }
+        }
+
+        function updateComplianceProjectInfo(projectId) {
+            const project = dummyProjects[projectId];
+            const rules = complianceRules[projectId];
+            if (!project || !rules) return;
+
+            const infoContainer = document.getElementById('complianceProjectInfo');
+            if (infoContainer) {
+                const hoaText = rules.hoa ? rules.hoa : 'None';
+                const hoaClass = rules.hoa ? 'text-amber-600' : 'text-gray-900';
+
+                infoContainer.innerHTML = `
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <span class="text-gray-500">Address:</span>
+                            <span class="font-medium text-gray-900 ml-2">${project.address.split(',')[0]}</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-500">Product:</span>
+                            <span class="font-medium text-gray-900 ml-2">${project.type.charAt(0).toUpperCase() + project.type.slice(1)}</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-500">Jurisdiction:</span>
+                            <span class="font-medium text-gray-900 ml-2">${rules.jurisdiction}</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-500">HOA:</span>
+                            <span class="font-medium ${hoaClass} ml-2">${hoaText}</span>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function handleCheckCompliance() {
+            const btn = document.getElementById('checkComplianceBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Checking...';
+
+            // Simulate compliance check
+            setTimeout(() => {
+                const rules = complianceRules[complianceState.selectedProject];
+                let passed = 0;
+                let warnings = 0;
+                let failed = 0;
+                const issues = [];
+
+                // Check setbacks
+                if (complianceState.setbacks.front >= rules.setbacks.front) {
+                    passed++;
+                } else {
+                    failed++;
+                    issues.push(`Front setback must be at least ${rules.setbacks.front}'`);
+                }
+
+                if (complianceState.setbacks.back >= rules.setbacks.rear) {
+                    passed++;
+                } else {
+                    failed++;
+                    issues.push(`Rear setback must be at least ${rules.setbacks.rear}'`);
+                }
+
+                if (complianceState.setbacks.left >= rules.setbacks.side && complianceState.setbacks.right >= rules.setbacks.side) {
+                    passed++;
+                } else {
+                    failed++;
+                    issues.push(`Side setbacks must be at least ${rules.setbacks.side}'`);
+                }
+
+                // Check height
+                if (complianceState.height <= rules.heightLimit) {
+                    passed++;
+                } else {
+                    failed++;
+                    issues.push(`Height exceeds ${rules.heightLimit}' limit`);
+                }
+
+                // Check utilities
+                if (complianceState.utilities.electrical) {
+                    warnings++; // Electrical permit required
+                }
+
+                // Check special considerations
+                if (rules.hoa) {
+                    warnings++; // HOA approval needed
+                }
+
+                if (rules.seismicZone && complianceState.special.seismic) {
+                    passed++; // Seismic compliance acknowledged
+                }
+
+                // Calculate overall compliance
+                const total = passed + warnings + failed;
+                const compliancePercent = Math.round((passed / (total || 1)) * 100);
+
+                // Update badge
+                const badge = document.getElementById('complianceBadge');
+                if (badge) {
+                    if (failed > 0) {
+                        badge.className = 'px-3 py-1 bg-red-100 text-red-700 text-sm font-medium rounded-full';
+                        badge.innerHTML = '<i class="fas fa-times-circle mr-1"></i>Issues Found';
+                    } else if (warnings > 0) {
+                        badge.className = 'px-3 py-1 bg-amber-100 text-amber-700 text-sm font-medium rounded-full';
+                        badge.innerHTML = '<i class="fas fa-exclamation-triangle mr-1"></i>Review Needed';
+                    } else {
+                        badge.className = 'px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full';
+                        badge.innerHTML = '<i class="fas fa-check-circle mr-1"></i>Compliant';
+                    }
+                }
+
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-shield-check mr-2"></i>Check Compliance';
+
+                if (issues.length > 0) {
+                    showToast('Compliance issues found: ' + issues[0], 'error');
+                } else {
+                    showToast('Compliance check completed!', 'success');
+                }
+            }, 2000);
+        }
+
         // ===== Initialize =====
         document.addEventListener('DOMContentLoaded', function() {
             if (checkAuth()) {
                 loadDashboardData();
                 initAIDesignerPage();
                 initPricingAgentPage();
+                initCompliancePage();
             }
         });
     </script>
