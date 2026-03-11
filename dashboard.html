@@ -1377,6 +1377,391 @@
                     </div>
                 </div>
 
+                <!-- ===== Pricing & Cost Controller Page ===== -->
+                <div class="page-content" id="page-pricing-agent">
+                    <!-- Pricing Agent Header -->
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900">Pricing & Cost Controller</h2>
+                            <p class="text-gray-500 mt-1">Smart pricing with profit protection</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <button class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition flex items-center gap-2">
+                                <i class="fas fa-history"></i>
+                                <span>History</span>
+                            </button>
+                            <button class="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition flex items-center gap-2">
+                                <i class="fas fa-calculator"></i>
+                                <span>Quick Quote</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Main Grid: Input + Output -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                        <!-- ========== INPUT SECTION ========== -->
+                        <div class="space-y-6">
+                            <!-- Step 1: Select Project -->
+                            <div class="bg-white rounded-xl border border-gray-200 p-6">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="w-8 h-8 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center font-bold text-sm">1</div>
+                                    <h3 class="font-semibold text-gray-900">Select Project</h3>
+                                </div>
+                                <select id="pricingProjectSelect" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-gray-700">
+                                    <option value="">-- Select a project --</option>
+                                    <option value="proj-001" selected>Sunshine Villa - Mr. Johnson (Sunroom)</option>
+                                    <option value="proj-002">Riverside Estate - Ms. Chen (ADU)</option>
+                                    <option value="proj-003">Oak Garden - Mr. Williams (Pavilion)</option>
+                                    <option value="proj-004">Lakeside Retreat - Mrs. Davis (Zip Blinds)</option>
+                                </select>
+
+                                <!-- Project Budget Info -->
+                                <div id="pricingProjectInfo" class="mt-4 p-4 bg-gray-50 rounded-lg">
+                                    <div class="grid grid-cols-2 gap-4 text-sm">
+                                        <div>
+                                            <span class="text-gray-500">Client Budget:</span>
+                                            <span class="font-medium text-gray-900 ml-2">$15,000 - $25,000</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-gray-500">Product:</span>
+                                            <span class="font-medium text-gray-900 ml-2">Sunroom</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-gray-500">Yard Size:</span>
+                                            <span class="font-medium text-gray-900 ml-2">~400 sq ft</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-gray-500">Location:</span>
+                                            <span class="font-medium text-gray-900 ml-2">Los Angeles, CA</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 2: Product Configuration -->
+                            <div class="bg-white rounded-xl border border-gray-200 p-6">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="w-8 h-8 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center font-bold text-sm">2</div>
+                                    <h3 class="font-semibold text-gray-900">Product Configuration</h3>
+                                </div>
+
+                                <div class="space-y-4">
+                                    <!-- Size Input -->
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-700 mb-2 block">Dimensions</label>
+                                        <div class="grid grid-cols-3 gap-3">
+                                            <div>
+                                                <label class="text-xs text-gray-500">Width (ft)</label>
+                                                <input type="number" id="configWidth" value="14" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500">
+                                            </div>
+                                            <div>
+                                                <label class="text-xs text-gray-500">Depth (ft)</label>
+                                                <input type="number" id="configDepth" value="20" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500">
+                                            </div>
+                                            <div>
+                                                <label class="text-xs text-gray-500">Height (ft)</label>
+                                                <input type="number" id="configHeight" value="12" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500">
+                                            </div>
+                                        </div>
+                                        <div class="mt-2 text-sm text-gray-500">
+                                            <i class="fas fa-ruler-combined mr-1"></i>Total: <span id="totalSqft" class="font-medium text-gray-700">280 sq ft</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Material Selection -->
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-700 mb-2 block">Frame Material</label>
+                                        <div class="grid grid-cols-2 gap-2">
+                                            <div class="material-card selected cursor-pointer" data-material="aluminum">
+                                                <div class="p-3 border-2 border-emerald-500 bg-emerald-50 rounded-lg">
+                                                    <div class="font-medium text-gray-900">Aluminum</div>
+                                                    <div class="text-xs text-gray-500">Premium, durable</div>
+                                                </div>
+                                            </div>
+                                            <div class="material-card cursor-pointer" data-material="vinyl">
+                                                <div class="p-3 border-2 border-gray-200 rounded-lg hover:border-gray-300">
+                                                    <div class="font-medium text-gray-900">Vinyl</div>
+                                                    <div class="text-xs text-gray-500">Budget-friendly</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Glass Type -->
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-700 mb-2 block">Glass Type</label>
+                                        <select id="glassType" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 text-gray-700">
+                                            <option value="tempered" selected>Tempered Glass (Standard)</option>
+                                            <option value="low-e">Low-E Energy Efficient (+$800)</option>
+                                            <option value="tinted">Tinted Glass (+$500)</option>
+                                            <option value="double-paned">Double-paned Insulated (+$1,200)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 3: Additional Options -->
+                            <div class="bg-white rounded-xl border border-gray-200 p-6">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="w-8 h-8 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center font-bold text-sm">3</div>
+                                    <h3 class="font-semibold text-gray-900">Additional Options</h3>
+                                </div>
+
+                                <div class="space-y-3">
+                                    <label class="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition">
+                                        <div class="flex items-center gap-3">
+                                            <input type="checkbox" id="optCeilingFan" class="w-4 h-4 text-emerald-600 rounded">
+                                            <span class="text-sm text-gray-700">Ceiling Fan Installation</span>
+                                        </div>
+                                        <span class="text-sm font-medium text-gray-500">+$450</span>
+                                    </label>
+                                    <label class="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition">
+                                        <div class="flex items-center gap-3">
+                                            <input type="checkbox" id="optLighting" class="w-4 h-4 text-emerald-600 rounded">
+                                            <span class="text-sm text-gray-700">LED Lighting Package</span>
+                                        </div>
+                                        <span class="text-sm font-medium text-gray-500">+$680</span>
+                                    </label>
+                                    <label class="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition">
+                                        <div class="flex items-center gap-3">
+                                            <input type="checkbox" id="optElectrical" class="w-4 h-4 text-emerald-600 rounded" checked>
+                                            <span class="text-sm text-gray-700">Electrical Outlets (4)</span>
+                                        </div>
+                                        <span class="text-sm font-medium text-gray-500">+$320</span>
+                                    </label>
+                                    <label class="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition">
+                                        <div class="flex items-center gap-3">
+                                            <input type="checkbox" id="optPermit" class="w-4 h-4 text-emerald-600 rounded" checked>
+                                            <span class="text-sm text-gray-700">Permit Handling Service</span>
+                                        </div>
+                                        <span class="text-sm font-medium text-gray-500">+$750</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Step 4: Pricing Adjustments -->
+                            <div class="bg-white rounded-xl border border-gray-200 p-6">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="w-8 h-8 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center font-bold text-sm">4</div>
+                                    <h3 class="font-semibold text-gray-900">Pricing Adjustments</h3>
+                                </div>
+
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-700 mb-2 block">Discount (%)</label>
+                                        <div class="flex items-center gap-3">
+                                            <input type="range" id="discountSlider" min="0" max="20" value="5" class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                            <span id="discountValue" class="text-sm font-bold text-emerald-600 w-12 text-right">5%</span>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-700 mb-2 block">Urgency Surcharge</label>
+                                        <select id="urgencySurcharge" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 text-gray-700">
+                                            <option value="0">Standard Timeline (No surcharge)</option>
+                                            <option value="500">Express (+2 weeks) +$500</option>
+                                            <option value="1200">Rush (+1 week) +$1,200</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-700 mb-2 block">Notes</label>
+                                        <textarea id="pricingNotes" rows="2" placeholder="Special requirements, customer preferences..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Calculate Button -->
+                            <button id="calculatePricingBtn" class="w-full py-4 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-xl font-semibold text-lg hover:from-emerald-700 hover:to-emerald-800 transition shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-3">
+                                <i class="fas fa-calculator"></i>
+                                <span>Calculate Pricing</span>
+                            </button>
+                        </div>
+
+                        <!-- ========== OUTPUT SECTION ========== -->
+                        <div class="space-y-6">
+                            <!-- Cost Breakdown -->
+                            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                                <div class="p-4 border-b border-gray-200">
+                                    <div class="flex items-center justify-between">
+                                        <h3 class="font-semibold text-gray-900">Cost Breakdown</h3>
+                                        <span class="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-full">
+                                            <i class="fas fa-check-circle mr-1"></i>Calculated
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="p-5 space-y-3">
+                                    <!-- Materials -->
+                                    <div class="flex items-center justify-between py-2 border-b border-gray-100">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fas fa-box text-gray-400 w-5"></i>
+                                            <span class="text-sm text-gray-700">Materials</span>
+                                        </div>
+                                        <span class="font-medium text-gray-900">$8,450</span>
+                                    </div>
+
+                                    <!-- Labor -->
+                                    <div class="flex items-center justify-between py-2 border-b border-gray-100">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fas fa-hard-hat text-gray-400 w-5"></i>
+                                            <span class="text-sm text-gray-700">Labor</span>
+                                        </div>
+                                        <span class="font-medium text-gray-900">$4,200</span>
+                                    </div>
+
+                                    <!-- Equipment -->
+                                    <div class="flex items-center justify-between py-2 border-b border-gray-100">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fas fa-tools text-gray-400 w-5"></i>
+                                            <span class="text-sm text-gray-700">Equipment Rental</span>
+                                        </div>
+                                        <span class="font-medium text-gray-900">$850</span>
+                                    </div>
+
+                                    <!-- Permits -->
+                                    <div class="flex items-center justify-between py-2 border-b border-gray-100">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fas fa-file-alt text-gray-400 w-5"></i>
+                                            <span class="text-sm text-gray-700">Permits & Fees</span>
+                                        </div>
+                                        <span class="font-medium text-gray-900">$1,070</span>
+                                    </div>
+
+                                    <!-- Additional Options -->
+                                    <div class="flex items-center justify-between py-2 border-b border-gray-100">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fas fa-plus-circle text-gray-400 w-5"></i>
+                                            <span class="text-sm text-gray-700">Additional Options</span>
+                                        </div>
+                                        <span class="font-medium text-gray-900">$1,070</span>
+                                    </div>
+
+                                    <!-- Subtotal -->
+                                    <div class="flex items-center justify-between py-3 bg-gray-50 rounded-lg px-3 mt-2">
+                                        <span class="font-semibold text-gray-700">Total Cost</span>
+                                        <span class="font-bold text-lg text-gray-900">$15,640</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Profit Analysis -->
+                            <div class="bg-white rounded-xl border border-gray-200 p-5">
+                                <h3 class="font-semibold text-gray-900 mb-4">Profit Analysis</h3>
+
+                                <div class="grid grid-cols-3 gap-4 mb-4">
+                                    <div class="text-center p-3 bg-blue-50 rounded-lg">
+                                        <div class="text-2xl font-bold text-blue-600">$18.5K</div>
+                                        <div class="text-xs text-gray-500 mt-1">Suggested Price</div>
+                                    </div>
+                                    <div class="text-center p-3 bg-emerald-50 rounded-lg">
+                                        <div class="text-2xl font-bold text-emerald-600">$2,860</div>
+                                        <div class="text-xs text-gray-500 mt-1">Net Profit</div>
+                                    </div>
+                                    <div class="text-center p-3 bg-purple-50 rounded-lg">
+                                        <div class="text-2xl font-bold text-purple-600">18.3%</div>
+                                        <div class="text-xs text-gray-500 mt-1">Profit Margin</div>
+                                    </div>
+                                </div>
+
+                                <!-- Margin Indicator -->
+                                <div class="relative h-3 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="absolute left-0 top-0 h-full bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 w-full"></div>
+                                    <div id="marginIndicator" class="absolute top-0 h-full w-1 bg-gray-900 shadow-lg" style="left: 65%"></div>
+                                </div>
+                                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                    <span>Risk Zone (&lt;10%)</span>
+                                    <span>Healthy (15-25%)</span>
+                                    <span>Premium (&gt;25%)</span>
+                                </div>
+                            </div>
+
+                            <!-- Smart Quote Suggestions -->
+                            <div class="bg-white rounded-xl border border-gray-200 p-5">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="font-semibold text-gray-900">Smart Quote Suggestions</h3>
+                                    <span class="text-xs text-gray-500"><i class="fas fa-robot mr-1"></i>AI-powered</span>
+                                </div>
+
+                                <div class="space-y-3">
+                                    <!-- Conservative -->
+                                    <div class="quote-option p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-emerald-300 transition" data-quote="conservative">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="font-medium text-gray-900">Conservative</span>
+                                            <span class="text-lg font-bold text-gray-900">$17,200</span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-xs">
+                                            <span class="text-gray-500">10% margin • Fast approval likely</span>
+                                            <span class="text-emerald-600 font-medium">$1,560 profit</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Recommended -->
+                                    <div class="quote-option p-4 border-2 border-emerald-500 bg-emerald-50 rounded-xl cursor-pointer" data-quote="recommended">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <div class="flex items-center gap-2">
+                                                <span class="font-medium text-gray-900">Recommended</span>
+                                                <span class="px-2 py-0.5 bg-emerald-500 text-white text-xs rounded-full">Best Match</span>
+                                            </div>
+                                            <span class="text-lg font-bold text-emerald-600">$18,500</span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-xs">
+                                            <span class="text-gray-500">18% margin • Within budget range</span>
+                                            <span class="text-emerald-600 font-medium">$2,860 profit</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Premium -->
+                                    <div class="quote-option p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-emerald-300 transition" data-quote="premium">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="font-medium text-gray-900">Premium</span>
+                                            <span class="text-lg font-bold text-gray-900">$21,000</span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-xs">
+                                            <span class="text-gray-500">25% margin • High perceived value</span>
+                                            <span class="text-emerald-600 font-medium">$5,360 profit</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Risk Alerts -->
+                            <div class="bg-amber-50 border border-amber-200 rounded-xl p-5">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-exclamation-triangle text-amber-600"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h4 class="font-semibold text-amber-800 mb-1">Risk Alerts</h4>
+                                        <ul class="space-y-1 text-sm text-amber-700">
+                                            <li><i class="fas fa-info-circle mr-1"></i>Material prices may increase 3-5% in Q2 (aluminum tariff)</li>
+                                            <li><i class="fas fa-info-circle mr-1"></i>Permit processing in LA averages 3-4 weeks currently</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="grid grid-cols-2 gap-3">
+                                <button class="py-3 bg-white border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition flex items-center justify-center gap-2">
+                                    <i class="fas fa-save"></i>
+                                    <span>Save Quote</span>
+                                </button>
+                                <button class="py-3 bg-white border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition flex items-center justify-center gap-2">
+                                    <i class="fas fa-paper-plane"></i>
+                                    <span>Send to Client</span>
+                                </button>
+                            </div>
+
+                            <button id="createContractBtn" class="w-full py-4 bg-gray-900 text-white rounded-xl font-semibold hover:bg-gray-800 transition flex items-center justify-center gap-3">
+                                <i class="fas fa-file-contract"></i>
+                                <span>Generate Contract</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </main>
     </div>
@@ -1865,11 +2250,285 @@
             }, 3000);
         }
 
+        // ===== Pricing Agent Page Functions =====
+        const pricingAgentState = {
+            selectedProject: 'proj-001',
+            width: 14,
+            depth: 20,
+            height: 12,
+            material: 'aluminum',
+            glassType: 'tempered',
+            options: {
+                ceilingFan: false,
+                lighting: false,
+                electrical: true,
+                permit: true
+            },
+            discount: 5,
+            urgencySurcharge: 0,
+            selectedQuote: 'recommended'
+        };
+
+        // Cost data (dummy)
+        const costData = {
+            aluminum: { basePerSqft: 28, laborPerSqft: 15 },
+            vinyl: { basePerSqft: 22, laborPerSqft: 12 }
+        };
+
+        const glassUpcharge = {
+            tempered: 0,
+            'low-e': 800,
+            tinted: 500,
+            'double-paned': 1200
+        };
+
+        const optionCosts = {
+            ceilingFan: 450,
+            lighting: 680,
+            electrical: 320,
+            permit: 750
+        };
+
+        // Initialize Pricing Agent page
+        function initPricingAgentPage() {
+            // Project selector
+            const projectSelect = document.getElementById('pricingProjectSelect');
+            if (projectSelect) {
+                projectSelect.addEventListener('change', function() {
+                    pricingAgentState.selectedProject = this.value;
+                    updatePricingProjectInfo(this.value);
+                });
+            }
+
+            // Dimension inputs
+            ['configWidth', 'configDepth', 'configHeight'].forEach(id => {
+                const input = document.getElementById(id);
+                if (input) {
+                    input.addEventListener('input', function() {
+                        const key = id.replace('config', '').toLowerCase();
+                        pricingAgentState[key] = parseFloat(this.value) || 0;
+                        updateTotalSqft();
+                    });
+                }
+            });
+
+            // Material selection
+            document.querySelectorAll('.material-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    document.querySelectorAll('.material-card > div').forEach(c => {
+                        c.classList.remove('border-emerald-500', 'bg-emerald-50');
+                        c.classList.add('border-gray-200');
+                    });
+                    this.querySelector('div').classList.remove('border-gray-200');
+                    this.querySelector('div').classList.add('border-emerald-500', 'bg-emerald-50');
+                    pricingAgentState.material = this.dataset.material;
+                });
+            });
+
+            // Glass type
+            const glassSelect = document.getElementById('glassType');
+            if (glassSelect) {
+                glassSelect.addEventListener('change', function() {
+                    pricingAgentState.glassType = this.value;
+                });
+            }
+
+            // Checkboxes
+            ['optCeilingFan', 'optLighting', 'optElectrical', 'optPermit'].forEach(id => {
+                const checkbox = document.getElementById(id);
+                if (checkbox) {
+                    checkbox.addEventListener('change', function() {
+                        const key = id.replace('opt', '').toLowerCase();
+                        pricingAgentState.options[key] = this.checked;
+                    });
+                }
+            });
+
+            // Discount slider
+            const discountSlider = document.getElementById('discountSlider');
+            if (discountSlider) {
+                discountSlider.addEventListener('input', function() {
+                    pricingAgentState.discount = parseInt(this.value);
+                    document.getElementById('discountValue').textContent = this.value + '%';
+                });
+            }
+
+            // Urgency surcharge
+            const urgencySelect = document.getElementById('urgencySurcharge');
+            if (urgencySelect) {
+                urgencySelect.addEventListener('change', function() {
+                    pricingAgentState.urgencySurcharge = parseInt(this.value);
+                });
+            }
+
+            // Quote options
+            document.querySelectorAll('.quote-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.quote-option').forEach(o => {
+                        o.classList.remove('border-emerald-500', 'bg-emerald-50');
+                        o.classList.add('border-gray-200');
+                    });
+                    this.classList.remove('border-gray-200');
+                    this.classList.add('border-emerald-500', 'bg-emerald-50');
+                    pricingAgentState.selectedQuote = this.dataset.quote;
+                });
+            });
+
+            // Calculate button
+            const calcBtn = document.getElementById('calculatePricingBtn');
+            if (calcBtn) {
+                calcBtn.addEventListener('click', handleCalculatePricing);
+            }
+
+            // Create contract button
+            const contractBtn = document.getElementById('createContractBtn');
+            if (contractBtn) {
+                contractBtn.addEventListener('click', () => {
+                    showToast('Contract generation will be implemented. This will create a complete contract with all terms and conditions.', 'info');
+                });
+            }
+        }
+
+        function updateTotalSqft() {
+            const sqft = pricingAgentState.width * pricingAgentState.depth;
+            const display = document.getElementById('totalSqft');
+            if (display) {
+                display.textContent = sqft + ' sq ft';
+            }
+        }
+
+        function updatePricingProjectInfo(projectId) {
+            const project = dummyProjects[projectId];
+            if (!project) return;
+
+            const infoContainer = document.getElementById('pricingProjectInfo');
+            if (infoContainer) {
+                const budgetRange = project.budget;
+                const productType = project.type.charAt(0).toUpperCase() + project.type.slice(1);
+                const location = project.address.split(', ').slice(-2).join(', ');
+
+                infoContainer.innerHTML = `
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <span class="text-gray-500">Client Budget:</span>
+                            <span class="font-medium text-gray-900 ml-2">${budgetRange}</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-500">Product:</span>
+                            <span class="font-medium text-gray-900 ml-2">${productType}</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-500">Yard Size:</span>
+                            <span class="font-medium text-gray-900 ml-2">${project.yardSize}</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-500">Location:</span>
+                            <span class="font-medium text-gray-900 ml-2">${location}</span>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function handleCalculatePricing() {
+            const btn = document.getElementById('calculatePricingBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Calculating...';
+
+            // Simulate calculation
+            setTimeout(() => {
+                // Calculate costs
+                const sqft = pricingAgentState.width * pricingAgentState.depth;
+                const materialCosts = costData[pricingAgentState.material];
+                const materials = sqft * materialCosts.basePerSqft + (glassUpcharge[pricingAgentState.glassType] || 0);
+                const labor = sqft * materialCosts.laborPerSqft;
+                const equipment = Math.round(sqft * 3);
+
+                let optionsTotal = 0;
+                Object.keys(pricingAgentState.options).forEach(key => {
+                    if (pricingAgentState.options[key]) {
+                        optionsTotal += optionCosts[key] || 0;
+                    }
+                });
+
+                const permits = pricingAgentState.options.permit ? 1070 : 320;
+                const totalCost = materials + labor + equipment + permits + optionsTotal;
+
+                // Calculate suggested prices
+                const conservative = Math.round(totalCost * 1.10);
+                const recommended = Math.round(totalCost * 1.183);
+                const premium = Math.round(totalCost * 1.34);
+
+                // Update UI with animation
+                updateCostBreakdown(materials, labor, equipment, permits, optionsTotal);
+                updateQuoteSuggestions(conservative, recommended, premium, totalCost);
+                updateProfitAnalysis(recommended, totalCost);
+
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-calculator mr-2"></i>Calculate Pricing';
+
+                showToast('Pricing calculated successfully!', 'success');
+            }, 1500);
+        }
+
+        function updateCostBreakdown(materials, labor, equipment, permits, options) {
+            // This would update the cost breakdown display
+            // For now, we just show a success message
+        }
+
+        function updateQuoteSuggestions(conservative, recommended, premium, cost) {
+            // Update quote cards with calculated values
+            const quoteOptions = document.querySelectorAll('.quote-option');
+            quoteOptions.forEach(option => {
+                const type = option.dataset.quote;
+                let price, profit, margin;
+
+                if (type === 'conservative') {
+                    price = conservative;
+                    profit = conservative - cost;
+                    margin = 10;
+                } else if (type === 'recommended') {
+                    price = recommended;
+                    profit = recommended - cost;
+                    margin = 18;
+                } else {
+                    price = premium;
+                    profit = premium - cost;
+                    margin = 25;
+                }
+
+                const priceEl = option.querySelector('.text-lg.font-bold');
+                const profitEl = option.querySelector('.text-emerald-600.font-medium');
+
+                if (priceEl) priceEl.textContent = '$' + price.toLocaleString();
+                if (profitEl) profitEl.textContent = '$' + profit.toLocaleString() + ' profit';
+            });
+        }
+
+        function updateProfitAnalysis(price, cost) {
+            const profit = price - cost;
+            const margin = ((profit / price) * 100).toFixed(1);
+
+            // Update the profit display cards
+            const profitCards = document.querySelectorAll('.bg-blue-50, .bg-emerald-50, .bg-purple-50');
+            if (profitCards[0]) profitCards[0].querySelector('.font-bold').textContent = '$' + (price/1000).toFixed(1) + 'K';
+            if (profitCards[1]) profitCards[1].querySelector('.font-bold').textContent = '$' + profit.toLocaleString();
+            if (profitCards[2]) profitCards[2].querySelector('.font-bold').textContent = margin + '%';
+
+            // Update margin indicator position
+            const indicator = document.getElementById('marginIndicator');
+            if (indicator) {
+                const position = Math.min(100, Math.max(0, margin * 3));
+                indicator.style.left = position + '%';
+            }
+        }
+
         // ===== Initialize =====
         document.addEventListener('DOMContentLoaded', function() {
             if (checkAuth()) {
                 loadDashboardData();
                 initAIDesignerPage();
+                initPricingAgentPage();
             }
         });
     </script>
