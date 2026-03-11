@@ -3054,6 +3054,625 @@
                     </div>
                 </div>
 
+                <!-- ===== Orders Page ===== -->
+                <div class="page-content" id="page-orders">
+                    <!-- Orders Header -->
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900">Orders</h2>
+                            <p class="text-gray-500 mt-1">Manage customer orders and track delivery status</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <button class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition flex items-center gap-2">
+                                <i class="fas fa-download"></i>
+                                <span>Export</span>
+                            </button>
+                            <button id="createOrderBtn" class="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition flex items-center gap-2">
+                                <i class="fas fa-plus"></i>
+                                <span>Create Order</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Stats Overview -->
+                    <div class="grid grid-cols-5 gap-4 mb-6">
+                        <div class="bg-white rounded-xl border border-gray-200 p-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-sm text-gray-500">Total Orders</div>
+                                    <div class="text-2xl font-bold text-gray-900">156</div>
+                                </div>
+                                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-shopping-cart text-blue-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl border border-gray-200 p-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-sm text-gray-500">Pending</div>
+                                    <div class="text-2xl font-bold text-amber-600">12</div>
+                                </div>
+                                <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-clock text-amber-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl border border-gray-200 p-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-sm text-gray-500">In Production</div>
+                                    <div class="text-2xl font-bold text-blue-600">8</div>
+                                </div>
+                                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-industry text-blue-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl border border-gray-200 p-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-sm text-gray-500">Shipped</div>
+                                    <div class="text-2xl font-bold text-purple-600">5</div>
+                                </div>
+                                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-truck text-purple-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl border border-gray-200 p-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-sm text-gray-500">Completed</div>
+                                    <div class="text-2xl font-bold text-green-600">131</div>
+                                </div>
+                                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-check-circle text-green-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="bg-white rounded-xl border border-gray-200 p-4 mb-6">
+                        <div class="flex flex-wrap items-center gap-4">
+                            <div class="flex-1 min-w-[200px]">
+                                <div class="relative">
+                                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                                    <input type="text" id="orderSearch" placeholder="Search orders..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+                                </div>
+                            </div>
+                            <select id="orderStatusFilter" class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
+                                <option value="">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="confirmed">Confirmed</option>
+                                <option value="in_production">In Production</option>
+                                <option value="shipped">Shipped</option>
+                                <option value="delivered">Delivered</option>
+                                <option value="installed">Installed</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                            <input type="date" id="orderDateFrom" class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
+                            <span class="text-gray-400">to</span>
+                            <input type="date" id="orderDateTo" class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
+                        </div>
+                    </div>
+
+                    <!-- Orders Table -->
+                    <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50 border-b border-gray-200">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200" id="ordersTableBody">
+                                    <!-- Order Row 1 -->
+                                    <tr class="hover:bg-gray-50 cursor-pointer" onclick="showOrderDetail('ord-001')">
+                                        <td class="px-4 py-4">
+                                            <div class="font-medium text-gray-900">#ORD-2024-0156</div>
+                                        </td>
+                                        <td class="px-4 py-4">
+                                            <div class="font-medium text-gray-900">Mr. Johnson</div>
+                                            <div class="text-sm text-gray-500">johnson@email.com</div>
+                                        </td>
+                                        <td class="px-4 py-4">
+                                            <div class="font-medium text-gray-900">Classic Sunroom</div>
+                                            <div class="text-sm text-gray-500">280 sqft</div>
+                                        </td>
+                                        <td class="px-4 py-4">
+                                            <div class="font-medium text-gray-900">$18,500</div>
+                                        </td>
+                                        <td class="px-4 py-4">
+                                            <span class="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">Paid</span>
+                                        </td>
+                                        <td class="px-4 py-4">
+                                            <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">In Production</span>
+                                        </td>
+                                        <td class="px-4 py-4">
+                                            <div class="text-sm text-gray-900">Mar 10, 2024</div>
+                                        </td>
+                                        <td class="px-4 py-4 text-right">
+                                            <button class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg">
+                                                <i class="fas fa-ellipsis-h"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <!-- Order Row 2 -->
+                                    <tr class="hover:bg-gray-50 cursor-pointer">
+                                        <td class="px-4 py-4">
+                                            <div class="font-medium text-gray-900">#ORD-2024-0155</div>
+                                        </td>
+                                        <td class="px-4 py-4">
+                                            <div class="font-medium text-gray-900">Ms. Chen</div>
+                                            <div class="text-sm text-gray-500">chen@email.com</div>
+                                        </td>
+                                        <td class="px-4 py-4">
+                                            <div class="font-medium text-gray-900">Studio ADU</div>
+                                            <div class="text-sm text-gray-500">450 sqft</div>
+                                        </td>
+                                        <td class="px-4 py-4">
+                                            <div class="font-medium text-gray-900">$95,000</div>
+                                        </td>
+                                        <td class="px-4 py-4">
+                                            <span class="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">Deposit Paid</span>
+                                        </td>
+                                        <td class="px-4 py-4">
+                                            <span class="px-2 py-1 bg-purple-100 text-purple-700 text-xs font-medium rounded-full">Shipped</span>
+                                        </td>
+                                        <td class="px-4 py-4">
+                                            <div class="text-sm text-gray-900">Mar 8, 2024</div>
+                                        </td>
+                                        <td class="px-4 py-4 text-right">
+                                            <button class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg">
+                                                <i class="fas fa-ellipsis-h"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <!-- Order Row 3 -->
+                                    <tr class="hover:bg-gray-50 cursor-pointer">
+                                        <td class="px-4 py-4">
+                                            <div class="font-medium text-gray-900">#ORD-2024-0154</div>
+                                        </td>
+                                        <td class="px-4 py-4">
+                                            <div class="font-medium text-gray-900">Mr. Williams</div>
+                                            <div class="text-sm text-gray-500">williams@email.com</div>
+                                        </td>
+                                        <td class="px-4 py-4">
+                                            <div class="font-medium text-gray-900">Garden Pavilion</div>
+                                            <div class="text-sm text-gray-500">200 sqft</div>
+                                        </td>
+                                        <td class="px-4 py-4">
+                                            <div class="font-medium text-gray-900">$9,200</div>
+                                        </td>
+                                        <td class="px-4 py-4">
+                                            <span class="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">Pending</span>
+                                        </td>
+                                        <td class="px-4 py-4">
+                                            <span class="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">Pending</span>
+                                        </td>
+                                        <td class="px-4 py-4">
+                                            <div class="text-sm text-gray-900">Mar 5, 2024</div>
+                                        </td>
+                                        <td class="px-4 py-4 text-right">
+                                            <button class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg">
+                                                <i class="fas fa-ellipsis-h"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <!-- Order Row 4 -->
+                                    <tr class="hover:bg-gray-50 cursor-pointer">
+                                        <td class="px-4 py-4">
+                                            <div class="font-medium text-gray-900">#ORD-2024-0153</div>
+                                        </td>
+                                        <td class="px-4 py-4">
+                                            <div class="font-medium text-gray-900">Mrs. Davis</div>
+                                            <div class="text-sm text-gray-500">davis@email.com</div>
+                                        </td>
+                                        <td class="px-4 py-4">
+                                            <div class="font-medium text-gray-900">Zip Blinds Pro</div>
+                                            <div class="text-sm text-gray-500">150 sqft</div>
+                                        </td>
+                                        <td class="px-4 py-4">
+                                            <div class="font-medium text-gray-900">$5,250</div>
+                                        </td>
+                                        <td class="px-4 py-4">
+                                            <span class="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">Paid</span>
+                                        </td>
+                                        <td class="px-4 py-4">
+                                            <span class="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">Completed</span>
+                                        </td>
+                                        <td class="px-4 py-4">
+                                            <div class="text-sm text-gray-900">Mar 1, 2024</div>
+                                        </td>
+                                        <td class="px-4 py-4 text-right">
+                                            <button class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg">
+                                                <i class="fas fa-ellipsis-h"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <!-- Order Row 5 -->
+                                    <tr class="hover:bg-gray-50 cursor-pointer">
+                                        <td class="px-4 py-4">
+                                            <div class="font-medium text-gray-900">#ORD-2024-0152</div>
+                                        </td>
+                                        <td class="px-4 py-4">
+                                            <div class="font-medium text-gray-900">Mr. Martinez</div>
+                                            <div class="text-sm text-gray-500">martinez@email.com</div>
+                                        </td>
+                                        <td class="px-4 py-4">
+                                            <div class="font-medium text-gray-900">Premium Sunroom</div>
+                                            <div class="text-sm text-gray-500">350 sqft</div>
+                                        </td>
+                                        <td class="px-4 py-4">
+                                            <div class="font-medium text-gray-900">$42,000</div>
+                                        </td>
+                                        <td class="px-4 py-4">
+                                            <span class="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">Paid</span>
+                                        </td>
+                                        <td class="px-4 py-4">
+                                            <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">Delivered</span>
+                                        </td>
+                                        <td class="px-4 py-4">
+                                            <div class="text-sm text-gray-900">Feb 28, 2024</div>
+                                        </td>
+                                        <td class="px-4 py-4 text-right">
+                                            <button class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg">
+                                                <i class="fas fa-ellipsis-h"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="px-4 py-3 border-t border-gray-200 flex items-center justify-between">
+                            <div class="text-sm text-gray-500">Showing 1-5 of 156 orders</div>
+                            <div class="flex gap-1">
+                                <button class="px-3 py-1 border border-gray-300 rounded text-sm text-gray-600 hover:bg-gray-50">Previous</button>
+                                <button class="px-3 py-1 bg-gray-900 text-white rounded text-sm">1</button>
+                                <button class="px-3 py-1 border border-gray-300 rounded text-sm text-gray-600 hover:bg-gray-50">2</button>
+                                <button class="px-3 py-1 border border-gray-300 rounded text-sm text-gray-600 hover:bg-gray-50">3</button>
+                                <button class="px-3 py-1 border border-gray-300 rounded text-sm text-gray-600 hover:bg-gray-50">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== Customers Page ===== -->
+                <div class="page-content" id="page-customers">
+                    <!-- Customers Header -->
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900">Customers</h2>
+                            <p class="text-gray-500 mt-1">Manage customer profiles and relationships</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <button class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition flex items-center gap-2">
+                                <i class="fas fa-download"></i>
+                                <span>Export</span>
+                            </button>
+                            <button id="addCustomerBtn" class="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition flex items-center gap-2">
+                                <i class="fas fa-user-plus"></i>
+                                <span>Add Customer</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Stats Overview -->
+                    <div class="grid grid-cols-4 gap-4 mb-6">
+                        <div class="bg-white rounded-xl border border-gray-200 p-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-sm text-gray-500">Total Customers</div>
+                                    <div class="text-2xl font-bold text-gray-900">482</div>
+                                </div>
+                                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-users text-blue-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl border border-gray-200 p-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-sm text-gray-500">Active</div>
+                                    <div class="text-2xl font-bold text-green-600">324</div>
+                                </div>
+                                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-user-check text-green-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl border border-gray-200 p-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-sm text-gray-500">New This Month</div>
+                                    <div class="text-2xl font-bold text-purple-600">28</div>
+                                </div>
+                                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-user-plus text-purple-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl border border-gray-200 p-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-sm text-gray-500">Repeat Customers</div>
+                                    <div class="text-2xl font-bold text-amber-600">156</div>
+                                </div>
+                                <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-redo text-amber-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main Grid: List + Detail -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Left: Customer List -->
+                        <div class="lg:col-span-1 space-y-4">
+                            <!-- Search & Filter -->
+                            <div class="bg-white rounded-xl border border-gray-200 p-4">
+                                <div class="relative mb-3">
+                                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                                    <input type="text" id="customerSearch" placeholder="Search customers..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+                                </div>
+                                <div class="flex gap-2 flex-wrap">
+                                    <button class="customer-filter-btn px-3 py-1 bg-gray-900 text-white text-xs rounded-full" data-filter="all">All</button>
+                                    <button class="customer-filter-btn px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50" data-filter="active">Active</button>
+                                    <button class="customer-filter-btn px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50" data-filter="new">New</button>
+                                    <button class="customer-filter-btn px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50" data-filter="vip">VIP</button>
+                                </div>
+                            </div>
+
+                            <!-- Customer List -->
+                            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                                <div class="p-3 border-b border-gray-200 flex items-center justify-between">
+                                    <span class="font-medium text-gray-900 text-sm">Customers</span>
+                                    <span class="text-xs text-gray-500">482 total</span>
+                                </div>
+                                <div id="customerList" class="divide-y divide-gray-100 max-h-[500px] overflow-y-auto">
+                                    <!-- Customer Item 1 -->
+                                    <div class="customer-item p-4 hover:bg-gray-50 cursor-pointer bg-blue-50/50 border-l-4 border-blue-500" data-customer="cust-001">
+                                        <div class="flex items-start gap-3">
+                                            <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">J</div>
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-center justify-between">
+                                                    <span class="font-medium text-gray-900 text-sm">Mr. Johnson</span>
+                                                    <span class="px-1.5 py-0.5 bg-green-100 text-green-700 text-xs rounded">VIP</span>
+                                                </div>
+                                                <p class="text-xs text-gray-500">Sunshine Villa • 3 orders</p>
+                                                <div class="flex items-center gap-2 mt-1">
+                                                    <span class="text-xs font-semibold text-gray-900">$42,500 spent</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Customer Item 2 -->
+                                    <div class="customer-item p-4 hover:bg-gray-50 cursor-pointer" data-customer="cust-002">
+                                        <div class="flex items-start gap-3">
+                                            <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">C</div>
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-center justify-between">
+                                                    <span class="font-medium text-gray-900 text-sm">Ms. Chen</span>
+                                                    <span class="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-xs rounded">Active</span>
+                                                </div>
+                                                <p class="text-xs text-gray-500">Riverside Estate • 1 order</p>
+                                                <div class="flex items-center gap-2 mt-1">
+                                                    <span class="text-xs font-semibold text-gray-900">$95,000 spent</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Customer Item 3 -->
+                                    <div class="customer-item p-4 hover:bg-gray-50 cursor-pointer" data-customer="cust-003">
+                                        <div class="flex items-start gap-3">
+                                            <div class="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">W</div>
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-center justify-between">
+                                                    <span class="font-medium text-gray-900 text-sm">Mr. Williams</span>
+                                                    <span class="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-xs rounded">New</span>
+                                                </div>
+                                                <p class="text-xs text-gray-500">Oak Garden • 0 orders</p>
+                                                <div class="flex items-center gap-2 mt-1">
+                                                    <span class="text-xs text-gray-500">Quote pending</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Customer Item 4 -->
+                                    <div class="customer-item p-4 hover:bg-gray-50 cursor-pointer" data-customer="cust-004">
+                                        <div class="flex items-start gap-3">
+                                            <div class="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">D</div>
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-center justify-between">
+                                                    <span class="font-medium text-gray-900 text-sm">Mrs. Davis</span>
+                                                    <span class="px-1.5 py-0.5 bg-green-100 text-green-700 text-xs rounded">VIP</span>
+                                                </div>
+                                                <p class="text-xs text-gray-500">Lakeside Retreat • 2 orders</p>
+                                                <div class="flex items-center gap-2 mt-1">
+                                                    <span class="text-xs font-semibold text-gray-900">$12,800 spent</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Customer Item 5 -->
+                                    <div class="customer-item p-4 hover:bg-gray-50 cursor-pointer" data-customer="cust-005">
+                                        <div class="flex items-start gap-3">
+                                            <div class="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">M</div>
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-center justify-between">
+                                                    <span class="font-medium text-gray-900 text-sm">Mr. Martinez</span>
+                                                    <span class="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-xs rounded">Active</span>
+                                                </div>
+                                                <p class="text-xs text-gray-500">Desert View • 1 order</p>
+                                                <div class="flex items-center gap-2 mt-1">
+                                                    <span class="text-xs font-semibold text-gray-900">$42,000 spent</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Customer Detail -->
+                        <div class="lg:col-span-2 space-y-6">
+                            <!-- Customer Info Card -->
+                            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                                <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+                                    <h3 class="font-semibold text-gray-900">Customer Profile</h3>
+                                    <div class="flex gap-2">
+                                        <button id="editCustomerBtn" class="px-3 py-1.5 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition">
+                                            <i class="fas fa-edit mr-1"></i>Edit
+                                        </button>
+                                        <button class="px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition">
+                                            <i class="fas fa-ellipsis-h"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="p-5">
+                                    <div class="flex gap-6">
+                                        <!-- Avatar -->
+                                        <div id="customerDetailAvatar" class="w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center text-white text-2xl font-semibold flex-shrink-0">J</div>
+
+                                        <!-- Info -->
+                                        <div class="flex-1">
+                                            <div class="flex items-center gap-3 mb-2">
+                                                <h2 id="customerDetailName" class="text-xl font-bold text-gray-900">Mr. Johnson</h2>
+                                                <span id="customerDetailBadge" class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full">VIP</span>
+                                            </div>
+                                            <p id="customerDetailProject" class="text-sm text-gray-500 mb-3">Sunshine Villa</p>
+
+                                            <div class="grid grid-cols-2 gap-4">
+                                                <div>
+                                                    <label class="text-xs text-gray-500">Email</label>
+                                                    <div id="customerDetailEmail" class="text-sm font-medium text-gray-900">johnson@email.com</div>
+                                                </div>
+                                                <div>
+                                                    <label class="text-xs text-gray-500">Phone</label>
+                                                    <div id="customerDetailPhone" class="text-sm font-medium text-gray-900">(310) 555-0101</div>
+                                                </div>
+                                                <div>
+                                                    <label class="text-xs text-gray-500">Address</label>
+                                                    <div id="customerDetailAddress" class="text-sm font-medium text-gray-900">123 Sunshine Ave, Los Angeles, CA</div>
+                                                </div>
+                                                <div>
+                                                    <label class="text-xs text-gray-500">Source</label>
+                                                    <div id="customerDetailSource" class="text-sm font-medium text-gray-900">Website</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Stats Cards -->
+                            <div class="grid grid-cols-4 gap-4">
+                                <div class="bg-white rounded-xl border border-gray-200 p-4 text-center">
+                                    <div id="customerStatOrders" class="text-2xl font-bold text-blue-600">3</div>
+                                    <div class="text-xs text-gray-500">Orders</div>
+                                </div>
+                                <div class="bg-white rounded-xl border border-gray-200 p-4 text-center">
+                                    <div id="customerStatSpent" class="text-2xl font-bold text-green-600">$42.5K</div>
+                                    <div class="text-xs text-gray-500">Total Spent</div>
+                                </div>
+                                <div class="bg-white rounded-xl border border-gray-200 p-4 text-center">
+                                    <div id="customerStatProjects" class="text-2xl font-bold text-purple-600">2</div>
+                                    <div class="text-xs text-gray-500">Projects</div>
+                                </div>
+                                <div class="bg-white rounded-xl border border-gray-200 p-4 text-center">
+                                    <div id="customerStatSatisfaction" class="text-2xl font-bold text-amber-600">92%</div>
+                                    <div class="text-xs text-gray-500">Satisfaction</div>
+                                </div>
+                            </div>
+
+                            <!-- Recent Orders -->
+                            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                                <div class="p-4 border-b border-gray-200">
+                                    <h3 class="font-semibold text-gray-900">Recent Orders</h3>
+                                </div>
+                                <div class="divide-y divide-gray-100">
+                                    <div class="p-4 hover:bg-gray-50">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <div class="font-medium text-gray-900">#ORD-2024-0156</div>
+                                                <div class="text-sm text-gray-500">Classic Sunroom • Mar 10, 2024</div>
+                                            </div>
+                                            <div class="text-right">
+                                                <div class="font-medium text-gray-900">$18,500</div>
+                                                <span class="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full">In Production</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="p-4 hover:bg-gray-50">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <div class="font-medium text-gray-900">#ORD-2024-0089</div>
+                                                <div class="text-sm text-gray-500">Premium Sunroom • Jan 15, 2024</div>
+                                            </div>
+                                            <div class="text-right">
+                                                <div class="font-medium text-gray-900">$24,000</div>
+                                                <span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full">Completed</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tags & Notes -->
+                            <div class="grid grid-cols-2 gap-6">
+                                <div class="bg-white rounded-xl border border-gray-200 p-5">
+                                    <h3 class="font-semibold text-gray-900 mb-3">Tags</h3>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span class="px-3 py-1 bg-blue-100 text-blue-700 text-sm rounded-full">Sunroom</span>
+                                        <span class="px-3 py-1 bg-green-100 text-green-700 text-sm rounded-full">VIP</span>
+                                        <span class="px-3 py-1 bg-purple-100 text-purple-700 text-sm rounded-full">Repeat Buyer</span>
+                                        <button class="px-3 py-1 border border-dashed border-gray-300 text-gray-500 text-sm rounded-full hover:border-gray-400">
+                                            <i class="fas fa-plus mr-1"></i>Add Tag
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white rounded-xl border border-gray-200 p-5">
+                                    <h3 class="font-semibold text-gray-900 mb-3">Notes</h3>
+                                    <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm resize-none" rows="3" placeholder="Add notes about this customer...">Prefers modern design. Interested in expanding sunroom in the future.</textarea>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="flex gap-3">
+                                <button class="flex-1 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition flex items-center justify-center gap-2">
+                                    <i class="fas fa-plus"></i>
+                                    <span>New Order</span>
+                                </button>
+                                <button class="flex-1 py-3 bg-white border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition flex items-center justify-center gap-2">
+                                    <i class="fas fa-envelope"></i>
+                                    <span>Send Email</span>
+                                </button>
+                                <button class="py-3 px-6 bg-white border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition flex items-center justify-center gap-2">
+                                    <i class="fas fa-phone"></i>
+                                    <span>Call</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </main>
     </div>
@@ -4651,6 +5270,263 @@
             }, 200);
         }
 
+        // ===== Orders Page Functions =====
+        function initOrdersPage() {
+            // Search functionality
+            const searchInput = document.getElementById('orderSearch');
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    filterOrders(this.value);
+                });
+            }
+
+            // Status filter
+            const statusFilter = document.getElementById('orderStatusFilter');
+            if (statusFilter) {
+                statusFilter.addEventListener('change', function() {
+                    filterOrdersByStatus(this.value);
+                });
+            }
+
+            // Create order button
+            const createBtn = document.getElementById('createOrderBtn');
+            if (createBtn) {
+                createBtn.addEventListener('click', () => {
+                    showToast('Create Order modal will be implemented. This will open a form to create new orders.', 'info');
+                });
+            }
+        }
+
+        function filterOrders(query) {
+            const rows = document.querySelectorAll('#ordersTableBody tr');
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(query.toLowerCase()) ? '' : 'none';
+            });
+        }
+
+        function filterOrdersByStatus(status) {
+            const rows = document.querySelectorAll('#ordersTableBody tr');
+            rows.forEach(row => {
+                if (!status) {
+                    row.style.display = '';
+                } else {
+                    const statusCell = row.querySelector('td:nth-child(6) span');
+                    if (statusCell) {
+                        const rowStatus = statusCell.textContent.toLowerCase().replace(' ', '_');
+                        row.style.display = rowStatus.includes(status) ? '' : 'none';
+                    }
+                }
+            });
+        }
+
+        function showOrderDetail(orderId) {
+            showToast('Order detail modal will be implemented for order: ' + orderId, 'info');
+        }
+
+        // ===== Customers Page Functions =====
+        const customersState = {
+            selectedCustomer: 'cust-001',
+            filter: 'all'
+        };
+
+        const dummyCustomers = {
+            'cust-001': {
+                name: 'Mr. Johnson',
+                initials: 'J',
+                color: 'bg-blue-500',
+                project: 'Sunshine Villa',
+                badge: 'VIP',
+                badgeColor: 'bg-green-100 text-green-700',
+                email: 'johnson@email.com',
+                phone: '(310) 555-0101',
+                address: '123 Sunshine Ave, Los Angeles, CA',
+                source: 'Website',
+                orders: 3,
+                spent: '$42.5K',
+                projects: 2,
+                satisfaction: '92%'
+            },
+            'cust-002': {
+                name: 'Ms. Chen',
+                initials: 'C',
+                color: 'bg-green-500',
+                project: 'Riverside Estate',
+                badge: 'Active',
+                badgeColor: 'bg-blue-100 text-blue-700',
+                email: 'chen@email.com',
+                phone: '(408) 555-0202',
+                address: '456 River Rd, San Jose, CA',
+                source: 'Referral',
+                orders: 1,
+                spent: '$95.0K',
+                projects: 1,
+                satisfaction: '85%'
+            },
+            'cust-003': {
+                name: 'Mr. Williams',
+                initials: 'W',
+                color: 'bg-purple-500',
+                project: 'Oak Garden',
+                badge: 'New',
+                badgeColor: 'bg-amber-100 text-amber-700',
+                email: 'williams@email.com',
+                phone: '(619) 555-0303',
+                address: '789 Oak St, San Diego, CA',
+                source: 'Exhibition',
+                orders: 0,
+                spent: '$0',
+                projects: 1,
+                satisfaction: 'N/A'
+            },
+            'cust-004': {
+                name: 'Mrs. Davis',
+                initials: 'D',
+                color: 'bg-amber-500',
+                project: 'Lakeside Retreat',
+                badge: 'VIP',
+                badgeColor: 'bg-green-100 text-green-700',
+                email: 'davis@email.com',
+                phone: '(916) 555-0404',
+                address: '321 Lake Dr, Sacramento, CA',
+                source: 'Partner',
+                orders: 2,
+                spent: '$12.8K',
+                projects: 1,
+                satisfaction: '98%'
+            },
+            'cust-005': {
+                name: 'Mr. Martinez',
+                initials: 'M',
+                color: 'bg-red-500',
+                project: 'Desert View',
+                badge: 'Active',
+                badgeColor: 'bg-blue-100 text-blue-700',
+                email: 'martinez@email.com',
+                phone: '(213) 555-0505',
+                address: '555 Desert Blvd, Los Angeles, CA',
+                source: 'Website',
+                orders: 1,
+                spent: '$42.0K',
+                projects: 1,
+                satisfaction: '65%'
+            }
+        };
+
+        function initCustomersPage() {
+            // Customer selection
+            document.querySelectorAll('.customer-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const customerId = this.dataset.customer;
+                    customersState.selectedCustomer = customerId;
+
+                    // Update active state
+                    document.querySelectorAll('.customer-item').forEach(i => {
+                        i.classList.remove('bg-blue-50/50', 'border-l-4', 'border-blue-500');
+                    });
+                    this.classList.add('bg-blue-50/50', 'border-l-4', 'border-blue-500');
+
+                    updateCustomerDetail(customerId);
+                });
+            });
+
+            // Filter buttons
+            document.querySelectorAll('.customer-filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.customer-filter-btn').forEach(b => {
+                        b.classList.remove('bg-gray-900', 'text-white');
+                        b.classList.add('bg-white', 'border', 'text-gray-600');
+                    });
+                    this.classList.remove('bg-white', 'border', 'text-gray-600');
+                    this.classList.add('bg-gray-900', 'text-white');
+
+                    customersState.filter = this.dataset.filter;
+                    filterCustomers(this.dataset.filter);
+                });
+            });
+
+            // Search
+            const searchInput = document.getElementById('customerSearch');
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    searchCustomers(this.value);
+                });
+            }
+
+            // Add customer button
+            const addBtn = document.getElementById('addCustomerBtn');
+            if (addBtn) {
+                addBtn.addEventListener('click', () => {
+                    showToast('Add Customer modal will be implemented. This will open a form to add new customers.', 'info');
+                });
+            }
+
+            // Edit customer button
+            const editBtn = document.getElementById('editCustomerBtn');
+            if (editBtn) {
+                editBtn.addEventListener('click', () => {
+                    showToast('Edit Customer modal will be implemented.', 'info');
+                });
+            }
+        }
+
+        function updateCustomerDetail(customerId) {
+            const customer = dummyCustomers[customerId];
+            if (!customer) return;
+
+            // Update avatar
+            const avatar = document.getElementById('customerDetailAvatar');
+            avatar.textContent = customer.initials;
+            avatar.className = `w-20 h-20 ${customer.color} rounded-full flex items-center justify-center text-white text-2xl font-semibold flex-shrink-0`;
+
+            // Update info
+            document.getElementById('customerDetailName').textContent = customer.name;
+            document.getElementById('customerDetailProject').textContent = customer.project;
+            document.getElementById('customerDetailEmail').textContent = customer.email;
+            document.getElementById('customerDetailPhone').textContent = customer.phone;
+            document.getElementById('customerDetailAddress').textContent = customer.address;
+            document.getElementById('customerDetailSource').textContent = customer.source;
+
+            // Update badge
+            const badge = document.getElementById('customerDetailBadge');
+            badge.textContent = customer.badge;
+            badge.className = `px-2 py-0.5 ${customer.badgeColor} text-xs font-medium rounded-full`;
+
+            // Update stats
+            document.getElementById('customerStatOrders').textContent = customer.orders;
+            document.getElementById('customerStatSpent').textContent = customer.spent;
+            document.getElementById('customerStatProjects').textContent = customer.projects;
+            document.getElementById('customerStatSatisfaction').textContent = customer.satisfaction;
+        }
+
+        function filterCustomers(filter) {
+            document.querySelectorAll('.customer-item').forEach(item => {
+                const customerId = item.dataset.customer;
+                const customer = dummyCustomers[customerId];
+                if (!customer) return;
+
+                let show = false;
+                if (filter === 'all') {
+                    show = true;
+                } else if (filter === 'active' && (customer.badge === 'Active' || customer.badge === 'VIP')) {
+                    show = true;
+                } else if (filter === 'new' && customer.badge === 'New') {
+                    show = true;
+                } else if (filter === 'vip' && customer.badge === 'VIP') {
+                    show = true;
+                }
+
+                item.style.display = show ? '' : 'none';
+            });
+        }
+
+        function searchCustomers(query) {
+            document.querySelectorAll('.customer-item').forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(query.toLowerCase()) ? '' : 'none';
+            });
+        }
+
         // ===== Initialize =====
         document.addEventListener('DOMContentLoaded', function() {
             if (checkAuth()) {
@@ -4660,6 +5536,8 @@
                 initCompliancePage();
                 initCSAgentPage();
                 initProductsPage();
+                initOrdersPage();
+                initCustomersPage();
             }
         });
     </script>
