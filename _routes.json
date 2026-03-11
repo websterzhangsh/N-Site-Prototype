@@ -3,7 +3,6 @@
   "include": ["/*"],
   "exclude": [
     "/partners.html",
-    "/register.html",
     "/team-management.html",
     "/login.html",
     "/dashboard.html",

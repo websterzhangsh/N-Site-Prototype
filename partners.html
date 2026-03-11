@@ -39,6 +39,8 @@
             --light-accent: #666666;
             --gradient-primary: linear-gradient(135deg, #222222 0%, #444444 100%);
             --shadow-elegant: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --success: #10b981;
+            --primary-hover: #333333;
         }
 
         .feature-card {
@@ -131,6 +133,349 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
         }
+
+        /* ===== Registration Form Styles ===== */
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .form-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .progress-steps {
+            display: flex;
+            justify-content: center;
+            padding: 32px 40px;
+            background: #fafafa;
+            border-bottom: 1px solid #eee;
+        }
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .step-dot {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #e5e7eb;
+            color: #9ca3af;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .step-indicator.active .step-dot {
+            background: var(--primary);
+            color: white;
+        }
+        .step-indicator.completed .step-dot {
+            background: var(--success);
+            color: white;
+        }
+        .step-label {
+            font-size: 14px;
+            color: #9ca3af;
+            font-weight: 500;
+        }
+        .step-indicator.active .step-label {
+            color: var(--primary);
+        }
+        .step-connector {
+            width: 60px;
+            height: 2px;
+            background: #e5e7eb;
+            margin: 0 16px;
+        }
+        .step-indicator.completed + .step-connector {
+            background: var(--success);
+        }
+        .form-content {
+            padding: 40px;
+        }
+        .form-section {
+            margin-bottom: 32px;
+        }
+        .form-section:last-child {
+            margin-bottom: 0;
+        }
+        .form-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f3f4f6;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        .form-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+        }
+        .form-label .required {
+            color: #ef4444;
+            margin-left: 2px;
+        }
+        .form-input, .form-select, .form-textarea {
+            padding: 14px 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.2s;
+            background: #fafafa;
+            font-family: inherit;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+        }
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .input-hint {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+        .plan-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 8px;
+        }
+        .plan-card {
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            position: relative;
+        }
+        .plan-card:hover {
+            border-color: #d1d5db;
+        }
+        .plan-card.selected {
+            border-color: var(--accent);
+            background: rgba(0, 0, 0, 0.02);
+        }
+        .plan-badge {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+        .plan-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+        .plan-price {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+        .plan-price span {
+            font-size: 14px;
+            font-weight: 400;
+            color: #6b7280;
+        }
+        .plan-features {
+            list-style: none;
+            margin-top: 16px;
+            text-align: left;
+        }
+        .plan-features li {
+            font-size: 13px;
+            color: #6b7280;
+            padding: 4px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .plan-features li i {
+            color: var(--success);
+            font-size: 12px;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        .checkbox-input {
+            width: 20px;
+            height: 20px;
+            margin-top: 2px;
+            accent-color: var(--accent);
+            cursor: pointer;
+        }
+        .checkbox-label {
+            font-size: 14px;
+            color: #4b5563;
+            line-height: 1.5;
+        }
+        .checkbox-label a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        .checkbox-label a:hover {
+            text-decoration: underline;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid #f3f4f6;
+        }
+        .btn {
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            text-decoration: none;
+        }
+        .btn-submit {
+            background: var(--primary);
+            color: white;
+        }
+        .btn-submit:hover {
+            background: var(--primary-hover);
+        }
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .btn-back {
+            background: white;
+            color: #4b5563;
+            border: 1px solid #e5e7eb;
+        }
+        .btn-back:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+        }
+        .btn-text {
+            background: none;
+            color: #6b7280;
+            padding: 8px 16px;
+        }
+        .btn-text:hover {
+            color: var(--primary);
+        }
+        .success-state {
+            text-align: center;
+            padding: 60px 40px;
+        }
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #d1fae5;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+        }
+        .success-icon i {
+            font-size: 40px;
+            color: var(--success);
+        }
+        .success-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+        .success-message {
+            font-size: 16px;
+            color: #6b7280;
+            margin-bottom: 32px;
+            line-height: 1.6;
+        }
+        .success-details {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 32px;
+            text-align: left;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        .detail-label {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        .detail-value {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--primary);
+        }
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        @media (max-width: 768px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .plan-grid { grid-template-columns: 1fr; }
+            .form-content { padding: 24px; }
+            .progress-steps { padding: 24px; }
+            .step-label { display: none; }
+            .step-connector { width: 30px; }
+        }
     </style>
 </head>
 <body class="font-sans bg-white text-[--light-text]">
@@ -175,9 +520,9 @@
                     <span class="lang-text" data-zh="了解服务流程" data-en="View Service Workflow">了解服务流程</span>
                     <i class="fas fa-arrow-down ml-2"></i>
                 </a>
-                <button onclick="window.location.href='register.html'" class="border-2 border-[--light-text] text-[--light-text] font-semibold py-3 px-8 rounded-lg hover:bg-[--light-text] hover:text-white transition inline-flex items-center">
+                <a href="#register" class="border-2 border-[--light-text] text-[--light-text] font-semibold py-3 px-8 rounded-lg hover:bg-[--light-text] hover:text-white transition inline-flex items-center">
                     <span class="lang-text" data-zh="申请合作" data-en="Apply to Partner">申请合作</span>
-                </button>
+                </a>
             </div>
         </div>
     </section>
@@ -764,12 +1109,340 @@
         </div>
     </section>
 
+    <!-- Registration Form Section -->
+    <section class="py-20 bg-[--darker-bg]" id="register">
+        <div class="form-container px-4">
+            <div class="text-center mb-12">
+                <span class="inline-block text-xs font-semibold tracking-widest uppercase text-[--accent] mb-4">Apply Now</span>
+                <h2 class="text-3xl md:text-4xl font-light text-[--light-text] mb-4">
+                    Join the <span class="font-bold">Trade Program</span>
+                </h2>
+                <p class="text-[--light-accent] text-lg max-w-2xl mx-auto">
+                    Complete your application to unlock exclusive partner benefits.
+                </p>
+            </div>
+
+            <div class="form-card">
+                <!-- Progress Steps -->
+                <div class="progress-steps">
+                    <div class="step-indicator active" data-step="1">
+                        <div class="step-dot">1</div>
+                        <span class="step-label">Company Info</span>
+                    </div>
+                    <div class="step-connector"></div>
+                    <div class="step-indicator" data-step="2">
+                        <div class="step-dot">2</div>
+                        <span class="step-label">Admin Account</span>
+                    </div>
+                    <div class="step-connector"></div>
+                    <div class="step-indicator" data-step="3">
+                        <div class="step-dot">3</div>
+                        <span class="step-label">Complete</span>
+                    </div>
+                </div>
+
+                <!-- Step 1: Company Info -->
+                <div class="form-content" id="regStep1Content">
+                    <form id="companyForm">
+                        <div class="form-section">
+                            <h3 class="form-section-title">
+                                <i class="fas fa-building"></i>
+                                Company Information
+                            </h3>
+                            <div class="form-grid">
+                                <div class="form-group full-width">
+                                    <label class="form-label">Company Name <span class="required">*</span></label>
+                                    <input type="text" class="form-input" id="companyName" name="companyName" placeholder="Enter legal company name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">DBA (Doing Business As)</label>
+                                    <input type="text" class="form-input" id="dbaName" name="dbaName" placeholder="Trading name (if different)">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">EIN / Tax ID</label>
+                                    <input type="text" class="form-input" id="ein" name="ein" placeholder="XX-XXXXXXX">
+                                    <p class="input-hint">Employer Identification Number (optional)</p>
+                                </div>
+                                <div class="form-group full-width">
+                                    <label class="form-label">Business Address <span class="required">*</span></label>
+                                    <input type="text" class="form-input" id="streetAddress" name="streetAddress" placeholder="Street address" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">City <span class="required">*</span></label>
+                                    <input type="text" class="form-input" id="city" name="city" placeholder="City" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">State <span class="required">*</span></label>
+                                    <select class="form-select" id="state" name="state" required>
+                                        <option value="">Select State</option>
+                                        <option value="AL">Alabama</option>
+                                        <option value="AK">Alaska</option>
+                                        <option value="AZ">Arizona</option>
+                                        <option value="AR">Arkansas</option>
+                                        <option value="CA">California</option>
+                                        <option value="CO">Colorado</option>
+                                        <option value="CT">Connecticut</option>
+                                        <option value="DE">Delaware</option>
+                                        <option value="FL">Florida</option>
+                                        <option value="GA">Georgia</option>
+                                        <option value="HI">Hawaii</option>
+                                        <option value="ID">Idaho</option>
+                                        <option value="IL">Illinois</option>
+                                        <option value="IN">Indiana</option>
+                                        <option value="IA">Iowa</option>
+                                        <option value="KS">Kansas</option>
+                                        <option value="KY">Kentucky</option>
+                                        <option value="LA">Louisiana</option>
+                                        <option value="ME">Maine</option>
+                                        <option value="MD">Maryland</option>
+                                        <option value="MA">Massachusetts</option>
+                                        <option value="MI">Michigan</option>
+                                        <option value="MN">Minnesota</option>
+                                        <option value="MS">Mississippi</option>
+                                        <option value="MO">Missouri</option>
+                                        <option value="MT">Montana</option>
+                                        <option value="NE">Nebraska</option>
+                                        <option value="NV">Nevada</option>
+                                        <option value="NH">New Hampshire</option>
+                                        <option value="NJ">New Jersey</option>
+                                        <option value="NM">New Mexico</option>
+                                        <option value="NY">New York</option>
+                                        <option value="NC">North Carolina</option>
+                                        <option value="ND">North Dakota</option>
+                                        <option value="OH">Ohio</option>
+                                        <option value="OK">Oklahoma</option>
+                                        <option value="OR">Oregon</option>
+                                        <option value="PA">Pennsylvania</option>
+                                        <option value="RI">Rhode Island</option>
+                                        <option value="SC">South Carolina</option>
+                                        <option value="SD">South Dakota</option>
+                                        <option value="TN">Tennessee</option>
+                                        <option value="TX">Texas</option>
+                                        <option value="UT">Utah</option>
+                                        <option value="VT">Vermont</option>
+                                        <option value="VA">Virginia</option>
+                                        <option value="WA">Washington</option>
+                                        <option value="WV">West Virginia</option>
+                                        <option value="WI">Wisconsin</option>
+                                        <option value="WY">Wyoming</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">ZIP Code <span class="required">*</span></label>
+                                    <input type="text" class="form-input" id="zipCode" name="zipCode" placeholder="XXXXX or XXXXX-XXXX" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Contact Name <span class="required">*</span></label>
+                                    <input type="text" class="form-input" id="contactName" name="contactName" placeholder="Full name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Phone <span class="required">*</span></label>
+                                    <input type="tel" class="form-input" id="contactPhone" name="contactPhone" placeholder="(XXX) XXX-XXXX" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Email <span class="required">*</span></label>
+                                    <input type="email" class="form-input" id="contactEmail" name="contactEmail" placeholder="email@company.com" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Website</label>
+                                    <input type="url" class="form-input" id="companyWebsite" name="companyWebsite" placeholder="https://www.example.com">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h3 class="form-section-title">
+                                <i class="fas fa-briefcase"></i>
+                                Business Details
+                            </h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label">Business Type <span class="required">*</span></label>
+                                    <select class="form-select" id="businessType" name="businessType" required>
+                                        <option value="">Select business type</option>
+                                        <option value="contractor">General Contractor</option>
+                                        <option value="landscape">Landscape Design</option>
+                                        <option value="architecture">Architecture Firm</option>
+                                        <option value="interior">Interior Design</option>
+                                        <option value="construction">Construction Company</option>
+                                        <option value="distributor">Material Distributor</option>
+                                        <option value="retailer">Retailer</option>
+                                        <option value="realestate">Real Estate Agent</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Company Size</label>
+                                    <select class="form-select" id="companySize" name="companySize">
+                                        <option value="">Select company size</option>
+                                        <option value="1-10">1-10 employees</option>
+                                        <option value="11-50">11-50 employees</option>
+                                        <option value="51-200">51-200 employees</option>
+                                        <option value="200+">200+ employees</option>
+                                    </select>
+                                </div>
+                                <div class="form-group full-width">
+                                    <label class="form-label">About Your Business</label>
+                                    <textarea class="form-textarea" id="companyDescription" name="companyDescription" placeholder="Briefly describe your business, services, and what you're looking for in a partnership..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h3 class="form-section-title">
+                                <i class="fas fa-star"></i>
+                                Choose Your Plan
+                            </h3>
+                            <div class="plan-grid">
+                                <div class="plan-card" data-plan="basic">
+                                    <div class="plan-name">Starter</div>
+                                    <div class="plan-price">$0 <span>/ mo</span></div>
+                                    <ul class="plan-features">
+                                        <li><i class="fas fa-check"></i> Up to 5 projects</li>
+                                        <li><i class="fas fa-check"></i> 2 team members</li>
+                                        <li><i class="fas fa-check"></i> Basic AI design tools</li>
+                                        <li><i class="fas fa-check"></i> Email support</li>
+                                    </ul>
+                                </div>
+                                <div class="plan-card selected" data-plan="pro">
+                                    <div class="plan-badge">Recommended</div>
+                                    <div class="plan-name">Professional</div>
+                                    <div class="plan-price">$49 <span>/ mo</span></div>
+                                    <ul class="plan-features">
+                                        <li><i class="fas fa-check"></i> Up to 50 projects</li>
+                                        <li><i class="fas fa-check"></i> 10 team members</li>
+                                        <li><i class="fas fa-check"></i> Advanced AI design</li>
+                                        <li><i class="fas fa-check"></i> Priority support</li>
+                                        <li><i class="fas fa-check"></i> Analytics dashboard</li>
+                                    </ul>
+                                </div>
+                                <div class="plan-card" data-plan="enterprise">
+                                    <div class="plan-name">Enterprise</div>
+                                    <div class="plan-price">Custom</div>
+                                    <ul class="plan-features">
+                                        <li><i class="fas fa-check"></i> Unlimited projects</li>
+                                        <li><i class="fas fa-check"></i> Unlimited team</li>
+                                        <li><i class="fas fa-check"></i> Custom AI models</li>
+                                        <li><i class="fas fa-check"></i> 24/7 support</li>
+                                        <li><i class="fas fa-check"></i> API access</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="checkbox-input" id="agreeTerms" required>
+                            <label class="checkbox-label" for="agreeTerms">
+                                I have read and agree to the <a href="#" target="_blank">Terms of Service</a> and <a href="#" target="_blank">Privacy Policy</a>. I confirm that the information provided is accurate.
+                            </label>
+                        </div>
+
+                        <div class="form-actions">
+                            <div></div>
+                            <button type="submit" class="btn btn-submit">
+                                Continue
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Step 2: Admin Account -->
+                <div class="form-content hidden" id="regStep2Content">
+                    <form id="adminForm">
+                        <div class="form-section">
+                            <h3 class="form-section-title">
+                                <i class="fas fa-user-shield"></i>
+                                Administrator Account
+                            </h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label">Full Name <span class="required">*</span></label>
+                                    <input type="text" class="form-input" id="adminName" name="adminName" placeholder="Your full name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Job Title</label>
+                                    <input type="text" class="form-input" id="adminTitle" name="adminTitle" placeholder="e.g., Owner, Project Manager">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label class="form-label">Login Email <span class="required">*</span></label>
+                                    <input type="email" class="form-input" id="adminEmail" name="adminEmail" placeholder="This email will be used for login" required>
+                                    <p class="input-hint">This email will be your login username. Make sure you can receive emails at this address.</p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Password <span class="required">*</span></label>
+                                    <input type="password" class="form-input" id="adminPassword" name="adminPassword" placeholder="Min 8 characters" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Confirm Password <span class="required">*</span></label>
+                                    <input type="password" class="form-input" id="adminPasswordConfirm" name="adminPasswordConfirm" placeholder="Re-enter password" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-back" onclick="regGoToStep(1)">
+                                <i class="fas fa-arrow-left"></i>
+                                Previous
+                            </button>
+                            <button type="submit" class="btn btn-submit" id="createAccountBtn">
+                                Create Account
+                                <i class="fas fa-check"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Step 3: Success -->
+                <div class="form-content hidden" id="regStep3Content">
+                    <div class="success-state">
+                        <div class="success-icon">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <h2 class="success-title">Application Submitted!</h2>
+                        <p class="success-message">
+                            Your Trade Partner application has been received.<br>
+                            We've sent a verification email to your inbox. Our team will review your application within 1-2 business days.
+                        </p>
+                        <div class="success-details">
+                            <div class="detail-row">
+                                <span class="detail-label">Company Name</span>
+                                <span class="detail-value" id="successCompanyName">-</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Admin Account</span>
+                                <span class="detail-value" id="successAdminEmail">-</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Your Portal URL</span>
+                                <span class="detail-value" id="successLoginUrl">-</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Selected Plan</span>
+                                <span class="detail-value" id="successPlan">-</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 16px; justify-content: center;">
+                            <a href="login.html" class="btn btn-submit">
+                                <i class="fas fa-sign-in-alt"></i>
+                                Sign In Now
+                            </a>
+                            <a href="index.html" class="btn btn-back">
+                                Back to Home
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- CTA Section -->
     <section class="py-16 bg-white">
         <div class="container mx-auto px-4 text-center">
             <h2 class="text-3xl font-light text-[--light-text] mb-4 lang-text" data-zh="准备好开始合作了吗？" data-en="Ready to Partner With Us?">准备好开始合作了吗？</h2>
             <p class="text-[--light-accent] mb-8 max-w-xl mx-auto lang-text" data-zh="立即联系我们，了解更多合作详情和专属支持方案" data-en="Contact us now to learn more about partnership details and exclusive support.">立即联系我们，了解更多合作详情和专属支持方案</p>
-            <a href="index.html#contact" class="btn-primary text-white font-semibold py-4 px-10 rounded-lg inline-flex items-center text-lg">
+            <a href="#register" class="btn-primary text-white font-semibold py-4 px-10 rounded-lg inline-flex items-center text-lg">
                 <span class="lang-text" data-zh="立即申请合作" data-en="Apply Now">立即申请合作</span>
                 <i class="fas fa-arrow-right ml-2"></i>
             </a>
@@ -893,7 +1566,136 @@
                     }, 100);
                 }
             }
+
+            // Initialize Registration Form
+            initRegistrationForm();
         });
+
+        // ===== Registration Form Logic =====
+        let regCurrentStep = 1;
+        let regFormData = {
+            company: {},
+            admin: {},
+            plan: 'pro'
+        };
+
+        function initRegistrationForm() {
+            // Plan selection
+            document.querySelectorAll('.plan-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+                    regFormData.plan = this.dataset.plan;
+                });
+            });
+
+            // Company form submission
+            document.getElementById('companyForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                if (!document.getElementById('agreeTerms').checked) {
+                    alert('Please read and agree to the Terms of Service');
+                    return;
+                }
+
+                regFormData.company = {
+                    name: document.getElementById('companyName').value,
+                    dbaName: document.getElementById('dbaName').value,
+                    ein: document.getElementById('ein').value,
+                    streetAddress: document.getElementById('streetAddress').value,
+                    city: document.getElementById('city').value,
+                    state: document.getElementById('state').value,
+                    zipCode: document.getElementById('zipCode').value,
+                    contactName: document.getElementById('contactName').value,
+                    contactPhone: document.getElementById('contactPhone').value,
+                    contactEmail: document.getElementById('contactEmail').value,
+                    website: document.getElementById('companyWebsite').value,
+                    businessType: document.getElementById('businessType').value,
+                    companySize: document.getElementById('companySize').value,
+                    description: document.getElementById('companyDescription').value
+                };
+
+                document.getElementById('adminName').value = regFormData.company.contactName || '';
+                regGoToStep(2);
+            });
+
+            // Admin form submission
+            document.getElementById('adminForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const password = document.getElementById('adminPassword').value;
+                const passwordConfirm = document.getElementById('adminPasswordConfirm').value;
+
+                if (password !== passwordConfirm) {
+                    alert('Passwords do not match');
+                    return;
+                }
+
+                if (password.length < 8) {
+                    alert('Password must be at least 8 characters');
+                    return;
+                }
+
+                regFormData.admin = {
+                    name: document.getElementById('adminName').value,
+                    title: document.getElementById('adminTitle').value,
+                    email: document.getElementById('adminEmail').value,
+                    password: password
+                };
+
+                const btn = document.getElementById('createAccountBtn');
+                btn.disabled = true;
+                btn.innerHTML = '<div class="spinner"></div> Creating...';
+
+                try {
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+
+                    const tenantSlug = regFormData.company.name.toLowerCase()
+                        .replace(/[^a-z0-9]/g, '-')
+                        .replace(/-+/g, '-')
+                        .substring(0, 20);
+
+                    document.getElementById('successCompanyName').textContent = regFormData.company.name;
+                    document.getElementById('successAdminEmail').textContent = regFormData.admin.email;
+                    document.getElementById('successLoginUrl').textContent = `${tenantSlug}.outdoorliving.expert`;
+                    document.getElementById('successPlan').textContent =
+                        regFormData.plan === 'basic' ? 'Starter (Free)' :
+                        regFormData.plan === 'pro' ? 'Professional ($49/mo)' : 'Enterprise (Custom)';
+
+                    regGoToStep(3);
+
+                } catch (error) {
+                    console.error('Registration failed:', error);
+                    alert('Registration failed. Please try again.');
+                    btn.disabled = false;
+                    btn.innerHTML = 'Create Account <i class="fas fa-check"></i>';
+                }
+            });
+        }
+
+        // Step navigation for registration form
+        function regGoToStep(step) {
+            regCurrentStep = step;
+
+            // Update step indicators
+            document.querySelectorAll('.step-indicator').forEach((s, index) => {
+                s.classList.remove('active', 'completed');
+                if (index + 1 < step) {
+                    s.classList.add('completed');
+                } else if (index + 1 === step) {
+                    s.classList.add('active');
+                }
+            });
+
+            // Show/hide content
+            document.getElementById('regStep1Content').classList.add('hidden');
+            document.getElementById('regStep2Content').classList.add('hidden');
+            document.getElementById('regStep3Content').classList.add('hidden');
+            document.getElementById(`regStep${step}Content`).classList.remove('hidden');
+
+            // Scroll to form section
+            document.getElementById('register').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
     </script>
 </body>
 </html>
