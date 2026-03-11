@@ -418,8 +418,8 @@
                 <nav class="hidden md:flex space-x-8">
                     <a href="index.html" class="text-[--light-accent] hover:text-[--light-text] transition lang-text" data-zh="首页" data-en="Home">首页</a>
                     <a href="index.html#product-showcase" class="text-[--light-accent] hover:text-[--light-text] transition lang-text" data-zh="产品" data-en="Products">产品</a>
-                    <a href="#top" class="text-[--light-text] font-semibold transition lang-text" data-zh="合作伙伴" data-en="Partners">合作伙伴</a>
-                    <a href="index.html#contact" class="text-[--light-accent] hover:text-[--light-text] transition lang-text" data-zh="联系我们" data-en="Contact">联系我们</a>
+                    <a href="#partner-hero" class="text-[--light-text] font-semibold transition lang-text" data-zh="合作伙伴" data-en="Partners">合作伙伴</a>
+                    <a href="index.html#contact" class="text-[--light-accent] hover:text-[--light-text] transition lang-text" data-zh="联系我们" data-en="Contact Us">联系我们</a>
                 </nav>
                 <div class="flex items-center space-x-4">
                     <a href="login.html" class="inline-flex items-center gap-2 px-5 py-2 border border-[--light-text] text-[--light-text] rounded-lg text-sm font-medium hover:bg-[--light-text] hover:text-white transition-all">
@@ -432,19 +432,29 @@
     </header>
 
     <!-- Hero Section -->
-    <section class="pt-32 pb-16 bg-[--darker-bg]">
-        <div class="container mx-auto px-4 text-center">
-            <span class="inline-block px-4 py-1.5 bg-[--light-text] text-white rounded-full text-sm font-semibold tracking-wider mb-4 lang-text" data-zh="B2B 专业定制服务" data-en="B2B PROFESSIONAL SERVICE">B2B 专业定制服务</span>
-            <h1 class="text-4xl md:text-5xl font-light text-[--light-text] mb-6 lang-text" data-zh="成为我们的合作伙伴" data-en="Become Our Partner">
-                成为我们的合作伙伴
+    <section id="partner-hero" class="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
+        <!-- Background Image -->
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&q=80" alt="Modern outdoor living space" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30"></div>
+        </div>
+
+        <!-- Content -->
+        <div class="container mx-auto px-4 text-center relative z-10 py-24">
+            <span class="inline-block px-4 py-1.5 bg-white/20 backdrop-blur-sm text-white rounded-full text-sm font-semibold tracking-wider mb-6 lang-text" data-zh="B2B 专业定制服务" data-en="B2B PROFESSIONAL SERVICE">B2B PROFESSIONAL SERVICE</span>
+            <h1 class="text-5xl md:text-6xl lg:text-7xl font-light text-white mb-8 leading-tight lang-text" data-zh="成为我们的合作伙伴" data-en="Become Our Partner">
+                Become Our Partner
             </h1>
-            <p class="text-[--light-accent] text-lg max-w-2xl mx-auto mb-8 lang-text" data-zh="从设计到交付的完整解决方案，专业团队全程支持，共同为客户打造理想的户外生活空间" data-en="Complete solution from design to delivery. Professional team support throughout the journey.">
-                从设计到交付的完整解决方案，专业团队全程支持，共同为客户打造理想的户外生活空间
+            <p class="text-white/90 text-xl md:text-2xl max-w-3xl mx-auto mb-12 font-light lang-text" data-zh="从设计到交付的完整解决方案，专业团队全程支持，共同为客户打造理想的户外生活空间" data-en="Complete solution from design to delivery. Professional team support throughout the journey.">
+                Complete solution from design to delivery. Professional team support throughout the journey.
             </p>
-            <div class="flex justify-center gap-4">
-                <a href="#register" class="btn-primary text-white font-semibold py-3 px-8 rounded-lg inline-flex items-center">
-                    <span class="lang-text" data-zh="申请合作" data-en="Apply to Partner">申请合作</span>
-                    <i class="fas fa-arrow-right ml-2"></i>
+            <div class="flex justify-center gap-6">
+                <a href="#register" class="inline-flex items-center gap-2 px-8 py-4 bg-white text-[--light-text] rounded-lg font-semibold hover:bg-gray-100 transition-all text-lg">
+                    <span class="lang-text" data-zh="立即申请" data-en="Apply Now">Apply Now</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+                <a href="#features" class="inline-flex items-center gap-2 px-8 py-4 border-2 border-white text-white rounded-lg font-semibold hover:bg-white/10 transition-all text-lg">
+                    <span class="lang-text" data-zh="了解更多" data-en="Learn More">Learn More</span>
                 </a>
             </div>
         </div>
@@ -526,7 +536,7 @@
             <div class="text-center mb-12">
                 <span class="inline-block text-xs font-semibold tracking-widest uppercase text-[--accent] mb-4">Apply Now</span>
                 <h2 class="text-3xl md:text-4xl font-light text-[--light-text] mb-4">
-                    Join the <span class="font-bold">Trade Program</span>
+                    Join the <span class="font-bold">Partner Program</span>
                 </h2>
                 <p class="text-[--light-accent] text-lg max-w-2xl mx-auto">
                     Complete your application to unlock exclusive partner benefits.
