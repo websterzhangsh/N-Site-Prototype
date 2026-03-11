@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nestopia B2B Platform - Product Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            background: #667eea;
+            border-radius: 50%;
+            border: 3px solid white;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+
+    <!-- Hero Section -->
+    <section class="gradient-bg text-white py-20">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center">
+                <div class="inline-flex items-center gap-2 bg-white/20 px-4 py-2 rounded-full text-sm mb-6">
+                    <i class="fas fa-rocket"></i>
+                    <span>过去 36 小时开发成果</span>
+                </div>
+                <h1 class="text-5xl font-bold mb-4">Nestopia B2B Platform</h1>
+                <p class="text-xl text-white/80 mb-8 max-w-2xl mx-auto">
+                    多租户户外阳光房行业 SaaS 平台，集成 4 个 AI Agent，赋能小型企业主
+                </p>
+                <div class="flex justify-center gap-4">
+                    <a href="#features" class="bg-white text-purple-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
+                        <i class="fas fa-play mr-2"></i>查看演示
+                    </a>
+                    <a href="dashboard.html" class="bg-transparent border-2 border-white px-6 py-3 rounded-lg font-semibold hover:bg-white/10 transition">
+                        <i class="fas fa-desktop mr-2"></i>进入 Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-12 bg-white border-b">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-purple-600 mb-2">18</div>
+                    <div class="text-gray-600">业务数据表</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-purple-600 mb-2">4</div>
+                    <div class="text-gray-600">AI Agent</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-purple-600 mb-2">28</div>
+                    <div class="text-gray-600">测试客户数据</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-purple-600 mb-2">100%</div>
+                    <div class="text-gray-600">多租户隔离</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">核心功能展示</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">完整的多租户业务管理平台，从产品管理到订单履约，从客户关系到定价策略</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Products Management -->
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover transition-all duration-300">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-box text-blue-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Products 产品管理</h3>
+                    <p class="text-gray-600 mb-4">完整的产品目录管理，支持 SKU、JSONB 规格、分层定价、文件上传（CAD/PDF/3D）</p>
+                    <ul class="text-sm text-gray-500 space-y-1">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>18 个产品数据</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>支持 8 种文件格式</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>分层定价规则</li>
+                    </ul>
+                </div>
+
+                <!-- Customers Management -->
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover transition-all duration-300">
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-users text-green-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Customers 客户管理</h3>
+                    <p class="text-gray-600 mb-4">客户关系管理，含场地信息、消费记录、满意度评分、来源追踪</p>
+                    <ul class="text-sm text-gray-500 space-y-1">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>28 个测试客户</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>VIP/Active/New 分类</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>真实中文数据</li>
+                    </ul>
+                </div>
+
+                <!-- Orders Management -->
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover transition-all duration-300">
+                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-shopping-cart text-purple-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Orders 订单管理</h3>
+                    <p class="text-gray-600 mb-4">完整订单生命周期，13 状态流转，三阶段付款，产品快照</p>
+                    <ul class="text-sm text-gray-500 space-y-1">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>7 个订单（各状态）</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>定金 30% + 二期 40% + 尾款 30%</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>产品价格快照</li>
+                    </ul>
+                </div>
+
+                <!-- Pricing Management -->
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover transition-all duration-300">
+                    <div class="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-dollar-sign text-amber-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Pricing 定价管理</h3>
+                    <p class="text-gray-600 mb-4">灵活定价规则，面积分层、选项加价、折扣策略、成本构成</p>
+                    <ul class="text-sm text-gray-500 space-y-1">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>16 条定价规则</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>8 个成本构成项</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>早鸟/VIP 折扣</li>
+                    </ul>
+                </div>
+
+                <!-- Multi-Tenant -->
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover transition-all duration-300">
+                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-building text-red-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Multi-Tenant 多租户</h3>
+                    <p class="text-gray-600 mb-4">严格数据隔离，RLS 行级安全，租户级 UI 定制，配额管理</p>
+                    <ul class="text-sm text-gray-500 space-y-1">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>4 个测试租户</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Enterprise/Pro/Basic 套餐</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>品牌定制登录页</li>
+                    </ul>
+                </div>
+
+                <!-- Database Schema -->
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover transition-all duration-300">
+                    <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-database text-indigo-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Database Schema</h3>
+                    <p class="text-gray-600 mb-4">严格 Schema 设计，复合唯一约束，审计触发器，自动编号</p>
+                    <ul class="text-sm text-gray-500 space-y-1">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>880+ 行 SQL</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>JSONB 灵活字段</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>完整 RLS 策略</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Agents Section -->
+    <section class="py-20 bg-gray-100">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">4 个 AI Agent 集成</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">智能业务流程自动化，从设计生成到合规检查，从成本控制到客户服务</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- AI Designer -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="bg-gradient-to-r from-blue-500 to-blue-600 p-6 text-white">
+                        <div class="flex items-center gap-3 mb-2">
+                            <i class="fas fa-magic text-2xl"></i>
+                            <h3 class="text-xl font-bold">AI Designer Agent</h3>
+                        </div>
+                        <p class="text-blue-100">15 分钟内生成光写实设计渲染</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="mb-4">
+                            <h4 class="font-semibold text-gray-900 mb-2">Input</h4>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li>• 场地照片上传</li>
+                                <li>• 产品类型选择</li>
+                                <li>• 风格偏好设置</li>
+                                <li>• 颜色方案</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900 mb-2">Output</h4>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li>• 3 张 AI 渲染图</li>
+                                <li>• 设计规格参数</li>
+                                <li>• 预估成本</li>
+                                <li>• 合规预检状态</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pricing Controller -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="bg-gradient-to-r from-green-500 to-green-600 p-6 text-white">
+                        <div class="flex items-center gap-3 mb-2">
+                            <i class="fas fa-calculator text-2xl"></i>
+                            <h3 class="text-xl font-bold">Pricing & Cost Controller</h3>
+                        </div>
+                        <p class="text-green-100">60 秒生成利润保护报价</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="mb-4">
+                            <h4 class="font-semibold text-gray-900 mb-2">Input</h4>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li>• 项目选择</li>
+                                <li>• 产品配置</li>
+                                <li>• 面积输入</li>
+                                <li>• 选项选择</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900 mb-2">Output</h4>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li>• 成本分解表</li>
+                                <li>• 利润率分析</li>
+                                <li>• 建议定价</li>
+                                <li>• 风险警告</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Compliance Manager -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="bg-gradient-to-r from-purple-500 to-purple-600 p-6 text-white">
+                        <div class="flex items-center gap-3 mb-2">
+                            <i class="fas fa-shield-alt text-2xl"></i>
+                            <h3 class="text-xl font-bold">Compliance Manager</h3>
+                        </div>
+                        <p class="text-purple-100">自动化合规性检查</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="mb-4">
+                            <h4 class="font-semibold text-gray-900 mb-2">Input</h4>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li>• 设计选择</li>
+                                <li>• 场地地址</li>
+                                <li>• 建筑类型</li>
+                                <li>• 当地管辖区</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900 mb-2">Output</h4>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li>• 合规状态（通过/失败）</li>
+                                <li>• 检查清单</li>
+                                <li>• 风险警告</li>
+                                <li>• 所需文档列表</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customer Service -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="bg-gradient-to-r from-amber-500 to-amber-600 p-6 text-white">
+                        <div class="flex items-center gap-3 mb-2">
+                            <i class="fas fa-headset text-2xl"></i>
+                            <h3 class="text-xl font-bold">Customer Service Executive</h3>
+                        </div>
+                        <p class="text-amber-100">多渠道智能客户支持</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="mb-4">
+                            <h4 class="font-semibold text-gray-900 mb-2">Input</h4>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li>• 客户查询</li>
+                                <li>• 渠道选择（微信/邮件/电话）</li>
+                                <li>• 优先级</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900 mb-2">Output</h4>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li>• 建议回复</li>
+                                <li>• 相关订单信息</li>
+                                <li>• 客户历史摘要</li>
+                                <li>• 升级建议</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline Section -->
+    <section class="py-20">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">开发时间线</h2>
+                <p class="text-gray-600">过去 36 小时的工作进展</p>
+            </div>
+
+            <div class="relative">
+                <div class="absolute left-8 top-0 bottom-0 w-0.5 bg-gray-200"></div>
+                
+                <div class="space-y-12">
+                    <!-- Phase 1 -->
+                    <div class="relative pl-16 timeline-item">
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="text-sm font-semibold text-purple-600 bg-purple-100 px-3 py-1 rounded-full">Phase 1</span>
+                                <span class="text-sm text-gray-500">前 12 小时</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">AI Agent 需求规格文档</h3>
+                            <p class="text-gray-600">创建 4 个 AI Agent 的完整需求规格文档，包括用户故事、功能需求、数据模型、API 端点</p>
+                        </div>
+                    </div>
+
+                    <!-- Phase 2 -->
+                    <div class="relative pl-16 timeline-item">
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="text-sm font-semibold text-purple-600 bg-purple-100 px-3 py-1 rounded-full">Phase 2</span>
+                                <span class="text-sm text-gray-500">中间 12 小时</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">核心业务页面开发</h3>
+                            <p class="text-gray-600">Products 产品管理、Orders 订单管理、Customers 客户管理，完整的前端交互逻辑</p>
+                        </div>
+                    </div>
+
+                    <!-- Phase 3 -->
+                    <div class="relative pl-16 timeline-item">
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="text-sm font-semibold text-purple-600 bg-purple-100 px-3 py-1 rounded-full">Phase 3</span>
+                                <span class="text-sm text-gray-500">后 12 小时</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">数据库 Schema 升级</h3>
+                            <p class="text-gray-600">全面多租户化，18 张表 RLS 策略，复合唯一约束，审计触发器，合成测试数据</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technical Highlights -->
+    <section class="py-20 bg-gray-900 text-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold mb-4">技术亮点</h2>
+                <p class="text-gray-400">企业级架构设计</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <i class="fas fa-lock text-3xl text-purple-400 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">多租户隔离</h3>
+                    <ul class="text-gray-400 text-sm space-y-2">
+                        <li>• RLS 行级安全策略</li>
+                        <li>• tenant_id 外键约束</li>
+                        <li>• 复合唯一约束</li>
+                        <li>• 租户上下文注入</li>
+                    </ul>
+                </div>
+
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <i class="fas fa-database text-3xl text-blue-400 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">数据库设计</h3>
+                    <ul class="text-gray-400 text-sm space-y-2">
+                        <li>• 18 张业务表</li>
+                        <li>• JSONB 灵活字段</li>
+                        <li>• 自动编号生成</li>
+                        <li>• 审计触发器</li>
+                    </ul>
+                </div>
+
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <i class="fas fa-robot text-3xl text-green-400 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">AI Agent 集成</h3>
+                    <ul class="text-gray-400 text-sm space-y-2">
+                        <li>• Input/Output 标准化</li>
+                        <li>• 业务数据深度集成</li>
+                        <li>• 风险警告机制</li>
+                        <li>• 合规预检</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 gradient-bg text-white">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <h2 class="text-3xl font-bold mb-4">准备开始演示？</h2>
+            <p class="text-white/80 mb-8">进入 Dashboard 体验完整功能，或查看详细的演示脚本</p>
+            <div class="flex justify-center gap-4 flex-wrap">
+                <a href="dashboard.html" class="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition inline-flex items-center gap-2">
+                    <i class="fas fa-desktop"></i>
+                    进入 Dashboard
+                </a>
+                <a href="docs/PRODUCT_DEMO.md" class="bg-transparent border-2 border-white px-8 py-3 rounded-lg font-semibold hover:bg-white/10 transition inline-flex items-center gap-2">
+                    <i class="fas fa-file-alt"></i>
+                    演示脚本
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-8">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <p class="mb-2">Nestopia B2B Platform - Product Demo</p>
+            <p class="text-sm">版本 2.0.0 | 创建于 2026-03-11 | 过去 36 小时开发成果</p>
+        </div>
+    </footer>
+
+</body>
+</html>
