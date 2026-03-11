@@ -3,27 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Partner Registration | Outdoor Living Expert</title>
-    <meta name="description" content="Register as a partner to access exclusive B2B customization services and support">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <title>Trade Partner Program | Outdoor Living Expert</title>
+    <meta name="description" content="Join our Trade Partner Program — exclusive benefits for contractors, designers, architects, and landscape professionals.">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/min.css">
     <style>
         :root {
-            --primary: #222222;
+            --primary: #1a1a1a;
             --primary-hover: #333333;
-            --bg-color: #f5f5f5;
-            --card-bg: #ffffff;
+            --accent: #2563eb;
+            --bg-light: #f8f9fa;
+            --bg-dark: #0f0f0f;
             --success: #10b981;
-            --warning: #f59e0b;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Roboto', system-ui, -apple-system, sans-serif;
-            background: var(--bg-color);
-            min-height: 100vh;
+            background: white;
+            color: var(--primary);
+            line-height: 1.6;
         }
 
         /* Header */
@@ -31,13 +32,15 @@
             background: white;
             border-bottom: 1px solid #e5e7eb;
             padding: 16px 24px;
-            position: sticky;
+            position: fixed;
             top: 0;
+            left: 0;
+            right: 0;
             z-index: 100;
         }
 
         .header-content {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             display: flex;
             align-items: center;
@@ -86,27 +89,322 @@
             color: var(--primary);
         }
 
-        /* Main Container */
-        .main-container {
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            padding: 160px 24px 100px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1600585154340-be6161a8a0cb?w=1920') center/cover;
+            opacity: 0.15;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 300;
+            margin-bottom: 16px;
+            line-height: 1.1;
+        }
+
+        .hero h1 span {
+            font-weight: 700;
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            color: rgba(255,255,255,0.8);
+            max-width: 600px;
+            margin-bottom: 40px;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--primary);
+            padding: 16px 32px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            padding: 16px 32px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid rgba(255,255,255,0.3);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.5);
+        }
+
+        /* Target Audience Pills */
+        .audience-pills {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
+        .audience-pill {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .audience-pill i {
+            color: var(--success);
+        }
+
+        /* Why Join Section */
+        .why-join {
+            padding: 100px 24px;
+            background: var(--bg-light);
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 60px;
+        }
+
+        .section-label {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 40px;
+            font-weight: 300;
+            color: var(--primary);
+            margin-bottom: 16px;
+        }
+
+        .section-title span {
+            font-weight: 700;
+        }
+
+        .section-subtitle {
+            font-size: 18px;
+            color: #666;
+        }
+
+        .benefits-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 32px;
+        }
+
+        .benefit-card {
+            background: white;
+            padding: 32px;
+            border-radius: 16px;
+            text-align: center;
+            transition: all 0.3s;
+            border: 1px solid #eee;
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .benefit-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--accent), #3b82f6);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 28px;
+        }
+
+        .benefit-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--primary);
+        }
+
+        .benefit-desc {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* How It Works */
+        .how-it-works {
+            padding: 100px 24px;
+            background: white;
+        }
+
+        .steps-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 48px;
+            position: relative;
+        }
+
+        .steps-container::before {
+            content: '';
+            position: absolute;
+            top: 40px;
+            left: 20%;
+            right: 20%;
+            height: 2px;
+            background: #e5e7eb;
+            z-index: 0;
+        }
+
+        .step-card {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-number {
+            width: 80px;
+            height: 80px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 auto 24px;
+            position: relative;
+        }
+
+        .step-number::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+        }
+
+        .step-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--primary);
+        }
+
+        .step-desc {
+            font-size: 15px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Registration Form Section */
+        .registration-section {
+            padding: 100px 24px;
+            background: var(--bg-light);
+        }
+
+        .form-container {
             max-width: 800px;
-            margin: 40px auto;
-            padding: 0 24px;
+            margin: 0 auto;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
         }
 
         /* Progress Steps */
         .progress-steps {
             display: flex;
             justify-content: center;
-            margin-bottom: 40px;
+            padding: 32px 40px;
+            background: #fafafa;
+            border-bottom: 1px solid #eee;
         }
 
-        .step {
+        .step-indicator {
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .step-number {
+        .step-dot {
             width: 36px;
             height: 36px;
             border-radius: 50%;
@@ -120,67 +418,42 @@
             transition: all 0.3s;
         }
 
-        .step.active .step-number {
+        .step-indicator.active .step-dot {
             background: var(--primary);
             color: white;
         }
 
-        .step.completed .step-number {
+        .step-indicator.completed .step-dot {
             background: var(--success);
             color: white;
         }
 
-        .step-title {
+        .step-label {
             font-size: 14px;
             color: #9ca3af;
             font-weight: 500;
         }
 
-        .step.active .step-title {
+        .step-indicator.active .step-label {
             color: var(--primary);
         }
 
-        .step-line {
+        .step-connector {
             width: 60px;
             height: 2px;
             background: #e5e7eb;
             margin: 0 16px;
         }
 
-        .step.completed + .step-line {
+        .step-indicator.completed + .step-connector {
             background: var(--success);
         }
 
-        /* Card */
-        .card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
+        /* Form Content */
+        .form-content {
+            padding: 40px;
         }
 
-        .card-header {
-            padding: 32px 40px 24px;
-            border-bottom: 1px solid #f3f4f6;
-        }
-
-        .card-title {
-            font-size: 24px;
-            font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 8px;
-        }
-
-        .card-subtitle {
-            font-size: 14px;
-            color: #6b7280;
-        }
-
-        .card-body {
-            padding: 32px 40px;
-        }
-
-        /* Form Styles */
         .form-section {
             margin-bottom: 32px;
         }
@@ -189,7 +462,7 @@
             margin-bottom: 0;
         }
 
-        .section-title {
+        .form-section-title {
             font-size: 16px;
             font-weight: 600;
             color: var(--primary);
@@ -229,9 +502,9 @@
         }
 
         .form-input, .form-select, .form-textarea {
-            padding: 12px 16px;
+            padding: 14px 16px;
             border: 1px solid #e5e7eb;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 15px;
             transition: all 0.2s;
             background: #fafafa;
@@ -239,13 +512,9 @@
 
         .form-input:focus, .form-select:focus, .form-textarea:focus {
             outline: none;
-            border-color: var(--primary);
+            border-color: var(--accent);
             background: white;
-        }
-
-        .form-input.error, .form-select.error {
-            border-color: #ef4444;
-            background: #fef2f2;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
         .form-textarea {
@@ -256,16 +525,6 @@
         .input-hint {
             font-size: 12px;
             color: #9ca3af;
-        }
-
-        .input-error {
-            font-size: 12px;
-            color: #ef4444;
-            display: none;
-        }
-
-        .input-error.show {
-            display: block;
         }
 
         /* Plan Selection */
@@ -279,10 +538,11 @@
         .plan-card {
             border: 2px solid #e5e7eb;
             border-radius: 12px;
-            padding: 20px;
+            padding: 24px;
             cursor: pointer;
             transition: all 0.2s;
             text-align: center;
+            position: relative;
         }
 
         .plan-card:hover {
@@ -290,12 +550,8 @@
         }
 
         .plan-card.selected {
-            border-color: var(--primary);
-            background: #f9fafb;
-        }
-
-        .plan-card.recommended {
-            position: relative;
+            border-color: var(--accent);
+            background: rgba(37, 99, 235, 0.05);
         }
 
         .plan-badge {
@@ -303,7 +559,7 @@
             top: -10px;
             left: 50%;
             transform: translateX(-50%);
-            background: var(--primary);
+            background: var(--accent);
             color: white;
             font-size: 11px;
             font-weight: 600;
@@ -319,7 +575,7 @@
         }
 
         .plan-price {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 700;
             color: var(--primary);
             margin-bottom: 4px;
@@ -363,7 +619,7 @@
             width: 20px;
             height: 20px;
             margin-top: 2px;
-            accent-color: var(--primary);
+            accent-color: var(--accent);
             cursor: pointer;
         }
 
@@ -374,7 +630,7 @@
         }
 
         .checkbox-label a {
-            color: var(--primary);
+            color: var(--accent);
             text-decoration: none;
         }
 
@@ -382,7 +638,7 @@
             text-decoration: underline;
         }
 
-        /* Buttons */
+        /* Form Actions */
         .form-actions {
             display: flex;
             justify-content: space-between;
@@ -394,7 +650,7 @@
 
         .btn {
             padding: 14px 28px;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 15px;
             font-weight: 500;
             cursor: pointer;
@@ -406,27 +662,27 @@
             text-decoration: none;
         }
 
-        .btn-primary {
+        .btn-submit {
             background: var(--primary);
             color: white;
         }
 
-        .btn-primary:hover {
+        .btn-submit:hover {
             background: var(--primary-hover);
         }
 
-        .btn-primary:disabled {
+        .btn-submit:disabled {
             opacity: 0.6;
             cursor: not-allowed;
         }
 
-        .btn-secondary {
+        .btn-back {
             background: white;
             color: #4b5563;
             border: 1px solid #e5e7eb;
         }
 
-        .btn-secondary:hover {
+        .btn-back:hover {
             background: #f9fafb;
             border-color: #d1d5db;
         }
@@ -464,14 +720,14 @@
         }
 
         .success-title {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 600;
             color: var(--primary);
             margin-bottom: 12px;
         }
 
         .success-message {
-            font-size: 15px;
+            font-size: 16px;
             color: #6b7280;
             margin-bottom: 32px;
             line-height: 1.6;
@@ -527,7 +783,34 @@
         }
 
         /* Responsive */
+        @media (max-width: 1024px) {
+            .benefits-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
         @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero-subtitle {
+                font-size: 16px;
+            }
+
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .steps-container {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+
+            .steps-container::before {
+                display: none;
+            }
+
             .form-grid {
                 grid-template-columns: 1fr;
             }
@@ -536,16 +819,20 @@
                 grid-template-columns: 1fr;
             }
 
-            .card-header, .card-body {
+            .form-content {
                 padding: 24px;
             }
 
-            .step-line {
-                width: 30px;
+            .progress-steps {
+                padding: 24px;
             }
 
-            .step-title {
+            .step-label {
                 display: none;
+            }
+
+            .step-connector {
+                width: 30px;
             }
         }
     </style>
@@ -561,45 +848,148 @@
                 <span class="logo-text">Outdoor Living Expert</span>
             </a>
             <div class="header-links">
-                <span style="font-size: 14px; color: #666;">Already have an account?</span>
+                <span style="font-size: 14px; color: #666;">Already a partner?</span>
                 <a href="login.html" class="header-link" style="color: var(--primary); font-weight: 500;">Sign In</a>
             </div>
         </div>
     </header>
 
-    <!-- Main Container -->
-    <div class="main-container">
-        <!-- Progress Steps -->
-        <div class="progress-steps">
-            <div class="step active" data-step="1">
-                <div class="step-number">1</div>
-                <span class="step-title">Company Info</span>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">Trade Partner Program</div>
+            <h1>Partner With <span>Industry Leaders</span></h1>
+            <p class="hero-subtitle">
+                Tailored for Contractors, Landscape Designers, Architects & Real Estate Professionals who demand exceptional outdoor living solutions.
+            </p>
+            <div class="hero-cta">
+                <a href="#register" class="btn-primary">
+                    Join the Trade Program
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+                <a href="#how-it-works" class="btn-secondary">
+                    How It Works
+                </a>
             </div>
-            <div class="step-line"></div>
-            <div class="step" data-step="2">
-                <div class="step-number">2</div>
-                <span class="step-title">Admin Account</span>
-            </div>
-            <div class="step-line"></div>
-            <div class="step" data-step="3">
-                <div class="step-number">3</div>
-                <span class="step-title">Complete</span>
+            <div class="audience-pills">
+                <div class="audience-pill">
+                    <i class="fas fa-check"></i>
+                    General Contractors
+                </div>
+                <div class="audience-pill">
+                    <i class="fas fa-check"></i>
+                    Landscape Designers
+                </div>
+                <div class="audience-pill">
+                    <i class="fas fa-check"></i>
+                    Architects
+                </div>
+                <div class="audience-pill">
+                    <i class="fas fa-check"></i>
+                    Real Estate Agents
+                </div>
             </div>
         </div>
+    </section>
 
-        <!-- Registration Form -->
-        <div class="card" id="registrationCard">
-            <!-- Step 1: Company Info -->
-            <div id="step1Content">
-                <div class="card-header">
-                    <h1 class="card-title">Partner Registration</h1>
-                    <p class="card-subtitle">Enter your company information to get started with B2B services</p>
+    <!-- Why Join Section -->
+    <section class="why-join">
+        <div class="section-header">
+            <div class="section-label">Benefits</div>
+            <h2 class="section-title">Why Join the <span>Trade Program</span></h2>
+            <p class="section-subtitle">Elevate your projects while earning rewards. Discover how our Trade Partners grow their business.</p>
+        </div>
+        <div class="benefits-grid">
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-chart-line"></i>
                 </div>
-                <div class="card-body">
+                <h3 class="benefit-title">Tiered Rewards</h3>
+                <p class="benefit-desc">Know exactly what you earn on every referral — with rewards that scale with your success.</p>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <h3 class="benefit-title">Referral Incentives</h3>
+                <p class="benefit-desc">Industry-leading referral payouts, paid reliably after every qualifying project.</p>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-award"></i>
+                </div>
+                <h3 class="benefit-title">Brand Building</h3>
+                <p class="benefit-desc">Be featured in lookbooks, digital showcases, and magazines — we help clients find you.</p>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <h3 class="benefit-title">Priority Access</h3>
+                <p class="benefit-desc">First-look product drops, design resources, and exclusive early-access events.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="section-header">
+            <div class="section-label">Process</div>
+            <h2 class="section-title">How It <span>Works</span></h2>
+            <p class="section-subtitle">Getting started is simple — unlock exclusive trade benefits in three easy steps.</p>
+        </div>
+        <div class="steps-container">
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <h3 class="step-title">Apply Online</h3>
+                <p class="step-desc">Submit a quick application to join the Trade Partner Program.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <h3 class="step-title">Get Matched</h3>
+                <p class="step-desc">We'll connect you with a dedicated rep to support your projects and referrals.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <h3 class="step-title">Start Earning</h3>
+                <p class="step-desc">Enjoy exclusive pricing, design support, and rewards with every project.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Registration Form Section -->
+    <section class="registration-section" id="register">
+        <div class="form-container">
+            <div class="section-header">
+                <div class="section-label">Apply Now</div>
+                <h2 class="section-title">Join the <span>Trade Program</span></h2>
+                <p class="section-subtitle">Complete your application to unlock exclusive partner benefits.</p>
+            </div>
+
+            <div class="form-card">
+                <!-- Progress Steps -->
+                <div class="progress-steps">
+                    <div class="step-indicator active" data-step="1">
+                        <div class="step-dot">1</div>
+                        <span class="step-label">Company Info</span>
+                    </div>
+                    <div class="step-connector"></div>
+                    <div class="step-indicator" data-step="2">
+                        <div class="step-dot">2</div>
+                        <span class="step-label">Admin Account</span>
+                    </div>
+                    <div class="step-connector"></div>
+                    <div class="step-indicator" data-step="3">
+                        <div class="step-dot">3</div>
+                        <span class="step-label">Complete</span>
+                    </div>
+                </div>
+
+                <!-- Step 1: Company Info -->
+                <div class="form-content" id="step1Content">
                     <form id="companyForm">
-                        <!-- Company Information -->
                         <div class="form-section">
-                            <h3 class="section-title">
+                            <h3 class="form-section-title">
                                 <i class="fas fa-building"></i>
                                 Company Information
                             </h3>
@@ -607,7 +997,6 @@
                                 <div class="form-group full-width">
                                     <label class="form-label">Company Name <span class="required">*</span></label>
                                     <input type="text" class="form-input" id="companyName" name="companyName" placeholder="Enter legal company name" required>
-                                    <span class="input-error" id="companyNameError">Please enter company name</span>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">DBA (Doing Business As)</label>
@@ -705,9 +1094,8 @@
                             </div>
                         </div>
 
-                        <!-- Business Type -->
                         <div class="form-section">
-                            <h3 class="section-title">
+                            <h3 class="form-section-title">
                                 <i class="fas fa-briefcase"></i>
                                 Business Details
                             </h3>
@@ -723,6 +1111,7 @@
                                         <option value="construction">Construction Company</option>
                                         <option value="distributor">Material Distributor</option>
                                         <option value="retailer">Retailer</option>
+                                        <option value="realestate">Real Estate Agent</option>
                                         <option value="other">Other</option>
                                     </select>
                                 </div>
@@ -743,16 +1132,15 @@
                             </div>
                         </div>
 
-                        <!-- Plan Selection -->
                         <div class="form-section">
-                            <h3 class="section-title">
+                            <h3 class="form-section-title">
                                 <i class="fas fa-star"></i>
                                 Choose Your Plan
                             </h3>
                             <div class="plan-grid">
                                 <div class="plan-card" data-plan="basic">
                                     <div class="plan-name">Starter</div>
-                                    <div class="plan-price">$0 <span>/ month</span></div>
+                                    <div class="plan-price">$0 <span>/ mo</span></div>
                                     <ul class="plan-features">
                                         <li><i class="fas fa-check"></i> Up to 5 projects</li>
                                         <li><i class="fas fa-check"></i> 2 team members</li>
@@ -760,10 +1148,10 @@
                                         <li><i class="fas fa-check"></i> Email support</li>
                                     </ul>
                                 </div>
-                                <div class="plan-card recommended selected" data-plan="pro">
+                                <div class="plan-card selected" data-plan="pro">
                                     <div class="plan-badge">Recommended</div>
                                     <div class="plan-name">Professional</div>
-                                    <div class="plan-price">$49 <span>/ month</span></div>
+                                    <div class="plan-price">$49 <span>/ mo</span></div>
                                     <ul class="plan-features">
                                         <li><i class="fas fa-check"></i> Up to 50 projects</li>
                                         <li><i class="fas fa-check"></i> 10 team members</li>
@@ -777,17 +1165,15 @@
                                     <div class="plan-price">Custom</div>
                                     <ul class="plan-features">
                                         <li><i class="fas fa-check"></i> Unlimited projects</li>
-                                        <li><i class="fas fa-check"></i> Unlimited team members</li>
+                                        <li><i class="fas fa-check"></i> Unlimited team</li>
                                         <li><i class="fas fa-check"></i> Custom AI models</li>
-                                        <li><i class="fas fa-check"></i> 24/7 dedicated support</li>
+                                        <li><i class="fas fa-check"></i> 24/7 support</li>
                                         <li><i class="fas fa-check"></i> API access</li>
-                                        <li><i class="fas fa-check"></i> On-premise deployment</li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Terms -->
                         <div class="checkbox-group">
                             <input type="checkbox" class="checkbox-input" id="agreeTerms" required>
                             <label class="checkbox-label" for="agreeTerms">
@@ -795,33 +1181,26 @@
                             </label>
                         </div>
 
-                        <!-- Actions -->
                         <div class="form-actions">
                             <button type="button" class="btn btn-text" onclick="window.location.href='index.html'">
                                 <i class="fas fa-arrow-left"></i>
                                 Back to Home
                             </button>
-                            <button type="submit" class="btn btn-primary" id="submitBtn">
-                                Continue: Create Admin Account
+                            <button type="submit" class="btn btn-submit">
+                                Continue
                                 <i class="fas fa-arrow-right"></i>
                             </button>
                         </div>
                     </form>
                 </div>
-            </div>
 
-            <!-- Step 2: Admin Account -->
-            <div id="step2Content" class="hidden">
-                <div class="card-header">
-                    <h1 class="card-title">Create Admin Account</h1>
-                    <p class="card-subtitle">Set up your administrator login credentials</p>
-                </div>
-                <div class="card-body">
+                <!-- Step 2: Admin Account -->
+                <div class="form-content hidden" id="step2Content">
                     <form id="adminForm">
                         <div class="form-section">
-                            <h3 class="section-title">
+                            <h3 class="form-section-title">
                                 <i class="fas fa-user-shield"></i>
-                                Administrator Information
+                                Administrator Account
                             </h3>
                             <div class="form-grid">
                                 <div class="form-group">
@@ -839,7 +1218,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Password <span class="required">*</span></label>
-                                    <input type="password" class="form-input" id="adminPassword" name="adminPassword" placeholder="Min 8 characters, letters & numbers" required>
+                                    <input type="password" class="form-input" id="adminPassword" name="adminPassword" placeholder="Min 8 characters" required>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Confirm Password <span class="required">*</span></label>
@@ -849,61 +1228,61 @@
                         </div>
 
                         <div class="form-actions">
-                            <button type="button" class="btn btn-secondary" onclick="goToStep(1)">
+                            <button type="button" class="btn btn-back" onclick="goToStep(1)">
                                 <i class="fas fa-arrow-left"></i>
                                 Previous
                             </button>
-                            <button type="submit" class="btn btn-primary" id="createAccountBtn">
+                            <button type="submit" class="btn btn-submit" id="createAccountBtn">
                                 Create Account
                                 <i class="fas fa-check"></i>
                             </button>
                         </div>
                     </form>
                 </div>
-            </div>
 
-            <!-- Step 3: Success -->
-            <div id="step3Content" class="hidden">
-                <div class="success-state">
-                    <div class="success-icon">
-                        <i class="fas fa-check"></i>
-                    </div>
-                    <h2 class="success-title">Registration Successful!</h2>
-                    <p class="success-message">
-                        Your partner account has been created.<br>
-                        We've sent a verification email to your inbox. Please check and verify your email address.
-                    </p>
-                    <div class="success-details">
-                        <div class="detail-row">
-                            <span class="detail-label">Company Name</span>
-                            <span class="detail-value" id="successCompanyName">-</span>
+                <!-- Step 3: Success -->
+                <div class="form-content hidden" id="step3Content">
+                    <div class="success-state">
+                        <div class="success-icon">
+                            <i class="fas fa-check"></i>
                         </div>
-                        <div class="detail-row">
-                            <span class="detail-label">Admin Account</span>
-                            <span class="detail-value" id="successAdminEmail">-</span>
+                        <h2 class="success-title">Application Submitted!</h2>
+                        <p class="success-message">
+                            Your Trade Partner application has been received.<br>
+                            We've sent a verification email to your inbox. Our team will review your application within 1-2 business days.
+                        </p>
+                        <div class="success-details">
+                            <div class="detail-row">
+                                <span class="detail-label">Company Name</span>
+                                <span class="detail-value" id="successCompanyName">-</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Admin Account</span>
+                                <span class="detail-value" id="successAdminEmail">-</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Your Portal URL</span>
+                                <span class="detail-value" id="successLoginUrl">-</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Selected Plan</span>
+                                <span class="detail-value" id="successPlan">-</span>
+                            </div>
                         </div>
-                        <div class="detail-row">
-                            <span class="detail-label">Your Portal URL</span>
-                            <span class="detail-value" id="successLoginUrl">-</span>
+                        <div style="display: flex; gap: 16px; justify-content: center;">
+                            <a href="login.html" class="btn btn-submit">
+                                <i class="fas fa-sign-in-alt"></i>
+                                Sign In Now
+                            </a>
+                            <a href="index.html" class="btn btn-back">
+                                Back to Home
+                            </a>
                         </div>
-                        <div class="detail-row">
-                            <span class="detail-label">Selected Plan</span>
-                            <span class="detail-value" id="successPlan">-</span>
-                        </div>
-                    </div>
-                    <div style="display: flex; gap: 16px; justify-content: center;">
-                        <a href="login.html" class="btn btn-primary">
-                            <i class="fas fa-sign-in-alt"></i>
-                            Sign In Now
-                        </a>
-                        <a href="index.html" class="btn btn-secondary">
-                            Back to Home
-                        </a>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
     <script>
         // State
@@ -927,8 +1306,8 @@
         function goToStep(step) {
             currentStep = step;
             
-            // Update steps UI
-            document.querySelectorAll('.step').forEach((s, index) => {
+            // Update step indicators
+            document.querySelectorAll('.step-indicator').forEach((s, index) => {
                 s.classList.remove('active', 'completed');
                 if (index + 1 < step) {
                     s.classList.add('completed');
@@ -948,13 +1327,11 @@
         document.getElementById('companyForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            // Validate
             if (!document.getElementById('agreeTerms').checked) {
                 alert('Please read and agree to the Terms of Service');
                 return;
             }
 
-            // Collect data
             formData.company = {
                 name: document.getElementById('companyName').value,
                 dbaName: document.getElementById('dbaName').value,
@@ -972,9 +1349,7 @@
                 description: document.getElementById('companyDescription').value
             };
 
-            // Pre-fill admin name
             document.getElementById('adminName').value = formData.company.contactName || '';
-
             goToStep(2);
         });
 
@@ -995,7 +1370,6 @@
                 return;
             }
 
-            // Collect admin data
             formData.admin = {
                 name: document.getElementById('adminName').value,
                 title: document.getElementById('adminTitle').value,
@@ -1003,29 +1377,18 @@
                 password: password
             };
 
-            // Show loading
             const btn = document.getElementById('createAccountBtn');
             btn.disabled = true;
             btn.innerHTML = '<div class="spinner"></div> Creating...';
 
             try {
-                // In production, this would be an API call
-                // const response = await fetch('/api/tenant/register', {
-                //     method: 'POST',
-                //     headers: { 'Content-Type': 'application/json' },
-                //     body: JSON.stringify(formData)
-                // });
-                
-                // Mock API call
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 
-                // Generate tenant slug
                 const tenantSlug = formData.company.name.toLowerCase()
                     .replace(/[^a-z0-9]/g, '-')
                     .replace(/-+/g, '-')
                     .substring(0, 20);
 
-                // Show success
                 document.getElementById('successCompanyName').textContent = formData.company.name;
                 document.getElementById('successAdminEmail').textContent = formData.admin.email;
                 document.getElementById('successLoginUrl').textContent = `${tenantSlug}.outdoorliving.expert`;
