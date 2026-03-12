@@ -3936,6 +3936,555 @@
 
             </div>
         </main>
+
+        <!-- Projects Management Page -->
+        <div class="page-content" id="page-projects">
+            <div class="max-w-7xl mx-auto">
+                <!-- Header -->
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">Projects</h2>
+                        <p class="text-gray-500 text-sm mt-1">Manage all active projects, track issues, and mitigate risks</p>
+                    </div>
+                    <button class="px-6 py-3 bg-gray-900 text-white rounded-xl font-medium hover:bg-gray-800 transition flex items-center gap-2 self-start">
+                        <i class="fas fa-plus"></i>
+                        <span>New Project</span>
+                    </button>
+                </div>
+
+                <!-- Stats Row -->
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+                    <div class="bg-white rounded-xl border border-gray-200 p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-folder text-blue-600"></i>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-gray-900">12</div>
+                                <div class="text-xs text-gray-500">Active Projects</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl border border-gray-200 p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-yellow-50 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-exclamation-triangle text-yellow-600"></i>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-gray-900">5</div>
+                                <div class="text-xs text-gray-500">Open Issues</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl border border-gray-200 p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-red-50 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-fire text-red-600"></i>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-gray-900">2</div>
+                                <div class="text-xs text-gray-500">High Risks</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl border border-gray-200 p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-check-circle text-green-600"></i>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-gray-900">98%</div>
+                                <div class="text-xs text-gray-500">On-Time Rate</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl border border-gray-200 p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-dollar-sign text-purple-600"></i>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-gray-900">$485K</div>
+                                <div class="text-xs text-gray-500">Total Value</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Risk Heat Map -->
+                <div class="bg-white rounded-xl border border-gray-200 p-6 mb-8">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Risk Heat Map</h3>
+                        <button class="text-sm text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-info-circle mr-1"></i>View Details
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <!-- High Risk -->
+                        <div class="border border-red-200 rounded-xl p-4 bg-red-50/50">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                                    <span class="font-medium text-red-700">High Risk</span>
+                                </div>
+                                <span class="text-xs font-medium text-red-600 bg-red-100 px-2 py-0.5 rounded-full">2 Projects</span>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-700">Johnson Residence</span>
+                                    <span class="text-red-600 font-medium">Permit Delay</span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-700">Martinez ADU</span>
+                                    <span class="text-red-600 font-medium">HOA Approval</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Medium Risk -->
+                        <div class="border border-yellow-200 rounded-xl p-4 bg-yellow-50/50">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                                    <span class="font-medium text-yellow-700">Medium Risk</span>
+                                </div>
+                                <span class="text-xs font-medium text-yellow-600 bg-yellow-100 px-2 py-0.5 rounded-full">3 Projects</span>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-700">Smith Sunroom</span>
+                                    <span class="text-yellow-600 font-medium">Material Delay</span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-700">Chen Pergola</span>
+                                    <span class="text-yellow-600 font-medium">Weather</span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-700">Davis Commercial</span>
+                                    <span class="text-yellow-600 font-medium">Budget Review</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Low Risk -->
+                        <div class="border border-green-200 rounded-xl p-4 bg-green-50/50">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                    <span class="font-medium text-green-700">Low Risk</span>
+                                </div>
+                                <span class="text-xs font-medium text-green-600 bg-green-100 px-2 py-0.5 rounded-full">5 Projects</span>
+                            </div>
+                            <div class="text-sm text-gray-600">
+                                <div class="flex items-center justify-between py-1">
+                                    <span>Wilson Residence</span>
+                                    <i class="fas fa-check text-green-500"></i>
+                                </div>
+                                <div class="flex items-center justify-between py-1">
+                                    <span>Taylor Backyard</span>
+                                    <i class="fas fa-check text-green-500"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- On Track -->
+                        <div class="border border-gray-200 rounded-xl p-4 bg-gray-50">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 bg-gray-400 rounded-full"></div>
+                                    <span class="font-medium text-gray-700">On Track</span>
+                                </div>
+                                <span class="text-xs font-medium text-gray-600 bg-gray-200 px-2 py-0.5 rounded-full">2 Projects</span>
+                            </div>
+                            <div class="text-sm text-gray-600">
+                                <div class="flex items-center justify-between py-1">
+                                    <span>Anderson Patio</span>
+                                    <i class="fas fa-check text-gray-400"></i>
+                                </div>
+                                <div class="flex items-center justify-between py-1">
+                                    <span>Thomas Deck</span>
+                                    <i class="fas fa-check text-gray-400"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Issues Tracker -->
+                <div class="bg-white rounded-xl border border-gray-200 p-6 mb-8">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Issues Tracker</h3>
+                        <button onclick="openIssueModal()" class="text-sm text-gray-900 bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg transition flex items-center gap-2">
+                            <i class="fas fa-plus"></i>
+                            Report Issue
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-gray-200">
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Issue ID</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Project</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Title</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Priority</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Status</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Assigned To</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Due Date</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="issuesTableBody">
+                                <!-- Issues will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Projects List -->
+                <div class="bg-white rounded-xl border border-gray-200">
+                    <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">All Projects</h3>
+                        <div class="flex items-center gap-3">
+                            <div class="relative">
+                                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                                <input type="text" placeholder="Search projects..." class="pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-300">
+                            </div>
+                            <select class="px-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-300">
+                                <option value="">All Statuses</option>
+                                <option value="design">Design</option>
+                                <option value="permit">Permit</option>
+                                <option value="manufacturing">Manufacturing</option>
+                                <option value="installation">Installation</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-gray-200 bg-gray-50">
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Project Name</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Customer</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Type</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Stage</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Budget</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Timeline</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Risk Level</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="projectsTableBody">
+                                <!-- Projects will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Team Management Page -->
+        <div class="page-content" id="page-team">
+            <div class="max-w-7xl mx-auto">
+                <!-- Header -->
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">Team Management</h2>
+                        <p class="text-gray-500 text-sm mt-1">Manage team members, roles, and performance</p>
+                    </div>
+                    <button onclick="openAddMemberModal()" class="px-6 py-3 bg-gray-900 text-white rounded-xl font-medium hover:bg-gray-800 transition flex items-center gap-2 self-start">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Add Member</span>
+                    </button>
+                </div>
+
+                <!-- Stats Row -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                    <div class="bg-white rounded-xl border border-gray-200 p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-users text-blue-600"></i>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-gray-900" id="teamTotalMembers">8</div>
+                                <div class="text-xs text-gray-500">Total Members</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl border border-gray-200 p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-chart-line text-green-600"></i>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-gray-900">24</div>
+                                <div class="text-xs text-gray-500">Active Projects</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl border border-gray-200 p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-star text-purple-600"></i>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-gray-900">4.8</div>
+                                <div class="text-xs text-gray-500">Avg Rating</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl border border-gray-200 p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-yellow-50 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-clock text-yellow-600"></i>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-gray-900">96%</div>
+                                <div class="text-xs text-gray-500">On-Time Rate</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team Members Table -->
+                <div class="bg-white rounded-xl border border-gray-200">
+                    <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">Team Members</h3>
+                        <div class="flex items-center gap-3">
+                            <div class="relative">
+                                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                                <input type="text" placeholder="Search members..." class="pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-300">
+                            </div>
+                            <select class="px-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-300">
+                                <option value="">All Roles</option>
+                                <option value="admin">Admin</option>
+                                <option value="sales">Sales</option>
+                                <option value="designer">Designer</option>
+                                <option value="installer">Installer</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-gray-200 bg-gray-50">
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Member</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Role</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Email</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Phone</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Projects</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Performance</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Status</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="teamMembersTableBody">
+                                <!-- Team members will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Settings Page -->
+        <div class="page-content" id="page-settings">
+            <div class="max-w-4xl mx-auto">
+                <!-- Header -->
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold text-gray-900">System Settings</h2>
+                    <p class="text-gray-500 text-sm mt-1">Manage company profile, integrations, notifications, and billing</p>
+                </div>
+
+                <!-- Settings Tabs -->
+                <div class="flex gap-2 mb-6 border-b border-gray-200">
+                    <button class="settings-tab px-4 py-2 text-sm font-medium border-b-2 border-gray-900 text-gray-900" data-tab="company">Company</button>
+                    <button class="settings-tab px-4 py-2 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-tab="integrations">Integrations</button>
+                    <button class="settings-tab px-4 py-2 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-tab="notifications">Notifications</button>
+                    <button class="settings-tab px-4 py-2 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-tab="billing">Billing</button>
+                </div>
+
+                <!-- Company Profile -->
+                <div class="settings-content bg-white rounded-xl border border-gray-200 p-6" id="content-company">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Company Profile</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Company Logo</label>
+                            <div class="flex items-center gap-4">
+                                <img src="images/partner-logo.png" alt="Company Logo" class="w-16 h-16 object-contain border border-gray-200 rounded-lg">
+                                <button class="px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition">Change Logo</button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Company Name</label>
+                            <input type="text" value="Greenscape Builders" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-300">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Business Address</label>
+                            <input type="text" value="123 Innovation Drive" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-300 mb-2">
+                            <input type="text" value="San Francisco, CA 94105" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-300">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                                <input type="tel" value="400-888-9999" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-300">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                <input type="email" value="contact@greenscape.com" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-300">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Website</label>
+                            <input type="url" value="https://greenscape.com" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-300">
+                        </div>
+                        <div class="pt-4">
+                            <button class="px-6 py-2.5 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition">Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Integrations (hidden by default) -->
+                <div class="settings-content bg-white rounded-xl border border-gray-200 p-6 hidden" id="content-integrations">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Third-Party Integrations</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-building text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-gray-900">Salesforce CRM</div>
+                                    <div class="text-sm text-gray-500">Sync customer and project data</div>
+                                </div>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-credit-card text-green-600"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-gray-900">Stripe Payments</div>
+                                    <div class="text-sm text-gray-500">Process customer payments</div>
+                                </div>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                            </label>
+                        </div>
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-envelope text-purple-600"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-gray-900">Mailchimp</div>
+                                    <div class="text-sm text-gray-500">Email marketing automation</div>
+                                </div>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notifications (hidden by default) -->
+                <div class="settings-content bg-white rounded-xl border border-gray-200 p-6 hidden" id="content-notifications">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Notification Preferences</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div>
+                                <div class="font-medium text-gray-900">New Project Assigned</div>
+                                <div class="text-sm text-gray-500">Receive notification when assigned to a new project</div>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div>
+                                <div class="font-medium text-gray-900">Issue Escalation</div>
+                                <div class="text-sm text-gray-500">Get alerted when an issue is escalated</div>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div>
+                                <div class="font-medium text-gray-900">Payment Received</div>
+                                <div class="text-sm text-gray-500">Notification for incoming customer payments</div>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div>
+                                <div class="font-medium text-gray-900">Daily Digest</div>
+                                <div class="text-sm text-gray-500">Summary of daily activities and updates</div>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Billing (hidden by default) -->
+                <div class="settings-content bg-white rounded-xl border border-gray-200 p-6 hidden" id="content-billing">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Billing & Subscription</h3>
+                    <div class="space-y-4">
+                        <div class="p-4 border border-gray-200 rounded-lg">
+                            <div class="flex items-center justify-between mb-2">
+                                <div>
+                                    <div class="font-medium text-gray-900">Professional Plan</div>
+                                    <div class="text-sm text-gray-500">$49/month · Billed annually</div>
+                                </div>
+                                <span class="px-3 py-1 bg-green-50 text-green-700 rounded-full text-xs font-medium">Active</span>
+                            </div>
+                            <div class="text-sm text-gray-600">Next billing date: April 1, 2026</div>
+                        </div>
+                        <div class="p-4 border border-gray-200 rounded-lg">
+                            <div class="font-medium text-gray-900 mb-2">Payment Method</div>
+                            <div class="flex items-center gap-3">
+                                <i class="fab fa-cc-visa text-2xl text-blue-600"></i>
+                                <span class="text-sm text-gray-600">Visa ending in 4242</span>
+                                <button class="text-sm text-gray-500 hover:text-gray-700 ml-auto">Update</button>
+                            </div>
+                        </div>
+                        <div class="p-4 border border-gray-200 rounded-lg">
+                            <div class="font-medium text-gray-900 mb-2">Invoice History</div>
+                            <div class="space-y-2">
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-600">March 2026 Invoice</span>
+                                    <a href="#" class="text-gray-900 hover:underline">Download PDF</a>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-600">February 2026 Invoice</span>
+                                    <a href="#" class="text-gray-900 hover:underline">Download PDF</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-4">
+                            <button class="px-6 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition mr-2">Change Plan</button>
+                            <button class="px-6 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition">Cancel Subscription</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -6169,8 +6718,241 @@
                 initOrdersPage();
                 initCustomersPage();
                 initKnowledgeBase();
+                initProjectsPage();
+                initTeamPage();
+                initSettingsPage();
             }
         });
+
+        // ===== Projects Management =====
+        const projectsDummyData = [
+            { id: 'PRJ-001', name: 'Johnson Residence', customer: 'Robert Johnson', type: 'Pergola', stage: 'permit', budget: 35000, timeline: '6 weeks', riskLevel: 'high', issues: 2 },
+            { id: 'PRJ-002', name: 'Martinez ADU', customer: 'Carlos Martinez', type: 'ADU', stage: 'design', budget: 125000, timeline: '14 weeks', riskLevel: 'high', issues: 1 },
+            { id: 'PRJ-003', name: 'Smith Sunroom', customer: 'Jennifer Smith', type: 'Sunroom', stage: 'manufacturing', budget: 58000, timeline: '8 weeks', riskLevel: 'medium', issues: 1 },
+            { id: 'PRJ-004', name: 'Chen Pergola', customer: 'David Chen', type: 'Pergola', stage: 'installation', budget: 42000, timeline: '4 weeks', riskLevel: 'medium', issues: 0 },
+            { id: 'PRJ-005', name: 'Davis Commercial', customer: 'ABC Restaurant', type: 'Commercial Pergola', stage: 'design', budget: 95000, timeline: '10 weeks', riskLevel: 'medium', issues: 1 },
+            { id: 'PRJ-006', name: 'Wilson Residence', customer: 'Sarah Wilson', type: 'Sunroom', stage: 'installation', budget: 52000, timeline: '6 weeks', riskLevel: 'low', issues: 0 },
+            { id: 'PRJ-007', name: 'Taylor Backyard', customer: 'Michael Taylor', type: 'Pergola', stage: 'completed', budget: 38000, timeline: '5 weeks', riskLevel: 'low', issues: 0 },
+            { id: 'PRJ-008', name: 'Anderson Patio', customer: 'Lisa Anderson', type: 'Zip Blinds', stage: 'completed', budget: 12000, timeline: '2 weeks', riskLevel: 'low', issues: 0 },
+            { id: 'PRJ-009', name: 'Thomas Deck', customer: 'James Thomas', type: 'Pergola', stage: 'permit', budget: 45000, timeline: '7 weeks', riskLevel: 'low', issues: 0 },
+            { id: 'PRJ-010', name: 'Brown Garden', customer: 'Patricia Brown', type: 'Sunroom', stage: 'design', budget: 67000, timeline: '9 weeks', riskLevel: 'low', issues: 0 },
+            { id: 'PRJ-011', name: 'Garcia Outdoor', customer: 'Maria Garcia', type: 'ADU', stage: 'manufacturing', budget: 135000, timeline: '15 weeks', riskLevel: 'low', issues: 0 },
+            { id: 'PRJ-012', name: 'Lee Pavilion', customer: 'Steven Lee', type: 'Pergola', stage: 'installation', budget: 48000, timeline: '6 weeks', riskLevel: 'low', issues: 0 }
+        ];
+
+        const issuesDummyData = [
+            { id: 'ISS-001', projectId: 'PRJ-001', title: 'Permit approval delayed by city', priority: 'high', status: 'open', assignedTo: 'John Smith', dueDate: '2026-03-15' },
+            { id: 'ISS-002', projectId: 'PRJ-001', title: 'HOA requires additional documentation', priority: 'medium', status: 'in_progress', assignedTo: 'Emily Davis', dueDate: '2026-03-18' },
+            { id: 'ISS-003', projectId: 'PRJ-002', title: 'HOA architectural review pending', priority: 'high', status: 'open', assignedTo: 'John Smith', dueDate: '2026-03-14' },
+            { id: 'ISS-004', projectId: 'PRJ-003', title: 'Material delivery delayed 1 week', priority: 'medium', status: 'in_progress', assignedTo: 'Mike Johnson', dueDate: '2026-03-20' },
+            { id: 'ISS-005', projectId: 'PRJ-005', title: 'Budget review with client needed', priority: 'medium', status: 'open', assignedTo: 'Emily Davis', dueDate: '2026-03-16' }
+        ];
+
+        const teamDummyData = [
+            { id: 'TM-001', name: 'John Smith', role: 'Admin', email: 'john@greenscape.com', phone: '415-555-0101', projects: 8, performance: 4.9, status: 'active', avatar: 'JS' },
+            { id: 'TM-002', name: 'Emily Davis', role: 'Sales', email: 'emily@greenscape.com', phone: '415-555-0102', projects: 12, performance: 4.8, status: 'active', avatar: 'ED' },
+            { id: 'TM-003', name: 'Mike Johnson', role: 'Designer', email: 'mike@greenscape.com', phone: '415-555-0103', projects: 6, performance: 4.7, status: 'active', avatar: 'MJ' },
+            { id: 'TM-004', name: 'Sarah Wilson', role: 'Installer', email: 'sarah@greenscape.com', phone: '415-555-0104', projects: 5, performance: 4.9, status: 'active', avatar: 'SW' },
+            { id: 'TM-005', name: 'David Chen', role: 'Sales', email: 'david@greenscape.com', phone: '415-555-0105', projects: 9, performance: 4.6, status: 'active', avatar: 'DC' },
+            { id: 'TM-006', name: 'Lisa Anderson', role: 'Designer', email: 'lisa@greenscape.com', phone: '415-555-0106', projects: 4, performance: 4.8, status: 'away', avatar: 'LA' },
+            { id: 'TM-007', name: 'Robert Taylor', role: 'Installer', email: 'robert@greenscape.com', phone: '415-555-0107', projects: 7, performance: 4.5, status: 'active', avatar: 'RT' },
+            { id: 'TM-008', name: 'Jennifer Martinez', role: 'Admin', email: 'jennifer@greenscape.com', phone: '415-555-0108', projects: 3, performance: 4.9, status: 'active', avatar: 'JM' }
+        ];
+
+        function getPriorityBadge(priority) {
+            const badges = {
+                high: '<span class="px-2 py-0.5 bg-red-50 text-red-700 rounded-full text-xs font-medium"><i class="fas fa-arrow-up mr-1"></i>High</span>',
+                medium: '<span class="px-2 py-0.5 bg-yellow-50 text-yellow-700 rounded-full text-xs font-medium"><i class="fas fa-arrow-right mr-1"></i>Medium</span>',
+                low: '<span class="px-2 py-0.5 bg-green-50 text-green-700 rounded-full text-xs font-medium"><i class="fas fa-arrow-down mr-1"></i>Low</span>'
+            };
+            return badges[priority] || '';
+        }
+
+        function getStatusBadge(status) {
+            const badges = {
+                open: '<span class="px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">Open</span>',
+                in_progress: '<span class="px-2 py-0.5 bg-yellow-50 text-yellow-700 rounded-full text-xs font-medium">In Progress</span>',
+                resolved: '<span class="px-2 py-0.5 bg-green-50 text-green-700 rounded-full text-xs font-medium">Resolved</span>',
+                closed: '<span class="px-2 py-0.5 bg-gray-50 text-gray-700 rounded-full text-xs font-medium">Closed</span>'
+            };
+            return badges[status] || '';
+        }
+
+        function getRiskBadge(risk) {
+            const badges = {
+                high: '<span class="px-2 py-0.5 bg-red-50 text-red-700 rounded-full text-xs font-medium"><i class="fas fa-fire mr-1"></i>High</span>',
+                medium: '<span class="px-2 py-0.5 bg-yellow-50 text-yellow-700 rounded-full text-xs font-medium"><i class="fas fa-exclamation-triangle mr-1"></i>Medium</span>',
+                low: '<span class="px-2 py-0.5 bg-green-50 text-green-700 rounded-full text-xs font-medium"><i class="fas fa-check-circle mr-1"></i>Low</span>'
+            };
+            return badges[risk] || '';
+        }
+
+        function getStageBadge(stage) {
+            const badges = {
+                design: '<span class="px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">Design</span>',
+                permit: '<span class="px-2 py-0.5 bg-purple-50 text-purple-700 rounded-full text-xs font-medium">Permit</span>',
+                manufacturing: '<span class="px-2 py-0.5 bg-yellow-50 text-yellow-700 rounded-full text-xs font-medium">Manufacturing</span>',
+                installation: '<span class="px-2 py-0.5 bg-orange-50 text-orange-700 rounded-full text-xs font-medium">Installation</span>',
+                completed: '<span class="px-2 py-0.5 bg-green-50 text-green-700 rounded-full text-xs font-medium">Completed</span>'
+            };
+            return badges[stage] || '';
+        }
+
+        function renderProjectsTable() {
+            const tbody = document.getElementById('projectsTableBody');
+            if (!tbody) return;
+
+            tbody.innerHTML = projectsDummyData.map(project => `
+                <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
+                    <td class="py-3 px-4">
+                        <div class="font-medium text-gray-900">${project.name}</div>
+                        <div class="text-xs text-gray-500">${project.id}</div>
+                    </td>
+                    <td class="py-3 px-4 text-sm text-gray-700">${project.customer}</td>
+                    <td class="py-3 px-4">
+                        <span class="text-sm text-gray-700">${project.type}</span>
+                    </td>
+                    <td class="py-3 px-4">${getStageBadge(project.stage)}</td>
+                    <td class="py-3 px-4 text-sm font-medium text-gray-900">$${project.budget.toLocaleString()}</td>
+                    <td class="py-3 px-4 text-sm text-gray-700">${project.timeline}</td>
+                    <td class="py-3 px-4">${getRiskBadge(project.riskLevel)}</td>
+                    <td class="py-3 px-4">
+                        <button class="text-gray-400 hover:text-gray-600 transition" onclick="viewProject('${project.id}')">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderIssuesTable() {
+            const tbody = document.getElementById('issuesTableBody');
+            if (!tbody) return;
+
+            tbody.innerHTML = issuesDummyData.map(issue => `
+                <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
+                    <td class="py-3 px-4">
+                        <div class="font-medium text-gray-900">${issue.id}</div>
+                    </td>
+                    <td class="py-3 px-4">
+                        <div class="text-sm text-gray-700">${projectsDummyData.find(p => p.id === issue.projectId)?.name || 'Unknown'}</div>
+                    </td>
+                    <td class="py-3 px-4">
+                        <div class="text-sm text-gray-900">${issue.title}</div>
+                    </td>
+                    <td class="py-3 px-4">${getPriorityBadge(issue.priority)}</td>
+                    <td class="py-3 px-4">${getStatusBadge(issue.status)}</td>
+                    <td class="py-3 px-4 text-sm text-gray-700">${issue.assignedTo}</td>
+                    <td class="py-3 px-4 text-sm text-gray-700">${issue.dueDate}</td>
+                    <td class="py-3 px-4">
+                        <button class="text-gray-400 hover:text-gray-600 transition" onclick="viewIssue('${issue.id}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderTeamTable() {
+            const tbody = document.getElementById('teamMembersTableBody');
+            if (!tbody) return;
+
+            tbody.innerHTML = teamDummyData.map(member => `
+                <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
+                    <td class="py-3 px-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 bg-gray-900 text-white rounded-full flex items-center justify-center text-sm font-medium">${member.avatar}</div>
+                            <div>
+                                <div class="font-medium text-gray-900">${member.name}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-3 px-4">
+                        <span class="px-2 py-0.5 bg-gray-100 text-gray-700 rounded-full text-xs font-medium">${member.role}</span>
+                    </td>
+                    <td class="py-3 px-4 text-sm text-gray-700">${member.email}</td>
+                    <td class="py-3 px-4 text-sm text-gray-700">${member.phone}</td>
+                    <td class="py-3 px-4 text-sm text-gray-900 font-medium">${member.projects}</td>
+                    <td class="py-3 px-4">
+                        <div class="flex items-center gap-1">
+                            <i class="fas fa-star text-yellow-400 text-xs"></i>
+                            <span class="text-sm font-medium text-gray-900">${member.performance}</span>
+                        </div>
+                    </td>
+                    <td class="py-3 px-4">
+                        <span class="px-2 py-0.5 ${member.status === 'active' ? 'bg-green-50 text-green-700' : 'bg-yellow-50 text-yellow-700'} rounded-full text-xs font-medium">
+                            ${member.status === 'active' ? 'Active' : 'Away'}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4">
+                        <button class="text-gray-400 hover:text-gray-600 transition" onclick="viewMember('${member.id}')">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function viewProject(id) {
+            const project = projectsDummyData.find(p => p.id === id);
+            if (project) {
+                alert(`Project: ${project.name} (${project.id})\\n\\nCustomer: ${project.customer}\\nType: ${project.type}\\nStage: ${project.stage}\\nBudget: $${project.budget.toLocaleString()}\\nTimeline: ${project.timeline}\\nRisk Level: ${project.riskLevel}\\n\\n(Project detail modal will be implemented with backend integration)`);
+            }
+        }
+
+        function viewIssue(id) {
+            const issue = issuesDummyData.find(i => i.id === id);
+            if (issue) {
+                alert(`Issue: ${issue.title} (${issue.id})\\n\\nProject: ${projectsDummyData.find(p => p.id === issue.projectId)?.name}\\nPriority: ${issue.priority}\\nStatus: ${issue.status}\\nAssigned To: ${issue.assignedTo}\\nDue Date: ${issue.dueDate}\\n\\n(Issue detail modal will be implemented with backend integration)`);
+            }
+        }
+
+        function viewMember(id) {
+            const member = teamDummyData.find(m => m.id === id);
+            if (member) {
+                alert(`Team Member: ${member.name}\\n\\nRole: ${member.role}\\nEmail: ${member.email}\\nPhone: ${member.phone}\\nProjects: ${member.projects}\\nPerformance: ${member.performance}/5.0\\nStatus: ${member.status}\\n\\n(Member detail modal will be implemented with backend integration)`);
+            }
+        }
+
+        function openIssueModal() {
+            alert('Report Issue modal will be implemented here with:\\n- Project selection\\n- Issue title and description\\n- Priority level\\n- Assignment\\n- Due date\\n\\nThis will be a full modal dialog for creating new issues.');
+        }
+
+        function openAddMemberModal() {
+            alert('Add Member modal will be implemented here with:\\n- Name and email\\n- Role assignment\\n- Phone number\\n- Initial permissions\\n\\nThis will be a full modal dialog for adding new team members.');
+        }
+
+        function initProjectsPage() {
+            renderProjectsTable();
+            renderIssuesTable();
+        }
+
+        function initTeamPage() {
+            renderTeamTable();
+        }
+
+        function initSettingsPage() {
+            // Settings tab switching
+            document.querySelectorAll('.settings-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.dataset.tab;
+                    
+                    // Update tab styles
+                    document.querySelectorAll('.settings-tab').forEach(t => {
+                        t.classList.remove('border-gray-900', 'text-gray-900');
+                        t.classList.add('border-transparent', 'text-gray-500');
+                    });
+                    this.classList.remove('border-transparent', 'text-gray-500');
+                    this.classList.add('border-gray-900', 'text-gray-900');
+                    
+                    // Show/hide content
+                    document.querySelectorAll('.settings-content').forEach(c => {
+                        c.classList.add('hidden');
+                    });
+                    document.getElementById(`content-${tabName}`).classList.remove('hidden');
+                });
+            });
+        }
     </script>
 </body>
 </html>

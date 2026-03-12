@@ -2,8 +2,8 @@
 # Nestopia Platform 需求规格说明书
 
 **Project Name**: Nestopia Platform (N-Site-Prototype)  
-**Version**: 4.0.0  
-**Last Updated**: 2026-03-11  
+**Version**: 5.0.0  
+**Last Updated**: 2026-03-12  
 **Maintainer**: websterzhangsh  
 **Live URL**: https://n-site-prototype.pages.dev  
 **Repository**: https://github.com/websterzhangsh/N-Site-Prototype
@@ -180,12 +180,47 @@ team-management.html → Team management page
 | FR-058 | Mobile Responsive | Collapsible sidebar on mobile | ✅ |
 | FR-059 | AI Agents (sidebar) | 4 agent nav items: AI Designer, Pricing & Cost Controller, Compliance Manager, Customer Service Executive | ✅ UI only |
 
-### 3.5 Team Management (`team-management.html`) — ✅ Basic
+### 3.5 Team Management (`team-management.html`) — ⏳ In Progress
 
 | ID | Feature | Description | Status |
 |----|---------|-------------|--------|
-| FR-060 | Team List | Employee list display | ✅ |
-| FR-061 | Add/Remove Members | Basic team member management | ✅ |
+| FR-060 | Team List | Employee list display with roles, status, contact info | ⏳ |
+| FR-061 | Add/Remove Members | Basic team member CRUD operations | ⏳ |
+| FR-062 | Role Management | Admin / Sales / Installer / Designer role assignment | ⏳ |
+| FR-063 | Permission Control | Role-based access control (RBAC) for features and data | ⏳ |
+| FR-064 | Task Assignment | Assign team members to projects with workload tracking | ⏳ |
+| FR-065 | Performance Dashboard | Sales metrics, completed projects, customer ratings per member | ⏳ |
+| FR-066 | Calendar & Scheduling | Team availability and installation crew scheduling view | ⏳ |
+
+---
+
+### 3.6 Projects Management — 🆕 Planned
+
+| ID | Feature | Description | Status |
+|----|---------|-------------|--------|
+| FR-070 | Project List | Card/table view of all projects with status filtering | 🆕 |
+| FR-071 | Project Stages | 15-step workflow visualization (Design → Approval → Permit → Manufacturing → Install → Done) | 🆕 |
+| FR-072 | Timeline View | Gantt chart or progress bar showing planned vs actual dates | 🆕 |
+| FR-073 | Budget Tracking | Quote, collected payments, outstanding balance per project | 🆕 |
+| FR-074 | Document Hub | AI design renders, contracts, permits, on-site photos linked to project | 🆕 |
+| FR-075 | Installation Schedule | Crew assignment, calendar view, availability management | 🆕 |
+| FR-076 | **Issues Tracker** | Flag and track project blockers, delays, customer concerns, resolution status | 🆕 |
+| FR-077 | **Risk Management** | Proactive risk identification (compliance, timeline, budget, quality) with mitigation actions | 🆕 |
+| FR-078 | **Risk Heat Map** | Visual dashboard showing high/medium/low risks across all active projects | 🆕 |
+| FR-079 | Customer Communication Log | All interactions (email, call, message) logged against project timeline | 🆕 |
+
+---
+
+### 3.7 Settings Page — ⏳ In Progress
+
+| ID | Feature | Description | Status |
+|----|---------|-------------|--------|
+| FR-080 | Company Profile | Logo, name, address, contact information management | ⏳ |
+| FR-081 | User Account | Password change, notification preferences | ⏳ |
+| FR-082 | Knowledge Base | ✅ Document upload and management by 6 categories with tagging | ✅ |
+| FR-083 | Integration Management | Third-party connections (CRM, payment, email services) | 🆕 |
+| FR-084 | Notification Settings | Email/SMS alert rules and templates | 🆕 |
+| FR-085 | Billing & Subscription | Plan details, invoice history, payment method management | 🆕 |
 
 ---
 
@@ -757,6 +792,7 @@ public/images/
 | 2.3.0 | 2026-03-09 | Multi-tenant architecture, business workflow docs | websterzhangsh |
 | 3.0.0 | 2026-03-11 | Reverse-engineered requirements reflecting actual implementation | websterzhangsh |
 | 4.0.0 | 2026-03-11 | Major update: Integrated AI Agent strategy (OUTPUT > HOW philosophy, 4 agent detailed specs, fine-tune roadmap, co-working model, digital measurement partnership, platform IP strategy); Added comprehensive US regional compliance requirements (IRC, CA/FL/TX specifics, HOA coverage); Added Phase I+/IV to roadmap; Moved to docs/ folder; Added documentation artifacts inventory | websterzhangsh |
+| 5.0.0 | 2026-03-12 | Added Projects Management module spec with Issues Tracker & Risk Management focus; Expanded Team Management module spec with role/permission/performance features; Expanded Settings module spec with integrations/notifications/billing; Updated feature status tracking | websterzhangsh |
 
 ---
 
