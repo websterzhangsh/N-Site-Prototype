@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS customer_intakes (
     email                   TEXT        NOT NULL,
     phone                   TEXT        NOT NULL,
     project_address         TEXT,
-    project_type            TEXT        NOT NULL CHECK (project_type IN ('sunroom', 'pavilion', 'windproof', 'combo', 'other')),
+    project_type            TEXT        NOT NULL CHECK (project_type IN ('sunroom', 'pergola', 'windproof', 'combo', 'other')),
     communication_preference TEXT       CHECK (communication_preference IN ('phone', 'email', 'wechat', '')),
     
     -- Step 2: Project Requirements

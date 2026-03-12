@@ -100,7 +100,7 @@ describe('tongyi-design API', () => {
 
       const productTypes: DesignGenerateRequest['product_type'][] = [
         'sunroom',
-        'pavilion',
+        'pergola',
         'roller_blind',
         'yard_accessory'
       ]

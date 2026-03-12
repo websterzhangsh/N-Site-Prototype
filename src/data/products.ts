@@ -1,4 +1,4 @@
-export type ProductCategory = 'sunroom' | 'pavilion' | 'windproof'
+export type ProductCategory = 'sunroom' | 'pergola' | 'windproof'
 
 export interface ProductInfo {
   id: ProductCategory
@@ -27,22 +27,22 @@ export const products: Record<ProductCategory, ProductInfo> = {
       { src: '/images/products/sunroom/gallery-6.jpg', alt: 'Sun room with swimming pool', title: 'Luxury Pool Room' },
     ],
   },
-  pavilion: {
-    id: 'pavilion',
-    label: 'Pavilion',
+  pergola: {
+    id: 'pergola',
+    label: 'Pergola',
     tagline: 'Elegant outdoor shelters for gatherings and relaxation',
     heroImages: [
-      { src: '/images/products/pavilion/hero-1.jpg', alt: 'Modern aluminum pavilion' },
-      { src: '/images/products/pavilion/hero-2.jpg', alt: 'Garden pavilion with seating' },
-      { src: '/images/products/pavilion/hero-3.jpg', alt: 'Luxury outdoor pavilion' },
+      { src: '/images/products/pergola/hero-1.jpg', alt: 'Modern aluminum pergola' },
+      { src: '/images/products/pergola/hero-2.jpg', alt: 'Garden pergola with seating' },
+      { src: '/images/products/pergola/hero-3.jpg', alt: 'Luxury outdoor pergola' },
     ],
     galleryImages: [
-      { src: '/images/products/pavilion/gallery-1.jpg', alt: 'Contemporary pavilion design', title: 'Contemporary Style' },
-      { src: '/images/products/pavilion/gallery-2.jpg', alt: 'Pavilion with louvered roof', title: 'Louvered Roof' },
-      { src: '/images/products/pavilion/gallery-3.jpg', alt: 'Backyard pavilion setup', title: 'Backyard Retreat' },
-      { src: '/images/products/pavilion/gallery-4.jpg', alt: 'Pavilion with LED lighting', title: 'LED Ambiance' },
-      { src: '/images/products/pavilion/gallery-5.jpg', alt: 'Large entertaining pavilion', title: 'Entertainment Space' },
-      { src: '/images/products/pavilion/gallery-6.jpg', alt: 'Pavilion with dining area', title: 'Outdoor Dining' },
+      { src: '/images/products/pergola/gallery-1.jpg', alt: 'Contemporary pergola design', title: 'Contemporary Style' },
+      { src: '/images/products/pergola/gallery-2.jpg', alt: 'Pergola with louvered roof', title: 'Louvered Roof' },
+      { src: '/images/products/pergola/gallery-3.jpg', alt: 'Backyard pergola setup', title: 'Backyard Retreat' },
+      { src: '/images/products/pergola/gallery-4.jpg', alt: 'Pergola with LED lighting', title: 'LED Ambiance' },
+      { src: '/images/products/pergola/gallery-5.jpg', alt: 'Large entertaining pergola', title: 'Entertainment Space' },
+      { src: '/images/products/pergola/gallery-6.jpg', alt: 'Pergola with dining area', title: 'Outdoor Dining' },
     ],
   },
   windproof: {
@@ -65,4 +65,4 @@ export const products: Record<ProductCategory, ProductInfo> = {
   },
 }
 
-export const categoryOrder: ProductCategory[] = ['sunroom', 'pavilion', 'windproof']
+export const categoryOrder: ProductCategory[] = ['sunroom', 'pergola', 'windproof']

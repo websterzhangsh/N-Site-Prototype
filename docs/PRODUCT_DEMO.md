@@ -194,7 +194,7 @@
 **操作**:
 1. 展示 Input 面板：
    - Upload Site Photo 区域（拖拽上传）
-   - Product Type 选择：Sunroom / Pavilion / Shutter
+   - Product Type 选择：Sunroom / Pergola / Shutter
    - Style Preferences：Modern / Classic / Minimalist
    - Color Scheme 选择
    - Special Requirements 文本框

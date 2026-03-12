@@ -10,7 +10,7 @@
 export interface DesignGenerateRequest {
   background_image: string  // Base64 编码的后院实景照片
   foreground_image: string  // Base64 编码的产品效果图
-  product_type: 'sunroom' | 'pavilion' | 'roller_blind' | 'yard_accessory'
+  product_type: 'sunroom' | 'pergola' | 'roller_blind' | 'yard_accessory'
   style?: string           // 可选的风格参数
   quality?: 'standard' | 'high'  // 生成质量
 }
@@ -106,7 +106,7 @@ export async function generateDesignImage(
 function getPromptByProductType(productType: string): string {
   const prompts: Record<string, string> = {
     sunroom: '将阳光房自然地融合到后院场景中，保持透视关系正确，光影效果真实，整体协调美观',
-    pavilion: '将凉亭自然地放置在后院中，与周围环境协调，阴影和光线效果真实',
+    pergola: '将凉亭自然地放置在后院中，与周围环境协调，阴影和光线效果真实',
     roller_blind: '将防风卷帘安装效果自然地展示在阳台或廊道中，保持比例和透视正确',
     yard_accessory: '将庭院附属设施自然地融入后院环境，整体效果和谐统一',
   }

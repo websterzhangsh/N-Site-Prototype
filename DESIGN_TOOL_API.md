@@ -250,7 +250,7 @@ let lastResultImageData = null; // 上一轮结果图（用作下轮输入）
 ```javascript
 const productImages = {
     sunroom:   ['images/products/sunroom/hero-1.jpg',   'hero-2.jpg', 'hero-3.jpg'],
-    pavilion:  ['images/products/pavilion/hero-1.jpg',  'hero-2.jpg', 'hero-3.jpg'],
+    pergola:  ['images/products/pergola/hero-1.jpg',  'hero-2.jpg', 'hero-3.jpg'],
     windproof: ['images/products/windproof/hero-1.jpg', 'hero-2.jpg', 'hero-3.jpg']
 };
 ```

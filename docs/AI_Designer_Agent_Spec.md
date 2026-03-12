@@ -9,7 +9,7 @@
 ## 1. Overview
 
 ### 1.1 Purpose
-AI Designer Agent is an intelligent visualization tool that enables outdoor living professionals to generate photorealistic design renders in seconds, directly at the customer's property. The agent transforms yard photos into stunning product visualizations (sunrooms, ADUs, pavilions, zip blinds) to accelerate deal closure.
+AI Designer Agent is an intelligent visualization tool that enables outdoor living professionals to generate photorealistic design renders in seconds, directly at the customer's property. The agent transforms yard photos into stunning product visualizations (sunrooms, ADUs, pergolas, zip blinds) to accelerate deal closure.
 
 ### 1.2 Target Users
 - Small business owners in outdoor living industry
@@ -29,7 +29,7 @@ AI Designer Agent is an intelligent visualization tool that enables outdoor livi
 | ID | User Story | Priority |
 |----|------------|----------|
 | US-001 | As a sales rep, I want to upload a yard photo and generate a design in <30 seconds so I can show options during the consultation | P0 |
-| US-002 | As a business owner, I want to select from multiple product types (sunroom, ADU, pavilion, zip blinds) so I can serve diverse customer needs | P0 |
+| US-002 | As a business owner, I want to select from multiple product types (sunroom, ADU, pergola, zip blinds) so I can serve diverse customer needs | P0 |
 | US-003 | As a sales rep, I want to customize design preferences (style, color, size) so the output matches customer preferences | P0 |
 | US-004 | As a sales rep, I want to see before/after comparison so I can demonstrate the transformation | P1 |
 | US-005 | As a sales rep, I want to generate multiple design variants so customers can compare options | P1 |
@@ -70,7 +70,7 @@ AI Designer Agent is an intelligent visualization tool that enables outdoor livi
 #### 3.1.3 Product Selection
 | Req ID | Requirement | Priority |
 |--------|-------------|----------|
-| FR-010 | System shall display product grid with 4 options: Sunroom, ADU, Pavilion, Zip Blinds | P0 |
+| FR-010 | System shall display product grid with 4 options: Sunroom, ADU, Pergola, Zip Blinds | P0 |
 | FR-011 | System shall allow single product selection with visual highlight | P0 |
 | FR-012 | System shall display product icon and brief description for each option | P1 |
 
@@ -192,7 +192,7 @@ interface DesignSession {
   id: string;
   projectId: string;
   yardPhoto: string; // URL or base64
-  productType: 'sunroom' | 'adu' | 'pavilion' | 'blinds';
+  productType: 'sunroom' | 'adu' | 'pergola' | 'blinds';
   style: 'modern' | 'traditional' | 'rustic';
   frameColor: 'black' | 'white' | 'bronze' | 'gray' | 'forest';
   size: 'small' | 'medium' | 'large';

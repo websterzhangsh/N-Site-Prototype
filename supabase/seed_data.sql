@@ -203,7 +203,7 @@ INSERT INTO product_categories (id, tenant_id, name, name_en, description, sort_
 ('e1f2a3b4-0001-0001-0001-000000000001'::UUID, 'a1b2c3d4-0001-0001-0001-000000000001'::UUID, '可伸缩阳光房', 'Retractable Sunroom', '智能可伸缩阳光房系统，支持一键开合', 1, TRUE),
 ('e1f2a3b4-0001-0001-0001-000000000002'::UUID, 'a1b2c3d4-0001-0001-0001-000000000001'::UUID, '固定阳光房', 'Fixed Sunroom', '传统固定式阳光房，经典设计', 2, TRUE),
 ('e1f2a3b4-0001-0001-0001-000000000003'::UUID, 'a1b2c3d4-0001-0001-0001-000000000001'::UUID, '智能阳光房', 'Smart Sunroom', '集成智能控制系统的阳光房', 3, TRUE),
-('e1f2a3b4-0001-0001-0001-000000000004'::UUID, 'a1b2c3d4-0001-0001-0001-000000000001'::UUID, '凉亭', 'Pavilion', '户外凉亭与遮阳系统', 4, TRUE),
+('e1f2a3b4-0001-0001-0001-000000000004'::UUID, 'a1b2c3d4-0001-0001-0001-000000000001'::UUID, '凉亭', 'Pergola', '户外凉亭与遮阳系统', 4, TRUE),
 ('e1f2a3b4-0001-0001-0001-000000000005'::UUID, 'a1b2c3d4-0001-0001-0001-000000000001'::UUID, '配件与附件', 'Accessories', '阳光房配件、五金件、装饰件', 5, TRUE);
 
 -- Product Categories for Tenant 2
@@ -230,9 +230,9 @@ INSERT INTO products (id, tenant_id, category_id, sku, name, name_en, descriptio
     '{"material": "铝合金6063-T6", "glass_type": "Low-E钢化中空玻璃6+12A+6", "frame_colors": ["白色", "黑色", "香槟金", "深灰"], "min_width_mm": 3000, "max_width_mm": 8000, "min_depth_mm": 3000, "max_depth_mm": 6000, "min_height_mm": 2400, "max_height_mm": 4000, "weight_per_sqm_kg": 28, "roof_styles": ["平顶", "人字顶", "弧形顶"]}'::jsonb, 'active', TRUE, 'b1c2d3e4-0001-0001-0001-000000000001'::UUID),
 ('f1a2b3c4-0001-0001-0001-000000000006'::UUID, 'a1b2c3d4-0001-0001-0001-000000000001'::UUID, 'e1f2a3b4-0001-0001-0001-000000000003'::UUID, 'SR-S-PRO', '智能阳光房 PRO系列', 'Smart Sunroom PRO', '全智能阳光房，集成温控、照明、通风', 
     '{"material": "铝合金6063-T6", "glass_type": "智能调光玻璃", "frame_colors": ["黑色", "深灰"], "min_width_mm": 3000, "max_width_mm": 10000, "min_depth_mm": 3000, "max_depth_mm": 8000, "min_height_mm": 2500, "max_height_mm": 4000, "weight_per_sqm_kg": 42, "smart_features": ["智能温控", "自动通风", "LED照明", "雨水感应", "语音控制", "远程监控"]}'::jsonb, 'active', TRUE, 'b1c2d3e4-0001-0001-0001-000000000001'::UUID),
-('f1a2b3c4-0001-0001-0001-000000000007'::UUID, 'a1b2c3d4-0001-0001-0001-000000000001'::UUID, 'e1f2a3b4-0001-0001-0001-000000000004'::UUID, 'PV-A-001', '铝合金凉亭 A款', 'Aluminum Pavilion A', '经典四角凉亭', 
+('f1a2b3c4-0001-0001-0001-000000000007'::UUID, 'a1b2c3d4-0001-0001-0001-000000000001'::UUID, 'e1f2a3b4-0001-0001-0001-000000000004'::UUID, 'PV-A-001', '铝合金凉亭 A款', 'Aluminum Pergola A', '经典四角凉亭', 
     '{"material": "铝合金6063-T5", "roof_material": "聚碳酸酯板", "frame_colors": ["白色", "黑色", "香槟金", "木纹"], "sizes": ["3x3m", "3.5x3.5m", "4x4m", "5x5m"], "height_mm": 2800, "weight_kg": 180}'::jsonb, 'active', TRUE, 'b1c2d3e4-0001-0001-0001-000000000001'::UUID),
-('f1a2b3c4-0001-0001-0001-000000000008'::UUID, 'a1b2c3d4-0001-0001-0001-000000000001'::UUID, 'e1f2a3b4-0001-0001-0001-000000000004'::UUID, 'PV-B-001', '铝合金凉亭 B款', 'Aluminum Pavilion B', '六角凉亭，更大遮阳面积', 
+('f1a2b3c4-0001-0001-0001-000000000008'::UUID, 'a1b2c3d4-0001-0001-0001-000000000001'::UUID, 'e1f2a3b4-0001-0001-0001-000000000004'::UUID, 'PV-B-001', '铝合金凉亭 B款', 'Aluminum Pergola B', '六角凉亭，更大遮阳面积', 
     '{"material": "铝合金6063-T6", "roof_material": "聚碳酸酯板", "frame_colors": ["黑色", "深灰", "木纹"], "diameters": ["3m", "4m", "5m", "6m"], "height_mm": 3000, "weight_kg": 250}'::jsonb, 'active', TRUE, 'b1c2d3e4-0001-0001-0001-000000000001'::UUID),
 ('f1a2b3c4-0001-0001-0001-000000000009'::UUID, 'a1b2c3d4-0001-0001-0001-000000000001'::UUID, 'e1f2a3b4-0001-0001-0001-000000000005'::UUID, 'ACC-LED-001', 'LED灯带套装', 'LED Lighting Kit', '阳光房专用LED灯带，防水设计', 
     '{"type": "LED灯带", "power": "14.4W/m", "color_temp": "3000K/4000K/6000K可选", "waterproof": "IP65", "length_m": [5, 10, 15, 20], "warranty_years": 2}'::jsonb, 'active', FALSE, 'b1c2d3e4-0001-0001-0001-000000000001'::UUID),
@@ -300,13 +300,13 @@ INSERT INTO pricing (id, tenant_id, product_id, pricing_name, pricing_type, base
     '{"voice_control": {"price": 2800, "unit": "per_unit", "label": "语音控制升级"}, "homekit": {"price": 1500, "unit": "per_unit", "label": "HomeKit集成"}}'::jsonb,
     '{"early_bird": {"percent": 8, "valid_until": "2026-06-30"}}'::jsonb,
     '2026-01-01', TRUE, 'b1c2d3e4-0001-0001-0001-000000000001'::UUID),
--- Pavilion A
+-- Pergola A
 ('g1a2b3c4-0001-0001-0001-000000000007'::UUID, 'a1b2c3d4-0001-0001-0001-000000000001'::UUID, 'f1a2b3c4-0001-0001-0001-000000000007'::UUID, '凉亭A款定价', 'standard', 28000.00, 'per_unit', 'CNY',
     '[]'::jsonb,
     '{"led_light": {"price": 1800, "unit": "per_unit", "label": "LED灯带套装"}, "mosquito_net": {"price": 1200, "unit": "per_unit", "label": "防蚊纱帘"}}'::jsonb,
     '{}'::jsonb,
     '2026-01-01', TRUE, 'b1c2d3e4-0001-0001-0001-000000000001'::UUID),
--- Pavilion B
+-- Pergola B
 ('g1a2b3c4-0001-0001-0001-000000000008'::UUID, 'a1b2c3d4-0001-0001-0001-000000000001'::UUID, 'f1a2b3c4-0001-0001-0001-000000000008'::UUID, '凉亭B款定价', 'standard', 38000.00, 'per_unit', 'CNY',
     '[]'::jsonb,
     '{"led_light": {"price": 2200, "unit": "per_unit", "label": "LED灯带套装"}, "mosquito_net": {"price": 1600, "unit": "per_unit", "label": "防蚊纱帘"}}'::jsonb,

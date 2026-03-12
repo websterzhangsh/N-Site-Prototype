@@ -297,7 +297,7 @@ describe('Design Generate API', () => {
 
   describe('产品类型提示词', () => {
     it('应该支持不同的产品类型', async () => {
-      const productTypes = ['sunroom', 'pavilion', 'roller_blind', 'yard_accessory'];
+      const productTypes = ['sunroom', 'pergola', 'roller_blind', 'yard_accessory'];
 
       for (const productType of productTypes) {
         mockFetch.mockResolvedValueOnce({

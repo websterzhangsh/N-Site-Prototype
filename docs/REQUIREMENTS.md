@@ -13,7 +13,7 @@
 ## 1. Project Overview
 
 ### 1.1 Background
-Nestopia is a B2B platform for outdoor living products — sunrooms, ADU (Accessory Dwelling Units), pavilions, and zip blinds. The platform serves as a public-facing product showcase, a partner registration and management portal, and a multi-tenant dashboard for partner companies — powered by four AI Agents that act as "super partners" for small enterprise owners.
+Nestopia is a B2B platform for outdoor living products — sunrooms, ADU (Accessory Dwelling Units), pergolas, and zip blinds. The platform serves as a public-facing product showcase, a partner registration and management portal, and a multi-tenant dashboard for partner companies — powered by four AI Agents that act as "super partners" for small enterprise owners.
 
 ### 1.2 Project Goals
 - Public website for product showcase and customer lead generation (To C)
@@ -98,7 +98,7 @@ team-management.html → Team management page
 ├── public/images/              # Static image assets (~40 images)
 │   ├── hero/                   # Hero carousel images
 │   ├── gallery/                # Gallery images
-│   ├── products/               # Product images (sunroom, pavilion, windproof)
+│   ├── products/               # Product images (sunroom, pergola, windproof)
 │   └── partner-logo.png        # Test partner logo
 ├── database/                   # Legacy schema (superseded by supabase/)
 │   └── schema.sql
@@ -129,7 +129,7 @@ team-management.html → Team management page
 | FR-001 | Responsive Layout | Mobile-first design, adapts to all screen sizes | ✅ |
 | FR-002 | Navigation | Sticky header with smooth scroll to sections | ✅ |
 | FR-003 | Hero Carousel | 3-slide auto-rotating product showcase | ✅ |
-| FR-004 | Product Showcase | 3 product categories: Sunroom, Pavilion, Zip Blinds | ✅ |
+| FR-004 | Product Showcase | 3 product categories: Sunroom, Pergola, Zip Blinds | ✅ |
 | FR-005 | Service Process | 3-step "Get Started" section | ✅ |
 | FR-006 | Design Consultation Form | 3-step intake wizard (contact → space → preferences) | ✅ |
 | FR-007 | Chatbot UI | Floating chat widget with AI-powered responses (Qwen API) | ✅ |
@@ -240,7 +240,7 @@ Located in `supabase/schema.sql`. Multi-tenant architecture with RLS.
 | `users` | All users across tenants | email, password_hash, role (super_admin/admin/manager/member), tenant_id |
 | `user_sessions` | JWT session management | token, refresh_token, ip_address, user_agent, expires_at |
 | `audit_logs` | Activity tracking | action, resource_type, old_values, new_values |
-| `projects` | Client projects | title, type (sunroom/pavilion/shutter), status, budget, timeline |
+| `projects` | Client projects | title, type (sunroom/pergola/shutter), status, budget, timeline |
 | `orders` | Order management | auto-generated order number, 3-stage payment tracking, production/logistics status |
 
 **Security**: Row-Level Security (RLS) enabled for tenant data isolation.
@@ -331,7 +331,7 @@ Nestopia AI Agents are **not traditional SaaS tools**. They are autonomous "supe
 | Data Source | Target Volume | Purpose |
 |------------|---------------|---------|
 | Real yard scene photos | 100,000+ | Train scene fusion naturalness |
-| Product-in-context renders | Per product category | Train product "planting" for sunroom/ADU/pavilion/blinds |
+| Product-in-context renders | Per product category | Train product "planting" for sunroom/ADU/pergola/blinds |
 | Style transfer datasets | American/Modern/Neo-Chinese | One-click style switching |
 | Regional adaptation data | North American building norms, common yard types, local plants | Localized design intelligence |
 
@@ -450,8 +450,8 @@ The Compliance Manager must handle the complex US regulatory landscape: **Federa
 |---------|----------------|------------|----------|-----|---------|
 | Sunroom | ✅ Required | ⚠️ If outlets/lighting | ⚠️ If plumbing | ⚠️ Usually | Seismic (CA), Wind (FL) |
 | ADU | ✅ Required | ✅ Required | ✅ Required | ⚠️ CA limited | Full residential code |
-| Pavilion (<200 sq ft) | ⚠️ Varies | ⚠️ If electrical | ❌ No | ⚠️ Usually | Setback compliance |
-| Pavilion (>200 sq ft) | ✅ Required | ⚠️ If electrical | ❌ No | ⚠️ Usually | Structural engineering |
+| Pergola (<200 sq ft) | ⚠️ Varies | ⚠️ If electrical | ❌ No | ⚠️ Usually | Setback compliance |
+| Pergola (>200 sq ft) | ✅ Required | ⚠️ If electrical | ❌ No | ⚠️ Usually | Structural engineering |
 | Windproof Blinds | ❌ Usually no | ❌ No | ❌ No | ⚠️ Often | Wind rating (FL) |
 
 #### 7.4.4 Fine-tune Training Strategy
@@ -473,7 +473,7 @@ The Compliance Manager must handle the complex US regulatory landscape: **Federa
 - **AI-extracted**: Automated parsing of PDF regulations
 
 **Competitive Moat**: Only Nestopia builds an "outdoor living industry-specific" regulatory knowledge graph with **US regional depth** — generic legal AI cannot understand:
-- Industry-specific scenarios (sunroom vs ADU vs pavilion)
+- Industry-specific scenarios (sunroom vs ADU vs pergola)
 - Local nuances (CA Title 24 vs FL wind zones vs TX clay soil)
 - HOA aesthetic requirements alongside building codes
 - The interplay of federal/state/local/HOA四层审批
@@ -506,7 +506,7 @@ The Compliance Manager must handle the complex US regulatory landscape: **Federa
 
 - **Scene A: Lead Conversion** — Prospect inquires at midnight → AI instantly replies → books daytime visit → partner sees scheduled calendar in the morning
 - **Scene B: Project Follow-up** — AI reminds "Customer X's delivery arriving tomorrow, suggest proactive contact today" → partner one-click confirms → AI auto-sends message
-- **Scene C: Repurchase Activation** — AI discovers "Customer Y installed sunroom last year, may now consider a pavilion" → auto-generates pavilion proposal → partner one-click sends → customer delighted
+- **Scene C: Repurchase Activation** — AI discovers "Customer Y installed sunroom last year, may now consider a pergola" → auto-generates pergola proposal → partner one-click sends → customer delighted
 - **Scene D: Crisis Recovery** — AI detects dissatisfaction in customer message → immediate alert + suggests "apologize first, explain second, compensate last" → partner responds quickly
 
 #### 7.5.3 Fine-tune Training Strategy
@@ -594,7 +594,7 @@ Every interaction feeds back into the training pipeline:
 - [x] AI Agent strategy & specification document
 
 ### Phase I+ — C-end Content Expansion (Short-term)
-- [ ] Create 4 product detail pages (sunroom / ADU / pavilion / zip blinds)
+- [ ] Create 4 product detail pages (sunroom / ADU / pergola / zip blinds)
 - [ ] Create brand strength / about page
 - [ ] Add 6-step AI process showcase on homepage (C-end simplified version)
 - [ ] Add ADU as 4th product category on homepage
@@ -699,7 +699,7 @@ public/images/
 ├── gallery/            # 6 product gallery images
 ├── products/
 │   ├── sunroom/        # 9 images (3 hero + 6 gallery)
-│   ├── pavilion/       # 9 images (3 hero + 6 gallery)
+│   ├── pergola/       # 9 images (3 hero + 6 gallery)
 │   └── windproof/      # 9 images (3 hero + 6 gallery)
 ├── hero-bg.jpg         # Homepage background
 ├── interior.jpg        # Interior page image
@@ -718,7 +718,7 @@ public/images/
 | Chinese remnants | Some `data-zh` attributes still visible in English mode on certain pages | P2 |
 | AI Design Tool stubs | Upload/generate functions are placeholder only | P1 |
 | Agent pages | Clicking agent nav items falls back to Overview (no dedicated pages) | P1 |
-| Missing product pages | No independent pages for sunroom/ADU/pavilion/zip blinds | P1 |
+| Missing product pages | No independent pages for sunroom/ADU/pergola/zip blinds | P1 |
 | Missing case library | No project showcase / case study section | P1 |
 | Missing brand page | No about us / brand strength page | P2 |
 

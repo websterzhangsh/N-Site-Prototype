@@ -534,7 +534,7 @@ CREATE TABLE products (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name_zh VARCHAR(255) NOT NULL,
     name_en VARCHAR(255),
-    category VARCHAR(50) NOT NULL,    -- sunroom, pavilion, windproof
+    category VARCHAR(50) NOT NULL,    -- sunroom, pergola, windproof
     description_zh TEXT,
     description_en TEXT,
     price_range VARCHAR(100),
