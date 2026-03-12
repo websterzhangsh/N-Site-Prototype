@@ -6,3 +6,22 @@
 
 /partners.html
   Cache-Control: no-cache, no-store, must-revalidate
+
+# Media files - short cache with revalidation for development
+/images/*
+  Cache-Control: public, max-age=300, must-revalidate
+
+/public/images/*
+  Cache-Control: public, max-age=300, must-revalidate
+
+/*.mp4
+  Cache-Control: public, max-age=300, must-revalidate
+
+/*.jpg
+  Cache-Control: public, max-age=300, must-revalidate
+
+/*.png
+  Cache-Control: public, max-age=300, must-revalidate
+
+/*.webp
+  Cache-Control: public, max-age=300, must-revalidate
