@@ -16,7 +16,7 @@
 ├─────────────────────────────────────────────────────────────────┤
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐  │
 │  │  公共网站     │  │  租户登录页   │  │   租户管理后台        │  │
-│  │  (index.html)│  │(login.html)  │  │  (dashboard.html)    │  │
+│  │  (index.html)│  │(login.html)  │  │(company-operations.html)│  │
 │  └──────────────┘  └──────────────┘  └──────────────────────┘  │
 └─────────────────────────────────────────────────────────────────┘
                               │
@@ -439,7 +439,7 @@ interface CreateOrderRequest {
 ├── index.html              # 公共首页
 ├── login.html              # 租户登录页
 ├── partners.html           # 合作伙伴介绍页
-├── dashboard.html          # 租户管理后台
+├── company-operations.html  # 租户管理后台 (Company Operations)
 ├── /assets
 │   ├── css/
 │   ├── js/

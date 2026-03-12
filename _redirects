@@ -1,3 +1,4 @@
 /partners.html /partners.html 200
 /login.html /login.html 200
-/dashboard.html /dashboard.html 200
+/company-operations.html /company-operations.html 200
+/dashboard.html /company-operations.html 301

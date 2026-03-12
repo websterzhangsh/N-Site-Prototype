@@ -406,7 +406,7 @@ The Knowledge Base serves as a **private domain data repository** that feeds our
 |------|---------|
 | `supabase/schema.sql` | Multi-tenant database schema |
 | `supabase/seed_data.sql` | Test data including 47 KB documents |
-| `dashboard.html` | Knowledge Base UI implementation |
+| `company-operations.html` | Knowledge Base UI implementation |
 | `docs/DATA_AI_STRATEGY.md` | This document |
 
 ### 10.2 Related Documents

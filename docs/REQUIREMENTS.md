@@ -72,7 +72,7 @@ The Nestopia AI Agent architecture is designed around a fundamental principle: *
 index.html          → Homepage (product showcase, contact form, chatbot)
 partners.html       → Partner Program page (features, registration form)
 login.html          → Partner sign-in (multi-tenant aware)
-dashboard.html      → Partner dashboard (overview, workflow, agents)
+company-operations.html      → Company Operations (overview, workflow, agents, projects, team, settings)
 team-management.html → Team management page
 ```
 
@@ -89,7 +89,7 @@ team-management.html → Team management page
 ├── index.html                  # Homepage
 ├── partners.html               # Partner program + registration
 ├── login.html                  # Partner sign-in
-├── dashboard.html              # Partner dashboard
+├── company-operations.html     # Company Operations (formerly dashboard)
 ├── team-management.html        # Team management
 ├── package.json                # Build config
 ├── _routes.json                # Cloudflare routing
@@ -165,7 +165,7 @@ team-management.html → Team management page
 | FR-045 | Auth Token | Mock JWT token stored on login, redirects to dashboard | ✅ |
 | FR-046 | English UI | Fully translated from Chinese to English | ✅ |
 
-### 3.4 Dashboard (`dashboard.html`) — ✅ Structural Complete
+### 3.4 Company Operations (`company-operations.html`) — ✅ Structural Complete
 
 | ID | Feature | Description | Status |
 |----|---------|-------------|--------|

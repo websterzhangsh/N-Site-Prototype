@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && cp partners.html team-management.html login.html dashboard.html _routes.json _redirects _headers dist/ 2>/dev/null; true",
+    "build": "vite build && cp partners.html team-management.html login.html company-operations.html _routes.json _redirects _headers dist/ 2>/dev/null; true",
     "preview": "vite preview",
     "pages:dev": "wrangler pages dev dist --compatibility-date=2024-01-01",
     "deploy": "wrangler pages deploy dist"

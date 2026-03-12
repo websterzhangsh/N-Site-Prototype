@@ -419,7 +419,7 @@
 ## 📄 附录：文件清单
 
 ### 核心文件
-- `dashboard.html` - 主 Dashboard 页面（5300+ 行）
+- `company-operations.html` - Company Operations 页面（6700+ 行）
 - `supabase/schema.sql` - 数据库 Schema（880+ 行）
 - `supabase/seed_data.sql` - 测试数据（496 行）
 - `DATABASE_SCHEMA.md` - Schema 文档（770+ 行）
