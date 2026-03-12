@@ -59,13 +59,44 @@
         }
         
         .feature-card {
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             border-radius: 1rem;
+            overflow: hidden;
+            position: relative;
         }
         
         .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-elegant);
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px -12px rgba(0,0,0,0.2);
+        }
+
+        .feature-card img {
+            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .feature-card:hover img {
+            transform: scale(1.08);
+        }
+
+        .feature-card .feature-overlay {
+            background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.15) 50%, transparent 100%);
+            transition: background 0.4s ease;
+        }
+
+        .feature-card:hover .feature-overlay {
+            background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.25) 50%, transparent 100%);
+        }
+
+        .feature-card .feature-icon-badge {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.25);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon-badge {
+            background: rgba(255,255,255,0.25);
+            transform: scale(1.05);
         }
         
         .btn-primary {
@@ -953,36 +984,68 @@
                         </div>
                     </div>
 
-                    <!-- Product Features -->
-                    <div class="mt-10 max-w-4xl mx-auto">
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <div class="bg-[--darker-bg] rounded-xl p-4 text-center border border-gray-200">
-                                <div class="w-10 h-10 bg-[--light-text] rounded-full flex items-center justify-center mx-auto mb-3">
-                                    <i class="fas fa-shield-alt text-white text-sm"></i>
+                    <!-- Product Features - Image Cards -->
+                    <div class="mt-10 max-w-5xl mx-auto">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
+                            <!-- Aluminum Alloy -->
+                            <div class="feature-card group cursor-pointer">
+                                <div class="relative aspect-[3/4] overflow-hidden rounded-xl">
+                                    <img src="public/images/products/pergola/matrix/Residential%20Pergola%20Sample%201.jpg?v=20260312" 
+                                         alt="Aluminum alloy pergola in modern garden setting" 
+                                         class="w-full h-full object-cover" loading="lazy">
+                                    <div class="feature-overlay absolute inset-0 flex flex-col justify-end p-4">
+                                        <div class="feature-icon-badge w-8 h-8 rounded-full flex items-center justify-center mb-2.5">
+                                            <i class="fas fa-shield-alt text-white text-xs"></i>
+                                        </div>
+                                        <h5 class="text-white font-semibold text-sm leading-tight lang-text" data-zh="铝合金材质" data-en="Aluminum Alloy">Aluminum Alloy</h5>
+                                        <p class="text-white/70 text-xs mt-0.5 lang-text" data-zh="永不生锈" data-en="Rust-proof">Rust-proof</p>
+                                    </div>
                                 </div>
-                                <div class="text-sm font-semibold text-[--light-text] lang-text" data-zh="铝合金材质" data-en="Aluminum Alloy">Aluminum Alloy</div>
-                                <div class="text-xs text-[--light-accent] mt-1 lang-text" data-zh="永不生锈" data-en="Rust-proof">Rust-proof</div>
                             </div>
-                            <div class="bg-[--darker-bg] rounded-xl p-4 text-center border border-gray-200">
-                                <div class="w-10 h-10 bg-[--light-text] rounded-full flex items-center justify-center mx-auto mb-3">
-                                    <i class="fas fa-sun text-white text-sm"></i>
+                            <!-- Smart Shade -->
+                            <div class="feature-card group cursor-pointer">
+                                <div class="relative aspect-[3/4] overflow-hidden rounded-xl">
+                                    <img src="public/images/products/pergola/matrix/Residential%20Pergola%20Sample%202.jpg?v=20260312" 
+                                         alt="Smart shade pergola with adjustable louvers" 
+                                         class="w-full h-full object-cover" loading="lazy">
+                                    <div class="feature-overlay absolute inset-0 flex flex-col justify-end p-4">
+                                        <div class="feature-icon-badge w-8 h-8 rounded-full flex items-center justify-center mb-2.5">
+                                            <i class="fas fa-sun text-white text-xs"></i>
+                                        </div>
+                                        <h5 class="text-white font-semibold text-sm leading-tight lang-text" data-zh="智能遮阳" data-en="Smart Shade">Smart Shade</h5>
+                                        <p class="text-white/70 text-xs mt-0.5 lang-text" data-zh="可调节百叶" data-en="Adjustable Louvers">Adjustable Louvers</p>
+                                    </div>
                                 </div>
-                                <div class="text-sm font-semibold text-[--light-text] lang-text" data-zh="智能遮阳" data-en="Smart Shade">Smart Shade</div>
-                                <div class="text-xs text-[--light-accent] mt-1 lang-text" data-zh="可调节百叶" data-en="Adjustable Louvers">Adjustable Louvers</div>
                             </div>
-                            <div class="bg-[--darker-bg] rounded-xl p-4 text-center border border-gray-200">
-                                <div class="w-10 h-10 bg-[--light-text] rounded-full flex items-center justify-center mx-auto mb-3">
-                                    <i class="fas fa-tools text-white text-sm"></i>
+                            <!-- Quick Install -->
+                            <div class="feature-card group cursor-pointer">
+                                <div class="relative aspect-[3/4] overflow-hidden rounded-xl">
+                                    <img src="public/images/products/pergola/matrix/Residential%20Pergola%20Sample%203.jpg?v=20260312" 
+                                         alt="Quick install modular pergola with evening lighting" 
+                                         class="w-full h-full object-cover" loading="lazy">
+                                    <div class="feature-overlay absolute inset-0 flex flex-col justify-end p-4">
+                                        <div class="feature-icon-badge w-8 h-8 rounded-full flex items-center justify-center mb-2.5">
+                                            <i class="fas fa-tools text-white text-xs"></i>
+                                        </div>
+                                        <h5 class="text-white font-semibold text-sm leading-tight lang-text" data-zh="快速安装" data-en="Quick Install">Quick Install</h5>
+                                        <p class="text-white/70 text-xs mt-0.5 lang-text" data-zh="1-2周完工" data-en="1-2 Weeks">1-2 Weeks</p>
+                                    </div>
                                 </div>
-                                <div class="text-sm font-semibold text-[--light-text] lang-text" data-zh="快速安装" data-en="Quick Install">Quick Install</div>
-                                <div class="text-xs text-[--light-accent] mt-1 lang-text" data-zh="1-2周完工" data-en="1-2 Weeks">1-2 Weeks</div>
                             </div>
-                            <div class="bg-[--darker-bg] rounded-xl p-4 text-center border border-gray-200">
-                                <div class="w-10 h-10 bg-[--light-text] rounded-full flex items-center justify-center mx-auto mb-3">
-                                    <i class="fas fa-award text-white text-sm"></i>
+                            <!-- 10-Year Warranty -->
+                            <div class="feature-card group cursor-pointer">
+                                <div class="relative aspect-[3/4] overflow-hidden rounded-xl">
+                                    <img src="public/images/products/pergola/matrix/Residential%20Pergola%20Sample%204.jpg?v=20260312" 
+                                         alt="Durable pergola carport with 10-year warranty" 
+                                         class="w-full h-full object-cover" loading="lazy">
+                                    <div class="feature-overlay absolute inset-0 flex flex-col justify-end p-4">
+                                        <div class="feature-icon-badge w-8 h-8 rounded-full flex items-center justify-center mb-2.5">
+                                            <i class="fas fa-award text-white text-xs"></i>
+                                        </div>
+                                        <h5 class="text-white font-semibold text-sm leading-tight lang-text" data-zh="10年质保" data-en="10-Year Warranty">10-Year Warranty</h5>
+                                        <p class="text-white/70 text-xs mt-0.5 lang-text" data-zh="品质保障" data-en="Quality Assured">Quality Assured</p>
+                                    </div>
                                 </div>
-                                <div class="text-sm font-semibold text-[--light-text] lang-text" data-zh="10年质保" data-en="10-Year Warranty">10-Year Warranty</div>
-                                <div class="text-xs text-[--light-accent] mt-1 lang-text" data-zh="品质保障" data-en="Quality Assured">Quality Assured</div>
                             </div>
                         </div>
                     </div>
