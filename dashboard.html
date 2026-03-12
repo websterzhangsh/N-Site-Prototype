@@ -325,6 +325,10 @@
 
                 <div class="nav-section">
                     <div class="nav-section-title">Settings</div>
+                    <a href="#" class="nav-item" data-page="knowledge-base">
+                        <i class="fas fa-brain"></i>
+                        <span>Knowledge Base</span>
+                    </a>
                     <a href="#" class="nav-item" data-page="team">
                         <i class="fas fa-user-cog"></i>
                         <span>Team Management</span>
@@ -3673,6 +3677,263 @@
                     </div>
                 </div>
 
+                <!-- ===== Knowledge Base Page ===== -->
+                <div class="page-content" id="page-knowledge-base">
+                    <div class="max-w-7xl mx-auto">
+
+                        <!-- Header & Stats -->
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+                            <div>
+                                <h2 class="text-2xl font-bold text-gray-900">Knowledge Base</h2>
+                                <p class="text-gray-500 text-sm mt-1">Upload and manage private domain data for AI training, RAG retrieval, and fine-tuning</p>
+                            </div>
+                            <button onclick="openKBUploadModal()" class="px-6 py-3 bg-gray-900 text-white rounded-xl font-medium hover:bg-gray-800 transition flex items-center gap-2 self-start">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span>Upload Documents</span>
+                            </button>
+                        </div>
+
+                        <!-- Stats Row -->
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                            <div class="bg-white rounded-xl border border-gray-200 p-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-file-alt text-blue-600"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-2xl font-bold text-gray-900" id="kbTotalDocs">47</div>
+                                        <div class="text-xs text-gray-500">Total Documents</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-xl border border-gray-200 p-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-check-circle text-green-600"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-2xl font-bold text-gray-900" id="kbProcessed">39</div>
+                                        <div class="text-xs text-gray-500">Indexed</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-xl border border-gray-200 p-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-yellow-50 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-spinner text-yellow-600"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-2xl font-bold text-gray-900" id="kbPending">5</div>
+                                        <div class="text-xs text-gray-500">Processing</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-xl border border-gray-200 p-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-tags text-purple-600"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-2xl font-bold text-gray-900" id="kbCategories">6</div>
+                                        <div class="text-xs text-gray-500">Categories</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Category Filter Tabs -->
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <button class="kb-cat-btn active px-4 py-2 rounded-full text-sm font-medium bg-gray-900 text-white transition" data-cat="all">
+                                All <span class="ml-1 text-xs opacity-70">(47)</span>
+                            </button>
+                            <button class="kb-cat-btn px-4 py-2 rounded-full text-sm font-medium bg-white border border-gray-200 text-gray-600 hover:border-gray-400 transition" data-cat="installation">
+                                <i class="fas fa-tools mr-1.5 text-blue-500"></i>Installation & Technical <span class="ml-1 text-xs opacity-70">(12)</span>
+                            </button>
+                            <button class="kb-cat-btn px-4 py-2 rounded-full text-sm font-medium bg-white border border-gray-200 text-gray-600 hover:border-gray-400 transition" data-cat="compliance">
+                                <i class="fas fa-gavel mr-1.5 text-red-500"></i>Compliance & Regulatory <span class="ml-1 text-xs opacity-70">(8)</span>
+                            </button>
+                            <button class="kb-cat-btn px-4 py-2 rounded-full text-sm font-medium bg-white border border-gray-200 text-gray-600 hover:border-gray-400 transition" data-cat="sales">
+                                <i class="fas fa-chart-line mr-1.5 text-green-500"></i>Sales & Marketing <span class="ml-1 text-xs opacity-70">(9)</span>
+                            </button>
+                            <button class="kb-cat-btn px-4 py-2 rounded-full text-sm font-medium bg-white border border-gray-200 text-gray-600 hover:border-gray-400 transition" data-cat="training">
+                                <i class="fas fa-graduation-cap mr-1.5 text-yellow-500"></i>Training Materials <span class="ml-1 text-xs opacity-70">(7)</span>
+                            </button>
+                            <button class="kb-cat-btn px-4 py-2 rounded-full text-sm font-medium bg-white border border-gray-200 text-gray-600 hover:border-gray-400 transition" data-cat="aftersales">
+                                <i class="fas fa-life-ring mr-1.5 text-orange-500"></i>After-Sales & Warranty <span class="ml-1 text-xs opacity-70">(6)</span>
+                            </button>
+                            <button class="kb-cat-btn px-4 py-2 rounded-full text-sm font-medium bg-white border border-gray-200 text-gray-600 hover:border-gray-400 transition" data-cat="design">
+                                <i class="fas fa-palette mr-1.5 text-purple-500"></i>Design References <span class="ml-1 text-xs opacity-70">(5)</span>
+                            </button>
+                        </div>
+
+                        <!-- Search & Sort Bar -->
+                        <div class="flex flex-col md:flex-row gap-3 mb-6">
+                            <div class="relative flex-1">
+                                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                <input type="text" id="kbSearchInput" placeholder="Search documents by name, tag, or content..." class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-gray-300 focus:border-gray-300 bg-white" oninput="filterKBDocuments()">
+                            </div>
+                            <select id="kbSortSelect" class="px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white text-gray-700" onchange="filterKBDocuments()">
+                                <option value="newest">Newest First</option>
+                                <option value="oldest">Oldest First</option>
+                                <option value="name">Name A-Z</option>
+                                <option value="size">Largest First</option>
+                            </select>
+                            <select id="kbStatusSelect" class="px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white text-gray-700" onchange="filterKBDocuments()">
+                                <option value="all">All Status</option>
+                                <option value="indexed">Indexed</option>
+                                <option value="processing">Processing</option>
+                                <option value="failed">Failed</option>
+                            </select>
+                        </div>
+
+                        <!-- Documents Table -->
+                        <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                            <table class="w-full">
+                                <thead class="bg-gray-50 border-b border-gray-200">
+                                    <tr>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Document</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden md:table-cell">Category</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden md:table-cell">Tags</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden lg:table-cell">AI Agent</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden lg:table-cell">Uploaded</th>
+                                        <th class="px-5 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="kbDocumentsList" class="divide-y divide-gray-100">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="flex items-center justify-between mt-6">
+                            <span class="text-sm text-gray-500" id="kbPagInfo">Showing 1-10 of 47 documents</span>
+                            <div class="flex gap-2">
+                                <button class="px-3 py-1.5 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition" onclick="kbPrevPage()"><i class="fas fa-chevron-left"></i></button>
+                                <button class="px-3 py-1.5 bg-gray-900 text-white rounded-lg text-sm">1</button>
+                                <button class="px-3 py-1.5 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition">2</button>
+                                <button class="px-3 py-1.5 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition">3</button>
+                                <button class="px-3 py-1.5 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition" onclick="kbNextPage()"><i class="fas fa-chevron-right"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KB Upload Modal -->
+                <div id="kbUploadModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+                    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                        <!-- Modal Header -->
+                        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900">Upload to Knowledge Base</h3>
+                                <p class="text-sm text-gray-500">Add private domain documents for AI training</p>
+                            </div>
+                            <button onclick="closeKBUploadModal()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition">
+                                <i class="fas fa-times text-gray-500"></i>
+                            </button>
+                        </div>
+
+                        <!-- Modal Body -->
+                        <div class="p-6 space-y-6">
+                            <!-- Drop Zone -->
+                            <div id="kbDropZone" class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-gray-400 transition cursor-pointer" onclick="document.getElementById('kbFileInput').click()">
+                                <div class="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-cloud-upload-alt text-2xl text-gray-400"></i>
+                                </div>
+                                <p class="font-medium text-gray-700 mb-1">Drop files here or click to browse</p>
+                                <p class="text-sm text-gray-400">PDF, DOC, DOCX, XLS, XLSX, TXT, CSV, JPG, PNG, MP4 — max 50MB per file</p>
+                                <input type="file" id="kbFileInput" class="hidden" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.csv,.jpg,.jpeg,.png,.mp4" onchange="handleKBFileSelect(event)">
+                            </div>
+
+                            <!-- Uploaded File List -->
+                            <div id="kbFilePreview" class="space-y-2 hidden">
+                                <div class="text-sm font-medium text-gray-700">Selected files:</div>
+                                <div id="kbFileList" class="space-y-2"></div>
+                            </div>
+
+                            <!-- Category Selection -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Category <span class="text-red-500">*</span></label>
+                                <select id="kbUploadCategory" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:ring-2 focus:ring-gray-300">
+                                    <option value="">Select a category...</option>
+                                    <option value="installation">Installation & Technical Docs</option>
+                                    <option value="compliance">Compliance & Regulatory</option>
+                                    <option value="sales">Sales & Marketing</option>
+                                    <option value="training">Training Materials</option>
+                                    <option value="aftersales">After-Sales & Warranty</option>
+                                    <option value="design">Design References</option>
+                                </select>
+                            </div>
+
+                            <!-- Target AI Agent -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Target AI Agent(s)</label>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <label class="flex items-center gap-2 px-3 py-2.5 border border-gray-200 rounded-xl cursor-pointer hover:border-gray-400 transition">
+                                        <input type="checkbox" value="designer" class="kb-agent-check rounded text-gray-900 focus:ring-gray-300">
+                                        <i class="fas fa-paint-brush text-blue-500 text-sm"></i>
+                                        <span class="text-sm">AI Designer</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 px-3 py-2.5 border border-gray-200 rounded-xl cursor-pointer hover:border-gray-400 transition">
+                                        <input type="checkbox" value="pricing" class="kb-agent-check rounded text-gray-900 focus:ring-gray-300">
+                                        <i class="fas fa-calculator text-green-500 text-sm"></i>
+                                        <span class="text-sm">Pricing Agent</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 px-3 py-2.5 border border-gray-200 rounded-xl cursor-pointer hover:border-gray-400 transition">
+                                        <input type="checkbox" value="compliance" class="kb-agent-check rounded text-gray-900 focus:ring-gray-300">
+                                        <i class="fas fa-gavel text-red-500 text-sm"></i>
+                                        <span class="text-sm">Compliance Manager</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 px-3 py-2.5 border border-gray-200 rounded-xl cursor-pointer hover:border-gray-400 transition">
+                                        <input type="checkbox" value="service" class="kb-agent-check rounded text-gray-900 focus:ring-gray-300">
+                                        <i class="fas fa-headset text-orange-500 text-sm"></i>
+                                        <span class="text-sm">Customer Service</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Tags -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Tags</label>
+                                <div class="flex flex-wrap gap-2 mb-2" id="kbTagsContainer"></div>
+                                <div class="flex gap-2">
+                                    <input type="text" id="kbTagInput" placeholder="Add a tag and press Enter..." class="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-gray-300" onkeydown="if(event.key==='Enter'){event.preventDefault();addKBTag();}">
+                                    <button onclick="addKBTag()" class="px-4 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                                <div class="mt-2 flex flex-wrap gap-1.5">
+                                    <span class="text-xs text-gray-400">Suggested:</span>
+                                    <button onclick="addKBSuggestedTag('pergola')" class="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition">pergola</button>
+                                    <button onclick="addKBSuggestedTag('sunroom')" class="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition">sunroom</button>
+                                    <button onclick="addKBSuggestedTag('zip blinds')" class="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition">zip blinds</button>
+                                    <button onclick="addKBSuggestedTag('ADU')" class="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition">ADU</button>
+                                    <button onclick="addKBSuggestedTag('California')" class="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition">California</button>
+                                    <button onclick="addKBSuggestedTag('Florida')" class="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition">Florida</button>
+                                    <button onclick="addKBSuggestedTag('HOA')" class="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition">HOA</button>
+                                    <button onclick="addKBSuggestedTag('installation')" class="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition">installation</button>
+                                </div>
+                            </div>
+
+                            <!-- Description -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Description (optional)</label>
+                                <textarea id="kbUploadDesc" rows="2" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-gray-300 resize-none" placeholder="Brief description of the document content..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Modal Footer -->
+                        <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
+                            <button onclick="closeKBUploadModal()" class="px-5 py-2.5 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100 transition">Cancel</button>
+                            <button onclick="submitKBUpload()" class="px-5 py-2.5 bg-gray-900 text-white rounded-xl text-sm font-medium hover:bg-gray-800 transition flex items-center gap-2">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                Upload & Index
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </main>
     </div>
@@ -5527,6 +5788,375 @@
             });
         }
 
+        // ===== Knowledge Base Functions =====
+        const kbState = {
+            documents: [],
+            currentCategory: 'all',
+            currentPage: 1,
+            pageSize: 10,
+            uploadTags: [],
+            selectedFiles: []
+        };
+
+        const kbCategoryMeta = {
+            installation: { label: 'Installation & Technical', icon: 'fa-tools', color: 'blue' },
+            compliance: { label: 'Compliance & Regulatory', icon: 'fa-gavel', color: 'red' },
+            sales: { label: 'Sales & Marketing', icon: 'fa-chart-line', color: 'green' },
+            training: { label: 'Training Materials', icon: 'fa-graduation-cap', color: 'yellow' },
+            aftersales: { label: 'After-Sales & Warranty', icon: 'fa-life-ring', color: 'orange' },
+            design: { label: 'Design References', icon: 'fa-palette', color: 'purple' }
+        };
+
+        const kbAgentMeta = {
+            designer: { label: 'AI Designer', icon: 'fa-paint-brush', color: 'blue' },
+            pricing: { label: 'Pricing Agent', icon: 'fa-calculator', color: 'green' },
+            compliance: { label: 'Compliance', icon: 'fa-gavel', color: 'red' },
+            service: { label: 'Customer Service', icon: 'fa-headset', color: 'orange' }
+        };
+
+        // Dummy knowledge base data
+        const kbDummyDocuments = [
+            { id: 'kb-001', name: 'Pergola Installation Manual v3.2.pdf', category: 'installation', size: 4520000, type: 'pdf', status: 'indexed', agents: ['designer', 'service'], tags: ['pergola', 'installation', 'manual'], uploaded: '2026-03-10', description: 'Complete installation guide for residential pergola systems' },
+            { id: 'kb-002', name: 'California Building Code - Outdoor Structures 2026.pdf', category: 'compliance', size: 12800000, type: 'pdf', status: 'indexed', agents: ['compliance'], tags: ['California', 'building code', 'pergola', 'sunroom'], uploaded: '2026-03-09', description: 'CA Title 24 requirements for outdoor structures' },
+            { id: 'kb-003', name: 'Sales Pitch Deck - Residential Pergola.pptx', category: 'sales', size: 8900000, type: 'doc', status: 'indexed', agents: ['service', 'pricing'], tags: ['pergola', 'sales', 'residential'], uploaded: '2026-03-09', description: 'Client-facing sales presentation for residential pergola line' },
+            { id: 'kb-004', name: 'Sunroom Engineering Specs - A100 Series.pdf', category: 'installation', size: 3200000, type: 'pdf', status: 'indexed', agents: ['designer'], tags: ['sunroom', 'engineering', 'A100'], uploaded: '2026-03-08', description: 'Structural engineering specifications for A100 series sunrooms' },
+            { id: 'kb-005', name: 'FL Wind Zone Requirements.pdf', category: 'compliance', size: 2100000, type: 'pdf', status: 'indexed', agents: ['compliance'], tags: ['Florida', 'wind zone', 'building code'], uploaded: '2026-03-08', description: 'Florida wind load requirements for outdoor structures' },
+            { id: 'kb-006', name: 'Material Cost Baseline Q1 2026.xlsx', category: 'sales', size: 890000, type: 'xls', status: 'indexed', agents: ['pricing'], tags: ['pricing', 'materials', 'cost'], uploaded: '2026-03-07', description: 'Quarterly material cost tracking spreadsheet' },
+            { id: 'kb-007', name: 'New Employee Onboarding Guide.pdf', category: 'training', size: 5600000, type: 'pdf', status: 'indexed', agents: ['service'], tags: ['onboarding', 'training', 'new hire'], uploaded: '2026-03-07', description: 'Complete onboarding manual for new team members' },
+            { id: 'kb-008', name: 'Warranty Policy v2.1.pdf', category: 'aftersales', size: 1200000, type: 'pdf', status: 'indexed', agents: ['service', 'compliance'], tags: ['warranty', 'policy', 'after-sales'], uploaded: '2026-03-06', description: '10-year warranty terms and conditions' },
+            { id: 'kb-009', name: 'HOA Approval Checklist Template.docx', category: 'compliance', size: 340000, type: 'doc', status: 'indexed', agents: ['compliance', 'service'], tags: ['HOA', 'checklist', 'approval'], uploaded: '2026-03-06', description: 'Standard checklist for HOA architectural review submissions' },
+            { id: 'kb-010', name: 'Design Style Guide - Modern Series.pdf', category: 'design', size: 15600000, type: 'pdf', status: 'indexed', agents: ['designer'], tags: ['design', 'modern', 'style guide'], uploaded: '2026-03-05', description: 'Visual style guide for modern product line designs' },
+            { id: 'kb-011', name: 'Competitor Pricing Analysis Q1.xlsx', category: 'sales', size: 2300000, type: 'xls', status: 'indexed', agents: ['pricing'], tags: ['competitor', 'pricing', 'analysis'], uploaded: '2026-03-05', description: 'Regional competitor pricing comparison' },
+            { id: 'kb-012', name: 'Zip Blinds Technical Specs.pdf', category: 'installation', size: 4100000, type: 'pdf', status: 'processing', agents: ['designer', 'service'], tags: ['zip blinds', 'specs', 'technical'], uploaded: '2026-03-12', description: 'Technical specifications for all Zip Blinds models' },
+            { id: 'kb-013', name: 'Customer Objection Handling Playbook.pdf', category: 'sales', size: 3400000, type: 'pdf', status: 'indexed', agents: ['service'], tags: ['sales', 'objections', 'scripts'], uploaded: '2026-03-04', description: 'Common customer objections and recommended responses' },
+            { id: 'kb-014', name: 'ADU Permit Application Guide - Los Angeles.pdf', category: 'compliance', size: 6700000, type: 'pdf', status: 'indexed', agents: ['compliance'], tags: ['ADU', 'permit', 'Los Angeles', 'California'], uploaded: '2026-03-03', description: 'Step-by-step ADU permit application for LA County' },
+            { id: 'kb-015', name: 'Troubleshooting Guide - Motor Systems.pdf', category: 'aftersales', size: 2800000, type: 'pdf', status: 'indexed', agents: ['service'], tags: ['troubleshooting', 'motor', 'repair'], uploaded: '2026-03-03', description: 'Diagnostic and repair guide for motorized systems' },
+            { id: 'kb-016', name: 'Product Photography Standards.pdf', category: 'design', size: 7200000, type: 'pdf', status: 'indexed', agents: ['designer'], tags: ['photography', 'standards', 'marketing'], uploaded: '2026-03-02', description: 'Photography guidelines for product catalogs' },
+            { id: 'kb-017', name: 'Supplier Catalog - Aluminum Alloy.pdf', category: 'installation', size: 9800000, type: 'pdf', status: 'processing', agents: ['pricing', 'designer'], tags: ['supplier', 'aluminum', 'materials'], uploaded: '2026-03-12', description: 'Primary supplier product catalog and specs' },
+            { id: 'kb-018', name: 'Regional Labor Cost Data 2026.xlsx', category: 'sales', size: 1500000, type: 'xls', status: 'indexed', agents: ['pricing'], tags: ['labor', 'cost', 'regional'], uploaded: '2026-03-01', description: 'Installation labor costs by US state/region' },
+            { id: 'kb-019', name: 'Sunroom Maintenance Guide.pdf', category: 'aftersales', size: 1800000, type: 'pdf', status: 'indexed', agents: ['service'], tags: ['sunroom', 'maintenance', 'cleaning'], uploaded: '2026-02-28', description: 'Homeowner maintenance guide for sunroom products' },
+            { id: 'kb-020', name: 'Smart Home Integration Manual.pdf', category: 'installation', size: 3900000, type: 'pdf', status: 'processing', agents: ['designer', 'service'], tags: ['smart home', 'integration', 'IoT'], uploaded: '2026-03-11', description: 'Integration guide for HomeKit, Alexa, Google Home' },
+            { id: 'kb-021', name: 'TX Building Code Updates 2026.pdf', category: 'compliance', size: 4200000, type: 'pdf', status: 'processing', agents: ['compliance'], tags: ['Texas', 'building code', 'update'], uploaded: '2026-03-12', description: 'Latest Texas building code amendments for outdoor structures' },
+            { id: 'kb-022', name: 'Product Training Video Script - Pergola.docx', category: 'training', size: 890000, type: 'doc', status: 'indexed', agents: ['service'], tags: ['training', 'pergola', 'video'], uploaded: '2026-02-27', description: 'Script for partner product training video' },
+            { id: 'kb-023', name: 'Color Palette Guide 2026.pdf', category: 'design', size: 5400000, type: 'pdf', status: 'indexed', agents: ['designer'], tags: ['color', 'palette', 'design'], uploaded: '2026-02-26', description: 'Annual color palette and finish options' },
+            { id: 'kb-024', name: 'FAQ Library - Top 200 Questions.xlsx', category: 'training', size: 670000, type: 'xls', status: 'indexed', agents: ['service'], tags: ['FAQ', 'customer questions', 'answers'], uploaded: '2026-02-25', description: 'Most frequently asked customer questions with approved answers' },
+            { id: 'kb-025', name: 'Installation Safety Protocol.pdf', category: 'installation', size: 2100000, type: 'pdf', status: 'indexed', agents: ['compliance', 'service'], tags: ['safety', 'installation', 'protocol'], uploaded: '2026-02-24', description: 'OSHA-compliant safety procedures for field installation' },
+            { id: 'kb-026', name: 'Structural Load Calculations - Pergola.xlsx', category: 'installation', size: 1400000, type: 'xls', status: 'indexed', agents: ['designer', 'compliance'], tags: ['structural', 'load', 'pergola', 'engineering'], uploaded: '2026-02-23', description: 'Engineering load calculation templates for pergola systems' },
+            { id: 'kb-027', name: 'Customer Success Stories - 2025 Annual.pdf', category: 'sales', size: 18200000, type: 'pdf', status: 'indexed', agents: ['service', 'pricing'], tags: ['case study', 'testimonial', 'success'], uploaded: '2026-02-22', description: 'Annual compilation of customer success stories and testimonials' },
+            { id: 'kb-028', name: 'Warranty Claim Processing SOP.pdf', category: 'aftersales', size: 1600000, type: 'pdf', status: 'indexed', agents: ['service'], tags: ['warranty', 'claim', 'SOP'], uploaded: '2026-02-21', description: 'Standard operating procedure for warranty claim handling' },
+            { id: 'kb-029', name: 'Partner Onboarding Checklist.pdf', category: 'training', size: 980000, type: 'pdf', status: 'indexed', agents: ['service'], tags: ['partner', 'onboarding', 'checklist'], uploaded: '2026-02-20', description: 'New partner onboarding requirements and timeline' },
+            { id: 'kb-030', name: 'Material Compatibility Matrix.xlsx', category: 'design', size: 420000, type: 'xls', status: 'indexed', agents: ['designer', 'pricing'], tags: ['material', 'compatibility', 'reference'], uploaded: '2026-02-19', description: 'Cross-reference matrix for material and finish combinations' },
+            { id: 'kb-031', name: 'Seasonal Demand Forecast Model.xlsx', category: 'sales', size: 3100000, type: 'xls', status: 'processing', agents: ['pricing'], tags: ['forecast', 'seasonal', 'demand'], uploaded: '2026-03-11', description: 'AI-assisted demand forecasting model by region and season' },
+            { id: 'kb-032', name: 'Seismic Zone Design Guide - CA.pdf', category: 'compliance', size: 5800000, type: 'pdf', status: 'indexed', agents: ['compliance', 'designer'], tags: ['seismic', 'California', 'design'], uploaded: '2026-02-18', description: 'Seismic design requirements for California installations' },
+            { id: 'kb-033', name: 'Customer Journey Map Template.pdf', category: 'training', size: 2300000, type: 'pdf', status: 'indexed', agents: ['service'], tags: ['customer journey', 'template', 'training'], uploaded: '2026-02-17', description: 'Full lifecycle customer journey mapping template' },
+            { id: 'kb-034', name: 'Glass Specification Reference.pdf', category: 'installation', size: 3700000, type: 'pdf', status: 'indexed', agents: ['designer'], tags: ['glass', 'specs', 'Low-E', 'tempered'], uploaded: '2026-02-16', description: 'Comprehensive glass type specifications and applications' },
+            { id: 'kb-035', name: 'Insurance Requirements by State.pdf', category: 'compliance', size: 2900000, type: 'pdf', status: 'indexed', agents: ['compliance'], tags: ['insurance', 'liability', 'state'], uploaded: '2026-02-15', description: 'Contractor insurance requirements by US state' },
+            { id: 'kb-036', name: 'Upselling Strategies Guide.pdf', category: 'sales', size: 1700000, type: 'pdf', status: 'indexed', agents: ['service', 'pricing'], tags: ['upselling', 'strategy', 'revenue'], uploaded: '2026-02-14', description: 'Proven upselling techniques for accessories and upgrades' },
+            { id: 'kb-037', name: 'After-Sales Follow-up Schedule.xlsx', category: 'aftersales', size: 340000, type: 'xls', status: 'indexed', agents: ['service'], tags: ['follow-up', 'schedule', 'retention'], uploaded: '2026-02-13', description: 'Post-installation follow-up timeline and communication templates' },
+            { id: 'kb-038', name: 'Brand Guidelines 2026.pdf', category: 'design', size: 12400000, type: 'pdf', status: 'indexed', agents: ['designer'], tags: ['brand', 'guidelines', 'identity'], uploaded: '2026-02-12', description: 'Official brand identity guidelines, logos, and usage rules' },
+            { id: 'kb-039', name: 'ADU Product Training Deck.pptx', category: 'training', size: 24500000, type: 'doc', status: 'indexed', agents: ['service', 'designer'], tags: ['ADU', 'training', 'product'], uploaded: '2026-02-11', description: 'Comprehensive ADU product knowledge training presentation' },
+            { id: 'kb-040', name: 'Roofing Material Options Guide.pdf', category: 'installation', size: 6100000, type: 'pdf', status: 'indexed', agents: ['designer', 'pricing'], tags: ['roofing', 'materials', 'polycarbonate'], uploaded: '2026-02-10', description: 'Guide to roofing material options for sunrooms and pergolas' },
+            { id: 'kb-041', name: 'FEMA Flood Zone Reference Map - FL.pdf', category: 'compliance', size: 8900000, type: 'pdf', status: 'indexed', agents: ['compliance'], tags: ['FEMA', 'flood zone', 'Florida'], uploaded: '2026-02-09', description: 'Florida FEMA flood zone maps and BFE data' },
+            { id: 'kb-042', name: 'Pricing Strategy - Premium vs Value.pdf', category: 'sales', size: 2200000, type: 'pdf', status: 'indexed', agents: ['pricing'], tags: ['pricing', 'strategy', 'tiers'], uploaded: '2026-02-08', description: 'Three-tier pricing strategy analysis and recommendations' },
+            { id: 'kb-043', name: 'Maintenance Service Checklist.pdf', category: 'aftersales', size: 780000, type: 'pdf', status: 'indexed', agents: ['service'], tags: ['maintenance', 'checklist', 'service'], uploaded: '2026-02-07', description: 'Annual maintenance service checklist for field technicians' },
+            { id: 'kb-044', name: 'Pergola Configuration Tool Specs.pdf', category: 'installation', size: 4300000, type: 'pdf', status: 'indexed', agents: ['designer'], tags: ['pergola', 'configuration', 'specs'], uploaded: '2026-02-06', description: 'Technical specs for online pergola configurator tool' },
+            { id: 'kb-045', name: 'Sales Territory Mapping - US.pdf', category: 'sales', size: 7600000, type: 'pdf', status: 'indexed', agents: ['pricing', 'service'], tags: ['territory', 'mapping', 'sales region'], uploaded: '2026-02-05', description: 'US sales territory assignments and market data' },
+            { id: 'kb-046', name: 'Quality Control Inspection Form.pdf', category: 'training', size: 560000, type: 'pdf', status: 'indexed', agents: ['compliance', 'service'], tags: ['QC', 'inspection', 'quality'], uploaded: '2026-02-04', description: 'Pre-delivery and post-installation QC inspection form' },
+            { id: 'kb-047', name: 'Successful Project Portfolio 2025.pdf', category: 'design', size: 32000000, type: 'pdf', status: 'indexed', agents: ['designer', 'service'], tags: ['portfolio', 'projects', 'showcase'], uploaded: '2026-02-03', description: 'Annual portfolio of completed projects with photos and specs' }
+        ];
+
+        function getFileIcon(type) {
+            const icons = { pdf: 'fa-file-pdf text-red-500', doc: 'fa-file-word text-blue-500', xls: 'fa-file-excel text-green-500', img: 'fa-file-image text-purple-500', video: 'fa-file-video text-pink-500' };
+            return icons[type] || 'fa-file text-gray-400';
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes >= 1048576) return (bytes / 1048576).toFixed(1) + ' MB';
+            return (bytes / 1024).toFixed(0) + ' KB';
+        }
+
+        function getStatusBadge(status) {
+            const map = {
+                indexed: '<span class="px-2 py-0.5 bg-green-50 text-green-700 rounded-full text-xs font-medium"><i class="fas fa-check-circle mr-1"></i>Indexed</span>',
+                processing: '<span class="px-2 py-0.5 bg-yellow-50 text-yellow-700 rounded-full text-xs font-medium"><i class="fas fa-spinner fa-spin mr-1"></i>Processing</span>',
+                failed: '<span class="px-2 py-0.5 bg-red-50 text-red-700 rounded-full text-xs font-medium"><i class="fas fa-exclamation-circle mr-1"></i>Failed</span>'
+            };
+            return map[status] || '';
+        }
+
+        function renderKBDocuments() {
+            const list = document.getElementById('kbDocumentsList');
+            if (!list) return;
+
+            let docs = [...kbDummyDocuments];
+            const search = document.getElementById('kbSearchInput')?.value.toLowerCase() || '';
+            const sort = document.getElementById('kbSortSelect')?.value || 'newest';
+            const statusFilter = document.getElementById('kbStatusSelect')?.value || 'all';
+
+            // Filter by category
+            if (kbState.currentCategory !== 'all') {
+                docs = docs.filter(d => d.category === kbState.currentCategory);
+            }
+
+            // Filter by search
+            if (search) {
+                docs = docs.filter(d =>
+                    d.name.toLowerCase().includes(search) ||
+                    d.tags.some(t => t.toLowerCase().includes(search)) ||
+                    (d.description && d.description.toLowerCase().includes(search))
+                );
+            }
+
+            // Filter by status
+            if (statusFilter !== 'all') {
+                docs = docs.filter(d => d.status === statusFilter);
+            }
+
+            // Sort
+            if (sort === 'newest') docs.sort((a, b) => b.uploaded.localeCompare(a.uploaded));
+            if (sort === 'oldest') docs.sort((a, b) => a.uploaded.localeCompare(b.uploaded));
+            if (sort === 'name') docs.sort((a, b) => a.name.localeCompare(b.name));
+            if (sort === 'size') docs.sort((a, b) => b.size - a.size);
+
+            // Paginate
+            const start = (kbState.currentPage - 1) * kbState.pageSize;
+            const pageDocs = docs.slice(start, start + kbState.pageSize);
+            const totalPages = Math.ceil(docs.length / kbState.pageSize);
+
+            document.getElementById('kbPagInfo').textContent = `Showing ${start + 1}-${Math.min(start + kbState.pageSize, docs.length)} of ${docs.length} documents`;
+
+            list.innerHTML = pageDocs.map(doc => {
+                const cat = kbCategoryMeta[doc.category];
+                const agentBadges = doc.agents.map(a => {
+                    const meta = kbAgentMeta[a];
+                    return `<span class="px-1.5 py-0.5 bg-${meta.color}-50 text-${meta.color}-700 rounded text-[10px] font-medium"><i class="fas ${meta.icon} mr-0.5"></i>${meta.label}</span>`;
+                }).join(' ');
+
+                const tagBadges = doc.tags.slice(0, 3).map(t =>
+                    `<span class="px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded text-[10px]">${t}</span>`
+                ).join(' ') + (doc.tags.length > 3 ? `<span class="text-[10px] text-gray-400">+${doc.tags.length - 3}</span>` : '');
+
+                return `
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-5 py-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 bg-gray-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas ${getFileIcon(doc.type)}"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <div class="font-medium text-gray-900 text-sm truncate max-w-[240px]" title="${doc.name}">${doc.name}</div>
+                                    <div class="text-[11px] text-gray-400">${formatFileSize(doc.size)}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-5 py-3 hidden md:table-cell">
+                            <span class="px-2 py-0.5 bg-${cat.color}-50 text-${cat.color}-700 rounded-full text-[11px] font-medium">
+                                <i class="fas ${cat.icon} mr-1"></i>${cat.label}
+                            </span>
+                        </td>
+                        <td class="px-5 py-3 hidden md:table-cell">
+                            <div class="flex flex-wrap gap-1">${tagBadges}</div>
+                        </td>
+                        <td class="px-5 py-3 hidden lg:table-cell">
+                            <div class="flex flex-wrap gap-1">${agentBadges}</div>
+                        </td>
+                        <td class="px-5 py-3">${getStatusBadge(doc.status)}</td>
+                        <td class="px-5 py-3 hidden lg:table-cell">
+                            <span class="text-xs text-gray-500">${doc.uploaded}</span>
+                        </td>
+                        <td class="px-5 py-3 text-right">
+                            <div class="flex items-center justify-end gap-1">
+                                <button onclick="viewKBDoc('${doc.id}')" class="w-7 h-7 rounded-md hover:bg-gray-100 flex items-center justify-center transition" title="View">
+                                    <i class="fas fa-eye text-gray-400 text-xs"></i>
+                                </button>
+                                <button onclick="deleteKBDoc('${doc.id}')" class="w-7 h-7 rounded-md hover:bg-red-50 flex items-center justify-center transition" title="Delete">
+                                    <i class="fas fa-trash text-gray-400 text-xs hover:text-red-500"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function filterKBDocuments() {
+            kbState.currentPage = 1;
+            renderKBDocuments();
+        }
+
+        function kbPrevPage() {
+            if (kbState.currentPage > 1) { kbState.currentPage--; renderKBDocuments(); }
+        }
+        function kbNextPage() {
+            kbState.currentPage++;
+            renderKBDocuments();
+        }
+
+        // Category filter click
+        document.querySelectorAll('.kb-cat-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.kb-cat-btn').forEach(b => {
+                    b.classList.remove('active', 'bg-gray-900', 'text-white');
+                    b.classList.add('bg-white', 'border', 'border-gray-200', 'text-gray-600');
+                });
+                btn.classList.add('active', 'bg-gray-900', 'text-white');
+                btn.classList.remove('bg-white', 'border', 'border-gray-200', 'text-gray-600');
+                kbState.currentCategory = btn.dataset.cat;
+                filterKBDocuments();
+            });
+        });
+
+        // Upload Modal
+        function openKBUploadModal() {
+            document.getElementById('kbUploadModal').classList.remove('hidden');
+            kbState.uploadTags = [];
+            kbState.selectedFiles = [];
+            document.getElementById('kbTagsContainer').innerHTML = '';
+            document.getElementById('kbFilePreview').classList.add('hidden');
+            document.getElementById('kbFileList').innerHTML = '';
+            document.getElementById('kbUploadCategory').value = '';
+            document.getElementById('kbUploadDesc').value = '';
+            document.querySelectorAll('.kb-agent-check').forEach(c => c.checked = false);
+        }
+
+        function closeKBUploadModal() {
+            document.getElementById('kbUploadModal').classList.add('hidden');
+        }
+
+        function handleKBFileSelect(event) {
+            const files = Array.from(event.target.files);
+            kbState.selectedFiles = files;
+            const preview = document.getElementById('kbFilePreview');
+            const list = document.getElementById('kbFileList');
+
+            if (files.length > 0) {
+                preview.classList.remove('hidden');
+                list.innerHTML = files.map((f, i) => `
+                    <div class="flex items-center justify-between bg-gray-50 rounded-lg px-3 py-2">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <i class="fas fa-file text-gray-400 text-sm"></i>
+                            <span class="text-sm text-gray-700 truncate">${f.name}</span>
+                            <span class="text-xs text-gray-400">${formatFileSize(f.size)}</span>
+                        </div>
+                        <button onclick="removeKBFile(${i})" class="text-gray-400 hover:text-red-500 transition"><i class="fas fa-times text-xs"></i></button>
+                    </div>
+                `).join('');
+            } else {
+                preview.classList.add('hidden');
+            }
+        }
+
+        function removeKBFile(index) {
+            kbState.selectedFiles.splice(index, 1);
+            const list = document.getElementById('kbFileList');
+            list.innerHTML = kbState.selectedFiles.map((f, i) => `
+                <div class="flex items-center justify-between bg-gray-50 rounded-lg px-3 py-2">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <i class="fas fa-file text-gray-400 text-sm"></i>
+                        <span class="text-sm text-gray-700 truncate">${f.name}</span>
+                        <span class="text-xs text-gray-400">${formatFileSize(f.size)}</span>
+                    </div>
+                    <button onclick="removeKBFile(${i})" class="text-gray-400 hover:text-red-500 transition"><i class="fas fa-times text-xs"></i></button>
+                </div>
+            `).join('');
+            if (kbState.selectedFiles.length === 0) {
+                document.getElementById('kbFilePreview').classList.add('hidden');
+            }
+        }
+
+        // Tag functions
+        function addKBTag() {
+            const input = document.getElementById('kbTagInput');
+            const tag = input.value.trim().toLowerCase();
+            if (tag && !kbState.uploadTags.includes(tag)) {
+                kbState.uploadTags.push(tag);
+                renderKBTags();
+            }
+            input.value = '';
+        }
+
+        function addKBSuggestedTag(tag) {
+            if (!kbState.uploadTags.includes(tag)) {
+                kbState.uploadTags.push(tag);
+                renderKBTags();
+            }
+        }
+
+        function removeKBTag(tag) {
+            kbState.uploadTags = kbState.uploadTags.filter(t => t !== tag);
+            renderKBTags();
+        }
+
+        function renderKBTags() {
+            const container = document.getElementById('kbTagsContainer');
+            container.innerHTML = kbState.uploadTags.map(tag =>
+                `<span class="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 rounded-full text-xs text-gray-700">
+                    ${tag}
+                    <button onclick="removeKBTag('${tag}')" class="text-gray-400 hover:text-red-500"><i class="fas fa-times text-[10px]"></i></button>
+                </span>`
+            ).join('');
+        }
+
+        function submitKBUpload() {
+            const category = document.getElementById('kbUploadCategory').value;
+            if (!category) { showToast('Please select a category', 'error'); return; }
+            if (kbState.selectedFiles.length === 0) { showToast('Please select files to upload', 'error'); return; }
+
+            const agents = Array.from(document.querySelectorAll('.kb-agent-check:checked')).map(c => c.value);
+            const desc = document.getElementById('kbUploadDesc').value;
+
+            // Simulate upload
+            showToast(`Uploading ${kbState.selectedFiles.length} file(s)... Processing will begin automatically.`, 'success');
+            closeKBUploadModal();
+
+            // Add to dummy data
+            kbState.selectedFiles.forEach(f => {
+                const ext = f.name.split('.').pop().toLowerCase();
+                let type = 'pdf';
+                if (['doc', 'docx', 'pptx'].includes(ext)) type = 'doc';
+                if (['xls', 'xlsx', 'csv'].includes(ext)) type = 'xls';
+                if (['jpg', 'jpeg', 'png', 'webp'].includes(ext)) type = 'img';
+                if (['mp4', 'mov'].includes(ext)) type = 'video';
+
+                kbDummyDocuments.unshift({
+                    id: 'kb-new-' + Date.now() + Math.random().toString(36).substr(2, 5),
+                    name: f.name,
+                    category: category,
+                    size: f.size,
+                    type: type,
+                    status: 'processing',
+                    agents: agents,
+                    tags: [...kbState.uploadTags],
+                    uploaded: new Date().toISOString().split('T')[0],
+                    description: desc
+                });
+            });
+
+            renderKBDocuments();
+        }
+
+        function viewKBDoc(id) {
+            const doc = kbDummyDocuments.find(d => d.id === id);
+            if (doc) {
+                alert(`Document: ${doc.name}\n\nCategory: ${kbCategoryMeta[doc.category].label}\nSize: ${formatFileSize(doc.size)}\nStatus: ${doc.status}\nTags: ${doc.tags.join(', ')}\nAgents: ${doc.agents.map(a => kbAgentMeta[a].label).join(', ')}\n\nDescription: ${doc.description || 'No description'}\n\n(Full document viewer will be implemented with backend integration)`);
+            }
+        }
+
+        function deleteKBDoc(id) {
+            if (confirm('Are you sure you want to remove this document from the Knowledge Base?')) {
+                const idx = kbDummyDocuments.findIndex(d => d.id === id);
+                if (idx !== -1) {
+                    kbDummyDocuments.splice(idx, 1);
+                    renderKBDocuments();
+                    showToast('Document removed from Knowledge Base', 'success');
+                }
+            }
+        }
+
+        function initKnowledgeBase() {
+            renderKBDocuments();
+        }
+
         // ===== Initialize =====
         document.addEventListener('DOMContentLoaded', function() {
             if (checkAuth()) {
@@ -5538,6 +6168,7 @@
                 initProductsPage();
                 initOrdersPage();
                 initCustomersPage();
+                initKnowledgeBase();
             }
         });
     </script>
