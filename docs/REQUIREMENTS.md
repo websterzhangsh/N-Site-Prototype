@@ -2,7 +2,7 @@
 # Nestopia Platform 需求规格说明书
 
 **Project Name**: Nestopia Platform (N-Site-Prototype)  
-**Version**: 5.0.0  
+**Version**: 6.0.0  
 **Last Updated**: 2026-03-12  
 **Maintainer**: websterzhangsh  
 **Live URL**: https://n-site-prototype.pages.dev  
@@ -13,13 +13,13 @@
 ## 1. Project Overview
 
 ### 1.1 Background
-Nestopia is a B2B platform for outdoor living products — sunrooms, ADU (Accessory Dwelling Units), pergolas, and zip blinds. The platform serves as a public-facing product showcase, a partner registration and management portal, and a multi-tenant dashboard for partner companies — powered by four AI Agents that act as "super partners" for small enterprise owners.
+Nestopia is a B2B platform for outdoor living products — sunrooms, ADU (Accessory Dwelling Units), pergolas, and zip blinds. The platform serves as a public-facing product showcase, a partner registration and management portal, and a multi-tenant dashboard for partner companies — powered by five AI Agents that act as "super partners" for small enterprise owners.
 
 ### 1.2 Project Goals
 - Public website for product showcase and customer lead generation (To C)
 - B2B Partner Program with registration and sign-in (To B)
 - Multi-tenant dashboard for partner companies (projects, orders, workflow, AI agents)
-- **Four AI Agents** that deliver business outcomes (OUTPUT-focused, not tool-focused)
+- **Five AI Agents** that deliver business outcomes (OUTPUT-focused, not tool-focused)
 - Fine-tuned models with industry-specific training data to build platform IP
 - Supabase-backed authentication, database, and edge functions
 
@@ -178,7 +178,7 @@ team-management.html → Team management page
 | FR-056 | Tenant Branding | Dynamic logo ("Greenscape Builders") and name from config | ✅ |
 | FR-057 | User Menu | Sign-out confirmation dialog | ✅ |
 | FR-058 | Mobile Responsive | Collapsible sidebar on mobile | ✅ |
-| FR-059 | AI Agents (sidebar) | 4 agent nav items: AI Designer, Pricing & Cost Controller, Compliance Manager, Customer Service Executive | ✅ UI only |
+| FR-059 | AI Agents (sidebar) | 5 agent nav items: AI Designer, Pricing & Cost Controller, Compliance Manager, Customer Service Executive, Knowledge Base Builder | ✅ UI only |
 
 ### 3.5 Team Management (`team-management.html`) — ⏳ In Progress
 
@@ -557,9 +557,61 @@ The Compliance Manager must handle the complex US regulatory landscape: **Federa
 
 ---
 
-### 7.6 Agent Co-working Model: The "Super Team" for Small Enterprise Owners
+### 7.6 Agent 5: Knowledge Base Builder — "智识引擎" (Intelligence Engine)
 
-#### 7.6.1 Typical Workday Flow
+**Core OUTPUT**: Build and maintain proprietary domain knowledge that powers all other AI agents with industry-specific intelligence
+
+| Dimension | Detail |
+|-----------|--------|
+| **Market Positioning** | From "document storage" to "intelligence engine" |
+| **Key Differentiator** | Structured ingestion of private company data (PDFs, videos, images, docs) into a RAG-ready knowledge base that continuously improves all 4 other agents |
+| **Current Status** | ✅ UI built in company-operations.html, ⏳ backend not implemented |
+
+#### 7.6.1 Key Capabilities
+
+| Capability | Traditional Approach | Nestopia KB Builder OUTPUT |
+|-----------|---------------------|---------------------------|
+| Document Ingestion | File server / SharePoint | Drag-drop upload → auto-categorize → chunk → embed → index → instantly queryable |
+| Multi-format Support | PDF reader per file type | PDF, DOCX, XLSX, PPTX, images (OCR), videos (transcript extraction) |
+| 6-Category Organization | Flat folder structure | Installation / Compliance / Sales / Design / Training / After-Sales — each feeds relevant agents |
+| Agent Routing | Manual copy-paste | Each document tagged to specific agents (Designer, Pricing, Compliance, CS) → auto-routed for RAG |
+| Semantic Search | Keyword search only | Vector embeddings → semantic search across all documents |
+| Status Tracking | Unknown if indexed | Processing → Indexed status per document with version control |
+
+#### 7.6.2 Document Categories & Agent Mapping
+
+| Category | Content Types | Primary Agents |
+|----------|--------------|----------------|
+| Installation | Manuals, specs, engineering drawings, supplier catalogs | AI Designer, Compliance Manager |
+| Compliance | Building codes, HOA guidelines, permit templates, state regulations | Compliance Manager |
+| Sales | Pitch decks, pricing guides, competitor analysis, objection playbooks | Pricing Controller, CS Executive |
+| Design | Style guides, color palettes, brand guidelines, photography standards | AI Designer |
+| Training | Onboarding guides, training decks, FAQ libraries, process docs | CS Executive |
+| After-Sales | Warranty policies, maintenance guides, troubleshooting, SOP | CS Executive |
+
+#### 7.6.3 Use Scenarios
+
+- **Scene A: New Product Launch** — Upload product spec PDF → AI auto-extracts features, dimensions, installation steps → immediately available to Designer and CS agents for accurate responses
+- **Scene B: Regulation Update** — New state building code released → upload PDF → Compliance Manager agent auto-updated with latest requirements
+- **Scene C: Sales Enablement** — Upload competitor pricing analysis → Pricing Controller agent gains market intelligence for smarter quotation
+- **Scene D: Knowledge Audit** — View all indexed documents by category → identify gaps → prioritize uploads to improve agent accuracy
+
+#### 7.6.4 Fine-tune Training Strategy
+
+| Data Source | Target Volume | Purpose |
+|------------|---------------|---------|
+| Company internal documents | All available docs | Proprietary knowledge unavailable to generic AI |
+| Product specifications | Per product line | Accurate technical responses |
+| Regional compliance docs | Per state/county | Hyper-local regulatory accuracy |
+| Historical Q&A logs | Ongoing | Continuously improve response quality |
+
+**Competitive Moat**: The Knowledge Base Builder transforms private company IP into AI-queryable intelligence — creating a unique, non-replicable knowledge advantage that improves over time as more documents are added.
+
+---
+
+### 7.7 Agent Co-working Model: The "Super Team" for Small Enterprise Owners
+
+#### 7.7.1 Typical Workday Flow
 
 | Time | What Happens |
 |------|-------------|
@@ -570,7 +622,7 @@ The Compliance Manager must handle the complex US regulatory landscape: **Federa
 
 **Result**: Small enterprise owners go from "exhausted juggling everything" to "commanding with confidence" — 4 agents become tireless super partners.
 
-#### 7.6.2 Cross-Agent Collaboration
+#### 7.7.2 Cross-Agent Collaboration
 
 | Scenario | Agents Involved | Workflow |
 |----------|-----------------|----------|
@@ -580,9 +632,9 @@ The Compliance Manager must handle the complex US regulatory landscape: **Federa
 
 ---
 
-### 7.7 Platform IP Building: Fine-tune Roadmap
+### 7.8 Platform IP Building: Fine-tune Roadmap
 
-#### 7.7.1 Data Flywheel
+#### 7.8.1 Data Flywheel
 
 ```
 More Users → More Data → Better Models → Better Experience → More Users
@@ -594,7 +646,7 @@ Every interaction feeds back into the training pipeline:
 - Every compliance check → actual approval result → refine regulation knowledge
 - Every customer interaction → satisfaction + repurchase → train smarter CS Agent
 
-#### 7.7.2 Fine-tune Priority
+#### 7.8.2 Fine-tune Priority
 
 | Agent | Priority | Data Requirement | Expected Impact |
 |-------|----------|------------------|-----------------|
@@ -602,8 +654,9 @@ Every interaction feeds back into the training pipeline:
 | Pricing Agent | **P1 High** | 500K+ quote-to-close data | Quote win-rate +30% |
 | CS Executive | **P1 High** | 1M+ customer conversations | Customer satisfaction 95%+ |
 | Compliance Manager | **P2 Medium** | Regulation DB + case library | Compliance accuracy 99%+ |
+| Knowledge Base Builder | **P1 High** | All internal company documents | Foundation layer that feeds all other agents |
 
-#### 7.7.3 Competitive Moat Summary
+#### 7.8.3 Competitive Moat Summary
 
 | Moat Type | Description |
 |-----------|-------------|
@@ -792,7 +845,7 @@ public/images/
 | 2.3.0 | 2026-03-09 | Multi-tenant architecture, business workflow docs | websterzhangsh |
 | 3.0.0 | 2026-03-11 | Reverse-engineered requirements reflecting actual implementation | websterzhangsh |
 | 4.0.0 | 2026-03-11 | Major update: Integrated AI Agent strategy (OUTPUT > HOW philosophy, 4 agent detailed specs, fine-tune roadmap, co-working model, digital measurement partnership, platform IP strategy); Added comprehensive US regional compliance requirements (IRC, CA/FL/TX specifics, HOA coverage); Added Phase I+/IV to roadmap; Moved to docs/ folder; Added documentation artifacts inventory | websterzhangsh |
-| 5.0.0 | 2026-03-12 | Added Projects Management module spec with Issues Tracker & Risk Management focus; Expanded Team Management module spec with role/permission/performance features; Expanded Settings module spec with integrations/notifications/billing; Updated feature status tracking | websterzhangsh |
+| 6.0.0 | 2026-03-12 | Added Agent 5: Knowledge Base Builder ("智识引擎"); updated agent count from 4 to 5; added Section 7.6 with full spec (capabilities, document categories, agent mapping, use scenarios, fine-tune strategy); updated fine-tune priority table; renumbered sections 7.6→7.7, 7.7→7.8 | websterzhangsh |
 
 ---
 

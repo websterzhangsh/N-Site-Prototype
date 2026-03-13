@@ -1,6 +1,6 @@
 # Data + AI Strategy for Nestopia
 
-**Version:** 2.0  
+**Version:** 3.0  
 **Last Updated:** 2026-03-12  
 **Status:** Active Development
 
@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-This document outlines the comprehensive data and AI strategy for Nestopia's outdoor living customization platform. It covers data architecture, AI agent implementation, knowledge management, and the integration of private domain data for RAG (Retrieval-Augmented Generation), embeddings, and fine-tuning purposes.
+This document outlines the comprehensive data and AI strategy for Nestopia's outdoor living customization platform. It covers data architecture, AI agent implementation, knowledge management, and the integration of private domain data for RAG (Retrieval-Augmented Generation), embeddings, and fine-tuning purposes. The platform is powered by **five AI Agents**: AI Designer, Pricing & Cost Controller, Compliance Manager, Customer Service Executive, and **Knowledge Base Builder**.
 
 ---
 
@@ -190,6 +190,43 @@ The Knowledge Base serves as a **private domain data repository** that feeds our
 - Escalation alerts
 - Sentiment analysis
 
+### 3.5 Knowledge Base Builder Agent
+
+**Core Role:** The intelligence foundation layer — ingests, organizes, and maintains all private domain knowledge that powers the other four agents.
+
+**Input Data Needs:**
+| Data Type | Source | Purpose |
+|-----------|--------|---------|
+| PDFs / DOCX / PPTX | Manual upload | Structured knowledge ingestion |
+| Images | Manual upload | OCR extraction + visual reference |
+| Videos | Manual upload | Transcript extraction + indexing |
+| Spreadsheets (XLSX) | Manual upload | Tabular data (pricing, specs, schedules) |
+
+**Processing Pipeline:**
+1. Upload → Auto-detect file type
+2. Extract text/content (OCR for images, transcription for video)
+3. Chunk into semantic segments
+4. Generate vector embeddings
+5. Index into vector DB (pgvector)
+6. Tag with category + agent routing metadata
+7. Status → **Indexed** (queryable by all assigned agents)
+
+**6-Category Organization:**
+| Category | Feeds Agents |
+|----------|-------------|
+| Installation & Technical | AI Designer, Compliance Manager |
+| Compliance & Regulatory | Compliance Manager |
+| Sales & Marketing | Pricing Controller, CS Executive |
+| Design References | AI Designer |
+| Training & Onboarding | CS Executive |
+| After-Sales & Warranty | CS Executive |
+
+**Output:**
+- Fully indexed, semantically searchable knowledge base
+- Agent-specific knowledge routing
+- Document version tracking and status monitoring
+- Gap analysis reports (what knowledge is missing)
+
 ---
 
 ## 4. Data Architecture
@@ -199,7 +236,7 @@ The Knowledge Base serves as a **private domain data repository** that feeds our
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    AI AGENT EXECUTION LAYER                 │
-│  (Designer | Pricing | Compliance | Customer Service)       │
+│  (Designer | Pricing | Compliance | Customer Service | KB Builder) │
 └─────────────────────────────────────────────────────────────┘
                               │
                               ▼
