@@ -1,45 +1,60 @@
 # Nestopia B2B Platform - Product Demo
-## 过去 24-36 小时开发成果演示
+## 平台功能演示脚本
 
-**演示日期**: 2026-03-11  
-**版本**: v2.0.0  
-**演示时长**: 约 10-15 分钟
+**演示日期**: 2026-03-12  
+**版本**: v3.0.0  
+**演示时长**: 约 15-20 分钟  
+**Live URL**: https://n-site-prototype.pages.dev
 
 ---
 
 ## 🎯 演示目标
 
 向利益相关者展示 Nestopia B2B 合作伙伴平台的核心功能，包括：
-1. 多租户架构下的完整数据隔离
-2. 4 个 AI Agent 的业务流程集成
-3. Products / Orders / Customers / Pricing 完整管理功能
-4. 严格的数据库 Schema 设计和测试数据
+1. 公共网站产品展示（Product Matrix with Before/After + 3D Video）
+2. 多租户架构下的完整数据隔离
+3. **5 个 AI Agent** 的业务流程集成（含 Knowledge Base Builder）
+4. Projects 项目管理（Issues Tracker + Risk Heat Map）
+5. Team Management 团队管理
+6. Settings 系统设置
+7. Products / Orders / Customers / Pricing 完整管理功能
 
 ---
 
 ## 📋 演示大纲
 
-### 第一部分：平台概览 (2 分钟)
-- 多租户架构介绍
-- 用户角色与权限体系
-- UI 定制能力
+### 第一部分：公共网站 (3 分钟)
+- Homepage 产品展示
+- Product Matrix — Pergola（Residential / Commercial）
+- Before/After 设计对比 + 3D 动画视频
+- Gallery 弹窗（Learn More）
+- 多语言切换（中/英）
 
-### 第二部分：核心业务功能 (5 分钟)
-- Products 产品管理
-- Customers 客户管理
-- Orders 订单管理
-- Pricing 定价管理
+### 第二部分：平台登录与概览 (2 分钟)
+- 多租户登录
+- Company Operations 概览页
+- 统计卡片与 Activity Feed
 
-### 第三部分：AI Agent 集成 (4 分钟)
+### 第三部分：项目管理 (3 分钟)
+- Projects 项目列表与筛选
+- Risk Heat Map（高/中/低/正常）
+- Issues Tracker（优先级、状态、负责人）
+
+### 第四部分：团队管理与设置 (2 分钟)
+- Team Management 团队成员、角色、绩效
+- Settings 公司信息、集成、通知、计费
+
+### 第五部分：5 个 AI Agent (5 分钟)
 - AI Designer Agent
 - Pricing & Cost Controller Agent
 - Compliance Manager Agent
 - Customer Service Executive Agent
+- **Knowledge Base Builder Agent（新增）**
 
-### 第四部分：技术架构 (3 分钟)
+### 第六部分：技术架构 (3 分钟)
 - 数据库 Schema 设计
 - 多租户隔离机制
-- 测试数据展示
+- Cloudflare Pages 部署
 
 ---
 
@@ -47,397 +62,306 @@
 
 ### 【开场 - 30秒】
 
-**画面**: 浏览器打开 https://nestopia.com
+**画面**: 浏览器打开 https://n-site-prototype.pages.dev
 
 **旁白**:
-> "大家好，今天我将演示 Nestopia B2B 合作伙伴平台在过去 36 小时内的开发成果。这是一个面向户外阳光房行业的小型企业主和合作伙伴的 SaaS 平台。"
+> "大家好，今天我将演示 Nestopia B2B 合作伙伴平台的最新版本。这是一个面向户外生活定制行业（阳光房、ADU、Pergola、Zip Blinds）的小型企业主和合作伙伴的 SaaS 平台，由 5 个 AI Agent 驱动。"
 
 ---
 
-### 【第一部分：多租户登录 - 1.5分钟】
+### 【第一部分：公共网站产品展示 - 3分钟】
 
-**画面**: 显示登录页面 `login.html`
+**画面**: Homepage hero carousel
+
+**操作**:
+1. 展示 3-slide hero carousel（自动轮播）
+2. 滚动到 "Explore Our Product Range" 区域
+3. 点击 "Pergola" 标签
+4. 展示 Residential 标签内容：
+   - Before Design / After Design 图片对比
+   - 3D 动画视频
+   - Icon 行：Aluminum Alloy, Smart Shade, Quick Install, 10-Year Warranty
+5. 点击 "Learn More" 按钮
+6. 展示 Gallery 弹窗（4 张 Residential Pergola 样图）
+7. 关闭 Gallery，切换到 Commercial 标签
+8. 展示 Commercial Before/After + Video
+9. 点击 Commercial "Learn More"，展示 Commercial Gallery
+
+**旁白**:
+> "公共网站的产品展示采用 Before/After 对比设计，配合 3D 渲染动画视频，让终端消费者直观感受产品效果。每个产品类别（Residential / Commercial）都有独立的图片库，用户可以点击 'Learn More' 查看更多案例。"
+
+---
+
+### 【第二部分：多租户登录与 Company Operations - 2分钟】
+
+**画面**: 打开 https://n-site-prototype.pages.dev/login.html
 
 **操作**:
 1. 展示租户定制化登录页面（Greenscape Builders 品牌）
-2. 输入演示账号：`demo@nestopia.com` / `Demo123!`
-3. 点击 "Sign In"
+2. 输入演示账号登录
+3. 进入 Company Operations 页面（原 Dashboard，已更名）
+4. 展示 Overview 页面：
+   - 统计卡片：Total Revenue, Active Projects, Pending Orders, Customer Satisfaction
+   - Recent Activity 时间线
+   - Quick Actions 快捷操作
 
 **旁白**:
-> "平台采用多租户架构，每个合作伙伴都有独立的品牌登录页面。系统支持 subdomain、path-based 和 custom domain 三种租户识别方式。"
-
-**画面**: 登录成功，进入 Dashboard 主页
-
-**旁白**:
-> "登录后，用户只能看到自己租户的数据，实现完全的数据隔离。"
+> "登录后进入 Company Operations 页面。Overview 提供业务全景概览，关键指标一目了然。"
 
 ---
 
-### 【第二部分：Dashboard 概览 - 1分钟】
+### 【第三部分：Projects 项目管理 - 3分钟】
 
-**画面**: Dashboard 主页 (`page-overview`)
+**画面**: 点击左侧菜单 "Projects"
 
 **操作**:
-1. 展示统计卡片：Total Revenue, Active Projects, Pending Orders, Customer Satisfaction
-2. 展示 Recent Activity 时间线
-3. 展示 Quick Actions 快捷操作
+1. 展示统计卡片：
+   - Active Projects: 12
+   - Open Issues: 5
+   - High Risks: 2
+   - On-Time Rate: 98%
+   - Total Value: $485K
+2. 展示 **Risk Heat Map**：
+   - 🔴 High Risk (2 Projects): Johnson Residence - Permit Delay, Martinez ADU - HOA Approval
+   - 🟡 Medium Risk (3 Projects): Smith Sunroom - Material Delay, Chen Pergola - Weather, Davis Commercial - Budget Review
+   - 🟢 Low Risk (5 Projects): Wilson Residence, Taylor Backyard
+   - ⚪ On Track (2 Projects): Anderson Patio, Thomas Deck
+3. 展示 **Issues Tracker** 表格：
+   - ISS-001: Permit approval delayed by city (High, Open)
+   - 展示 Priority 徽章、Status 标签、Assigned To、Due Date
+4. 展示项目列表（支持搜索和阶段筛选）
 
 **旁白**:
-> "Dashboard 提供业务概览，让小型企业主一眼看到关键指标。Recent Activity 显示最新的订单、项目动态。"
+> "Projects 模块重点突出 Issues Tracker 和 Risk Management。Risk Heat Map 以四色分级直观展示所有项目风险。Issues Tracker 追踪阻碍因素、延误和解决状态。"
 
 ---
 
-### 【第三部分：Products 产品管理 - 1.5分钟】
+### 【第四部分：Team Management & Settings - 2分钟】
 
-**画面**: 点击左侧菜单 "Products"
+**画面**: 点击左侧菜单 "Team Management"
 
 **操作**:
-1. 展示产品列表（左侧面板）
-   - 6 个产品：可伸缩阳光房、固定阳光房、智能阳光房、凉亭、配件
-   - 每个产品显示：缩略图、名称、分类、状态
-2. 点击产品 "可伸缩阳光房 A100系列"
-3. 展示右侧详情面板：
-   - 产品图片、规格参数（JSONB）
-   - 定价配置（分层定价、选项加价）
-   - 文件管理（支持上传 CAD/PDF/图片）
-4. 点击 "Upload Files" 按钮
-5. 展示支持的文件类型：image, pdf, dwg, dxf, skp, obj, step, stl
+1. 展示团队统计：8 Members, 24 Active Projects, 4.8 Avg Rating, 96% On-Time
+2. 展示成员表格：角色、邮箱、电话、项目数、绩效星级、在线状态
+3. 切换到 "System Settings"
+4. 展示 Settings Tabs：
+   - Company：公司信息、Logo、地址
+   - Integrations：CRM、支付、邮件服务连接
+   - Notifications：告警规则和模板
+   - Billing：订阅计划、发票历史
 
 **旁白**:
-> "Products 页面支持完整的产品目录管理。每个产品有详细的规格参数，使用 JSONB 存储灵活的结构化数据。定价支持分层定价、选项加价、折扣规则。文件管理支持 CAD 图纸、3D 模型、PDF 文档等多种格式。"
+> "Team Management 支持成员角色分配和绩效追踪。Settings 页面提供公司配置、第三方集成、通知规则和计费管理。"
 
 ---
 
-### 【第四部分：Customers 客户管理 - 1.5分钟】
+### 【第五部分：5 个 AI Agent - 5分钟】
 
-**画面**: 点击左侧菜单 "Customers"
+#### Agent 1: AI Designer — "签单武器"
+
+**画面**: 点击左侧菜单 "AI Designer"
 
 **操作**:
-1. 展示客户列表（左侧面板）
-   - 筛选按钮：All / Active / New / VIP
-   - 搜索框
-   - 5 个客户：显示头像、姓名、徽章（VIP/Active/New）、项目名、消费金额
-2. 点击客户 "王建国"
-3. 展示右侧详情面板：
-   - 头像、姓名、VIP 徽章
-   - 联系信息：邮箱、电话、微信、地址
-   - 统计卡片：订单数、总消费、项目数、满意度
-   - Recent Orders 表格
-   - Tags 标签：["高净值", "复购客户", "推荐客户"]
-   - Notes 备注
-   - Action Buttons：New Order, Send Email, Call
-4. 切换筛选按钮 "VIP"，展示 VIP 客户列表
+1. 展示上传场地照片区域
+2. 展示产品类型选择：Sunroom / Pergola / ADU / Zip Blinds
+3. 展示风格偏好、颜色方案
+4. 展示 AI 渲染结果（场景融合效果）
 
 **旁白**:
-> "Customers 页面提供完整的客户关系管理。左侧列表支持筛选和搜索，右侧详情展示客户的完整画像，包括场地信息、消费记录、满意度评分。系统自动追踪客户来源（website/referral/partner/exhibition）。"
+> "AI Designer 是'签单武器'——上传客户院子照片，30 秒内 AI 将产品植入真实场景，自然光照、阴影、比例完美还原。"
+
+#### Agent 2: Pricing & Cost Controller — "利润保镖"
+
+**画面**: 点击 "Pricing and Cost Controller"
+
+**操作**:
+1. 展示项目选择和产品配置
+2. 展示成本分解表格
+3. 展示利润分析和风险告警
+
+**旁白**:
+> "Pricing Agent 自动计算成本，提供三档报价，利润率低于阈值时自动警告。"
+
+#### Agent 3: Compliance Manager — "风险雷达"
+
+**画面**: 点击 "Compliance Manager"
+
+**操作**:
+1. 展示地址输入和合规检查
+2. 展示合规检查清单（Setback、Height、Fire Safety、Permit）
+3. 展示所需文件列表
+
+**旁白**:
+> "Compliance Manager 自动扫描项目地址的建筑法规和 HOA 要求，生成合规清单和许可申请路线图。"
+
+#### Agent 4: Customer Service Executive — "增长引擎"
+
+**画面**: 点击 "Customer Service Executive"
+
+**操作**:
+1. 展示对话列表（5 个客户对话）
+2. 点击客户对话，展示完整聊天历史
+3. 展示 AI 自动回复建议
+4. 展示情绪分析标签
+
+**旁白**:
+> "Customer Service Agent 提供 7×24 智能客服，自动识别客户情绪，主动跟进，推动复购。"
+
+#### Agent 5: Knowledge Base Builder — "智识引擎" (NEW)
+
+**画面**: 点击 "Knowledge Base Builder"
+
+**操作**:
+1. 展示 Knowledge Base 统计：47 Documents, 6 Categories
+2. 展示分类筛选：Installation / Compliance / Sales / Design / Training / After-Sales
+3. 展示文档列表：
+   - 文件名、分类、大小、状态（Indexed / Processing）
+   - Agent 标签（Designer / Pricing / Compliance / Service）
+   - Tags 标签
+4. 展示搜索功能
+5. 展示上传功能（支持 PDF, DOCX, XLSX, PPTX, 图片, 视频）
+6. 展示 Agent 路由配置（选择哪些 Agent 可以访问此文档）
+
+**旁白**:
+> "Knowledge Base Builder 是第五个 Agent，也是其他四个 Agent 的'智识引擎'。上传公司私有领域数据——产品手册、合规法规、定价分析、设计指南——AI 自动分类、切片、向量化、索引，构建 RAG 知识库。每份文档可以路由到特定 Agent，让 AI Designer 了解产品规格，让 Compliance Manager 掌握最新法规。目前已索引 47 份文档，覆盖 6 大分类。"
 
 ---
 
-### 【第五部分：Orders 订单管理 - 1.5分钟】
+### 【第六部分：技术架构 - 2分钟】
 
-**画面**: 点击左侧菜单 "Orders"
-
-**操作**:
-1. 展示订单统计卡片：
-   - Total Orders: 156
-   - Pending: 12
-   - In Production: 8
-   - Shipped: 5
-   - Completed: 131
-2. 展示筛选区域：
-   - 搜索框
-   - Status 下拉菜单
-   - Date Range 选择器
-3. 展示订单表格：
-   - 列：Order #, Customer, Product, Total, Payment Status, Status, Date, Actions
-   - 5 行订单数据
-   - 状态徽章颜色：Pending(amber), In Production(blue), Shipped(purple), Completed(green)
-4. 点击订单行，展示订单详情（模拟）
-5. 展示分页控件：1-5 of 156
-
-**旁白**:
-> "Orders 页面支持完整的订单生命周期管理。系统采用 13 状态流转：从 pending 到 completed，支持三阶段付款（定金30%、二期40%、尾款30%）。Payment Status 显示付款进度。"
-
----
-
-### 【第六部分：Pricing & Cost Controller Agent - 1分钟】
-
-**画面**: 点击左侧菜单 "Agents" → "Pricing Agent"
+**画面**: 展示架构图或 VS Code
 
 **操作**:
-1. 展示 Input 面板：
-   - Project Selection 下拉菜单
-   - Product Configuration 区域
-   - Area Input (平方米)
-   - Options 复选框：Premium Glass, Smart Shading, Heating System, LED Lighting
-2. 展示 Output 面板：
-   - Cost Breakdown 表格：
-     - Material Cost: ¥185,000
-     - Labor Cost: ¥45,000
-     - Shipping Cost: ¥8,500
-     - Installation Cost: ¥52,000
-     - Options Cost: ¥25,300
-   - Margin Analysis: 15%
-   - Suggested Price: ¥326,800
-   - Risk Alerts: "Margin below 20% threshold"
-3. 展示 "Generate Quote" 按钮
+1. 展示多租户数据库架构（RLS 行级安全）
+2. 展示 Supabase Edge Functions
+3. 展示 Cloudflare Pages 部署管线
+4. 展示文档体系：
+   - `docs/REQUIREMENTS.md` (v6.0.0)
+   - `docs/DATA_AI_STRATEGY.md` (v3.0)
+   - `docs/AI_Agents_Strategy_Whitepaper.docx`
+   - 5 个 Agent Spec 文档
 
 **旁白**:
-> "Pricing & Cost Controller Agent 自动计算项目成本，提供透明的成本分解。系统从 cost_components 表读取材料、人工、物流、安装等成本项，保护利润率。当利润率低于阈值时，系统会发出风险警告。"
-
----
-
-### 【第七部分：AI Designer Agent - 1分钟】
-
-**画面**: 点击左侧菜单 "Agents" → "AI Designer"
-
-**操作**:
-1. 展示 Input 面板：
-   - Upload Site Photo 区域（拖拽上传）
-   - Product Type 选择：Sunroom / Pergola / Shutter
-   - Style Preferences：Modern / Classic / Minimalist
-   - Color Scheme 选择
-   - Special Requirements 文本框
-2. 展示 Output 面板：
-   - AI Generated Renders（3 张渲染图）
-   - Design Specifications
-   - Estimated Cost
-   - Compliance Pre-check Status: ✅ Passed
-3. 展示 "Create Proposal" 按钮
-
-**旁白**:
-> "AI Designer Agent 在 15 分钟内生成光写实设计渲染。用户上传场地照片，选择产品类型和偏好，系统自动生成多个设计变体。Compliance Pre-check 自动检查设计是否符合当地建筑法规。"
-
----
-
-### 【第八部分：Compliance Manager Agent - 1分钟】
-
-**画面**: 点击左侧菜单 "Agents" → "Compliance Manager"
-
-**操作**:
-1. 展示 Input 面板：
-   - Design Selection 下拉菜单
-   - Site Address
-   - Building Type: Residential / Commercial
-   - Local Jurisdiction 选择
-2. 展示 Output 面板：
-   - Compliance Status: ✅ PASSED
-   - Checklist:
-     - ✅ Setback Requirements: 1.5m minimum
-     - ✅ Height Restrictions: Under 4m limit
-     - ✅ Fire Safety: Meets code
-     - ⚠️ Permit Required: Yes - Building permit needed
-   - Recommendations
-   - Required Documents List
-
-**旁白**:
-> "Compliance Manager Agent 自动化可行性和合规性检查。系统根据设计数据和当地建筑法规，生成通过/失败决定，提供风险警告和调整建议。"
-
----
-
-### 【第九部分：Customer Service Executive Agent - 1分钟】
-
-**画面**: 点击左侧菜单 "Agents" → "CS Agent"
-
-**操作**:
-1. 展示 Input 面板：
-   - Customer Query 文本框
-   - Channel 选择：WeChat / Email / Phone
-   - Priority: Low / Medium / High
-2. 展示 Output 面板：
-   - Suggested Response
-   - Related Order Info
-   - Customer History Summary
-   - Escalation Recommendation
-3. 展示 Conversation History
-
-**旁白**:
-> "Customer Service Executive Agent 提供多渠道客户支持。系统自动查询订单状态、交付追踪、常见问题解答。复杂问题会自动升级到人工客服。"
-
----
-
-### 【第十部分：数据库架构 - 2分钟】
-
-**画面**: 打开 VS Code，展示 `supabase/schema.sql`
-
-**操作**:
-1. 滚动展示表结构：
-   - tenants (租户表)
-   - users (用户表，含 tenant_id FK)
-   - customers (客户表，含 tenant_id FK)
-   - products (产品表，含 tenant_id FK)
-   - pricing (定价表)
-   - cost_components (成本构成表)
-   - orders (订单表，13状态)
-   - order_items (订单明细)
-   - payments (支付记录)
-2. 展示 RLS 策略：
-   ```sql
-   CREATE POLICY rls_customers ON customers FOR ALL
-       USING (tenant_id = get_current_tenant_id() OR is_super_admin());
-   ```
-3. 展示复合唯一约束：
-   ```sql
-   UNIQUE(tenant_id, sku)  -- products
-   UNIQUE(tenant_id, order_number)  -- orders
-   ```
-4. 打开 `supabase/seed_data.sql`，展示测试数据
-
-**旁白**:
-> "数据库采用严格的多租户设计。所有 18 张业务表都有 tenant_id 外键。RLS 行级安全策略在数据库层面强制租户隔离。复合唯一约束确保业务键在租户维度内唯一。seed_data.sql 包含真实感的合成测试数据：4 个租户、28 个客户、18 个产品、7 个订单。"
-
----
-
-### 【第十一部分：文档体系 - 1分钟】
-
-**画面**: 展示文档目录
-
-**操作**:
-1. 打开 `DATABASE_SCHEMA.md`
-   - 展示 ER 图
-   - 展示表设计说明
-   - 展示 AI Agent 数据需求映射
-2. 打开 `docs/multi-tenant-architecture.md`
-   - 展示架构图
-   - 展示 API 设计
-3. 打开 `docs/AI_Designer_Agent_Spec.md` 等 4 个 Agent 规格文档
-
-**旁白**:
-> "完整的文档体系支持开发和维护。DATABASE_SCHEMA.md 详细说明每个表的字段、索引、约束。multi-tenant-architecture.md 描述租户识别策略、认证流程、API 设计。4 个 AI Agent 规格文档定义用户故事、功能需求、数据模型。"
+> "平台采用多租户架构，Supabase PostgreSQL + RLS 实现数据隔离。5 个 AI Agent 规格文档详细定义了每个 Agent 的能力、使用场景和训练策略。Knowledge Base 采用 Lakehouse 架构（对象存储 + 向量数据库 + 关系型数据库）。"
 
 ---
 
 ### 【结尾 - 30秒】
 
-**画面**: 回到 Dashboard 主页
+**画面**: 回到 Company Operations 主页
 
 **旁白**:
-> "以上是 Nestopia B2B 平台在过去 36 小时内的开发成果。系统已完成核心功能开发，包括多租户架构、4 个 AI Agent 集成、Products/Orders/Customers/Pricing 完整管理、严格的数据库设计和测试数据。下一步将进行后端集成、用户测试和部署上线。"
-
-**画面**: 显示 "Thank You" 页面
+> "以上是 Nestopia B2B 平台的最新版本演示。平台已完成公共网站产品展示、5 个 AI Agent 集成、项目管理（Issues + Risk Management）、团队管理、系统设置等核心模块。下一步将进行后端集成和 AI Agent 功能实现。感谢观看。"
 
 ---
 
 ## 📊 演示数据说明
 
 ### 租户数据
-- **Tenant 1**: 上海阳光房科技有限公司 (Enterprise Plan)
-- **Tenant 2**: 北京户外生活空间设计有限公司 (Pro Plan)
-- **Tenant 3**: 杭州庭院景观工程有限公司 (Basic Plan)
+- **Demo Tenant**: Greenscape Builders (Enterprise Plan)
 
 ### 演示账号
-- **Admin**: admin@nestopia.com / Demo123!
-- **Sales**: sales@nestopia.com / Demo123!
-- **Manager**: zhang.wei@shsunrooms.com / Demo123!
+- **Admin**: demo@nestopia.com / Demo123!
 
 ### 关键业务数据
+- **Projects**: 12 个项目（含 Pergola, Sunroom, ADU 等类型）
+- **Issues**: 5 个跟踪项（High/Medium/Low 优先级）
+- **Team Members**: 8 人（Admin, Sales, Installer, Designer 等角色）
+- **Knowledge Base**: 47 份文档，6 个分类
 - **Products**: 18 个产品，含 SKU、JSONB 规格、分层定价
-- **Customers**: 28 个客户，含真实中文姓名、地址、场地信息
-- **Orders**: 7 个订单，覆盖 pending → completed 完整流程
-- **Payments**: 9 笔支付，展示三阶段付款
 
 ---
 
 ## 🛠️ 技术亮点
 
-### 1. 多租户隔离
+### 1. 公共网站
+- Hero carousel 自动轮播
+- Product Matrix: Before/After 对比 + 3D 视频
+- Gallery 弹窗（Learn More）
+- 双语支持（中/英）
+- 响应式设计（移动端适配）
+
+### 2. 多租户隔离
 - RLS 行级安全策略
 - tenant_id 外键约束
 - 复合唯一约束
 - 租户上下文注入
 
-### 2. 数据库设计
-- 18 张业务表
-- JSONB 灵活字段
-- 自动编号生成
-- 审计触发器
+### 3. 5 个 AI Agent
+- AI Designer — 场景融合渲染
+- Pricing & Cost Controller — 动态报价与利润保护
+- Compliance Manager — 合规扫描与许可导航
+- Customer Service Executive — 全生命周期客户管理
+- **Knowledge Base Builder — RAG 知识库构建与管理**
 
-### 3. AI Agent 集成
-- Input/Output 标准化接口
-- 与业务数据深度集成
-- 风险警告机制
-- 合规预检
+### 4. 项目管理
+- Risk Heat Map（四级风险可视化）
+- Issues Tracker（优先级、状态、负责人）
+- 项目列表搜索与筛选
 
-### 4. 前端架构
-- 多页面静态站点
+### 5. 前端架构
+- 多页面静态站点（非 SPA）
 - Tailwind CSS 响应式设计
-- JavaScript 状态管理
-- 模块化组件
+- Cloudflare Pages 自动部署
+- Cache-busting 策略（?v=20260312）
 
 ---
 
 ## 📝 演示注意事项
 
 ### 准备工作
-1. 启动本地服务器：`python3 -m http.server 8080`
+1. 确认 https://n-site-prototype.pages.dev 可访问
 2. 准备演示浏览器（Chrome 推荐）
-3. 清除浏览器缓存
+3. 清除浏览器缓存（或使用无痕模式）
 4. 准备备用截图（以防网络问题）
 
 ### 演示技巧
 1. 放慢操作速度，让观众看清每个步骤
-2. 鼠标移动要平滑，避免快速跳转
-3. 关键功能停留 3-5 秒
-4. 旁白与操作同步
-5. 准备应对提问
+2. 重点停留在 Risk Heat Map 和 Knowledge Base Builder
+3. Gallery 弹窗动画效果要展示完整
+4. Before/After 对比停留 5 秒
+5. 准备应对 Agent 功能深度提问
 
 ### 常见问题预案
-- **Q: 为什么选择多租户架构？**
-  A: 降低运维成本，支持快速扩展，数据隔离安全
-  
-- **Q: AI Agent 如何保证准确性？**
-  A: 基于规则引擎 + 历史数据训练，人工审核机制
-  
-- **Q: 如何处理大文件上传？**
-  A: 分片上传，后台异步处理，支持断点续传
+- **Q: 5 个 Agent 之间如何协作？**
+  A: Knowledge Base Builder 是基础层，为其他 4 个 Agent 提供领域知识。Agent 间通过标准化数据接口交换信息，例如 Designer 生成渲染后自动触发 Pricing 报价和 Compliance 检查。
 
----
+- **Q: Knowledge Base 支持哪些文件格式？**
+  A: PDF, DOCX, XLSX, PPTX, 图片（OCR）, 视频（转录）。上传后自动分类、切片、向量化、索引。
 
-## 🎥 录制建议
-
-### 设备要求
-- 屏幕录制：OBS Studio 或 Camtasia
-- 分辨率：1920x1080
-- 帧率：30fps
-- 音频：高质量麦克风
-
-### 录制流程
-1. 录制屏幕操作（无旁白）
-2. 录制旁白音频
-3. 后期合成
-4. 添加字幕
-5. 导出 MP4
-
-### 后期处理
-- 添加章节标记
-- 关键操作添加高亮
-- 底部添加进度条
-- 开头添加 Logo 动画
+- **Q: Risk Heat Map 数据是实时的吗？**
+  A: 目前使用 dummy data 演示 UI。后端集成后将实时从项目数据计算风险等级。
 
 ---
 
 ## 📄 附录：文件清单
 
-### 核心文件
-- `company-operations.html` - Company Operations 页面（6700+ 行）
-- `supabase/schema.sql` - 数据库 Schema（880+ 行）
-- `supabase/seed_data.sql` - 测试数据（496 行）
-- `DATABASE_SCHEMA.md` - Schema 文档（770+ 行）
+### 核心页面
+- `index.html` — 公共首页（产品展示、Hero Carousel、Product Matrix）
+- `company-operations.html` — Company Operations（Overview, Projects, Team, Settings, 5 Agents）
+- `login.html` — 多租户登录
+- `partners.html` — 合作伙伴注册
+- `team-management.html` — 团队管理
 
-### 文档文件
-- `docs/multi-tenant-architecture.md` - 多租户架构文档
-- `docs/AI_Designer_Agent_Spec.md` - AI Designer 规格
-- `docs/Pricing_Cost_Controller_Agent_Spec.md` - Pricing Agent 规格
-- `docs/Compliance_Manager_Agent_Spec.md` - Compliance Agent 规格
-- `docs/Customer_Service_Executive_Agent_Spec.md` - CS Agent 规格
+### 文档体系
+- `docs/REQUIREMENTS.md` (v6.0.0) — 需求规格说明书
+- `docs/DATA_AI_STRATEGY.md` (v3.0) — Data + AI 战略
+- `docs/AI_Agents_Strategy_Whitepaper.docx` — Agent 战略白皮书
+- `docs/AI_Designer_Agent_Spec.md` — AI Designer 规格
+- `docs/Pricing_Cost_Controller_Agent_Spec.md` — Pricing Agent 规格
+- `docs/Compliance_Manager_Agent_Spec.md` — Compliance Agent 规格
+- `docs/Customer_Service_Executive_Agent_Spec.md` — CS Agent 规格
+- `docs/multi-tenant-architecture.md` — 多租户架构
+- `docs/business-workflow.md` — 业务流程
 
-### 其他文件
-- `index.html` - 公共首页
-- `login.html` - 登录页面
-- `partners.html` - 合作伙伴介绍页
+### 配置文件
+- `package.json` — 构建配置
+- `_routes.json` — Cloudflare 路由
+- `_redirects` — URL 重定向
+- `_headers` — Cache 控制
 
 ---
 
-**文档版本**: 1.0.0  
-**创建日期**: 2026-03-11  
+**文档版本**: 3.0.0  
+**最后更新**: 2026-03-12  
 **维护者**: Qoder AI Assistant
