@@ -1,14 +1,19 @@
 # Data + AI Strategy for Nestopia
 
-**Version:** 3.0  
-**Last Updated:** 2026-03-12  
-**Status:** Active Development
+**Version:** 3.1  
+**Last Updated:** 2026-03-13  
+**Status:** Active Development — LLM-First Approach
 
 ---
 
 ## Executive Summary
 
 This document outlines the comprehensive data and AI strategy for Nestopia's outdoor living customization platform. It covers data architecture, AI agent implementation, knowledge management, and the integration of private domain data for RAG (Retrieval-Augmented Generation), embeddings, and fine-tuning purposes. The platform is powered by **five AI Agents**: AI Designer, Pricing & Cost Controller, Compliance Manager, Customer Service Executive, and **Knowledge Base Builder**.
+
+**Strategic Pivot (v3.1)**: Following industry insights from Anthropic and modern LLM capabilities, we adopt a **LLM-First, Fine-Tuning Later** approach:
+- **Short-term (0-6 months)**: Depend on public LLM APIs (GPT-4, Claude, Qwen) with prompt engineering
+- **Mid-term (6-12 months)**: Light RAG with 10-50 curated documents, continuous strategy assessment
+- **Long-term (12+ months)**: Selective fine-tuning only after product-market fit and data accumulation
 
 ---
 
@@ -297,9 +302,11 @@ The Knowledge Base serves as a **private domain data repository** that feeds our
 
 ---
 
-## 5. Implementation Roadmap
+## 5. Implementation Roadmap (Timeline-Based)
 
-### Phase 0: Foundation (Months 0-3)
+### Phase 0: Foundation (Months 0-3) ✅
+**Status**: Core infrastructure complete
+
 - [x] Multi-tenant database schema (Supabase)
 - [x] Test data creation (seed_data.sql with 47 realistic documents)
 - [x] Knowledge Base UI in Dashboard
@@ -307,24 +314,87 @@ The Knowledge Base serves as a **private domain data repository** that feeds our
 - [ ] ELT pipeline for ERP/OA data
 - [ ] Unified ID system implementation
 
-### Phase 1: Knowledge Base & RAG (Months 3-6)
-- [ ] Document ingestion pipeline (PDF, CAD, images)
-- [ ] Metadata extraction for CAD files
-- [ ] Vector database setup (pgvector)
-- [ ] Basic RAG implementation for all 4 Agents
+### Phase 1: LLM-First MVP (Months 3-6) 🔄
+**Strategy**: Depend on public LLM APIs, zero proprietary data required
+
+**AI Designer Agent**:
+- [ ] Photo upload → GPT-4V / Qwen-VL vision analysis
+- [ ] Prompt engineering for scene description (no fine-tuning)
+- [ ] Integration with Midjourney/DALL-E/SD API for rendering
+- [ ] Few-shot examples in prompt (10-20 representative scenarios)
+
+**Pricing Agent**:
+- [ ] Hard-coded cost formulas for MVP
+- [ ] LLM generates natural language explanations
+- [ ] Manual profit threshold alerts
+- [ ] **No 500K quotes needed** — start with rule-based approach
+
+**Knowledge Base Builder**:
+- [ ] Upload 10-50 key documents (not 10,000)
+- [ ] Simple vector search (Supabase pgvector)
+- [ ] LLM answers grounded in uploaded docs via RAG
+- [ ] Curated > comprehensive approach
+
+**Customer Service & Compliance**:
+- [ ] GPT-4/Claude with system prompts
+- [ ] Store conversation history for future analysis
+- [ ] Simple sentiment analysis (use LLM, don't build model)
+- [ ] Compliance: RAG over uploaded regulation docs only
+
+**Key Metric**: Prove AI features drive engagement/revenue before investing in fine-tuning
+
+### Phase 2: Assessment & Light Customization (Months 6-9) 🔮
+**Goal**: Evaluate approach effectiveness, decide next steps
+
+**Assessment Criteria**:
+- [ ] **Usage Metrics**: Which AI features do partners use most?
+- [ ] **LLM Performance**: Where do public LLMs fail? (collect failure cases)
+- [ ] **Cost Analysis**: LLM API costs vs. revenue from AI features
+- [ ] **Partner Feedback**: What delivers measurable business value?
+
+**Decision Gate**: Based on assessment, choose one of:
+- **Option A**: Continue with LLM APIs (if working well)
+- **Option B**: Add light fine-tuning for specific high-value tasks
+- **Option C**: Pivot strategy based on learnings
+
+**Light Customization** (if justified):
+- [ ] Fine-tune small model (Llama 3 8B) for highest-value use case
+- [ ] Use LoRA/QLoRA — cheap, fast, reversible
+- [ ] Keep public LLMs for general tasks
+
+### Phase 3: Scale with Data Flywheel (Months 9-18) 🔮
+**Only if**: Product-market fit achieved, 100+ paying partners
+
+- [ ] **Selective Fine-Tuning** (not blanket)
+  - AI Designer: 10K+ renders with feedback
+  - Pricing: 5K+ quotes with outcome data
+  - Skip CS/Compliance — public LLMs sufficient
+  
+- [ ] **Data Accumulation** (organic, not forced)
+  - Every interaction stored for future training
+  - Partner-consented data usage
+  - Privacy-preserving aggregation
+  
+- [ ] **Hybrid Architecture**
+  - Public LLMs for 80% of tasks
+  - Fine-tuned models for 20% high-value predictions
+  - Cost optimization via model routing
+
 - [ ] Document search and retrieval API
 
-### Phase 2: AI Agent Enhancement (Months 6-9)
-- [ ] AI Designer: Scene fusion with Knowledge Base context
-- [ ] Pricing Agent: Real-time cost lookup from Knowledge Base
-- [ ] Compliance Agent: Automated permit checking
-- [ ] Customer Service: RAG-powered responses
+### Phase 2+: Advanced Features (Only After PMF Validation)
+**Timeline**: Months 9-18+ (contingent on traction)
 
-### Phase 3: Advanced Features (Months 9-12)
-- [ ] Fine-tuning pipeline preparation
+**Decision Criteria** — Only proceed if:
+- Monthly recurring revenue > $50K
+- 100+ paying partners actively using AI features
+- Clear ROI metrics showing AI drives revenue
+
+- [ ] Fine-tuning pipeline preparation (if justified)
 - [ ] Automated knowledge extraction from new projects
 - [ ] Cross-agent data sharing and coordination
-- [ ] Local deployment optimization
+- [ ] Local deployment optimization (for enterprise customers)
+- [ ] Selective fine-tuning for highest-value use cases only
 
 ---
 
