@@ -1,8 +1,8 @@
 # Nestopia AI Agents Strategy Whitepaper
 # Nestopia AI Agent 战略白皮书
 
-**Version**: 2.0.0  
-**Last Updated**: 2026-03-12  
+**Version**: 2.1.0  
+**Last Updated**: 2026-03-13  
 **Status**: Active — Living Document  
 **Maintainer**: websterzhangsh  
 **Related Docs**:
@@ -63,6 +63,20 @@ Generic AI models lack understanding of:
 - Material cost structures and seasonal pricing patterns
 
 Nestopia's proprietary training data creates an **irreplicable competitive moat**.
+
+### 2.4 Startup Reality Check: Pragmatic AI Strategy
+
+**The Challenge**: Brios (Anthropic) notes that modern LLMs are moving away from RAG. Meanwhile, our earlier specs called for massive datasets (100K+ photos, 500K+ quotes) — unrealistic for a startup.
+
+**The Pivot**: Embrace a **hybrid, incremental approach** that leverages modern LLM capabilities while building proprietary advantages over time.
+
+| Phase | Approach | Data Requirement | Timeline |
+|-------|----------|------------------|----------|
+| **MVP** | Prompt engineering + Few-shot examples + Public LLM APIs | 0 proprietary data | Now |
+| **Growth** | Light RAG (Knowledge Base) + Fine-tuning small models | 100-1,000 documents | 6-12 months |
+| **Scale** | Full fine-tuning + Proprietary data flywheel | 10K+ interactions | 1-2 years |
+
+**Key Insight**: Don't build a data moat before you have product-market fit. Start with LLM APIs (OpenAI, Anthropic, Qwen), prove value, then gradually introduce proprietary data as you grow.
 
 ---
 
@@ -352,6 +366,8 @@ This agent doesn't just answer questions — it proactively identifies growth op
 
 The Knowledge Base Builder is the **foundation layer** that powers all other four agents. Generic AI models have broad but shallow knowledge. Nestopia's competitive advantage comes from **deep, private, industry-specific knowledge** — product specs, regional compliance data, historical pricing, customer interaction patterns — that cannot be obtained from public sources.
 
+**Startup Pragmatism**: Modern LLMs (GPT-4, Claude, Qwen) already have strong general knowledge. The KB Builder's role shifts from "feeding raw knowledge" to **"grounding LLM responses with your specific context"** — a much lighter lift than traditional RAG. Start with 10-50 key documents, not 10,000.
+
 ### 8.2 Core Architecture
 
 ```
@@ -532,76 +548,157 @@ Every interaction feeds back into the training pipeline:
 | CS Executive | **P1** | 1M+ customer conversations | Customer satisfaction 95%+ | Phase III |
 | Compliance Manager | **P2** | Regulation DB + case library | Compliance accuracy 99%+ | Phase III |
 
-### 10.3 Four-Layer Competitive Moat
+### 10.3 Four-Layer Competitive Moat (Evolves Over Time)
 
-| Moat Type | Description |
-|-----------|-------------|
-| **Data Moat** | Industry-specific training data (yard scenes, deal outcomes, compliance cases, customer interactions) that generic AI platforms cannot replicate |
-| **Industry Depth** | Generic AI cannot understand "outdoor living customization" nuanced scenarios — material compatibility, regional pricing, climate-specific design |
-| **Network Effect** | More partners → more regional data (pricing, regulations, customer patterns) → higher value for every partner on the platform |
-| **Workflow Integration** | Seamless measure → design → quote → compliance → sign pipeline impossible for point solutions to match |
+| Moat Type | MVP (Now) | Growth (6-12mo) | Scale (1-2yr) |
+|-----------|-----------|-----------------|---------------|
+| **Data Moat** | None — use public LLMs | Light — 100-1K documents indexed | Deep — 10K+ proprietary interactions |
+| **Industry Depth** | Prompt engineering + few-shot examples | Light RAG grounding LLM responses | Fine-tuned models with proprietary data |
+| **Network Effect** | None — single tenant focus | Early — shared KB across partners | Strong — regional data crowdsourcing |
+| **Workflow Integration** | UI/UX moat — seamless experience | API integrations — data flow automation | Platform moat — ecosystem lock-in |
 
-### 10.4 Knowledge Base as Moat Multiplier
+### 10.4 The Real Moat: Time-to-Value + Network Effects
 
-The Knowledge Base Builder uniquely **amplifies all four moat layers**:
-- **Data Moat**: Every uploaded document is proprietary data no competitor has access to
-- **Industry Depth**: Domain-specific manuals, specs, and guidelines create unmatched contextual understanding
-- **Network Effect**: Partners contributing knowledge (HOA guidelines, local regulations) benefit all partners
-- **Workflow Integration**: KB-informed agents make better decisions at every workflow step
+**Don't chase data moats before PMF.** The real competitive advantage for a startup:
+
+1. **Speed of Execution** — Ship working AI features in weeks, not years
+2. **Domain Expertise** — Deep understanding of outdoor living industry pain points
+3. **Customer Intimacy** — Work closely with early partners, learn fast
+4. **Data Flywheel** — Once you have 50+ partners, proprietary data accumulates naturally
+
+**The Anthropic Insight**: Modern LLMs (Claude 3.5, GPT-4o, Qwen 2.5) are so capable that **prompt engineering + light context injection** gets you 80% of the value of fine-tuning, with 1% of the effort. Start there.
 
 ---
 
-## 11. Implementation Roadmap
+## 11. Implementation Roadmap (Startup-Realistic)
 
-### Phase II — Backend Integration & Core Agents (Next)
-- [ ] Provision Supabase Cloud instance
-- [ ] **AI Designer Agent — P0**
-  - Photo upload + auto-dimension extraction
-  - Scene fusion rendering
-  - Instant variant generation
-  - One-click proposal export
-- [ ] **Knowledge Base Builder — P1**
-  - File upload to object storage (R2)
-  - Text extraction pipeline (PDF, DOCX, OCR, video transcription)
-  - Vector embedding generation
-  - pgvector indexing and semantic search
-  - Agent routing and serving
-- [ ] **Pricing & Cost Controller — P1**
-  - 3-tier auto-quotation engine
-  - Real-time profit margin monitoring
-  - Material cost tracking (supplier API)
-  - Hidden cost auto-calculation
+### Phase II — MVP with LLM APIs (Next 2-3 Months)
+**Goal**: Ship working AI features using public LLMs, zero proprietary data required
 
-### Phase III — Advanced Agents & Growth
+- [ ] **Supabase Backend**
+  - Provision cloud instance
+  - Connect login/registration
+  - Basic project/order CRUD
+  
+- [ ] **AI Designer — P0 (LLM-Powered)**
+  - Photo upload → GPT-4V/Qwen-VL vision analysis
+  - Prompt engineering for scene description
+  - Integration with Midjourney/DALL-E/SD API for rendering
+  - **No fine-tuning needed** — use prompt templates + few-shot examples
+  
+- [ ] **Pricing Agent — P1 (Rule-Based + LLM)**
+  - Hard-coded cost formulas for MVP
+  - LLM generates natural language explanations
+  - Manual profit threshold alerts
+  - **No 500K quotes needed** — start with 10-20 representative scenarios
+  
+- [ ] **Knowledge Base — P1 (Light RAG)**
+  - Upload 10-50 key documents (product specs, compliance guides)
+  - Simple vector search (Supabase pgvector)
+  - LLM answers grounded in uploaded docs
+  - **No massive corpus needed** — curated > comprehensive
+
+### Phase III — Growth with Light Customization (3-6 Months)
+**Goal**: Add proprietary data as it naturally accumulates
+
 - [ ] **Customer Service Executive — P1**
-  - 7×24 AI auto-response with escalation
-  - Proactive follow-up and satisfaction tracking
-  - Repurchase signal detection
-  - Emotional intelligence analysis
+  - GPT-4/Claude with system prompts
+  - Store conversation history
+  - Simple sentiment analysis (use LLM, don't build model)
+  
 - [ ] **Compliance Manager — P2**
-  - Regulation pre-check by project address
-  - Permit application roadmap
+  - RAG over uploaded regulation docs
+  - API integration with UpCodes/Municode
+  - **Don't build regulation DB from scratch** — buy/license it
+  
+- [ ] **Analytics Dashboard**
+  - Track which AI features partners use most
+  - Identify where LLM responses fail → prioritize KB additions
+  - **Data-driven prioritization** > guesswork
+
+### Phase IV — Scale with Fine-Tuning (6-18 Months)
+**Goal**: Only now invest in fine-tuning, when you have product-market fit AND data
+
+- [ ] **Fine-Tuning Criteria**: Only when you have:
+  - 100+ active partners
+  - 10,000+ AI-generated renders with feedback (signed/not signed)
+  - 5,000+ successful quotes with outcome data
+  - Clear ROI metrics proving AI features drive revenue
+  
+- [ ] **Selective Fine-Tuning**
+  - Start with smallest viable model (e.g., fine-tune Llama 3 8B, not GPT-4)
+  - Focus on highest-value use case (likely AI Designer scene fusion)
+  - Use LoRA/QLoRA — cheap, fast, reversible
+  
+- [ ] **Hybrid Architecture**
+  - Keep using public LLMs for general tasks
+  - Fine-tuned models only for specific high-value predictions
+  - **Don't rebuild what LLMs already do well**
   - Application form auto-fill
   - Risk radar and regulation monitoring
 - [ ] Cross-agent collaboration workflows
 - [ ] Digital measurement partner SDK integration
 
-### Phase IV — Platform IP & Scale
-- [ ] Fine-tune AI Designer model (100K+ data)
-- [ ] Fine-tune Pricing model (500K+ data)
-- [ ] Fine-tune CS model (1M+ data)
-- [ ] Build Compliance regulation knowledge graph
-- [ ] Data flywheel optimization
-- [ ] Enterprise-tier offering (custom models + API access)
+### Phase IV — Platform IP & Scale (Only After PMF)
+**Goal**: Fine-tuning and proprietary models — but only when justified by traction
+
+- [ ] **Fine-Tuning Decision Gate**: Only proceed if:
+  - Monthly recurring revenue > $50K
+  - 100+ paying partners actively using AI features
+  - Clear metrics showing LLM API costs exceed fine-tuning ROI
+  
+- [ ] **Selective Fine-Tuning** (not blanket)
+  - AI Designer scene fusion: 10K+ successful renders with feedback
+  - Pricing optimization: 5K+ quotes with outcome data
+  - Skip fine-tuning for CS/Compliance — public LLMs sufficient
+  
+- [ ] **Buy vs Build for Compliance**
+  - License regulation data from UpCodes/BuildingAdvisor
+  - Don't build regulation DB from scratch
+  - Focus engineering on UX and workflow, not data collection
+
+- [ ] **Enterprise Tier**
+  - Custom models for large partners (only if they pay $10K+/month)
+  - API access to Nestopia agents
+  - White-label options
 
 ---
 
-## 12. Change Log
+## 12. Key Principles for Startup AI Development
+
+### 12.1 The 80/20 Rule
+- **80% of value** comes from prompt engineering + light context injection
+- **20% of value** requires fine-tuning and massive proprietary data
+- Start with the 80%, prove value, then invest in the 20%
+
+### 12.2 Buy Data, Build UX
+- **Don't collect data from scratch** — buy/license it (UpCodes, supplier APIs, industry databases)
+- **Build what differentiates** — seamless UX, industry-specific workflows, partner relationships
+- **Use LLMs for everything else** — general knowledge, language understanding, reasoning
+
+### 12.3 The Anthropic Insight Applied
+> "Modern LLMs are so capable that RAG is often unnecessary. Just give the model the right context in the prompt."
+
+**For Nestopia**:
+- Instead of: Complex vector DB + embeddings + chunking
+- Try first: Simple document retrieval + stuff into prompt + GPT-4/Claude
+- Only add complexity when you hit context limits or latency issues
+
+### 12.4 Data Moat is a Lagging Indicator
+- **PMF first, data moat second**
+- You can't collect proprietary data without users
+- You can't get users without a working product
+- Start with public LLMs, collect data organically, fine-tune later
+
+---
+
+## 13. Change Log
 
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0.0 | 2026-03-11 | Initial whitepaper — 4 AI Agents strategy, co-working model, fine-tune roadmap, digital measurement partnership |
-| 2.0.0 | 2026-03-12 | **Added Agent 5: Knowledge Base Builder** ("智识引擎"); Updated agent count from 4 to 5; Added Section 8 with full KB Builder spec; Updated architecture diagram; Added agent dependency graph; Updated fine-tune priority matrix; Added KB as moat multiplier analysis; Migrated from .docx to .md format for version control |
+| 2.0.0 | 2026-03-12 | **Added Agent 5: Knowledge Base Builder** ("智识引擎"); Updated agent count from 4 to 5; Full KB Builder spec; Architecture diagrams |
+| 2.1.0 | 2026-03-13 | **Startup Reality Check**: Added Section 2.4 pragmatic AI strategy; Revised Section 10.3 moat evolution; Rewrote Section 11 implementation roadmap (LLM-first, fine-tuning later); Added Section 12 key principles; Reduced data requirements from 100K/500K to 10-50 documents for MVP |
 
 ---
 
