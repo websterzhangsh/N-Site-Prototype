@@ -1,0 +1,608 @@
+# Nestopia AI Agents Strategy Whitepaper
+# Nestopia AI Agent 战略白皮书
+
+**Version**: 2.0.0  
+**Last Updated**: 2026-03-12  
+**Status**: Active — Living Document  
+**Maintainer**: websterzhangsh  
+**Related Docs**:
+- `docs/REQUIREMENTS.md` (v6.0.0) — Feature specs & roadmap
+- `docs/DATA_AI_STRATEGY.md` (v3.0) — Data architecture & knowledge base
+- `docs/AI_Designer_Agent_Spec.md` — AI Designer detailed spec
+- `docs/Pricing_Cost_Controller_Agent_Spec.md` — Pricing Agent detailed spec
+- `docs/Compliance_Manager_Agent_Spec.md` — Compliance Manager detailed spec
+- `docs/Customer_Service_Executive_Agent_Spec.md` — CS Executive detailed spec
+
+---
+
+## 1. Executive Summary
+
+Nestopia's AI Agent strategy is built on a single principle: **OUTPUT > HOW**. Small enterprise owners in the outdoor living industry don't need another ERP system — they need **"super partners"** who co-work with them to close deals, protect margins, eliminate risk, grow customers, and build institutional knowledge.
+
+The platform deploys **five AI Agents**, each designed to deliver measurable business outcomes:
+
+| # | Agent | Chinese Name | Core OUTPUT |
+|---|-------|-------------|-------------|
+| 1 | **AI Designer** | 签单武器 (Deal-Closing Weapon) | Increase deal-closing rate through instant visual impact |
+| 2 | **Pricing & Cost Controller** | 利润保镖 (Profit Bodyguard) | Maximize profit per deal while maintaining competitiveness |
+| 3 | **Compliance Manager** | 风险雷达 (Risk Radar) | Zero-risk project delivery and fast permit approval |
+| 4 | **Customer Service Executive** | 增长引擎 (Growth Engine) | Boost satisfaction, retention, and referral-driven growth |
+| 5 | **Knowledge Base Builder** | 智识引擎 (Intelligence Engine) | Build proprietary domain knowledge that powers all agents |
+
+**Key differentiator**: These are not tools to operate — they are autonomous co-workers that proactively assist, trained on industry-specific data that generic AI platforms cannot replicate.
+
+---
+
+## 2. Design Philosophy
+
+### 2.1 OUTPUT > HOW
+
+| Dimension | Traditional ERP | Nestopia Agent |
+|-----------|----------------|----------------|
+| User Goal | Learn to use tools | Get business results |
+| Interaction | Fill forms → query reports | Natural language → direct deliverables |
+| Value Metric | Feature completeness | Business KPI improvement |
+| Learning Curve | Training + manuals | Zero learning, ask & receive |
+| Success Criteria | Data entry complete | Deals closed / Profit grown / Zero complaints |
+
+### 2.2 Co-Working Model
+
+Agents are not passive tools waiting for commands. They:
+- **Proactively alert** — "3 follow-up tasks today, 1 customer showing dissatisfaction"
+- **Autonomously execute** — Generate renders, calculate quotes, check compliance without prompting
+- **Cross-collaborate** — Designer output feeds Pricing; Compliance checks trigger before project launch
+- **Continuously learn** — Every interaction feeds back into the training pipeline
+
+### 2.3 Industry-Specific Intelligence
+
+Generic AI models lack understanding of:
+- Outdoor living customization scenarios (sunroom vs ADU vs pergola vs zip blinds)
+- US regional regulatory complexity (CA Title 24 vs FL wind zones vs TX clay soil)
+- HOA aesthetic requirements alongside building codes
+- Industry-specific customer psychology and deal-closing dynamics
+- Material cost structures and seasonal pricing patterns
+
+Nestopia's proprietary training data creates an **irreplicable competitive moat**.
+
+---
+
+## 3. Agent Architecture Overview
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                      PARTNER USER INTERFACE                      │
+│              (Company Operations Dashboard)                      │
+└──────────────────────────────────────────────────────────────────┘
+                               │
+                               ▼
+┌──────────────────────────────────────────────────────────────────┐
+│                    AI AGENT EXECUTION LAYER                       │
+│                                                                  │
+│  ┌────────────┐ ┌──────────┐ ┌────────────┐ ┌────────────────┐  │
+│  │ AI Designer│ │ Pricing  │ │ Compliance │ │ Customer Svc   │  │
+│  │ (签单武器) │ │ (利润保镖)│ │ (风险雷达) │ │ (增长引擎)     │  │
+│  └─────┬──────┘ └────┬─────┘ └─────┬──────┘ └───────┬────────┘  │
+│        │             │             │                 │            │
+│        └─────────────┴─────────────┴─────────────────┘            │
+│                               │                                  │
+│                               ▼                                  │
+│              ┌─────────────────────────────┐                     │
+│              │  Knowledge Base Builder      │                     │
+│              │  (智识引擎)                  │                     │
+│              │  RAG · Embeddings · Index    │                     │
+│              └─────────────────────────────┘                     │
+└──────────────────────────────────────────────────────────────────┘
+                               │
+                               ▼
+┌──────────────────────────────────────────────────────────────────┐
+│                       DATA LAYER                                 │
+│  Object Storage (R2) │ Vector DB (pgvector) │ PostgreSQL (RLS)   │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+**Knowledge Base Builder sits at the foundation** — it ingests, processes, and serves domain knowledge to the other four agents via RAG and semantic search.
+
+---
+
+## 4. Agent 1: AI Designer — "签单武器" (Deal-Closing Weapon)
+
+### 4.1 Strategic Positioning
+
+**From "design tool" to "deal-closing weapon".**
+
+The AI Designer's primary mission is not to produce pretty pictures — it's to **close deals on the spot**. When a partner visits a customer's home, the ability to show a photorealistic render of the product in the customer's actual yard within 30 seconds creates an emotional "wow" moment that drives immediate purchase decisions.
+
+### 4.2 Key Capabilities
+
+| Capability | Traditional Approach | Nestopia AI Designer OUTPUT |
+|-----------|---------------------|----------------------------|
+| On-site Measurement | Upload photo → manually mark dimensions | Photo/scan → auto-extract dimensions → instant 3D model |
+| Scene Fusion | Photoshop compositing (hours) | AI auto-plants product into real yard scene (30 seconds) |
+| Instant Variants | Re-model and re-render | Customer says "change color" → 5-second new render |
+| Deal Mode | Send renders, wait days for feedback | Tablet projection → customer swipes options → decide on the spot |
+| One-click Proposal | Export images, manually compose email | Auto-generate proposal (design + quote + contract) → sign immediately |
+
+### 4.3 Use Scenarios
+
+**Scene A: On-site Deal**
+> Partner arrives with tablet → photos the yard → AI fuses product in 30 seconds → customer "wow" → swipes through options → signs deal on the spot
+
+**Scene B: Remote Proposal**
+> Customer sends yard photo → AI generates 3 design options → auto-composes video proposal → customer confirms online → deal closed without site visit
+
+**Scene C: Quick Inquiry**
+> Customer calls about pergola → partner sends product preview → AI generates render from description → customer books site visit → conversion pipeline started
+
+### 4.4 Strategic Partnership: Digital Measurement Expert
+
+**Future differentiator**: Deep integration with professional digital measurement solution vendor.
+
+| Capability | Nestopia Current | Partner Enhancement |
+|-----------|-----------------|---------------------|
+| Measurement Precision | Photo estimation + manual input | Laser scanning / Photogrammetry / SLAM → mm-level precision |
+| Data Collection | Single photo | 360° panoramic scan / Point cloud / 3D reconstruction |
+| Complex Terrain | Flat yards only | Irregular terrain / Elevation changes / Existing structure integration |
+| Output Format | 2D fusion image | CAD drawings / BIM models / Engineering-grade measurement reports |
+
+**Three-Layer Moat from Partnership**:
+1. **Data Layer**: Partner measurement data + Nestopia design data → jointly trained proprietary models
+2. **Workflow Layer**: Seamless "measure → design → quote → sign" pipeline, zero data gaps
+3. **Certification Layer**: Co-branded "Nestopia Precision Measurement Partner" certification
+
+**Business Model Tiers**:
+
+| Tier | Service | Pricing |
+|------|---------|---------|
+| Basic | Photo estimation + AI fusion | Included in subscription |
+| Professional | SDK integration + customer self-scan | Per-scan fee, revenue sharing |
+| Expert | On-site measurement + engineering delivery | Per-project fee |
+| Enterprise | Custom devices + API access + proprietary model | Annual license |
+
+### 4.5 Fine-tune Training Strategy
+
+| Data Source | Target Volume | Purpose |
+|------------|---------------|---------|
+| Real yard scene photos | 100,000+ | Train scene fusion naturalness |
+| Product-in-context renders | Per product category | Train product "planting" for sunroom/ADU/pergola/blinds |
+| Style transfer datasets | American/Modern/Neo-Chinese | One-click style switching |
+| Regional adaptation data | North American building norms | Localized design intelligence |
+
+**Priority**: **P0 — Highest**. This agent has the most direct impact on revenue (deal-closing rate).
+
+---
+
+## 5. Agent 2: Pricing & Cost Controller — "利润保镖" (Profit Bodyguard)
+
+### 5.1 Strategic Positioning
+
+**From "calculator" to "profit bodyguard".**
+
+Small enterprise owners frequently lose money because they:
+- Forget hidden costs (transport, tax, installation, after-sale reserves)
+- Price emotionally rather than data-driven
+- Don't track material cost fluctuations
+- Can't calculate competitive price points by region
+
+The Pricing Agent eliminates these profit leaks automatically.
+
+### 5.2 Key Capabilities
+
+| Capability | Traditional Approach | Nestopia Pricing Agent OUTPUT |
+|-----------|---------------------|------------------------------|
+| Smart Quotation | Excel formulas | Input needs → AI matches optimal materials → 3-tier quote (Basic/Standard/Premium) |
+| Profit Alert | Discover losses in month-end reports | Real-time margin display during quoting; auto-alert when below target |
+| Cost Tracking | Manual procurement records | Connect supplier APIs, real-time material price feeds, auto-update baselines |
+| Competitive Pricing | Gut-feeling pricing | AI analyzes regional competitors, seasonal demand, customer budget → optimal price |
+| Hidden Cost Coverage | Often forgotten | Auto-calculate transport, installation, tax, after-sale reserves — zero omissions |
+| Plan Optimization | Manual adjustment | Budget-limited customer → AI recommends "profit-preserving" alternatives |
+
+### 5.3 Use Scenarios
+
+**Scene A: Quick Quote**
+> Customer describes needs → AI generates 3-tier quote in 30 seconds → partner selects tier → quote delivered on the spot
+
+**Scene B: Margin Defense**
+> Customer haggles → AI calculates "minimum acceptable price" → below threshold auto-warns "suggest decline or change plan" → margin protected
+
+**Scene C: Batch Optimization**
+> Month-end review → AI analyzes all quotes → identifies "profit killers" (e.g., material cost increase unnoticed) → auto-adjusts next month pricing strategy
+
+### 5.4 Fine-tune Training Strategy
+
+| Data Source | Target Volume | Purpose |
+|------------|---------------|---------|
+| Historical quotes + close results | 500,000+ | Train optimal pricing models |
+| Regional pricing models | Per state/city | Labor, transport, tax variance by region |
+| Material price trends | Seasonal + supply chain | Material cost prediction |
+| Customer persona pricing | By customer segment | Payment willingness models (villa/apartment/commercial) |
+
+**Priority**: **P1 — High**. Expected impact: quote win-rate +30%.
+
+---
+
+## 6. Agent 3: Compliance Manager — "风险雷达" (Risk Radar)
+
+### 6.1 Strategic Positioning
+
+**From "regulation lookup" to "zero-risk delivery".**
+
+The US regulatory landscape for outdoor structures is extraordinarily complex: **Federal baseline + State amendments + Local ordinances + HOA restrictions**. A single compliance miss can result in project stoppage, fines, or forced demolition. The Compliance Manager navigates this automatically.
+
+### 6.2 Key Capabilities
+
+| Capability | Traditional Approach | Nestopia Compliance Agent OUTPUT |
+|-----------|---------------------|----------------------------------|
+| Regulation Pre-check | Manually read regulation docs | Input address + plan → AI identifies applicable regulations → compliance checklist |
+| Permit Navigation | Consult lawyers / government offices | AI generates "permit roadmap": which permits → what materials → where to submit → timeline |
+| Auto-fill Applications | Hand-fill application forms | AI auto-fills from project data → partner just signs |
+| Risk Radar | Fix problems after they occur | Pre-project scan for potential risks → proactive avoidance advice |
+| Regulation Updates | Subscribe to emails/news | AI monitors changes, auto-push "updates affecting your projects" |
+| Case Library | Learn by trial and error | Same-industry, same-region compliance case references |
+
+### 6.3 US Regional Compliance Landscape
+
+**Federal Level:**
+- **IRC 2024** (International Residential Code): Baseline for residential structures
+- **IBC** (International Building Code): Commercial/multi-family applications
+- **IECC** (International Energy Conservation Code): Energy efficiency
+- **ADA** (Americans with Disabilities Act): Accessibility for public-facing structures
+
+**State-Specific Complexity:**
+
+| State | Key Requirements | Unique Challenges |
+|-------|------------------|-------------------|
+| **California** | CBC, Title 24 Energy, Seismic Design Cat D/E | ADU laws (SB9/SB897), strict energy codes, earthquake requirements |
+| **Florida** | FBC, Wind load 115-180+ mph | Hurricane zones, Large Missile Impact Test, FEMA flood zones |
+| **Texas** | Varies by city (Houston no zoning, Dallas/Austin have zoning) | Clay soil expansion, tornado risk, post-Harvey flood zones |
+| **Arizona** | CBC-based, extreme heat requirements | Thermal performance, dust/wind considerations |
+| **Nevada** | CBC-based, desert climate | Similar to AZ, Las Vegas specific requirements |
+
+**HOA Coverage**: ~60% of US single-family homes. HOA approval is SEPARATE from government permits and can be MORE restrictive.
+
+**Permit Matrix by Product:**
+
+| Product | Building Permit | Electrical | Plumbing | HOA | Special |
+|---------|----------------|------------|----------|-----|---------|
+| Sunroom | ✅ Required | ⚠️ If outlets | ⚠️ If plumbing | ⚠️ Usually | Seismic (CA), Wind (FL) |
+| ADU | ✅ Required | ✅ Required | ✅ Required | ⚠️ CA limited | Full residential code |
+| Pergola (<200 sqft) | ⚠️ Varies | ⚠️ If electrical | ❌ No | ⚠️ Usually | Setback compliance |
+| Pergola (>200 sqft) | ✅ Required | ⚠️ If electrical | ❌ No | ⚠️ Usually | Structural engineering |
+| Zip Blinds | ❌ Usually no | ❌ No | ❌ No | ⚠️ Often | Wind rating (FL) |
+
+### 6.4 Use Scenarios
+
+**Scene A: Pre-project Launch**
+> After accepting job → AI scans project address regulations → discovers HOA approval needed → prepares materials in advance → avoids post-construction stoppage
+
+**Scene B: Permit Application**
+> AI generates complete application package → partner one-click submits → tracks approval progress → auto-reminds for supplementary materials
+
+**Scene C: Risk Alert**
+> AI monitors new local environmental restriction → auto-alerts "3 active projects may be affected" → provides adjustment suggestions
+
+### 6.5 Fine-tune Training Strategy
+
+| Data Source | Target Volume | Purpose |
+|------------|---------------|---------|
+| Building regulations | All 50 states + major counties | IRC, state amendments, local ordinances |
+| HOA databases | Top 1000 HOAs by population | Architectural guidelines, approval processes |
+| Permit process database | Per government office | Application workflows, checklists, timelines, fees |
+| Case law library | Real project cases | Train risk identification, common pitfalls |
+| FEMA flood maps | Nationwide | Flood zone classification, BFE data |
+| Seismic zone maps | USGS data | Seismic design categories by location |
+
+**Data Sources**: ICC (IRC/IBC), State government websites, Municode, FEMA, UpCodes API, BuildingAdvisor, partner-contributed HOA guidelines.
+
+**Priority**: **P2 — Medium**. Target: compliance accuracy 99%+.
+
+---
+
+## 7. Agent 4: Customer Service Executive — "增长引擎" (Growth Engine)
+
+### 7.1 Strategic Positioning
+
+**From "customer service tool" to "growth engine".**
+
+This agent doesn't just answer questions — it proactively identifies growth opportunities (repurchase, referral) and prevents churn through emotional intelligence and full-lifecycle customer management.
+
+### 7.2 Key Capabilities
+
+| Capability | Traditional Approach | Nestopia CS Agent OUTPUT |
+|-----------|---------------------|--------------------------|
+| Smart Response | Manual message replies | 7×24 AI auto-reply; complex issues auto-escalate with reply suggestions |
+| Follow-up Reminders | Excel + alarms | AI identifies "needs follow-up" → generates tasks → push reminders + scripts |
+| Satisfaction Management | Post-project questionnaire | AI contacts at milestones → identifies dissatisfaction signals → early warning |
+| Repurchase Mining | Wait for customer to contact | AI identifies "likely needs other products" → auto-generate proposals |
+| Referral Drive | Verbally ask for referrals | AI identifies satisfied customers → auto-generate referral invitations |
+| Emotional Intelligence | Gut feeling | AI analyzes tone/wording → identifies emotional state → prompts appropriate response |
+| Customer Profiles | Remember in your head | Auto-builds customer files (preferences, budget, family) → auto-prompts key info |
+
+### 7.3 Use Scenarios
+
+**Scene A: Lead Conversion**
+> Prospect inquires at midnight → AI instantly replies → books daytime visit → partner sees scheduled calendar in the morning
+
+**Scene B: Project Follow-up**
+> AI reminds "Customer X's delivery arriving tomorrow, suggest proactive contact today" → partner one-click confirms → AI auto-sends message
+
+**Scene C: Repurchase Activation**
+> AI discovers "Customer Y installed sunroom last year, may now consider pergola" → auto-generates pergola proposal → partner one-click sends
+
+**Scene D: Crisis Recovery**
+> AI detects dissatisfaction in customer message → immediate alert → suggests "apologize first, explain second, compensate last" → partner responds quickly
+
+### 7.4 Fine-tune Training Strategy
+
+| Data Source | Target Volume | Purpose |
+|------------|---------------|---------|
+| Real customer conversations | 1,000,000+ | Intent recognition and sentiment analysis |
+| Industry script library | Outdoor living specific | Professional terminology, best replies |
+| Customer journey model | Full lifecycle | Consultation → Design → Sign → Install → After-sale touchpoints |
+| Repurchase prediction | Customer features + behavior | Predict repurchase probability and timing |
+
+**Priority**: **P1 — High**. Target: customer satisfaction 95%+.
+
+---
+
+## 8. Agent 5: Knowledge Base Builder — "智识引擎" (Intelligence Engine)
+
+### 8.1 Strategic Positioning
+
+**From "document storage" to "intelligence engine".**
+
+The Knowledge Base Builder is the **foundation layer** that powers all other four agents. Generic AI models have broad but shallow knowledge. Nestopia's competitive advantage comes from **deep, private, industry-specific knowledge** — product specs, regional compliance data, historical pricing, customer interaction patterns — that cannot be obtained from public sources.
+
+### 8.2 Core Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                   UPLOAD INTERFACE                        │
+│   PDF · DOCX · XLSX · PPTX · Images · Videos            │
+└───────────────────────┬─────────────────────────────────┘
+                        │
+                        ▼
+┌─────────────────────────────────────────────────────────┐
+│               PROCESSING PIPELINE                        │
+│  ┌──────────┐  ┌──────────┐  ┌───────────┐  ┌────────┐ │
+│  │ Extract  │→ │ Chunk    │→ │ Embed     │→ │ Index  │ │
+│  │ (OCR/    │  │ (Semantic│  │ (Vector   │  │ (pgvec-│ │
+│  │ Transcr.)│  │ Segments)│  │ Embeddings│  │  tor)  │ │
+│  └──────────┘  └──────────┘  └───────────┘  └────────┘ │
+└───────────────────────┬─────────────────────────────────┘
+                        │
+                        ▼
+┌─────────────────────────────────────────────────────────┐
+│              AGENT ROUTING & SERVING                     │
+│                                                         │
+│  Documents tagged with:                                 │
+│  • Category (6 types)                                   │
+│  • Agent assignment (1 or more agents)                  │
+│  • Semantic tags (keywords)                             │
+│  • Status (Processing / Indexed)                        │
+│                                                         │
+│  Serving via:                                           │
+│  • RAG (Retrieval-Augmented Generation)                 │
+│  • Semantic vector search                               │
+│  • Keyword + metadata filtering                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+### 8.3 Key Capabilities
+
+| Capability | Traditional Approach | Nestopia KB Builder OUTPUT |
+|-----------|---------------------|---------------------------|
+| Document Ingestion | File server / SharePoint | Drag-drop upload → auto-categorize → chunk → embed → index → instantly queryable |
+| Multi-format Support | PDF reader per file type | PDF, DOCX, XLSX, PPTX, images (OCR), videos (transcript extraction) |
+| 6-Category Organization | Flat folder structure | Installation / Compliance / Sales / Design / Training / After-Sales |
+| Agent Routing | Manual copy-paste to each tool | Each document tagged to specific agents → auto-routed for RAG retrieval |
+| Semantic Search | Keyword search only | Vector embeddings → semantic search across all documents |
+| Status Tracking | Unknown if indexed | Processing → Indexed status per document with version control |
+| Gap Analysis | Unknown what's missing | Identify knowledge gaps across categories → prioritize uploads |
+
+### 8.4 Document Categories & Agent Mapping
+
+| Category | Content Types | Primary Agents Fed |
+|----------|--------------|-------------------|
+| **Installation & Technical** | Manuals, specs, engineering drawings, supplier catalogs | AI Designer, Compliance Manager |
+| **Compliance & Regulatory** | Building codes, HOA guidelines, permit templates, state regulations | Compliance Manager |
+| **Sales & Marketing** | Pitch decks, pricing guides, competitor analysis, objection playbooks | Pricing Controller, CS Executive |
+| **Design References** | Style guides, color palettes, brand guidelines, photography standards | AI Designer |
+| **Training & Onboarding** | Onboarding guides, training decks, FAQ libraries, process docs | CS Executive |
+| **After-Sales & Warranty** | Warranty policies, maintenance guides, troubleshooting SOPs | CS Executive |
+
+### 8.5 Use Scenarios
+
+**Scene A: New Product Launch**
+> Upload product spec PDF → AI auto-extracts features, dimensions, installation steps → immediately available to Designer (for accurate renders) and CS (for customer Q&A)
+
+**Scene B: Regulation Update**
+> New state building code released → upload PDF → Compliance Manager agent auto-updated with latest requirements → all active projects re-checked
+
+**Scene C: Sales Enablement**
+> Upload competitor pricing analysis → Pricing Controller gains market intelligence → next quote automatically factors in competitive positioning
+
+**Scene D: Knowledge Audit**
+> View all indexed documents by category → identify gaps (e.g., no Florida HOA data) → prioritize uploads → agent accuracy improves
+
+### 8.6 Current Implementation Status
+
+| Component | Status | Detail |
+|-----------|--------|--------|
+| Upload UI | ✅ Built | Drag-drop interface in company-operations.html |
+| Category Filtering | ✅ Built | 6-category filter tabs |
+| Agent Tagging | ✅ Built | Multi-agent assignment per document |
+| Document List | ✅ Built | 47 dummy documents with metadata |
+| Search | ✅ Built | Keyword search across documents |
+| Processing Pipeline | ⏳ Planned | Requires backend (Supabase + pgvector) |
+| Vector Embeddings | ⏳ Planned | Requires embedding model integration |
+| RAG Serving | ⏳ Planned | Requires LLM integration |
+
+### 8.7 Fine-tune Training Strategy
+
+| Data Source | Target Volume | Purpose |
+|------------|---------------|---------|
+| Company internal documents | All available | Proprietary knowledge unavailable to generic AI |
+| Product specifications | Per product line | Accurate technical responses |
+| Regional compliance docs | Per state/county | Hyper-local regulatory accuracy |
+| Historical Q&A logs | Ongoing | Continuously improve response quality |
+
+**Priority**: **P1 — High**. This is the foundation that multiplies the effectiveness of all other agents.
+
+---
+
+## 9. Cross-Agent Collaboration
+
+### 9.1 Typical Workday Flow
+
+| Time | What Happens |
+|------|-------------|
+| **8:00 AM** | Open Dashboard → CS Agent: "3 follow-ups today, 1 dissatisfied customer needs attention" → one-click confirm |
+| **10:00 AM** | Visit customer → photo yard → AI Designer renders in 30s → customer selects option → Pricing Agent quotes → sign on the spot |
+| **2:00 PM** | New order → Compliance Agent scans regulations → discovers HOA needed → AI generates materials → one-click submit |
+| **4:00 PM** | Upload new supplier catalog → KB Builder indexes it → Pricing Agent auto-updates cost baselines |
+| **8:00 PM** | Customer inquires online → CS Agent auto-replies → books morning visit → partner sees ready schedule next day |
+
+**Result**: Small enterprise owners go from "exhausted juggling everything" to "commanding with confidence" — 5 agents become tireless super partners.
+
+### 9.2 Cross-Agent Workflows
+
+| Scenario | Agents Involved | Workflow |
+|----------|-----------------|----------|
+| **New Deal** | Designer + Pricing + Compliance + KB | Design render → instant quote → pre-check compliance → complete proposal (all informed by KB) |
+| **Project Execution** | CS + Compliance + KB | Auto follow-up → milestone notifications → risk monitoring → KB-informed responses |
+| **Customer Retention** | CS + Designer + KB | Identify repurchase signal → auto-generate new product proposal → one-click send |
+| **Knowledge Update** | KB Builder → All Agents | New document indexed → relevant agents auto-updated with latest knowledge |
+| **Regulation Change** | KB Builder → Compliance → CS | New code uploaded → Compliance re-checks projects → CS proactively notifies affected customers |
+
+### 9.3 Agent Dependency Graph
+
+```
+                    ┌─────────────────┐
+                    │  Knowledge Base  │
+                    │    Builder       │
+                    │  (Foundation)    │
+                    └────────┬────────┘
+                             │
+              ┌──────────────┼──────────────┐
+              │              │              │
+              ▼              ▼              ▼
+    ┌──────────────┐ ┌────────────┐ ┌──────────────┐
+    │  AI Designer │ │ Compliance │ │   Pricing    │
+    │              │ │  Manager   │ │  Controller  │
+    └──────┬───────┘ └─────┬──────┘ └──────┬───────┘
+           │               │               │
+           └───────────────┼───────────────┘
+                           │
+                           ▼
+                  ┌──────────────────┐
+                  │ Customer Service │
+                  │   Executive      │
+                  │ (Customer-Facing)│
+                  └──────────────────┘
+```
+
+- **KB Builder** feeds all agents with domain knowledge
+- **Designer / Compliance / Pricing** produce project-level outputs
+- **CS Executive** is the customer-facing layer that leverages all other agents' outputs
+
+---
+
+## 10. Platform IP & Competitive Moat
+
+### 10.1 Data Flywheel
+
+```
+More Users → More Data → Better Models → Better Experience → More Users
+```
+
+Every interaction feeds back into the training pipeline:
+- Every AI Designer render → feedback (did customer sign?) → improve model
+- Every quote → deal result + actual cost → train better pricing
+- Every compliance check → actual approval result → refine regulation knowledge
+- Every customer interaction → satisfaction + repurchase → train smarter CS
+- Every KB document uploaded → richer domain knowledge → all agents improve
+
+### 10.2 Fine-tune Priority Matrix
+
+| Agent | Priority | Data Requirement | Expected Impact | Timeline |
+|-------|----------|------------------|-----------------|----------|
+| AI Designer | **P0** | 100K+ yard scene photos | Scene fusion surpasses generic AI | Phase II |
+| Knowledge Base Builder | **P1** | All internal company docs | Foundation for all agent intelligence | Phase II |
+| Pricing Agent | **P1** | 500K+ quote-to-close data | Quote win-rate +30% | Phase II |
+| CS Executive | **P1** | 1M+ customer conversations | Customer satisfaction 95%+ | Phase III |
+| Compliance Manager | **P2** | Regulation DB + case library | Compliance accuracy 99%+ | Phase III |
+
+### 10.3 Four-Layer Competitive Moat
+
+| Moat Type | Description |
+|-----------|-------------|
+| **Data Moat** | Industry-specific training data (yard scenes, deal outcomes, compliance cases, customer interactions) that generic AI platforms cannot replicate |
+| **Industry Depth** | Generic AI cannot understand "outdoor living customization" nuanced scenarios — material compatibility, regional pricing, climate-specific design |
+| **Network Effect** | More partners → more regional data (pricing, regulations, customer patterns) → higher value for every partner on the platform |
+| **Workflow Integration** | Seamless measure → design → quote → compliance → sign pipeline impossible for point solutions to match |
+
+### 10.4 Knowledge Base as Moat Multiplier
+
+The Knowledge Base Builder uniquely **amplifies all four moat layers**:
+- **Data Moat**: Every uploaded document is proprietary data no competitor has access to
+- **Industry Depth**: Domain-specific manuals, specs, and guidelines create unmatched contextual understanding
+- **Network Effect**: Partners contributing knowledge (HOA guidelines, local regulations) benefit all partners
+- **Workflow Integration**: KB-informed agents make better decisions at every workflow step
+
+---
+
+## 11. Implementation Roadmap
+
+### Phase II — Backend Integration & Core Agents (Next)
+- [ ] Provision Supabase Cloud instance
+- [ ] **AI Designer Agent — P0**
+  - Photo upload + auto-dimension extraction
+  - Scene fusion rendering
+  - Instant variant generation
+  - One-click proposal export
+- [ ] **Knowledge Base Builder — P1**
+  - File upload to object storage (R2)
+  - Text extraction pipeline (PDF, DOCX, OCR, video transcription)
+  - Vector embedding generation
+  - pgvector indexing and semantic search
+  - Agent routing and serving
+- [ ] **Pricing & Cost Controller — P1**
+  - 3-tier auto-quotation engine
+  - Real-time profit margin monitoring
+  - Material cost tracking (supplier API)
+  - Hidden cost auto-calculation
+
+### Phase III — Advanced Agents & Growth
+- [ ] **Customer Service Executive — P1**
+  - 7×24 AI auto-response with escalation
+  - Proactive follow-up and satisfaction tracking
+  - Repurchase signal detection
+  - Emotional intelligence analysis
+- [ ] **Compliance Manager — P2**
+  - Regulation pre-check by project address
+  - Permit application roadmap
+  - Application form auto-fill
+  - Risk radar and regulation monitoring
+- [ ] Cross-agent collaboration workflows
+- [ ] Digital measurement partner SDK integration
+
+### Phase IV — Platform IP & Scale
+- [ ] Fine-tune AI Designer model (100K+ data)
+- [ ] Fine-tune Pricing model (500K+ data)
+- [ ] Fine-tune CS model (1M+ data)
+- [ ] Build Compliance regulation knowledge graph
+- [ ] Data flywheel optimization
+- [ ] Enterprise-tier offering (custom models + API access)
+
+---
+
+## 12. Change Log
+
+| Version | Date | Changes |
+|---------|------|---------|
+| 1.0.0 | 2026-03-11 | Initial whitepaper — 4 AI Agents strategy, co-working model, fine-tune roadmap, digital measurement partnership |
+| 2.0.0 | 2026-03-12 | **Added Agent 5: Knowledge Base Builder** ("智识引擎"); Updated agent count from 4 to 5; Added Section 8 with full KB Builder spec; Updated architecture diagram; Added agent dependency graph; Updated fine-tune priority matrix; Added KB as moat multiplier analysis; Migrated from .docx to .md format for version control |
+
+---
+
+*This is a living document. It will be updated when significant strategic changes occur — new agent additions, architecture shifts, partnership developments, or competitive landscape changes.*

@@ -816,8 +816,14 @@ public/images/
 
 | Document | Location | Description |
 |----------|----------|-------------|
-| REQUIREMENTS.md | `docs/` | This document — project specification (v4.0.0) |
-| AI_Agents_Strategy_Whitepaper.docx | `docs/` | Four AI Agent differentiation strategy, fine-tune roadmap, co-working model |
+| REQUIREMENTS.md | `docs/` | This document — project specification (v6.0.0) |
+| AI_Agents_Strategy_Whitepaper.md | `docs/` | Five AI Agent strategy, fine-tune roadmap, co-working model, competitive moat analysis |
+| DATA_AI_STRATEGY.md | `docs/` | Data + AI architecture, knowledge base design, lakehouse pattern |
+| PRODUCT_DEMO.md | `docs/` | Product demo script (v3.0.0) |
+| AI_Designer_Agent_Spec.md | `docs/` | AI Designer detailed spec |
+| Pricing_Cost_Controller_Agent_Spec.md | `docs/` | Pricing Agent detailed spec |
+| Compliance_Manager_Agent_Spec.md | `docs/` | Compliance Manager detailed spec |
+| Customer_Service_Executive_Agent_Spec.md | `docs/` | CS Executive detailed spec |
 | AI_Designer_Feasibility_Study.docx | `docs/` | Market feasibility, use cases, UX design, technical feasibility, partnership strategy |
 | US_Regional_Compliance_Requirements.docx | `docs/` | US federal/state/local building codes, HOA requirements, Compliance Manager specs |
 | Gap_Analysis_Report.docx | `docs/` | Third-party proposal vs current implementation analysis |
