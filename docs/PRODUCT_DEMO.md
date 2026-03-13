@@ -28,7 +28,6 @@
 - Product Matrix — Pergola（Residential / Commercial）
 - Before/After 设计对比 + 3D 动画视频
 - Gallery 弹窗（Learn More）
-- 多语言切换（中/英）
 
 ### 第二部分：平台登录与概览 (2 分钟)
 - 多租户登录
