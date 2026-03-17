@@ -11,6 +11,7 @@
 - `docs/Pricing_Cost_Controller_Agent_Spec.md` — 定价 Agent 详细规格
 - `docs/Compliance_Manager_Agent_Spec.md` — 合规管理 Agent 详细规格
 - `docs/Customer_Service_Executive_Agent_Spec.md` — 客服 Agent 详细规格
+- `docs/Chatbot_Agent_Spec_CN.md` — Chatbot 智能对话助手 Agent 详细规格
 
 ---
 
