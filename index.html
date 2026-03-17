@@ -902,14 +902,14 @@
             <!-- Product Category Tabs -->
             <div class="flex justify-center mb-12">
                 <div class="inline-flex bg-[--darker-bg] rounded-full p-1.5 border border-gray-200">
-                    <button class="product-tab active px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 bg-[--light-text] text-white" data-product="pergola">
+                    <button class="product-tab active px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 bg-[--light-text] text-white" data-product="sunroom">
+                        <span class="lang-text" data-zh="阳光房" data-en="Sunroom">Sunroom</span>
+                    </button>
+                    <button class="product-tab px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 text-[--light-accent] hover:text-[--light-text]" data-product="pergola">
                         <span class="lang-text" data-zh="凉亭" data-en="Pergola">Pergola</span>
                     </button>
                     <button class="product-tab px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 text-[--light-accent] hover:text-[--light-text]" data-product="zipblinds">
                         <span class="lang-text" data-zh="Zip Blinds" data-en="Zip Blinds">Zip Blinds</span>
-                    </button>
-                    <button class="product-tab px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 text-[--light-accent] hover:text-[--light-text]" data-product="sunroom">
-                        <span class="lang-text" data-zh="阳光房" data-en="Sunroom">Sunroom</span>
                     </button>
                     <button class="product-tab px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 text-[--light-accent] hover:text-[--light-text]" data-product="adu">
                         <span class="lang-text" data-zh="ADU" data-en="ADU">ADU</span>
@@ -918,7 +918,7 @@
             </div>
 
             <!-- Pergola Content -->
-            <div id="product-pergola" class="product-content active">
+            <div id="product-pergola" class="product-content hidden">
                 <!-- Scenario Tabs -->
                 <div class="flex justify-center mb-8">
                     <div class="inline-flex bg-white rounded-full p-1 border border-gray-200 shadow-sm">
@@ -1158,7 +1158,7 @@
             </div>
 
             <!-- Sunroom Content (Placeholder) -->
-            <div id="product-sunroom" class="product-content hidden">
+            <div id="product-sunroom" class="product-content active">
                 <div class="max-w-4xl mx-auto text-center py-16 bg-[--darker-bg] rounded-2xl border border-gray-200 border-dashed">
                     <div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-sun text-gray-400 text-2xl"></i>
