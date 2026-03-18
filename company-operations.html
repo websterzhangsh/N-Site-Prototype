@@ -3529,19 +3529,242 @@
 
             </div>
 
-        <!-- Projects Page (Redirects to Service Workflow) -->
+        <!-- Projects Management Page -->
         <div class="page-content" id="page-projects">
-            <div class="max-w-4xl mx-auto py-16 text-center">
-                <div class="bg-white rounded-2xl border border-gray-200 p-12">
-                    <div class="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                        <i class="fas fa-project-diagram text-2xl text-gray-500"></i>
+            <div class="max-w-7xl mx-auto">
+                <!-- Header -->
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">Projects</h2>
+                        <p class="text-gray-500 text-sm mt-1">Manage all active projects, track issues, and mitigate risks</p>
                     </div>
-                    <h2 class="text-2xl font-bold text-gray-900 mb-3">Project Management</h2>
-                    <p class="text-gray-500 mb-8 max-w-md mx-auto">All projects are now managed through the 6-Step Service Workflow. Click below to view and manage your projects.</p>
-                    <button onclick="navigateToPage('workflow')" class="px-8 py-3 bg-gray-900 text-white rounded-xl font-medium hover:bg-gray-800 transition inline-flex items-center gap-2">
-                        <i class="fas fa-arrow-right"></i>
-                        <span>Go to Service Workflow</span>
+                    <button class="px-6 py-3 bg-gray-900 text-white rounded-xl font-medium hover:bg-gray-800 transition flex items-center gap-2 self-start">
+                        <i class="fas fa-plus"></i>
+                        <span>New Project</span>
                     </button>
+                </div>
+
+                <!-- Stats Row -->
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+                    <div class="bg-white rounded-xl border border-gray-200 p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-folder text-blue-600"></i>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-gray-900">12</div>
+                                <div class="text-xs text-gray-500">Active Projects</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl border border-gray-200 p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-yellow-50 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-exclamation-triangle text-yellow-600"></i>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-gray-900">5</div>
+                                <div class="text-xs text-gray-500">Open Issues</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl border border-gray-200 p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-red-50 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-fire text-red-600"></i>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-gray-900">2</div>
+                                <div class="text-xs text-gray-500">High Risks</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl border border-gray-200 p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-check-circle text-green-600"></i>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-gray-900">98%</div>
+                                <div class="text-xs text-gray-500">On-Time Rate</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl border border-gray-200 p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-dollar-sign text-purple-600"></i>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-gray-900">$485K</div>
+                                <div class="text-xs text-gray-500">Total Value</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Risk Heat Map -->
+                <div class="bg-white rounded-xl border border-gray-200 p-6 mb-8">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Risk Heat Map</h3>
+                        <button class="text-sm text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-info-circle mr-1"></i>View Details
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <!-- High Risk -->
+                        <div class="border border-red-200 rounded-xl p-4 bg-red-50/50">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                                    <span class="font-medium text-red-700">High Risk</span>
+                                </div>
+                                <span class="text-xs font-medium text-red-600 bg-red-100 px-2 py-0.5 rounded-full">2 Projects</span>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-700">Johnson Residence</span>
+                                    <span class="text-red-600 font-medium">Permit Delay</span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-700">Martinez ADU</span>
+                                    <span class="text-red-600 font-medium">HOA Approval</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Medium Risk -->
+                        <div class="border border-yellow-200 rounded-xl p-4 bg-yellow-50/50">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                                    <span class="font-medium text-yellow-700">Medium Risk</span>
+                                </div>
+                                <span class="text-xs font-medium text-yellow-600 bg-yellow-100 px-2 py-0.5 rounded-full">3 Projects</span>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-700">Smith Sunroom</span>
+                                    <span class="text-yellow-600 font-medium">Material Delay</span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-700">Chen Pergola</span>
+                                    <span class="text-yellow-600 font-medium">Weather</span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-700">Davis Commercial</span>
+                                    <span class="text-yellow-600 font-medium">Budget Review</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Low Risk -->
+                        <div class="border border-green-200 rounded-xl p-4 bg-green-50/50">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                    <span class="font-medium text-green-700">Low Risk</span>
+                                </div>
+                                <span class="text-xs font-medium text-green-600 bg-green-100 px-2 py-0.5 rounded-full">5 Projects</span>
+                            </div>
+                            <div class="text-sm text-gray-600">
+                                <div class="flex items-center justify-between py-1">
+                                    <span>Wilson Residence</span>
+                                    <i class="fas fa-check text-green-500"></i>
+                                </div>
+                                <div class="flex items-center justify-between py-1">
+                                    <span>Taylor Backyard</span>
+                                    <i class="fas fa-check text-green-500"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- On Track -->
+                        <div class="border border-gray-200 rounded-xl p-4 bg-gray-50">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 bg-gray-400 rounded-full"></div>
+                                    <span class="font-medium text-gray-700">On Track</span>
+                                </div>
+                                <span class="text-xs font-medium text-gray-600 bg-gray-200 px-2 py-0.5 rounded-full">2 Projects</span>
+                            </div>
+                            <div class="text-sm text-gray-600">
+                                <div class="flex items-center justify-between py-1">
+                                    <span>Anderson Patio</span>
+                                    <i class="fas fa-check text-gray-400"></i>
+                                </div>
+                                <div class="flex items-center justify-between py-1">
+                                    <span>Thomas Deck</span>
+                                    <i class="fas fa-check text-gray-400"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Issues Tracker -->
+                <div class="bg-white rounded-xl border border-gray-200 p-6 mb-8">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Issues Tracker</h3>
+                        <button onclick="openIssueModal()" class="text-sm text-gray-900 bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg transition flex items-center gap-2">
+                            <i class="fas fa-plus"></i>
+                            Report Issue
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-gray-200">
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Issue ID</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Project</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Title</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Priority</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Status</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Assigned To</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Due Date</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="issuesTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Projects List -->
+                <div class="bg-white rounded-xl border border-gray-200">
+                    <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">All Projects</h3>
+                        <div class="flex items-center gap-3">
+                            <div class="relative">
+                                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                                <input type="text" placeholder="Search projects..." class="pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-300">
+                            </div>
+                            <select class="px-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-300">
+                                <option value="">All Statuses</option>
+                                <option value="design">Design</option>
+                                <option value="permit">Permit</option>
+                                <option value="manufacturing">Manufacturing</option>
+                                <option value="installation">Installation</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-gray-200 bg-gray-50">
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Project Name</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Customer</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Type</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Stage</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Budget</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Timeline</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Risk Level</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="projectsTableBody">
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -6428,9 +6651,126 @@
             alert('New Project\n\n1. Select/create customer\n2. Fill project info\n3. Start Intake Questionnaire (Appendix A)\n4. Project starts at Step 1: Intent\n\n(Backend integration pending)');
         }
 
+        // ===== Projects Management (Risk & Issues) =====
+        const projectsDummyData = [
+            { id: 'PRJ-001', name: 'Johnson Residence', customer: 'Robert Johnson', type: 'Pergola', stage: 'permit', budget: 35000, timeline: '6 weeks', riskLevel: 'high', issues: 2 },
+            { id: 'PRJ-002', name: 'Martinez ADU', customer: 'Carlos Martinez', type: 'ADU', stage: 'design', budget: 125000, timeline: '14 weeks', riskLevel: 'high', issues: 1 },
+            { id: 'PRJ-003', name: 'Smith Sunroom', customer: 'Jennifer Smith', type: 'Sunroom', stage: 'manufacturing', budget: 58000, timeline: '8 weeks', riskLevel: 'medium', issues: 1 },
+            { id: 'PRJ-004', name: 'Chen Pergola', customer: 'David Chen', type: 'Pergola', stage: 'installation', budget: 42000, timeline: '4 weeks', riskLevel: 'medium', issues: 0 },
+            { id: 'PRJ-005', name: 'Davis Commercial', customer: 'ABC Restaurant', type: 'Commercial Pergola', stage: 'design', budget: 95000, timeline: '10 weeks', riskLevel: 'medium', issues: 1 },
+            { id: 'PRJ-006', name: 'Wilson Residence', customer: 'Sarah Wilson', type: 'Sunroom', stage: 'installation', budget: 52000, timeline: '6 weeks', riskLevel: 'low', issues: 0 },
+            { id: 'PRJ-007', name: 'Taylor Backyard', customer: 'Michael Taylor', type: 'Pergola', stage: 'completed', budget: 38000, timeline: '5 weeks', riskLevel: 'low', issues: 0 },
+            { id: 'PRJ-008', name: 'Anderson Patio', customer: 'Lisa Anderson', type: 'Zip Blinds', stage: 'completed', budget: 12000, timeline: '2 weeks', riskLevel: 'low', issues: 0 },
+            { id: 'PRJ-009', name: 'Thomas Deck', customer: 'James Thomas', type: 'Pergola', stage: 'permit', budget: 45000, timeline: '7 weeks', riskLevel: 'low', issues: 0 },
+            { id: 'PRJ-010', name: 'Brown Garden', customer: 'Patricia Brown', type: 'Sunroom', stage: 'design', budget: 67000, timeline: '9 weeks', riskLevel: 'low', issues: 0 },
+            { id: 'PRJ-011', name: 'Garcia Outdoor', customer: 'Maria Garcia', type: 'ADU', stage: 'manufacturing', budget: 135000, timeline: '15 weeks', riskLevel: 'low', issues: 0 },
+            { id: 'PRJ-012', name: 'Lee Pavilion', customer: 'Steven Lee', type: 'Pergola', stage: 'installation', budget: 48000, timeline: '6 weeks', riskLevel: 'low', issues: 0 }
+        ];
+
+        const issuesDummyData = [
+            { id: 'ISS-001', projectId: 'PRJ-001', title: 'Permit approval delayed by city', priority: 'high', status: 'open', assignedTo: 'John Smith', dueDate: '2026-03-15' },
+            { id: 'ISS-002', projectId: 'PRJ-001', title: 'HOA requires additional documentation', priority: 'medium', status: 'in_progress', assignedTo: 'Emily Davis', dueDate: '2026-03-18' },
+            { id: 'ISS-003', projectId: 'PRJ-002', title: 'HOA architectural review pending', priority: 'high', status: 'open', assignedTo: 'John Smith', dueDate: '2026-03-14' },
+            { id: 'ISS-004', projectId: 'PRJ-003', title: 'Material delivery delayed 1 week', priority: 'medium', status: 'in_progress', assignedTo: 'Mike Johnson', dueDate: '2026-03-20' },
+            { id: 'ISS-005', projectId: 'PRJ-005', title: 'Budget review with client needed', priority: 'medium', status: 'open', assignedTo: 'Emily Davis', dueDate: '2026-03-16' }
+        ];
+
+        function getPriorityBadge(priority) {
+            const badges = {
+                high: '<span class="px-2 py-0.5 bg-red-50 text-red-700 rounded-full text-xs font-medium"><i class="fas fa-arrow-up mr-1"></i>High</span>',
+                medium: '<span class="px-2 py-0.5 bg-yellow-50 text-yellow-700 rounded-full text-xs font-medium"><i class="fas fa-arrow-right mr-1"></i>Medium</span>',
+                low: '<span class="px-2 py-0.5 bg-green-50 text-green-700 rounded-full text-xs font-medium"><i class="fas fa-arrow-down mr-1"></i>Low</span>'
+            };
+            return badges[priority] || '';
+        }
+
+        function getIssuStatusBadge(status) {
+            const badges = {
+                open: '<span class="px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">Open</span>',
+                in_progress: '<span class="px-2 py-0.5 bg-yellow-50 text-yellow-700 rounded-full text-xs font-medium">In Progress</span>',
+                resolved: '<span class="px-2 py-0.5 bg-green-50 text-green-700 rounded-full text-xs font-medium">Resolved</span>',
+                closed: '<span class="px-2 py-0.5 bg-gray-50 text-gray-700 rounded-full text-xs font-medium">Closed</span>'
+            };
+            return badges[status] || '';
+        }
+
+        function getRiskBadge(risk) {
+            const badges = {
+                high: '<span class="px-2 py-0.5 bg-red-50 text-red-700 rounded-full text-xs font-medium"><i class="fas fa-fire mr-1"></i>High</span>',
+                medium: '<span class="px-2 py-0.5 bg-yellow-50 text-yellow-700 rounded-full text-xs font-medium"><i class="fas fa-exclamation-triangle mr-1"></i>Medium</span>',
+                low: '<span class="px-2 py-0.5 bg-green-50 text-green-700 rounded-full text-xs font-medium"><i class="fas fa-check-circle mr-1"></i>Low</span>'
+            };
+            return badges[risk] || '';
+        }
+
+        function getStageBadge(stage) {
+            const badges = {
+                design: '<span class="px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">Design</span>',
+                permit: '<span class="px-2 py-0.5 bg-purple-50 text-purple-700 rounded-full text-xs font-medium">Permit</span>',
+                manufacturing: '<span class="px-2 py-0.5 bg-yellow-50 text-yellow-700 rounded-full text-xs font-medium">Manufacturing</span>',
+                installation: '<span class="px-2 py-0.5 bg-orange-50 text-orange-700 rounded-full text-xs font-medium">Installation</span>',
+                completed: '<span class="px-2 py-0.5 bg-green-50 text-green-700 rounded-full text-xs font-medium">Completed</span>'
+            };
+            return badges[stage] || '';
+        }
+
+        function renderProjectsTable() {
+            const tbody = document.getElementById('projectsTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = projectsDummyData.map(project => `
+                <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
+                    <td class="py-3 px-4"><div class="font-medium text-gray-900">${project.name}</div><div class="text-xs text-gray-500">${project.id}</div></td>
+                    <td class="py-3 px-4 text-sm text-gray-700">${project.customer}</td>
+                    <td class="py-3 px-4 text-sm text-gray-700">${project.type}</td>
+                    <td class="py-3 px-4">${getStageBadge(project.stage)}</td>
+                    <td class="py-3 px-4 text-sm font-medium text-gray-900">$${project.budget.toLocaleString()}</td>
+                    <td class="py-3 px-4 text-sm text-gray-700">${project.timeline}</td>
+                    <td class="py-3 px-4">${getRiskBadge(project.riskLevel)}</td>
+                    <td class="py-3 px-4"><button class="text-gray-400 hover:text-gray-600 transition" onclick="viewProject('${project.id}')"><i class="fas fa-ellipsis-v"></i></button></td>
+                </tr>
+            `).join('');
+        }
+
+        function renderIssuesTable() {
+            const tbody = document.getElementById('issuesTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = issuesDummyData.map(issue => `
+                <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
+                    <td class="py-3 px-4"><div class="font-medium text-gray-900">${issue.id}</div></td>
+                    <td class="py-3 px-4 text-sm text-gray-700">${projectsDummyData.find(p => p.id === issue.projectId)?.name || 'Unknown'}</td>
+                    <td class="py-3 px-4 text-sm text-gray-900">${issue.title}</td>
+                    <td class="py-3 px-4">${getPriorityBadge(issue.priority)}</td>
+                    <td class="py-3 px-4">${getIssuStatusBadge(issue.status)}</td>
+                    <td class="py-3 px-4 text-sm text-gray-700">${issue.assignedTo}</td>
+                    <td class="py-3 px-4 text-sm text-gray-700">${issue.dueDate}</td>
+                    <td class="py-3 px-4"><button class="text-gray-400 hover:text-gray-600 transition" onclick="viewIssue('${issue.id}')"><i class="fas fa-edit"></i></button></td>
+                </tr>
+            `).join('');
+        }
+
+        function viewProject(id) {
+            const project = projectsDummyData.find(p => p.id === id);
+            if (project) {
+                alert('Project: ' + project.name + ' (' + project.id + ')\n\nCustomer: ' + project.customer + '\nType: ' + project.type + '\nStage: ' + project.stage + '\nBudget: $' + project.budget.toLocaleString() + '\nTimeline: ' + project.timeline + '\nRisk Level: ' + project.riskLevel + '\n\n(Project detail modal pending backend integration)');
+            }
+        }
+
+        function viewIssue(id) {
+            const issue = issuesDummyData.find(i => i.id === id);
+            if (issue) {
+                alert('Issue: ' + issue.title + ' (' + issue.id + ')\n\nProject: ' + (projectsDummyData.find(p => p.id === issue.projectId)?.name || '') + '\nPriority: ' + issue.priority + '\nStatus: ' + issue.status + '\nAssigned To: ' + issue.assignedTo + '\nDue Date: ' + issue.dueDate + '\n\n(Issue detail modal pending backend integration)');
+            }
+        }
+
+        function openIssueModal() {
+            alert('Report Issue modal will be implemented here with:\n- Project selection\n- Issue title and description\n- Priority level\n- Assignment\n- Due date\n\nThis will be a full modal dialog for creating new issues.');
+        }
+
         function initProjectsPage() {
             renderWorkflowPipeline();
             renderWorkflowProjects();
+            renderProjectsTable();
+            renderIssuesTable();
         }
 
         // ===== Team Management =====
