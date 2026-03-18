@@ -13,7 +13,7 @@
 |------|------|------|
 | `supabase/schema.sql` | **规范来源** - 完整多租户 Schema (18 表 + RLS + 触发器) | ✅ 主用 |
 | `database/schema.sql` | 镜像文件 - 用于非 Supabase 部署 (Aliyun RDS 等) | ✅ 同步 |
-| `supabase/customer_intake_form_schema.sql` | 客户设计申请表单 (独立功能，不含多租户) | ⚠️ 待整合 |
+| `supabase/customer_intake_form_schema.sql` | Client Design Intake Questionnaire (8 modules A.1–A.8) + project_documents table — multi-tenant enabled | ✅ v2.0 |
 | `DATABASE_SCHEMA.md` | 本文档 | ✅ |
 
 > **注意**: 历史上曾有无多租户的旧 schema，已全部废弃。当前唯一规范来源是 `supabase/schema.sql`。

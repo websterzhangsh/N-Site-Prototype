@@ -3549,8 +3549,9 @@
                     <div class="flex gap-0 h-[calc(100vh-80px)]">
 
                         <!-- Left Panel: Project List -->
-                        <div class="w-80 flex-shrink-0 border-r border-gray-200 bg-white flex flex-col">
-                            <div class="p-4 border-b border-gray-100">
+                        <div id="projectListPanel" class="w-80 flex-shrink-0 border-r border-gray-200 bg-white flex flex-col transition-all duration-300 ease-in-out overflow-hidden">
+                            <!-- Full list header (shown when expanded) -->
+                            <div id="projListHeaderFull" class="p-4 border-b border-gray-100">
                                 <div class="relative">
                                     <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
                                     <input type="text" id="projectListSearch" placeholder="Search projects..." class="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-300" oninput="filterProjectList()">
@@ -3561,13 +3562,24 @@
                                     <button class="proj-filter-btn px-2.5 py-1 bg-white border text-gray-500 text-xs rounded-full hover:bg-gray-50" data-filter="completed" onclick="filterProjectListByStatus('completed')">Done</button>
                                 </div>
                             </div>
+                            <!-- Collapsed header (shown when collapsed) -->
+                            <div id="projListHeaderCollapsed" class="hidden flex-col items-center py-3 px-1 border-b border-gray-100 gap-2">
+                                <button onclick="toggleProjectListPanel()" class="w-9 h-9 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition" title="Expand project list">
+                                    <i class="fas fa-chevron-right text-gray-500 text-xs"></i>
+                                </button>
+                            </div>
+                            <!-- Full list container -->
                             <div class="flex-1 overflow-y-auto" id="projectListContainer">
                                 <!-- Populated by JS -->
+                            </div>
+                            <!-- Collapsed list container -->
+                            <div id="projectListCollapsed" class="hidden flex-1 overflow-y-auto">
+                                <!-- Populated by JS: mini avatars -->
                             </div>
                         </div>
 
                         <!-- Right Panel: Project Detail -->
-                        <div class="flex-1 overflow-y-auto bg-gray-50/50 p-6" id="projectDetailPanel">
+                        <div class="flex-1 overflow-y-auto bg-gray-50/50 p-6 transition-all duration-300" id="projectDetailPanel">
                             <!-- Default empty state -->
                             <div id="projectDetailEmpty" class="flex flex-col items-center justify-center h-full text-gray-400">
                                 <i class="fas fa-folder-open text-5xl mb-4"></i>
@@ -3576,12 +3588,17 @@
                             </div>
 
                             <!-- Project Detail Content (hidden initially) -->
-                            <div id="projectDetailContent" class="hidden max-w-5xl">
+                            <div id="projectDetailContent" class="hidden">
                                 <!-- Project Header -->
                                 <div class="flex items-start justify-between mb-6">
-                                    <div>
-                                        <h2 class="text-xl font-bold text-gray-900" id="projDetailName"></h2>
-                                        <p class="text-sm text-gray-500 mt-1" id="projDetailMeta"></p>
+                                    <div class="flex items-center gap-3">
+                                        <button onclick="toggleProjectListPanel()" id="projListToggleBtn" class="w-8 h-8 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 flex items-center justify-center transition shadow-sm" title="Toggle project list">
+                                            <i class="fas fa-bars text-gray-400 text-sm"></i>
+                                        </button>
+                                        <div>
+                                            <h2 class="text-xl font-bold text-gray-900" id="projDetailName"></h2>
+                                            <p class="text-sm text-gray-500 mt-1" id="projDetailMeta"></p>
+                                        </div>
                                     </div>
                                     <div class="flex items-center gap-2">
                                         <span class="text-xs font-medium px-3 py-1 rounded-full" id="projDetailStatus"></span>
@@ -3593,11 +3610,15 @@
                                     <div class="flex items-center gap-2 px-5 py-3 border-b border-gray-100 bg-gray-50/70">
                                         <i class="fas fa-project-diagram text-blue-600 text-sm"></i>
                                         <h3 class="text-sm font-semibold text-gray-700">Service Workflow</h3>
+                                        <span class="text-xs text-gray-400 ml-auto" id="projWorkflowHint">Click a step to view details</span>
                                     </div>
                                     <div class="p-5">
                                         <div class="flex items-center justify-between gap-2" id="projWorkflowSteps">
                                             <!-- 6-step pipeline rendered by JS -->
                                         </div>
+                                    </div>
+                                    <!-- Step Detail Expansion -->
+                                    <div id="projStepDetail" class="hidden border-t border-gray-100">
                                     </div>
                                 </div>
 
@@ -6321,6 +6342,588 @@
             `).join('');
         }
 
+        // ===== Step Detail Data (per-step core actions & key deliverables) =====
+        const STEP_DETAIL_CONFIG = {
+            1: {
+                name: 'Intent',
+                nameEn: 'Intent',
+                goal: 'Awaken the customer\'s aspiration for an ideal outdoor lifestyle, build trust, and filter high-intent customers',
+                payment: '$100 Intent Fee',
+                coreActions: [
+                    { id: 'a1', label: 'Multi-Channel Acquisition', desc: 'Streaming media distribution; partnerships with builders, designers, agents', icon: 'fa-bullhorn' },
+                    { id: 'a2', label: 'Initial Communication', desc: 'Phone/video/in-person, 15-20 min to understand basic needs', icon: 'fa-phone-alt' },
+                    { id: 'a3', label: 'Product Demo', desc: 'Showcase Before-After-Animation to spark interest', icon: 'fa-play-circle' },
+                    { id: 'a4', label: 'Deep Insight', desc: 'Complete the Client Design Intake Questionnaire (8 modules)', icon: 'fa-clipboard-list' },
+                    { id: 'a5', label: 'Compliance Pre-check', desc: 'Proactively inquire about HOA/community rules, inform review requirements', icon: 'fa-shield-alt' },
+                    { id: 'a6', label: 'Collect Intent Fee', desc: '$100 (credited toward contract), lock in customer intent', icon: 'fa-dollar-sign' }
+                ],
+                keyDeliverables: [
+                    { id: 'd1', label: 'Client Design Intake Form', desc: '8-module questionnaire', icon: 'fa-clipboard-list', required: true },
+                    { id: 'd2', label: 'Intent Fee Receipt', desc: '$100 payment voucher', icon: 'fa-receipt', required: true },
+                    { id: 'd3', label: 'Phase 1 Client Sign-off', desc: 'Client confirms intent and agrees to proceed to Design phase', icon: 'fa-signature', required: true }
+                ],
+                questionnaire: [
+                    { module: 'A.1', name: 'Customer Basics', items: 'Name, address, contact info, decision maker', required: true },
+                    { module: 'A.2', name: 'Project Overview', items: 'Scene, location, usage, wall-mount, dimensions, constraints', required: true },
+                    { module: 'A.3', name: 'Usage & Lifestyle', items: 'Duration, headcount, activities, functional needs', required: true },
+                    { module: 'A.4', name: 'Budget & Timeline', items: 'Budget range, start date, key dates', required: true },
+                    { module: 'A.5', name: 'Community & HOA Compliance', items: 'HOA status, design guidelines, regulation awareness', required: true },
+                    { module: 'A.6', name: 'Style & Aesthetic Preferences', items: 'Style, colors, reference image upload', required: false },
+                    { module: 'A.7', name: 'Decision Process', items: 'Decision makers, decision timeline', required: false },
+                    { module: 'A.8', name: 'Additional Notes', items: 'Open text', required: false }
+                ],
+                agentSupport: [
+                    { agent: 'CS Agent', ability: '24/7 auto-reply to inquiries, schedule on-site/video appointments' },
+                    { agent: 'Knowledge Base', ability: 'Provide HOA FAQ references, product FAQ' },
+                    { agent: 'Compliance Agent', ability: 'Preliminary HOA restriction lookup by community name' }
+                ]
+            }
+            // Steps 2-6: to be added progressively
+        };
+
+        // Dummy per-project step status data
+        function getProjectStepStatus(project, stepNum) {
+            // Simulate different completion states based on project progress
+            if (stepNum < project.workflowStep) {
+                return { actionsCompleted: 6, actionTotal: 6, deliverablesCompleted: 3, deliverableTotal: 3, questionnaireCompleted: 8, questionnaireTotal: 8, paymentStatus: 'paid' };
+            } else if (stepNum === project.workflowStep) {
+                // Current step - partially done
+                if (stepNum === 1) return { actionsCompleted: 3, actionTotal: 6, deliverablesCompleted: 0, deliverableTotal: 3, questionnaireCompleted: 5, questionnaireTotal: 8, paymentStatus: 'pending' };
+                return { actionsCompleted: 2, actionTotal: 6, deliverablesCompleted: 0, deliverableTotal: 3, questionnaireCompleted: 0, questionnaireTotal: 8, paymentStatus: 'pending' };
+            }
+            return { actionsCompleted: 0, actionTotal: 6, deliverablesCompleted: 0, deliverableTotal: 3, questionnaireCompleted: 0, questionnaireTotal: 8, paymentStatus: 'not_started' };
+        }
+
+        let expandedStep = null;
+        let currentDetailProject = null;
+
+        // ===== Intake Form Modal & Module Configs =====
+        let intakeFormData = {};  // In-memory storage keyed by project_id
+        let intakeUploadedFiles = {}; // Simulated file references keyed by project_id
+
+        const INTAKE_MODULE_FIELDS = {
+            'A.1': {
+                title: 'Customer Basics',
+                fields: [
+                    { key: 'a1_client_name', label: 'Client Name', type: 'text', required: true, placeholder: 'Full name' },
+                    { key: 'a1_address_street', label: 'Street Address', type: 'text', required: true, placeholder: '123 Main St' },
+                    { key: 'a1_address_city', label: 'City', type: 'text', required: true, placeholder: 'Los Angeles' },
+                    { key: 'a1_address_state', label: 'State', type: 'text', required: true, placeholder: 'CA' },
+                    { key: 'a1_address_zip', label: 'ZIP Code', type: 'text', required: true, placeholder: '90001' },
+                    { key: 'a1_phone', label: 'Phone', type: 'text', required: true, placeholder: '(310) 555-0100' },
+                    { key: 'a1_email', label: 'Email', type: 'email', required: true, placeholder: 'client@email.com' },
+                    { key: 'a1_preferred_contact', label: 'Preferred Contact Method', type: 'select', required: true, options: [
+                        { value: 'phone', label: 'Phone' }, { value: 'sms', label: 'SMS' },
+                        { value: 'email', label: 'Email' }, { value: 'video', label: 'Video Call' }
+                    ]},
+                    { key: 'a1_other_decision_makers', label: 'Other Decision Makers (Name / Relationship)', type: 'text', required: false, placeholder: 'e.g. Jane Doe / Spouse' }
+                ]
+            },
+            'A.2': {
+                title: 'Project Overview',
+                fields: [
+                    { key: 'a2_usage_scenario', label: 'Usage Scenario', type: 'select', required: true, options: [
+                        { value: 'residential_house', label: 'Residential (House)' }, { value: 'residential_apartment', label: 'Residential (Apartment)' },
+                        { value: 'commercial_restaurant', label: 'Commercial (Restaurant)' }, { value: 'commercial_cafe', label: 'Commercial (Cafe)' },
+                        { value: 'office', label: 'Office / Conference' }, { value: 'hotel_resort', label: 'Hotel / Resort' },
+                        { value: 'poolside', label: 'Poolside' }, { value: 'other', label: 'Other' }
+                    ]},
+                    { key: 'a2_install_location', label: 'Installation Location', type: 'select', required: true, options: [
+                        { value: 'patio_ground', label: 'Patio (Ground Level)' }, { value: 'terrace_upper', label: 'Terrace (Upper Floor)' },
+                        { value: 'raised_platform', label: 'Raised Platform' }, { value: 'rooftop', label: 'Rooftop' },
+                        { value: 'commercial_space', label: 'Commercial Space' }, { value: 'other', label: 'Other' }
+                    ]},
+                    { key: 'a2_primary_usage', label: 'Primary Usage (multi-select)', type: 'multiselect', required: true, options: [
+                        { value: 'leisure', label: 'Leisure / Tea Room' }, { value: 'gym', label: 'Gym / Yoga' },
+                        { value: 'study', label: 'Study / Workspace' }, { value: 'dining', label: 'Dining / Entertaining' },
+                        { value: 'kids_play', label: "Kids' Play Area" }, { value: 'pets', label: 'Pet Area' },
+                        { value: 'garden', label: 'Garden / Greenhouse' }, { value: 'pool_cover', label: 'Pool / Patio Cover' },
+                        { value: 'other', label: 'Other' }
+                    ]},
+                    { key: 'a2_wall_connected', label: 'Attached to Existing Wall?', type: 'select', required: true, options: [
+                        { value: 'true', label: 'Yes (attached to house/garage)' }, { value: 'false', label: 'No (freestanding structure)' }
+                    ]},
+                    { key: 'a2_dimension_length_ft', label: 'Length (ft)', type: 'number', required: true, placeholder: 'e.g. 20' },
+                    { key: 'a2_dimension_width_ft', label: 'Width (ft)', type: 'number', required: true, placeholder: 'e.g. 15' },
+                    { key: 'a2_dimension_height_ft', label: 'Height (ft)', type: 'number', required: true, placeholder: 'e.g. 10' },
+                    { key: 'a2_special_constraints', label: 'Special Constraints', type: 'textarea', required: false, placeholder: 'e.g. Max wall height 8ft due to roof overhang' }
+                ]
+            },
+            'A.3': {
+                title: 'Usage & Lifestyle',
+                fields: [
+                    { key: 'a3_usage_duration', label: 'Usage Duration', type: 'select', required: true, options: [
+                        { value: 'year_round', label: 'Year-round (needs insulation/HVAC)' },
+                        { value: 'three_season', label: 'Three-season (Spring–Fall)' },
+                        { value: 'seasonal', label: 'Seasonal / Temporary' }
+                    ]},
+                    { key: 'a3_household_size', label: 'Household Size', type: 'number', required: true, placeholder: 'e.g. 4' },
+                    { key: 'a3_frequent_visitors', label: 'Frequent Visitors / Parties?', type: 'select', required: true, options: [
+                        { value: 'true', label: 'Yes' }, { value: 'false', label: 'No' }
+                    ]},
+                    { key: 'a3_activities', label: 'Planned Activities (multi-select)', type: 'multiselect', required: true, options: [
+                        { value: 'reading', label: 'Reading / Relaxing' }, { value: 'dining', label: 'Dining / Tea' },
+                        { value: 'exercise', label: 'Exercise / Yoga' }, { value: 'gardening', label: 'Gardening' },
+                        { value: 'kids_play', label: "Children's Play" }, { value: 'entertaining', label: 'Family / Social Gatherings' },
+                        { value: 'other', label: 'Other' }
+                    ]},
+                    { key: 'a3_functional_needs', label: 'Functional Needs (multi-select)', type: 'multiselect', required: true, options: [
+                        { value: 'shade_blinds', label: 'Shade / Blinds' }, { value: 'motorized_windows', label: 'Motorized Windows / Doors' },
+                        { value: 'smart_control', label: 'Smart Control (App)' }, { value: 'lighting', label: 'Lighting System' },
+                        { value: 'hvac', label: 'HVAC / Floor Heating' }, { value: 'outdoor_kitchen', label: 'Outdoor Kitchen / Bar' },
+                        { value: 'solar', label: 'Solar Panel / Energy Storage' }
+                    ]}
+                ]
+            },
+            'A.4': {
+                title: 'Budget & Timeline',
+                fields: [
+                    { key: 'a4_budget_range', label: 'Overall Project Budget', type: 'select', required: true, options: [
+                        { value: '10k_20k', label: '$10K – $20K' }, { value: '20k_35k', label: '$20K – $35K' },
+                        { value: '35k_50k', label: '$35K – $50K' }, { value: '50k_75k', label: '$50K – $75K' },
+                        { value: '75k_100k', label: '$75K – $100K' }, { value: '100k_plus', label: '$100K+' }
+                    ]},
+                    { key: 'a4_ideal_start', label: 'Ideal Start Time', type: 'select', required: true, options: [
+                        { value: 'asap', label: 'ASAP (within 1 month)' }, { value: '1_3_months', label: '1 – 3 months' },
+                        { value: '3_6_months', label: '3 – 6 months' }, { value: 'undecided', label: 'Not decided yet' }
+                    ]},
+                    { key: 'a4_important_dates', label: 'Important Dates', type: 'text', required: false, placeholder: 'e.g. Need it ready for Thanksgiving party' }
+                ]
+            },
+            'A.5': {
+                title: 'Community & HOA Compliance',
+                fields: [
+                    { key: 'a5_has_hoa', label: 'Is there an HOA?', type: 'select', required: true, options: [
+                        { value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }, { value: 'unsure', label: 'Not Sure' }
+                    ]},
+                    { key: 'a5_hoa_name', label: 'HOA Name', type: 'text', required: false, placeholder: 'e.g. Sunset Hills HOA' },
+                    { key: 'a5_hoa_design_guidelines', label: 'HOA Design Guidelines Available?', type: 'select', required: true, options: [
+                        { value: 'has_can_provide', label: 'Yes, I can provide the document' },
+                        { value: 'has_need_lookup', label: 'Yes, but I need to look it up' },
+                        { value: 'none', label: 'No guidelines' },
+                        { value: 'unsure', label: 'Not sure' }
+                    ]},
+                    { key: 'a5_setback_awareness', label: 'Aware of local setback/height restrictions?', type: 'select', required: true, options: [
+                        { value: 'aware', label: 'Yes, I understand the restrictions' },
+                        { value: 'need_help', label: 'No, I need assistance' }
+                    ]}
+                ],
+                uploads: [
+                    { key: 'hoa_design_guidelines', label: 'Upload HOA Design Guidelines', accept: '.pdf,.doc,.docx,.jpg,.png', icon: 'fa-file-pdf', hint: 'PDF, DOC, or image files' }
+                ]
+            },
+            'A.6': {
+                title: 'Style & Aesthetic Preferences',
+                fields: [
+                    { key: 'a6_style_preference', label: 'Overall Style Preference', type: 'textarea', required: true, placeholder: 'Describe your preferred style or select from product catalog...' },
+                    { key: 'a6_color_preference', label: 'Color Preference', type: 'text', required: false, placeholder: 'e.g. White frame with dark tint glass' }
+                ],
+                uploads: [
+                    { key: 'intake_ref_image_liked', label: 'Reference Images You Like (3–5)', accept: 'image/*', icon: 'fa-images', hint: 'Upload 3–5 photos of designs you like', multiple: true },
+                    { key: 'intake_ref_image_disliked', label: 'Reference Images You Dislike (1–2)', accept: 'image/*', icon: 'fa-image', hint: 'Upload 1–2 photos of designs you want to avoid', multiple: true }
+                ]
+            },
+            'A.7': {
+                title: 'Decision Process',
+                fields: [
+                    { key: 'a7_decision_maker', label: 'Final Decision Maker', type: 'select', required: true, options: [
+                        { value: 'self', label: 'Myself' }, { value: 'spouse', label: 'Spouse / Partner' },
+                        { value: 'family_joint', label: 'Family Members (Joint)' }, { value: 'other', label: 'Other' }
+                    ]},
+                    { key: 'a7_decision_timeline', label: 'Decision Timeline', type: 'select', required: true, options: [
+                        { value: 'within_1_week', label: 'Within 1 week' }, { value: '2_4_weeks', label: '2 – 4 weeks' },
+                        { value: '1_3_months', label: '1 – 3 months' }, { value: 'undecided', label: 'Not decided' }
+                    ]}
+                ]
+            },
+            'A.8': {
+                title: 'Additional Notes',
+                fields: [
+                    { key: 'a8_additional_notes', label: 'Anything else we should know?', type: 'textarea', required: false, placeholder: 'Any other requirements, concerns, or information you\'d like to share...' }
+                ]
+            }
+        };
+
+        function getIntakeData(projectId) {
+            if (!intakeFormData[projectId]) intakeFormData[projectId] = {};
+            return intakeFormData[projectId];
+        }
+        function getUploadedFiles(projectId) {
+            if (!intakeUploadedFiles[projectId]) intakeUploadedFiles[projectId] = {};
+            return intakeUploadedFiles[projectId];
+        }
+
+        function openIntakeModule(moduleKey, projectId) {
+            const config = INTAKE_MODULE_FIELDS[moduleKey];
+            if (!config) return;
+            const data = getIntakeData(projectId);
+            const files = getUploadedFiles(projectId);
+
+            const fieldsHTML = config.fields.map(f => {
+                const val = data[f.key] || '';
+                const reqBadge = f.required ? '<span class="text-red-400 ml-1">*</span>' : '';
+                let inputHTML = '';
+                if (f.type === 'select') {
+                    inputHTML = `<select id="intake_${f.key}" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-300 focus:border-blue-400 bg-white">
+                        <option value="">-- Select --</option>
+                        ${f.options.map(o => `<option value="${o.value}" ${val === o.value ? 'selected' : ''}>${o.label}</option>`).join('')}
+                    </select>`;
+                } else if (f.type === 'multiselect') {
+                    const selectedVals = Array.isArray(val) ? val : (val ? [val] : []);
+                    inputHTML = `<div class="flex flex-wrap gap-2" id="intake_${f.key}">${f.options.map(o => {
+                        const checked = selectedVals.includes(o.value);
+                        return `<label class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs cursor-pointer transition ${checked ? 'bg-blue-50 border-blue-300 text-blue-700' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'}">
+                            <input type="checkbox" value="${o.value}" ${checked ? 'checked' : ''} class="hidden ms-check" data-field="${f.key}" onchange="toggleMultiSelect(this)">
+                            ${o.label}
+                        </label>`;
+                    }).join('')}</div>`;
+                } else if (f.type === 'textarea') {
+                    inputHTML = `<textarea id="intake_${f.key}" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-300 focus:border-blue-400 resize-none" rows="3" placeholder="${f.placeholder || ''}">${val}</textarea>`;
+                } else {
+                    inputHTML = `<input type="${f.type}" id="intake_${f.key}" value="${val}" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-300 focus:border-blue-400" placeholder="${f.placeholder || ''}">`;
+                }
+                return `<div class="space-y-1.5">
+                    <label class="text-xs font-medium text-gray-700">${f.label}${reqBadge}</label>
+                    ${inputHTML}
+                </div>`;
+            }).join('');
+
+            // File upload zones
+            let uploadsHTML = '';
+            if (config.uploads) {
+                uploadsHTML = `<div class="border-t border-gray-100 pt-4 mt-4">
+                    <div class="flex items-center gap-2 mb-3">
+                        <i class="fas fa-cloud-upload-alt text-gray-500 text-sm"></i>
+                        <span class="text-sm font-semibold text-gray-700">Document Uploads</span>
+                    </div>
+                    ${config.uploads.map(u => {
+                        const existingFiles = files[u.key] || [];
+                        const fileListHTML = existingFiles.length > 0 ? `
+                            <div class="mt-2 space-y-1">
+                                ${existingFiles.map((ef, fi) => `
+                                    <div class="flex items-center gap-2 py-1 px-2 bg-green-50 rounded text-xs text-green-700">
+                                        <i class="fas fa-file-check"></i>
+                                        <span class="flex-1 truncate">${ef.name}</span>
+                                        <button onclick="removeUploadedFile('${projectId}', '${u.key}', ${fi})" class="text-red-400 hover:text-red-600"><i class="fas fa-times"></i></button>
+                                    </div>
+                                `).join('')}
+                            </div>` : '';
+                        return `<div class="mb-3">
+                            <label class="text-xs font-medium text-gray-600 mb-1.5 block">${u.label}</label>
+                            <div class="border-2 border-dashed border-gray-200 rounded-lg p-4 text-center hover:border-blue-300 hover:bg-blue-50/30 transition cursor-pointer" onclick="document.getElementById('file_${u.key}').click()">
+                                <i class="fas ${u.icon} text-gray-300 text-2xl mb-2"></i>
+                                <p class="text-xs text-gray-400">${u.hint}</p>
+                                <p class="text-[10px] text-gray-300 mt-1">Click to browse or drag & drop</p>
+                                <input type="file" id="file_${u.key}" accept="${u.accept}" ${u.multiple ? 'multiple' : ''} class="hidden" onchange="handleFileUpload('${projectId}', '${u.key}', this)">
+                            </div>
+                            ${fileListHTML}
+                        </div>`;
+                    }).join('')}
+                </div>`;
+            }
+
+            // Build modal
+            const modal = document.createElement('div');
+            modal.id = 'intakeFormModal';
+            modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm';
+            modal.onclick = (e) => { if (e.target === modal) closeIntakeModal(); };
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[85vh] flex flex-col mx-4 animate-in" style="animation: modalIn 0.2s ease-out">
+                    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                        <div>
+                            <div class="text-sm font-bold text-gray-900">${moduleKey} — ${config.title}</div>
+                            <div class="text-xs text-gray-400 mt-0.5">Client Design Intake Questionnaire</div>
+                        </div>
+                        <button onclick="closeIntakeModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition">
+                            <i class="fas fa-times text-gray-500 text-sm"></i>
+                        </button>
+                    </div>
+                    <div class="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+                        ${fieldsHTML}
+                        ${uploadsHTML}
+                    </div>
+                    <div class="flex items-center justify-between px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-2xl">
+                        <button onclick="closeIntakeModal()" class="px-4 py-2 text-xs text-gray-500 hover:text-gray-700 transition">Cancel</button>
+                        <button onclick="saveIntakeModule('${moduleKey}', '${projectId}')" class="px-5 py-2 bg-gray-900 text-white text-xs font-medium rounded-lg hover:bg-gray-800 transition shadow-sm">
+                            <i class="fas fa-save mr-1.5"></i>Save Module
+                        </button>
+                    </div>
+                </div>`;
+            document.body.appendChild(modal);
+        }
+
+        function closeIntakeModal() {
+            const modal = document.getElementById('intakeFormModal');
+            if (modal) modal.remove();
+        }
+
+        function toggleMultiSelect(checkbox) {
+            const label = checkbox.closest('label');
+            if (checkbox.checked) {
+                label.classList.add('bg-blue-50', 'border-blue-300', 'text-blue-700');
+                label.classList.remove('bg-white', 'border-gray-200', 'text-gray-600');
+            } else {
+                label.classList.remove('bg-blue-50', 'border-blue-300', 'text-blue-700');
+                label.classList.add('bg-white', 'border-gray-200', 'text-gray-600');
+            }
+        }
+
+        function saveIntakeModule(moduleKey, projectId) {
+            const config = INTAKE_MODULE_FIELDS[moduleKey];
+            if (!config) return;
+            const data = getIntakeData(projectId);
+
+            config.fields.forEach(f => {
+                if (f.type === 'multiselect') {
+                    const checkboxes = document.querySelectorAll(`#intake_${f.key} input[type=checkbox]:checked`);
+                    data[f.key] = Array.from(checkboxes).map(cb => cb.value);
+                } else {
+                    const el = document.getElementById(`intake_${f.key}`);
+                    if (el) data[f.key] = el.value;
+                }
+            });
+
+            // Mark module as completed (simple check: all required fields filled)
+            const allRequiredFilled = config.fields.filter(f => f.required).every(f => {
+                const val = data[f.key];
+                return val && (Array.isArray(val) ? val.length > 0 : val.trim() !== '');
+            });
+
+            if (!data._modules) data._modules = {};
+            data._modules[moduleKey] = allRequiredFilled ? 'completed' : 'partial';
+
+            closeIntakeModal();
+
+            // Re-render step detail if open
+            if (expandedStep && currentDetailProject) {
+                toggleStepDetail(expandedStep, currentDetailProject);
+                toggleStepDetail(expandedStep, currentDetailProject);
+            }
+        }
+
+        function handleFileUpload(projectId, uploadKey, input) {
+            const files = getUploadedFiles(projectId);
+            if (!files[uploadKey]) files[uploadKey] = [];
+            for (const f of input.files) {
+                files[uploadKey].push({ name: f.name, size: f.size, type: f.type, uploadedAt: new Date().toISOString() });
+            }
+            // Refresh modal upload section
+            const existingModal = document.getElementById('intakeFormModal');
+            if (existingModal) {
+                // Find module key from upload key mapping
+                for (const [mk, mc] of Object.entries(INTAKE_MODULE_FIELDS)) {
+                    if (mc.uploads && mc.uploads.some(u => u.key === uploadKey)) {
+                        closeIntakeModal();
+                        openIntakeModule(mk, projectId);
+                        break;
+                    }
+                }
+            }
+        }
+
+        function removeUploadedFile(projectId, uploadKey, fileIndex) {
+            const files = getUploadedFiles(projectId);
+            if (files[uploadKey]) {
+                files[uploadKey].splice(fileIndex, 1);
+            }
+            // Find and refresh modal
+            for (const [mk, mc] of Object.entries(INTAKE_MODULE_FIELDS)) {
+                if (mc.uploads && mc.uploads.some(u => u.key === uploadKey)) {
+                    closeIntakeModal();
+                    openIntakeModule(mk, projectId);
+                    break;
+                }
+            }
+        }
+
+        function toggleStepDetail(stepNum, project) {
+            const container = document.getElementById('projStepDetail');
+            if (!container) return;
+
+            if (expandedStep === stepNum) {
+                // Collapse
+                container.classList.add('hidden');
+                container.innerHTML = '';
+                expandedStep = null;
+                return;
+            }
+
+            const config = STEP_DETAIL_CONFIG[stepNum];
+            if (!config) {
+                // Steps 2-6 not yet configured
+                container.classList.remove('hidden');
+                container.innerHTML = `
+                    <div class="p-6 text-center text-gray-400">
+                        <i class="fas fa-tools text-2xl mb-2"></i>
+                        <p class="text-sm">Step ${stepNum} details coming soon...</p>
+                    </div>`;
+                expandedStep = stepNum;
+                return;
+            }
+
+            const status = getProjectStepStatus(project, stepNum);
+            const stepColors = ['blue', 'indigo', 'purple', 'orange', 'yellow', 'green'];
+            const color = stepColors[stepNum - 1];
+
+            container.classList.remove('hidden');
+            container.innerHTML = renderStepDetailHTML(config, status, stepNum, color, project);
+            expandedStep = stepNum;
+
+            // Smooth scroll to detail
+            container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function renderStepDetailHTML(config, status, stepNum, color, project) {
+            const isCompleted = stepNum < project.workflowStep;
+            const isCurrent = stepNum === project.workflowStep;
+
+            // Core Actions
+            const actionsHTML = config.coreActions.map((a, i) => {
+                const done = i < status.actionsCompleted;
+                return `
+                    <div class="flex items-start gap-3 py-2.5 ${i < config.coreActions.length - 1 ? 'border-b border-gray-50' : ''}">
+                        <div class="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${done ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400'}">
+                            <i class="fas ${done ? 'fa-check' : a.icon} text-[10px]"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="text-sm font-medium ${done ? 'text-gray-900' : 'text-gray-600'}">${a.label}</div>
+                            <div class="text-xs text-gray-400 mt-0.5">${a.desc}</div>
+                        </div>
+                        <span class="text-[10px] px-1.5 py-0.5 rounded ${done ? 'bg-green-50 text-green-600' : 'bg-gray-50 text-gray-400'}">${done ? 'Completed' : 'Pending'}</span>
+                    </div>`;
+            }).join('');
+
+            // Key Deliverables
+            const deliverablesHTML = config.keyDeliverables.map((d, i) => {
+                const done = i < status.deliverablesCompleted;
+                return `
+                    <div class="flex items-center gap-3 py-2.5 ${i < config.keyDeliverables.length - 1 ? 'border-b border-gray-50' : ''}">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${done ? 'bg-green-50 text-green-600' : 'bg-gray-50 text-gray-400'}">
+                            <i class="fas ${d.icon} text-sm"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="text-sm font-medium ${done ? 'text-gray-900' : 'text-gray-600'}">${d.label}</div>
+                            <div class="text-xs text-gray-400">${d.desc}</div>
+                        </div>
+                        ${d.required ? '<span class="text-[10px] text-red-400 bg-red-50 px-1.5 py-0.5 rounded">Required</span>' : '<span class="text-[10px] text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded">Optional</span>'}
+                        <div class="w-6 h-6 rounded-full flex items-center justify-center ${done ? 'bg-green-500 text-white' : 'border-2 border-gray-200'}">
+                            ${done ? '<i class="fas fa-check text-[10px]"></i>' : ''}
+                        </div>
+                    </div>`;
+            }).join('');
+
+            // Questionnaire Progress (Step 1 specific)
+            const qPct = Math.round((status.questionnaireCompleted / status.questionnaireTotal) * 100);
+            const questionnaireHTML = config.questionnaire ? `
+                <div class="bg-white rounded-lg border border-gray-100 p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-clipboard-list text-${color}-500 text-sm"></i>
+                            <span class="text-sm font-semibold text-gray-700">Client Design Intake Form</span>
+                        </div>
+                        <span class="text-xs text-gray-500">${status.questionnaireCompleted}/${status.questionnaireTotal} modules</span>
+                    </div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="flex-1 bg-gray-100 rounded-full h-2">
+                            <div class="bg-${color}-500 rounded-full h-2 transition-all" style="width:${qPct}%"></div>
+                        </div>
+                        <span class="text-xs font-medium text-gray-500">${qPct}%</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                        ${config.questionnaire.map((q, i) => {
+                            const qDone = i < status.questionnaireCompleted;
+                            const moduleData = getIntakeData(project.id);
+                            const modStatus = moduleData._modules && moduleData._modules[q.module];
+                            const hasData = modStatus === 'completed' || modStatus === 'partial';
+                            const displayDone = qDone || modStatus === 'completed';
+                            const displayPartial = !displayDone && modStatus === 'partial';
+                            return `<div class="flex items-center gap-2 py-1.5 px-2 rounded cursor-pointer transition hover:bg-blue-50 ${displayDone ? 'bg-green-50/50' : displayPartial ? 'bg-amber-50/50' : ''}" onclick="openIntakeModule('${q.module}', '${project.id}')">
+                                <i class="fas ${displayDone ? 'fa-check-circle text-green-500' : displayPartial ? 'fa-circle-half-stroke text-amber-400' : 'fa-circle text-gray-300'} text-xs"></i>
+                                <span class="text-xs ${displayDone ? 'text-gray-700' : 'text-gray-400'} flex-1"><span class="font-medium">${q.module}</span> ${q.name}</span>
+                                ${q.required ? '' : '<span class="text-[9px] text-gray-300">Optional</span>'}
+                                <i class="fas fa-chevron-right text-gray-300 text-[9px]"></i>
+                            </div>`;
+                        }).join('')}
+                    </div>
+                </div>` : '';
+
+            // Payment Status
+            const paymentColors = { paid: 'green', pending: 'amber', not_started: 'gray' };
+            const paymentLabels = { paid: 'Paid', pending: 'Pending', not_started: 'Not Started' };
+            const pc = paymentColors[status.paymentStatus];
+            const pl = paymentLabels[status.paymentStatus];
+
+            // Agent Support
+            const agentHTML = config.agentSupport ? config.agentSupport.map(a => `
+                <div class="flex items-center gap-2 py-1.5">
+                    <div class="w-6 h-6 bg-gray-900 text-white rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-robot text-[9px]"></i>
+                    </div>
+                    <span class="text-xs font-medium text-gray-700">${a.agent}</span>
+                    <span class="text-xs text-gray-400">— ${a.ability}</span>
+                </div>
+            `).join('') : '';
+
+            return `
+                <div class="p-5 bg-gray-50/30">
+                    <!-- Step Header -->
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 bg-${color}-100 rounded-lg flex items-center justify-center">
+                                <span class="text-sm font-bold text-${color}-700">${stepNum}</span>
+                            </div>
+                            <div>
+                                <div class="text-sm font-bold text-gray-900">Step ${stepNum}: ${config.name}</div>
+                                <div class="text-xs text-gray-400 mt-0.5">${config.goal}</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-medium px-2.5 py-1 bg-${pc}-50 text-${pc}-700 rounded-full"><i class="fas fa-dollar-sign mr-1"></i>${config.payment} · ${pl}</span>
+                            <button onclick="toggleStepDetail(${stepNum}, currentDetailProject)" class="w-7 h-7 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50">
+                                <i class="fas fa-times text-gray-400 text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <!-- Left: Core Actions -->
+                        <div class="bg-white rounded-lg border border-gray-100 p-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-tasks text-${color}-500 text-sm"></i>
+                                    <span class="text-sm font-semibold text-gray-700">Core Actions</span>
+                                </div>
+                                <span class="text-xs text-gray-500">${status.actionsCompleted}/${status.actionTotal}</span>
+                            </div>
+                            ${actionsHTML}
+                        </div>
+
+                        <!-- Right: Key Deliverables -->
+                        <div class="bg-white rounded-lg border border-gray-100 p-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-file-alt text-${color}-500 text-sm"></i>
+                                    <span class="text-sm font-semibold text-gray-700">Key Deliverables</span>
+                                </div>
+                                <span class="text-xs text-gray-500">${status.deliverablesCompleted}/${status.deliverableTotal}</span>
+                            </div>
+                            ${deliverablesHTML}
+                        </div>
+                    </div>
+
+                    ${questionnaireHTML ? `<div class="mt-4">${questionnaireHTML}</div>` : ''}
+
+                    ${agentHTML ? `
+                    <div class="mt-4 bg-white rounded-lg border border-gray-100 p-4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fas fa-robot text-gray-500 text-sm"></i>
+                            <span class="text-sm font-semibold text-gray-700">AI Agent Collaboration</span>
+                        </div>
+                        ${agentHTML}
+                    </div>` : ''}
+                </div>`;
+        }
+
         // ===== Projects Page: Master-Detail =====
         const allProjectsData = [
             { id: 'PRJ-001', name: 'Johnson Residence Sunroom', customer: 'Mr. Johnson', customerEmail: 'johnson@email.com', customerPhone: '(310) 555-0101', customerAddress: '123 Sunshine Ave, Los Angeles, CA', type: 'Sunroom', workflowStep: 3, stage: 'measurement', riskLevel: 'high', budget: 35000, paid: 18500, timeline: '6 weeks', startDate: '2026-01-15', risks: [{title:'Permit approval delayed by city', severity:'high', status:'open'},{title:'HOA design review pending', severity:'medium', status:'monitoring'}], issues: [{id:'ISS-001', title:'Permit approval delayed by city', priority:'high', status:'open', assignedTo:'John Smith', dueDate:'2026-03-15'},{title:'HOA documentation incomplete', priority:'medium', status:'in_progress', assignedTo:'Emily Davis', dueDate:'2026-03-20'}], order: {id:'ORD-2024-0156', product:'Classic Sunroom', total:'$18,500', status:'In Production', date:'Mar 10, 2026'} },
@@ -6385,6 +6988,69 @@
             renderProjectList();
         }
 
+        let projectListCollapsed = false;
+
+        function toggleProjectListPanel() {
+            const panel = document.getElementById('projectListPanel');
+            const headerFull = document.getElementById('projListHeaderFull');
+            const headerCollapsed = document.getElementById('projListHeaderCollapsed');
+            const listFull = document.getElementById('projectListContainer');
+            const listCollapsed = document.getElementById('projectListCollapsed');
+            const toggleBtn = document.getElementById('projListToggleBtn');
+
+            projectListCollapsed = !projectListCollapsed;
+
+            if (projectListCollapsed) {
+                panel.classList.remove('w-80');
+                panel.classList.add('w-16');
+                headerFull.classList.add('hidden');
+                headerCollapsed.classList.remove('hidden');
+                headerCollapsed.classList.add('flex');
+                listFull.classList.add('hidden');
+                listCollapsed.classList.remove('hidden');
+                if (toggleBtn) toggleBtn.title = 'Expand project list';
+                renderCollapsedProjectList();
+            } else {
+                panel.classList.remove('w-16');
+                panel.classList.add('w-80');
+                headerFull.classList.remove('hidden');
+                headerCollapsed.classList.add('hidden');
+                headerCollapsed.classList.remove('flex');
+                listFull.classList.remove('hidden');
+                listCollapsed.classList.add('hidden');
+                if (toggleBtn) toggleBtn.title = 'Collapse project list';
+            }
+        }
+
+        function collapseProjectListPanel() {
+            if (!projectListCollapsed) {
+                toggleProjectListPanel();
+            }
+        }
+
+        function renderCollapsedProjectList() {
+            const container = document.getElementById('projectListCollapsed');
+            if (!container) return;
+            const riskColors = { high: 'red', medium: 'amber', low: 'green' };
+            const selectedId = document.querySelector('.project-list-item.bg-blue-50')?.dataset?.projectId;
+
+            container.innerHTML = allProjectsData.map(p => {
+                const initials = p.name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+                const isSelected = p.id === selectedId;
+                const ringClass = isSelected ? `ring-2 ring-blue-500 bg-blue-100 text-blue-700` : `bg-gray-100 text-gray-600 hover:bg-gray-200`;
+                return `
+                    <div class="flex flex-col items-center py-2 cursor-pointer transition-all" onclick="selectProject('${p.id}')" title="${p.name}\n${p.customer}">
+                        <div class="relative">
+                            <div class="w-9 h-9 rounded-full ${ringClass} flex items-center justify-center text-xs font-bold transition-all">
+                                ${initials}
+                            </div>
+                            <div class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-${riskColors[p.riskLevel]}-500 border-2 border-white"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
         function selectProject(projectId) {
             const project = allProjectsData.find(p => p.id === projectId);
             if (!project) return;
@@ -6395,6 +7061,11 @@
                 el.classList.toggle('border-l-4', el.dataset.projectId === projectId);
                 el.classList.toggle('border-l-blue-500', el.dataset.projectId === projectId);
             });
+
+            // Collapse project list panel to give space for detail view
+            collapseProjectListPanel();
+            // Update collapsed list selection
+            if (projectListCollapsed) renderCollapsedProjectList();
 
             // Show detail panel
             document.getElementById('projectDetailEmpty').classList.add('hidden');
@@ -6430,8 +7101,15 @@
         function renderProjectWorkflow(project) {
             const container = document.getElementById('projWorkflowSteps');
             const stepNames = ['Intent', 'Design', 'Measurement', 'Quotation', 'Production', 'Installation'];
+            const stepNamesEn = ['Intent', 'Design', 'Measurement', 'Quotation', 'Production', 'Installation'];
             const stepIcons = ['fa-handshake', 'fa-palette', 'fa-ruler-combined', 'fa-file-contract', 'fa-industry', 'fa-tools'];
             const stepColors = ['blue', 'indigo', 'purple', 'orange', 'yellow', 'green'];
+
+            // Reset expanded step
+            expandedStep = null;
+            currentDetailProject = project;
+            const detailContainer = document.getElementById('projStepDetail');
+            if (detailContainer) { detailContainer.classList.add('hidden'); detailContainer.innerHTML = ''; }
 
             container.innerHTML = stepNames.map((name, i) => {
                 const step = i + 1;
@@ -6439,16 +7117,17 @@
                 const isCurrent = step === project.workflowStep;
                 const isFuture = step > project.workflowStep;
                 const baseColor = stepColors[i];
+                const hasDetail = !!STEP_DETAIL_CONFIG[step];
 
-                let classes = 'flex-1 flex flex-col items-center p-3 rounded-xl transition ';
+                let classes = 'flex-1 flex flex-col items-center p-3 rounded-xl transition cursor-pointer hover:shadow-md ';
                 if (isCurrent) classes += `bg-${baseColor}-50 border-2 border-${baseColor}-300`;
-                else if (isCompleted) classes += 'bg-green-50/50';
-                else classes += 'opacity-40';
+                else if (isCompleted) classes += 'bg-green-50/50 hover:bg-green-50';
+                else classes += 'opacity-40 hover:opacity-60';
 
                 const icon = isCompleted ? 'fa-check-circle text-green-500' : `${stepIcons[i]} text-${baseColor}-500`;
 
                 return `
-                    <div class="${classes}">
+                    <div class="${classes}" onclick="toggleStepDetail(${step}, currentDetailProject)" title="Click to view Step ${step} details">
                         <i class="fas ${icon} text-lg mb-1.5"></i>
                         <span class="text-xs font-semibold text-gray-700">${name}</span>
                         <span class="text-[10px] text-gray-400 mt-0.5">Step ${step}</span>
