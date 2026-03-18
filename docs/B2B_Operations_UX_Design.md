@@ -1,674 +1,672 @@
-# Nestopia B2B Operations Platform - UX Design Document
-**Version**: 1.0.0
-**Last Updated**: 2026-03-18
-**Status**: Living Document - Continuously Evolving
-**Scope**: Company Operations Dashboard (company-operations.html)
+# Nestopia B2B 运营平台 - UX 设计文档
+**版本**: 1.0.0
+**最后更新**: 2026-03-18
+**状态**: 持续演进的活文档
+**范围**: 公司运营管理后台 (company-operations.html)
 
 ---
 
-## 1. Product Overview
+## 1. 产品概述
 
-### 1.1 Platform Purpose
-The Nestopia B2B Operations Platform serves as the internal command center for managing the full lifecycle of outdoor living projects — from initial customer intent through installation and post-sale support. It integrates project management, AI-powered design tools, compliance workflows, and business intelligence into a unified dashboard.
+### 1.1 平台定位
+Nestopia B2B 运营平台是管理户外生活空间项目全生命周期的内部指挥中心——从客户初始意向到安装验收及售后支持。平台整合了项目管理、AI 驱动设计工具、合规工作流和商业智能分析于统一仪表板。
 
-### 1.2 Target Users
+### 1.2 目标用户
 
-| Role | Description | Primary Tasks | Frequency |
-|------|-------------|---------------|-----------|
-| **Operations Admin** | Day-to-day business manager | Monitor KPIs, manage orders, oversee projects | Daily |
-| **Project Manager** | Oversees individual project delivery | Track workflow steps, manage risks/issues, coordinate teams | Daily |
-| **Sales Representative** | Handles customer inquiries & conversions | View customers, create quotes, track orders | Daily |
-| **Designer** | Uses AI tools for concept & detail design | Generate designs, review measurements, prepare renderings | Per project |
-| **Compliance Officer** | Ensures regulatory requirements are met | Review permits, HOA approvals, inspection reports | Per project |
-| **Company Owner / Exec** | Strategic oversight | Revenue dashboards, team performance, portfolio health | Weekly |
+| 角色 | 描述 | 主要任务 | 使用频率 |
+|------|------|---------|---------|
+| **运营管理员** | 日常业务管理者 | 监控 KPI、管理订单、统筹项目 | 每日 |
+| **项目经理** | 负责单个项目交付 | 跟踪工作流步骤、管理风险/问题、协调团队 | 每日 |
+| **销售代表** | 处理客户咨询与转化 | 查看客户、创建报价、跟踪订单 | 每日 |
+| **设计师** | 使用 AI 工具进行概念和详细设计 | 生成设计、审核测量数据、准备效果图 | 按项目 |
+| **合规专员** | 确保满足法规要求 | 审核许可证、HOA 审批、检验报告 | 按项目 |
+| **公司负责人 / 高管** | 战略决策层 | 收入仪表板、团队绩效、项目组合健康度 | 每周 |
 
-### 1.3 Design Principles
+### 1.3 设计原则
 ```
-Clarity > Density > Beauty > Animation
+清晰度 > 信息密度 > 美观度 > 动效
 ```
-- **Clarity**: Every screen answers "What should I do next?"
-- **Density**: Show enough data without overwhelming; progressive disclosure
-- **Beauty**: Professional, premium aesthetic aligned with Nestopia brand
-- **Animation**: Purposeful transitions, never decorative
+- **清晰度**: 每个界面都能回答"我下一步该做什么？"
+- **信息密度**: 展示足够数据但不过载；渐进式信息呈现
+- **美观度**: 专业、高端的视觉风格，与 Nestopia 品牌一致
+- **动效**: 有目的的过渡动画，不做纯装饰性动效
 
-### 1.4 Design System Reference
-- Color palette: `#222222` (primary dark), `#f5f5f5` (background), semantic colors for status
-- Typography: Roboto 400/500/600/700
-- Spacing: 4px base unit (Tailwind scale)
-- Border radius: 8px (cards), 12px (modals), full (badges)
-- See `UI_DESIGN_SYSTEM.md` for full token reference
+### 1.4 设计系统参考
+- 色彩体系: `#222222` (主色深灰黑), `#f5f5f5` (背景色), 语义化状态色
+- 字体: Roboto 400/500/600/700
+- 间距: 4px 基础单位 (Tailwind 比例)
+- 圆角: 8px (卡片), 12px (弹窗), full (徽标)
+- 详见 `UI_DESIGN_SYSTEM.md` 完整令牌参考
 
 ---
 
-## 2. Information Architecture
+## 2. 信息架构
 
-### 2.1 Site Map
+### 2.1 站点地图
 
 ```
-Company Operations Dashboard
-├── MAIN MENU
-│   ├── Company Overview (default landing)
-│   │   ├── Orders Summary Card → Expandable Orders Table
-│   │   ├── Customers Summary Card → Expandable Customers Table
-│   │   ├── Products Summary Card → Expandable Products Grid
-│   │   └── Revenue Summary Card (static with trend chart)
+公司运营管理后台
+├── 主菜单 (MAIN MENU)
+│   ├── 公司概览 (默认首页)
+│   │   ├── 订单概要卡片 → 可展开订单表格
+│   │   ├── 客户概要卡片 → 可展开客户表格
+│   │   ├── 产品概要卡片 → 可展开产品卡片网格
+│   │   └── 营收概要卡片 (静态趋势图)
 │   │
-│   └── Projects (master-detail layout)
-│       ├── [Left Panel] Project List (searchable, filterable)
-│       └── [Right Panel] Project Detail
-│           ├── Service Workflow (6-step tracker)
-│           ├── Risk List
-│           ├── Issue List
-│           ├── Customer Info
-│           ├── Order Info
-│           └── Revenue / Payment Progress
+│   └── 项目管理 (主从详情布局)
+│       ├── [左侧面板] 项目列表 (可搜索、可筛选)
+│       └── [右侧面板] 项目详情
+│           ├── 服务工作流 (6步追踪器)
+│           ├── 风险清单
+│           ├── 问题清单
+│           ├── 客户信息
+│           ├── 订单信息
+│           └── 营收 / 付款进度
 │
-├── AGENTS
-│   ├── AI Designer
-│   │   ├── Project Selection
-│   │   ├── Photo Upload (site + reference)
-│   │   ├── AI Design Generation
-│   │   ├── Design Preview (before/after)
-│   │   └── Variant Selection
+├── 智能体 (AGENTS)
+│   ├── AI 设计师
+│   │   ├── 项目选择
+│   │   ├── 照片上传 (现场 + 参考)
+│   │   ├── AI 设计生成
+│   │   ├── 设计预览 (前后对比)
+│   │   └── 方案选择
 │   │
-│   ├── Pricing and Cost Controller
-│   │   ├── Product Configuration
-│   │   ├── Cost Breakdown
-│   │   ├── Margin Analysis
-│   │   └── Quote Generation
+│   ├── 报价与成本控制器
+│   │   ├── 产品配置
+│   │   ├── 成本分解
+│   │   ├── 利润分析
+│   │   └── 报价生成
 │   │
-│   ├── Compliance Manager
-│   │   ├── Project Selection
-│   │   ├── Jurisdiction & Code Lookup
-│   │   ├── Compliance Checklist
-│   │   └── Document Package Generation
+│   ├── 合规管理器
+│   │   ├── 项目选择
+│   │   ├── 管辖区 & 法规查询
+│   │   ├── 合规检查清单
+│   │   └── 合规文件包生成
 │   │
-│   ├── Customer Service Executive
-│   │   ├── Ticket Queue
-│   │   ├── Customer Communication
-│   │   ├── FAQ / Knowledge Retrieval
-│   │   └── Escalation Workflow
+│   ├── 客户服务执行官
+│   │   ├── 工单队列
+│   │   ├── 客户沟通
+│   │   ├── FAQ / 知识检索
+│   │   └── 升级处理流程
 │   │
-│   └── Knowledge Base Builder
-│       ├── Document Upload & Indexing
-│       ├── Tag Management
-│       ├── Search & Retrieval
-│       └── Training Data Curation
+│   └── 知识库构建器
+│       ├── 文档上传 & 索引
+│       ├── 标签管理
+│       ├── 搜索 & 检索
+│       └── 训练数据管理
 │
-└── SETTINGS
-    ├── Team Management
-    │   ├── Member List (table view)
-    │   ├── Role Assignment
-    │   └── Performance Overview
+└── 设置 (SETTINGS)
+    ├── 团队管理
+    │   ├── 成员列表 (表格视图)
+    │   ├── 角色分配
+    │   └── 绩效概览
     │
-    └── System Settings
-        ├── Company Profile
-        ├── Integrations
-        ├── Notifications
-        └── Billing
+    └── 系统设置
+        ├── 公司档案
+        ├── 集成配置
+        ├── 通知设置
+        └── 账单管理
 ```
 
-### 2.2 Navigation Model
+### 2.2 导航模型
 
-| Level | Component | Behavior |
-|-------|-----------|----------|
-| **L1 - Sidebar** | Fixed left sidebar (260px) | Always visible; collapsible on mobile |
-| **L2 - Page Content** | Right main area | Switches via sidebar nav click |
-| **L3 - In-Page Sections** | Cards, panels, tabs | Click-to-expand (Overview), master-detail (Projects), tabs (Settings) |
+| 层级 | 组件 | 行为 |
+|------|------|------|
+| **L1 - 侧边栏** | 固定左侧边栏 (260px) | 始终可见；移动端可折叠 |
+| **L2 - 页面内容** | 右侧主区域 | 通过侧边栏导航点击切换 |
+| **L3 - 页内区块** | 卡片、面板、标签页 | 点击展开 (概览)、主从详情 (项目)、标签切换 (设置) |
 
 ---
 
-## 3. Page-by-Page UX Specifications
+## 3. 逐页 UX 规范
 
-### 3.1 Company Overview
+### 3.1 公司概览
 
-#### Layout
+#### 布局
 ```
 ┌──────────────────────────────────────────────────────┐
-│  [Orders Card]  [Customers Card]  [Products Card]  [Revenue Card] │
-│   156 total       482 total        24 total        $128K/mo       │
-│   clickable ▼     clickable ▼      clickable ▼     static chart   │
+│  [订单卡片]  [客户卡片]  [产品卡片]  [营收卡片]              │
+│   156 总计     482 总计    24 总计    $128K/月              │
+│   可点击 ▼    可点击 ▼    可点击 ▼   静态图表              │
 ├──────────────────────────────────────────────────────┤
-│  ┌─────────── Expandable Detail Section ──────────┐  │
-│  │  (Shows when a card above is clicked)           │  │
-│  │  Orders → table with search/filter              │  │
-│  │  Customers → table with search/filter/badges    │  │
-│  │  Products → card grid with category filters     │  │
-│  └─────────────────────────────────────────────────┘  │
+│  ┌────────── 可展开详情区域 ─────────────────────┐   │
+│  │  (点击上方卡片后展开)                          │   │
+│  │  订单 → 带搜索/筛选的表格                      │   │
+│  │  客户 → 带搜索/筛选/徽标的表格                  │   │
+│  │  产品 → 带分类筛选的卡片网格                    │   │
+│  └──────────────────────────────────────────────┘   │
 └──────────────────────────────────────────────────────┘
 ```
 
-#### Interaction Design
+#### 交互设计
 
-| Action | Behavior | Animation |
-|--------|----------|-----------|
-| Click summary card | Expand detail section below; highlight card border | Smooth slide-down (200ms), border color change |
-| Click same card again | Collapse detail section | Slide-up, border revert |
-| Click different card | Switch detail section | Cross-fade |
-| Revenue card | Non-clickable; shows mini bar chart trend | Static |
+| 操作 | 行为 | 动效 |
+|------|------|------|
+| 点击概要卡片 | 展开下方详情区域；高亮卡片边框 | 平滑下滑 (200ms)，边框颜色变化 |
+| 再次点击同一卡片 | 收起详情区域 | 上滑收起，边框恢复 |
+| 点击不同卡片 | 切换详情区域 | 交叉淡入淡出 |
+| 营收卡片 | 不可点击；展示迷你柱状趋势图 | 静态 |
 
-#### Card States
-- **Default**: `border-gray-200`, subtle hover shadow
-- **Active/Expanded**: `border-{color}-400`, elevated shadow, arrow rotated 180deg
-- **Hover**: `border-{color}-400` hint, slight shadow lift
+#### 卡片状态
+- **默认态**: `border-gray-200`，轻微悬停阴影
+- **激活/展开态**: `border-{color}-400`，增强阴影，箭头旋转 180 度
+- **悬停态**: `border-{color}-400` 提示，轻微阴影提升
 
-#### Data Density Guidelines
-- Summary cards: 1 primary metric + 2 secondary stats
-- Orders table: 6 columns max (ID, Customer, Product, Total, Status, Date)
-- Customers table: 6 columns (Name, Email, Location, Projects, Spent, Status)
-- Products grid: Card layout with icon, name, category, price, status badge
+#### 数据密度指南
+- 概要卡片: 1 个主要指标 + 2 个次要统计
+- 订单表格: 最多 6 列 (编号、客户、产品、金额、状态、日期)
+- 客户表格: 6 列 (姓名、邮箱、地址、项目数、消费总额、状态)
+- 产品网格: 卡片布局含图标、名称、分类、价格、状态徽标
 
-#### Future Enhancements (Planned)
-- [ ] Revenue card click → detailed revenue breakdown (charts, MoM comparison)
-- [ ] Quick-action buttons on tables (View, Edit, Export)
-- [ ] Real-time data via Supabase subscription
-- [ ] Date range filter for all sections
-- [ ] Drag-to-reorder cards based on user preference
+#### 后续增强计划
+- [ ] 营收卡片点击 → 详细营收分析 (图表、同比环比对比)
+- [ ] 表格快捷操作按钮 (查看、编辑、导出)
+- [ ] 通过 Supabase 订阅实现实时数据
+- [ ] 所有区域增加日期范围筛选
+- [ ] 拖拽排列卡片 (用户自定义偏好)
 
 ---
 
-### 3.2 Projects (Master-Detail)
+### 3.2 项目管理 (主从详情)
 
-#### Layout
+#### 布局
 ```
 ┌────────────────┬──────────────────────────────────────┐
-│  Left Panel    │  Right Panel - Project Detail          │
-│  (320px fixed) │  (flex-1, scrollable)                  │
+│  左侧面板       │  右侧面板 - 项目详情                     │
+│  (320px 固定)   │  (flex-1, 可滚动)                       │
 │                │                                        │
-│  [Search...]   │  Project Name          [Risk Badge]    │
-│  [All][Active] │  Customer · Type · Budget              │
-│  [Done]        │                                        │
-│                │  ┌─ Service Workflow ────────────────┐  │
-│  ● PRJ-001 ◄  │  │  ✓ Intent → ✓ Design → ■ Meas…  │  │
+│  [搜索...]     │  项目名称              [风险徽标]         │
+│  [全部][进行中] │  客户 · 类型 · 预算                      │
+│  [已完成]      │                                        │
+│                │  ┌─ 服务工作流 ────────────────────┐    │
+│  ● PRJ-001 ◄  │  │  ✓ 意向 → ✓ 设计 → ■ 测量…     │    │
 │    Johnson     │  └──────────────────────────────────┘  │
-│    Step 3/6    │                                        │
-│                │  ┌─ Risk List ───────────────────────┐  │
-│  ○ PRJ-002     │  │  ● Permit delayed     [high]     │  │
-│    Martinez    │  │  ● HOA review pending  [medium]   │  │
-│    Step 2/6    │  └──────────────────────────────────┘  │
+│    第3步/共6步  │                                        │
+│                │  ┌─ 风险清单 ──────────────────────┐    │
+│  ○ PRJ-002     │  │  ● 许可证审批延迟     [高]       │    │
+│    Martinez    │  │  ● HOA 审查待处理     [中]       │    │
+│    第2步/共6步  │  └──────────────────────────────────┘  │
 │                │                                        │
-│  ○ PRJ-003     │  ┌─ Issue List ─────────────────────┐  │
-│    Smith       │  │  ● Permit approval delayed       │  │
-│    Step 5/6    │  │  ● HOA docs incomplete           │  │
+│  ○ PRJ-003     │  ┌─ 问题清单 ──────────────────────┐    │
+│    Smith       │  │  ● 许可证审批延迟                 │    │
+│    第5步/共6步  │  │  ● HOA 文件不完整               │    │
 │                │  └──────────────────────────────────┘  │
 │  ...           │                                        │
-│                │  ┌─ Customer ───────────────────────┐  │
-│                │  │  [Avatar] Name / Email / Phone    │  │
+│                │  ┌─ 客户信息 ──────────────────────┐    │
+│                │  │  [头像] 姓名 / 邮箱 / 电话       │    │
 │                │  └──────────────────────────────────┘  │
 │                │                                        │
-│                │  ┌─ Order ──────────────────────────┐  │
-│                │  │  ORD-xxxx / Product / Total       │  │
+│                │  ┌─ 订单信息 ──────────────────────┐    │
+│                │  │  ORD-xxxx / 产品 / 金额           │    │
 │                │  └──────────────────────────────────┘  │
 │                │                                        │
-│                │  ┌─ Revenue ────────────────────────┐  │
-│                │  │  Budget: $35K  Collected: $18.5K  │  │
-│                │  │  [████████░░░░] 53%               │  │
+│                │  ┌─ 营收/付款 ─────────────────────┐    │
+│                │  │  预算: $35K  已收: $18.5K         │    │
+│                │  │  [████████░░░░] 53%              │    │
 │                │  └──────────────────────────────────┘  │
 └────────────────┴──────────────────────────────────────┘
 ```
 
-#### Left Panel - Project List
+#### 左侧面板 - 项目列表
 
-| Element | Specification |
-|---------|---------------|
-| Search input | Full-width, icon prefix, debounced 300ms |
-| Filter chips | All / Active / Done — pill buttons, single-select |
-| Project item | Name (bold), customer · type (gray), progress bar + step label |
-| Risk indicator | Colored dot (red/amber/green) top-right of each item |
-| Selected state | Blue-50 background + left blue border (4px) |
-| Empty state | Centered icon + "No projects found" message |
+| 元素 | 规格说明 |
+|------|---------|
+| 搜索输入框 | 全宽，图标前缀，300ms 防抖 |
+| 筛选标签 | 全部 / 进行中 / 已完成 — 胶囊按钮，单选 |
+| 项目条目 | 名称 (加粗)，客户 · 类型 (灰色)，进度条 + 步骤标签 |
+| 风险指示器 | 彩色圆点 (红/橙/绿) 位于条目右上角 |
+| 选中状态 | 蓝色-50 背景 + 左侧蓝色边框 (4px) |
+| 空状态 | 居中图标 + "未找到项目" 提示文字 |
 
-#### Right Panel - Project Detail
+#### 右侧面板 - 项目详情
 
-| Section | Content | Interaction |
-|---------|---------|-------------|
-| **Header** | Project name, metadata line, risk badge | Static display |
-| **Service Workflow** | 6-step horizontal pipeline | Visual only (no click action yet) |
-| **Risk List** | Severity dot + title + badges | Expandable rows (future) |
-| **Issue List** | Priority dot + title + assignee + status badge | Click to open issue detail (future) |
-| **Customer** | Avatar + 2x2 info grid (name, email, phone, address) | Click to open full customer profile (future) |
-| **Order** | 4-column grid (ID, product, total, status) | Click to open order detail (future) |
-| **Revenue** | Budget / Collected / Remaining + progress bar | Static display |
+| 区块 | 内容 | 交互 |
+|------|------|------|
+| **头部** | 项目名称、元数据行、风险徽标 | 静态展示 |
+| **服务工作流** | 6 步水平管道 | 仅视觉展示 (暂无点击操作) |
+| **风险清单** | 严重度圆点 + 标题 + 徽标 | 可展开行 (后续) |
+| **问题清单** | 优先级圆点 + 标题 + 负责人 + 状态徽标 | 点击打开问题详情 (后续) |
+| **客户信息** | 头像 + 2×2 信息网格 (姓名、邮箱、电话、地址) | 点击打开完整客户档案 (后续) |
+| **订单信息** | 4 列网格 (编号、产品、金额、状态) | 点击打开订单详情 (后续) |
+| **营收/付款** | 预算 / 已收 / 待收 + 进度条 | 静态展示 |
 
-#### Empty State (no project selected)
-- Large folder icon (text-5xl, gray-400)
-- "Select a project" heading
-- "Choose a project from the list to view details" subtext
-- Centered vertically in the panel
+#### 空状态 (未选择项目)
+- 大文件夹图标 (text-5xl, gray-400)
+- "请选择一个项目" 标题
+- "从左侧列表中选择项目查看详情" 副标题
+- 在面板中垂直居中
 
-#### Future Enhancements (Planned)
-- [ ] Service Workflow step click → expand step detail with document uploads & checklist
-- [ ] Inline issue creation from Issue List section
-- [ ] Risk severity editing (click to change level)
-- [ ] Customer profile deep-link
-- [ ] Order payment tracking with milestone markers
-- [ ] Project timeline / Gantt view option
-- [ ] Bulk actions on project list (assign, archive)
-- [ ] Project creation wizard (multi-step form)
+#### 后续增强计划
+- [ ] 工作流步骤点击 → 展开步骤详情含文档上传 & 检查清单
+- [ ] 问题清单区块内联创建问题
+- [ ] 风险严重度编辑 (点击修改级别)
+- [ ] 客户档案深度链接
+- [ ] 订单付款追踪含里程碑标记
+- [ ] 项目时间线 / 甘特图视图
+- [ ] 项目列表批量操作 (分配、归档)
+- [ ] 项目创建向导 (多步骤表单)
 
 ---
 
-### 3.3 AI Designer Agent
+### 3.3 AI 设计师智能体
 
-#### User Flow
+#### 用户流程
 ```
-1. Select Project → 2. Upload Site Photo → 3. Configure Style →
-4. Generate Design → 5. Preview & Compare → 6. Select Variant → 7. Export/Save
+1. 选择项目 → 2. 上传现场照片 → 3. 配置风格 →
+4. 生成设计 → 5. 预览对比 → 6. 选择方案 → 7. 导出/保存
 ```
 
-#### Layout
+#### 布局
 ```
 ┌──────────────────┬──────────────────────────────┐
-│  Left Column     │  Right Column                  │
-│  (Form inputs)   │  (Visual output)               │
+│  左栏             │  右栏                          │
+│  (表单输入)       │  (视觉输出)                     │
 │                  │                                 │
-│  1. Select Proj  │  ┌─ Design Preview ──────────┐  │
-│  [Dropdown]      │  │                            │  │
-│  Client, Address │  │    AI-Generated            │  │
-│  Yard Size, etc  │  │    Rendering               │  │
-│                  │  │                            │  │
-│  2. Upload Photo │  └────────────────────────────┘  │
-│  [Drop zone]     │                                 │
-│                  │  ┌─ Before/After Toggle ──────┐  │
-│  3. Style Config │  │  [Before] [After]          │  │
-│  [Options]       │  └────────────────────────────┘  │
+│  1. 选择项目      │  ┌─ 设计预览 ───────────────┐   │
+│  [下拉选择]       │  │                           │   │
+│  客户、地址       │  │    AI 生成                 │   │
+│  院子尺寸等       │  │    效果图                   │   │
+│                  │  │                           │   │
+│  2. 上传照片      │  └───────────────────────────┘   │
+│  [拖放区域]       │                                 │
+│                  │  ┌─ 前后对比切换 ─────────────┐   │
+│  3. 风格配置      │  │  [改造前] [改造后]          │   │
+│  [选项]           │  └───────────────────────────┘   │
 │                  │                                 │
-│  [Generate]      │  Variants: [1] [2] [3] [+More]  │
+│  [生成设计]       │  方案: [1] [2] [3] [+生成更多]    │
 └──────────────────┴──────────────────────────────────┘
 ```
 
-#### Key UX Decisions
-- Photo upload supports drag-and-drop + file picker
-- AI generation shows loading skeleton with estimated time
-- Before/After comparison uses slider overlay
-- Variants displayed as thumbnail strip below main preview
-- "Generate More" button for additional variations
+#### 关键 UX 决策
+- 照片上传支持拖放 + 文件选择器
+- AI 生成中展示骨架屏加载及预估时间
+- 前后对比使用滑块覆盖方式
+- 方案以缩略图条形式展示在主预览下方
+- "生成更多" 按钮用于获取额外方案
 
-#### Future Enhancements (Planned)
-- [ ] Real-time AI generation progress indicator
-- [ ] Style transfer from reference photos
-- [ ] Material/color customization on generated designs
-- [ ] Direct export to measurement phase (Step 3)
-- [ ] Customer-facing design sharing link
+#### 后续增强计划
+- [ ] AI 生成实时进度指示器
+- [ ] 从参考照片进行风格迁移
+- [ ] 在生成设计上自定义材料/颜色
+- [ ] 直接导出至测量阶段 (第3步)
+- [ ] 面向客户的设计分享链接
 
 ---
 
-### 3.4 Pricing and Cost Controller Agent
+### 3.4 报价与成本控制器智能体
 
-#### Layout
+#### 布局
 ```
 ┌──────────────────┬──────────────────────────────┐
-│  Configuration   │  Cost Breakdown & Quote        │
+│  配置参数         │  成本分解 & 报价               │
 │                  │                                 │
-│  Product Type    │  ┌─ Cost Structure ───────────┐ │
-│  Dimensions      │  │  Materials:    $12,500     │ │
-│  Materials       │  │  Labor:        $4,200      │ │
-│  Add-ons         │  │  Permits:      $800        │ │
-│                  │  │  Overhead:     $2,100      │ │
-│  [Calculate]     │  │  ─────────────────────     │ │
-│                  │  │  Total Cost:   $19,600     │ │
-│                  │  │  Margin (35%): $10,545     │ │
-│                  │  │  QUOTE:        $30,145     │ │
-│                  │  └────────────────────────────┘ │
+│  产品类型         │  ┌─ 成本结构 ───────────────┐   │
+│  尺寸             │  │  材料:       $12,500      │   │
+│  材料             │  │  人工:       $4,200       │   │
+│  附加项           │  │  许可证:     $800         │   │
+│                  │  │  间接费用:   $2,100       │   │
+│  [计算]           │  │  ─────────────────────    │   │
+│                  │  │  总成本:     $19,600      │   │
+│                  │  │  利润 (35%): $10,545      │   │
+│                  │  │  报价:       $30,145      │   │
+│                  │  └───────────────────────────┘   │
 │                  │                                 │
-│                  │  [Generate Quote PDF]            │
+│                  │  [生成报价 PDF]                    │
 └──────────────────┴──────────────────────────────────┘
 ```
 
-#### Future Enhancements (Planned)
-- [ ] Historical pricing comparison
-- [ ] Competitor price benchmarking
-- [ ] Volume discount calculator
-- [ ] Multi-currency support
-- [ ] Quote version history & approval workflow
+#### 后续增强计划
+- [ ] 历史定价对比
+- [ ] 竞品价格基准对标
+- [ ] 批量折扣计算器
+- [ ] 多币种支持
+- [ ] 报价版本历史 & 审批工作流
 
 ---
 
-### 3.5 Compliance Manager Agent
+### 3.5 合规管理器智能体
 
-#### Layout
+#### 布局
 ```
 ┌──────────────────┬──────────────────────────────┐
-│  Project & Specs │  Compliance Status              │
+│  项目 & 规格      │  合规状态                       │
 │                  │                                 │
-│  1. Select Proj  │  Overall: 85% ████████░░        │
-│  [Dropdown]      │                                 │
-│                  │  Federal: IRC 2024 / IBC / IECC │
-│  2. Specs        │   ✓ Egress requirements met     │
-│  Structure Size  │   ✓ Energy efficiency (ECC)     │
-│  Height (ft)     │   ⚠ Structural load review      │
+│  1. 选择项目      │  整体: 85% ████████░░            │
+│  [下拉选择]       │                                 │
+│                  │  联邦: IRC 2024 / IBC / IECC     │
+│  2. 规格参数      │   ✓ 出口通道要求已满足              │
+│  结构尺寸         │   ✓ 节能效率 (ECC)                │
+│  高度 (ft)        │   ⚠ 结构荷载审查                  │
 │  ...             │                                 │
-│                  │  State: California Building Code │
-│                  │   ✓ Seismic zone compliance      │
-│                  │   ✗ Solar access ordinance        │
+│                  │  州级: 加州建筑法规                 │
+│                  │   ✓ 地震区合规                    │
+│                  │   ✗ 日照权条例                    │
 │                  │                                 │
-│  [Run Check]     │  HOA: Sunshine Hills HOA         │
-│                  │   ⚠ Design review needed          │
+│  [运行检查]       │  HOA: Sunshine Hills HOA         │
+│                  │   ⚠ 设计审查待处理                 │
 │                  │                                 │
-│                  │  [Generate Compliance Package]    │
+│                  │  [生成合规文件包]                   │
 └──────────────────┴──────────────────────────────────┘
 ```
 
-#### Future Enhancements (Planned)
-- [ ] Auto-detect jurisdiction from project address
-- [ ] Permit application auto-fill
-- [ ] Code update notifications (building code changes)
-- [ ] Integration with local government permit portals
+#### 后续增强计划
+- [ ] 根据项目地址自动识别管辖区
+- [ ] 许可证申请自动填充
+- [ ] 建筑法规更新通知
+- [ ] 与地方政府许可证门户集成
 
 ---
 
-### 3.6 Customer Service Executive Agent
+### 3.6 客户服务执行官智能体
 
-#### Layout
-- Left sidebar: ticket queue with priority indicators
-- Center: active conversation thread
-- Right panel: customer context (project, order, history)
+#### 布局
+- 左侧边栏: 工单队列含优先级指示器
+- 中间: 活跃对话线程
+- 右侧面板: 客户上下文 (项目、订单、历史)
 
-#### Future Enhancements (Planned)
-- [ ] AI-suggested response templates
-- [ ] Sentiment analysis on customer messages
-- [ ] Automatic ticket routing based on category
-- [ ] SLA tracking with visual indicators
-- [ ] Customer satisfaction scoring
-
----
-
-### 3.7 Knowledge Base Builder
-
-#### Layout
-- Top: Stats (total docs, indexed, pending, categories)
-- Upload modal with drag-drop, tag selection, category assignment
-- Document grid with search, filter by tag/category/status
-- Preview panel for selected document
-
-#### Future Enhancements (Planned)
-- [ ] Bulk upload with auto-categorization
-- [ ] RAG quality scoring per document
-- [ ] Version control for updated documents
-- [ ] Usage analytics (which docs are retrieved most)
+#### 后续增强计划
+- [ ] AI 推荐回复模板
+- [ ] 客户消息情感分析
+- [ ] 基于类别的自动工单路由
+- [ ] SLA 追踪含可视化指示器
+- [ ] 客户满意度评分
 
 ---
 
-## 4. Shared UX Patterns
+### 3.7 知识库构建器
 
-### 4.1 Navigation
+#### 布局
+- 顶部: 统计数据 (总文档数、已索引、待处理、分类数)
+- 上传弹窗含拖放、标签选择、分类指定
+- 文档网格含搜索，按标签/分类/状态筛选
+- 选中文档的预览面板
+
+#### 后续增强计划
+- [ ] 批量上传含自动分类
+- [ ] RAG 质量评分
+- [ ] 文档版本控制
+- [ ] 使用量分析 (哪些文档被检索最多)
+
+---
+
+## 4. 共享 UX 模式
+
+### 4.1 导航框架
 ```
 ┌──────────┬───────────────────────────────────────┐
-│ SIDEBAR  │  HEADER (sticky)                       │
-│ 260px    │  [Page Title]        [Search][Bell][User] │
+│ 侧边栏    │  头部 (固定置顶)                         │
+│ 260px    │  [页面标题]       [搜索][通知][用户]       │
 │          ├───────────────────────────────────────┤
 │ Logo     │                                        │
-│ Tenant   │  CONTENT AREA                          │
-│          │  (scrollable, 24px padding)            │
-│ Nav Items│                                        │
-│          │                                        │
-│          │                                        │
+│ 租户名    │  内容区域                                │
+│          │  (可滚动, 24px 内边距)                    │
+│ 导航项    │                                        │
 │          │                                        │
 └──────────┴───────────────────────────────────────┘
 ```
 
-### 4.2 Status Badges
-| Status | Color | Use Cases |
-|--------|-------|-----------|
-| Active / In Progress | `bg-blue-50 text-blue-700` | Orders, projects, issues |
-| Pending / Warning | `bg-amber-50 text-amber-700` | Awaiting action |
-| Completed / Success | `bg-green-50 text-green-700` | Done, approved, active |
-| High Risk / Error | `bg-red-50 text-red-700` | Critical alerts |
-| Info / New | `bg-purple-50 text-purple-700` | New items, shipped |
-| VIP / Premium | `bg-amber-50 text-amber-700` | Customer tier |
+### 4.2 状态徽标
+| 状态 | 颜色 | 使用场景 |
+|------|------|---------|
+| 进行中 / 活跃 | `bg-blue-50 text-blue-700` | 订单、项目、问题 |
+| 待处理 / 警告 | `bg-amber-50 text-amber-700` | 等待操作 |
+| 已完成 / 成功 | `bg-green-50 text-green-700` | 完成、已批准、活跃 |
+| 高风险 / 错误 | `bg-red-50 text-red-700` | 关键警报 |
+| 信息 / 新建 | `bg-purple-50 text-purple-700` | 新条目、已发货 |
+| VIP / 高级 | `bg-amber-50 text-amber-700` | 客户等级 |
 
-### 4.3 Table Design
-- Header: `bg-gray-50/50`, uppercase text-xs, tracking-wider
-- Rows: `border-b border-gray-50`, hover `bg-gray-50/50`
-- Actions column: icon buttons (ellipsis or specific icons)
-- Empty state: centered message with icon
-- Loading state: skeleton shimmer rows
+### 4.3 表格设计
+- 表头: `bg-gray-50/50`，大写 text-xs，tracking-wider
+- 数据行: `border-b border-gray-50`，悬停 `bg-gray-50/50`
+- 操作列: 图标按钮 (省略号或特定图标)
+- 空状态: 居中消息含图标
+- 加载状态: 骨架屏闪烁行
 
-### 4.4 Card Design
-- Background: white
-- Border: `border-gray-200` (1px), `rounded-xl` (12px)
-- Padding: `p-5` (20px)
-- Hover: `shadow-lg` + border color change
-- Section headers inside cards: `bg-gray-50/70`, icon + text, `border-b`
+### 4.4 卡片设计
+- 背景: 白色
+- 边框: `border-gray-200` (1px), `rounded-xl` (12px)
+- 内边距: `p-5` (20px)
+- 悬停: `shadow-lg` + 边框颜色变化
+- 卡片内区块头: `bg-gray-50/70`，图标 + 文字，`border-b`
 
-### 4.5 Form Inputs
-- Border: `border-gray-200`, `rounded-lg`
-- Focus: `ring-2 ring-gray-300` (neutral) or `ring-{color}-300` (contextual)
-- Labels: `text-sm font-medium text-gray-700`
-- Helper text: `text-xs text-gray-400`
-- Error: `border-red-300 ring-red-300`, red helper text
+### 4.5 表单输入
+- 边框: `border-gray-200`, `rounded-lg`
+- 聚焦: `ring-2 ring-gray-300` (中性) 或 `ring-{color}-300` (上下文)
+- 标签: `text-sm font-medium text-gray-700`
+- 辅助文字: `text-xs text-gray-400`
+- 错误: `border-red-300 ring-red-300`，红色辅助文字
 
-### 4.6 Empty States
-All empty states follow this pattern:
+### 4.6 空状态
+所有空状态遵循以下模式:
 ```
-[Icon - 5xl, gray-400]
-[Heading - lg, font-medium]
-[Subtext - sm, gray-400]
-[Optional CTA button]
+[图标 - 5xl, gray-400]
+[标题 - lg, font-medium]
+[副标题 - sm, gray-400]
+[可选 CTA 按钮]
 ```
 
-### 4.7 Loading States
-- Skeleton shimmer for initial loads
-- Inline spinner for actions (button → loading state)
-- Progress bars for multi-step operations
+### 4.7 加载状态
+- 初始加载使用骨架屏闪烁
+- 操作中使用内联加载器 (按钮 → 加载状态)
+- 多步骤操作使用进度条
 
 ---
 
-## 5. Service Workflow (6-Step) UX Specification
+## 5. 服务工作流 (6 步法) UX 规范
 
-### 5.1 Overview
-The 6-step workflow is the backbone of every project. It appears inside the Projects detail panel and drives the entire project lifecycle.
+### 5.1 概述
+6 步工作流是每个项目的骨干。它出现在项目详情面板中，驱动整个项目生命周期。
 
-### 5.2 Step Definition
+### 5.2 步骤定义
 
-| Step | Name | Icon | Color | Payment Milestone | Key Documents |
-|------|------|------|-------|-------------------|---------------|
-| 1 | Intent | fa-handshake | blue | $100 Intent Fee | Intent fee receipt, Phase 1 sign-off |
-| 2 | Design | fa-palette | indigo | $500-$1K Design Fee | Site photos, AI renderings, design fee receipt, Phase 2 sign-off |
-| 3 | Measurement | fa-ruler-combined | purple | — | Measurement report, site plan, elevation drawings, Phase 3 sign-off |
-| 4 | Quotation | fa-file-contract | orange | 50% Deposit | Quotation, signed contract, compliance package, Phase 4 sign-off |
-| 5 | Production | fa-industry | yellow | 40% Pre-ship | QC report, pre-assembly photos, delivery receipt, Phase 5 sign-off |
-| 6 | Installation | fa-tools | green | 10% Final | Installation photos, CO certificate, inspection report, warranty, Phase 6 sign-off |
+| 步骤 | 名称 | 图标 | 颜色 | 付款里程碑 | 关键文档 |
+|------|------|------|------|-----------|---------|
+| 1 | 意向 | fa-handshake | blue | $100 意向金 | 意向金收据、第1阶段签收 |
+| 2 | 设计 | fa-palette | indigo | $500-$1K 设计费 | 现场照片、AI 效果图、设计费收据、第2阶段签收 |
+| 3 | 测量 | fa-ruler-combined | purple | — | 测量报告、场地平面图、立面图、第3阶段签收 |
+| 4 | 报价 | fa-file-contract | orange | 50% 定金 | 报价单、签署合同、合规文件包、第4阶段签收 |
+| 5 | 生产 | fa-industry | yellow | 40% 发货前付款 | QC 报告、预组装照片、发货单、第5阶段签收 |
+| 6 | 安装 | fa-tools | green | 10% 尾款 | 安装照片、使用许可证、检验报告、保修单、第6阶段签收 |
 
-### 5.3 Workflow Visualization
+### 5.3 工作流可视化
 
-**Current (v1.0)**: Horizontal pipeline with step circles
+**当前版本 (v1.0)**: 水平管道含步骤圆圈
 ```
-[✓ Intent] → [✓ Design] → [■ Measurement] → [○ Quotation] → [○ Production] → [○ Installation]
- completed     completed      current            future           future           future
- green-50      green-50      purple-50/border   opacity-40       opacity-40       opacity-40
-```
-
-**Planned (v2.0)**: Clickable steps with expandable detail
-```
-Click on step → Expand below showing:
-  - Document uploads (required vs optional, uploaded vs pending)
-  - Checklist items (checkbox list)
-  - Payment status
-  - Customer sign-off status
-  - Notes / comments
+[✓ 意向] → [✓ 设计] → [■ 测量] → [○ 报价] → [○ 生产] → [○ 安装]
+ 已完成      已完成      当前步骤     待进行      待进行      待进行
+ green-50   green-50   purple-50  opacity-40  opacity-40  opacity-40
 ```
 
-### 5.4 Step 3 Special Note
-> **Manual measurement is the PRIMARY method (current).**
-> Laser 3D scanning (UNRE/Leica) remains a planned future capability, NOT yet operational.
-> Professional tools: measuring tape, laser measure, level, angle finder.
+**规划版本 (v2.0)**: 可点击步骤含可展开详情
+```
+点击步骤 → 下方展开显示:
+  - 文档上传 (必需 vs 可选, 已上传 vs 待上传)
+  - 检查清单项 (复选框列表)
+  - 付款状态
+  - 客户签收状态
+  - 备注 / 评论
+```
+
+### 5.4 第3步特别说明
+> **手动精准测量是当前主要方式。**
+> 激光三维扫描 (UNRE 首选 / Leica 备选) 仍为近期规划能力，尚未投入运营。
+> 专业工具: 卷尺、激光测距仪、水平仪、角度尺。
 
 ---
 
-## 6. Responsive Design
+## 6. 响应式设计
 
-### 6.1 Breakpoints
-| Breakpoint | Width | Layout Changes |
-|------------|-------|----------------|
-| Desktop | ≥1280px | Full layout with sidebar |
-| Tablet | 768-1279px | Collapsible sidebar, stacked cards |
-| Mobile | <768px | Hidden sidebar (hamburger), single column |
+### 6.1 断点
+| 断点 | 宽度 | 布局变化 |
+|------|------|---------|
+| 桌面端 | ≥1280px | 含侧边栏的完整布局 |
+| 平板端 | 768-1279px | 可折叠侧边栏，堆叠卡片 |
+| 移动端 | <768px | 隐藏侧边栏 (汉堡菜单)，单列布局 |
 
-### 6.2 Projects Page Responsive Behavior
-- **Desktop**: Side-by-side (320px list + flex detail)
-- **Tablet**: Overlay detail panel on project click
-- **Mobile**: List view only; project click navigates to full-screen detail
+### 6.2 项目页响应式行为
+- **桌面端**: 并排显示 (320px 列表 + 弹性详情)
+- **平板端**: 点击项目时浮层详情面板
+- **移动端**: 仅列表视图；点击项目导航至全屏详情
 
-### 6.3 Company Overview Responsive Behavior
-- **Desktop**: 4 cards in a row
-- **Tablet**: 2x2 grid
-- **Mobile**: Single column, stacked cards
-
----
-
-## 7. Accessibility
-
-### 7.1 Requirements
-- WCAG 2.1 Level AA compliance target
-- All interactive elements keyboard-navigable
-- Color contrast ratio ≥ 4.5:1 for text
-- Screen reader labels on all icon-only buttons
-- Focus indicators on all interactive elements
-
-### 7.2 Implementation Notes
-- All `<button>` and `<a>` elements must have descriptive text or `aria-label`
-- Status colors always paired with text labels (not color-only)
-- Tables include `<thead>` with semantic headers
-- Form inputs have associated `<label>` elements
+### 6.3 公司概览响应式行为
+- **桌面端**: 4 卡片一行
+- **平板端**: 2×2 网格
+- **移动端**: 单列堆叠
 
 ---
 
-## 8. Evolution Roadmap
+## 7. 无障碍访问
 
-### Phase 1 (Current - v1.0) ✅
-- [x] Company Overview with clickable summary cards
-- [x] Projects master-detail layout
-- [x] 6-step workflow visualization in project detail
-- [x] Risk/Issue lists per project
-- [x] Customer/Order/Revenue sections per project
-- [x] 5 AI Agent pages (basic layouts)
-- [x] Team Management page
-- [x] System Settings page
+### 7.1 要求
+- WCAG 2.1 AA 级合规目标
+- 所有交互元素支持键盘导航
+- 文字颜色对比度 ≥ 4.5:1
+- 所有纯图标按钮配有屏幕阅读器标签
+- 所有交互元素有焦点指示器
 
-### Phase 2 (Next - v1.1)
-- [ ] Clickable workflow steps with document upload & checklist
-- [ ] Project creation wizard (multi-step modal)
-- [ ] Inline issue creation & editing
-- [ ] Customer profile deep-link from project
-- [ ] Real data integration (Supabase backend)
-- [ ] File upload with drag-and-drop for all document types
-- [ ] Notification center (bell icon functionality)
-
-### Phase 3 (v1.2)
-- [ ] AI Designer: real AI integration (DALL-E / Stable Diffusion)
-- [ ] Pricing Agent: dynamic cost calculation engine
-- [ ] Compliance Agent: jurisdiction database integration
-- [ ] Customer Service: ticket system with AI-suggested replies
-- [ ] Knowledge Base: RAG integration with document indexing
-- [ ] Mobile-responsive layout optimization
-
-### Phase 4 (v2.0)
-- [ ] Multi-tenant support (partner/channel company switching)
-- [ ] Role-based access control (RBAC) on all pages
-- [ ] Advanced analytics dashboard (charts, trends, forecasting)
-- [ ] Calendar view for project timelines
-- [ ] Gantt chart for project scheduling
-- [ ] Email/SMS notification integration
-- [ ] Customer-facing portal (project status tracking)
-- [ ] API integration with factory ERP systems
+### 7.2 实现说明
+- 所有 `<button>` 和 `<a>` 元素需有描述性文字或 `aria-label`
+- 状态颜色始终配合文字标签 (不仅依赖颜色)
+- 表格包含 `<thead>` 语义表头
+- 表单输入关联 `<label>` 元素
 
 ---
 
-## 9. Design Decision Log
+## 8. 演进路线图
 
-| Date | Decision | Rationale |
-|------|----------|-----------|
-| 2026-03-18 | Merge Orders/Customers/Products into Company Overview | Reduce sidebar clutter; these are summary-level views, not independent workflows |
-| 2026-03-18 | Service Workflow moved into Project detail (not standalone) | Workflow is always project-specific; standalone page was redundant |
-| 2026-03-18 | Master-detail layout for Projects | Efficient project browsing; reduce page switches; inspired by email client UX |
-| 2026-03-18 | Revenue card is static (non-clickable) | Revenue is a KPI indicator; detailed revenue analysis planned for Phase 2 |
-| 2026-03-18 | Keep Agents and Settings as separate sidebar sections | Agent pages are complex enough to warrant dedicated views; will be reconstructed later |
-| 2026-03-16 | Manual measurement as primary (Step 3) | Laser 3D scanning not yet feasible; manual tools are reliable and proven |
+### 第一阶段 (当前 - v1.0) ✅
+- [x] 公司概览含可点击概要卡片
+- [x] 项目管理主从详情布局
+- [x] 项目详情内 6 步工作流可视化
+- [x] 每个项目的风险/问题清单
+- [x] 每个项目的客户/订单/营收区块
+- [x] 5 个 AI 智能体页面 (基础布局)
+- [x] 团队管理页面
+- [x] 系统设置页面
 
----
+### 第二阶段 (下一步 - v1.1)
+- [ ] 可点击工作流步骤含文档上传 & 检查清单
+- [ ] 项目创建向导 (多步骤弹窗)
+- [ ] 内联创建 & 编辑问题
+- [ ] 从项目深度链接至客户档案
+- [ ] 真实数据集成 (Supabase 后端)
+- [ ] 所有文档类型的拖放上传
+- [ ] 通知中心 (铃铛图标功能)
 
-## Appendix A: File Upload Types per Workflow Step
+### 第三阶段 (v1.2)
+- [ ] AI 设计师: 真实 AI 集成 (DALL-E / Stable Diffusion)
+- [ ] 报价智能体: 动态成本计算引擎
+- [ ] 合规智能体: 管辖区数据库集成
+- [ ] 客户服务: 含 AI 推荐回复的工单系统
+- [ ] 知识库: RAG 集成含文档索引
+- [ ] 移动端响应式布局优化
 
-### Step 1 - Intent
-| Document | Required | Icon |
-|----------|----------|------|
-| Intent Fee Receipt ($100) | Yes | fa-receipt |
-| Phase 1 Customer Sign-off | Yes | fa-signature |
-
-### Step 2 - Design
-| Document | Required | Icon |
-|----------|----------|------|
-| Site Photos (multi-angle) | Yes | fa-camera |
-| Style Reference Photos | No | fa-images |
-| AI Concept Design Renderings | Yes | fa-paint-brush |
-| Design Fee Receipt ($500-$1K) | Yes | fa-receipt |
-| Phase 2 Customer Sign-off | Yes | fa-signature |
-
-### Step 3 - Measurement
-| Document | Required | Icon |
-|----------|----------|------|
-| Measurement Report | Yes | fa-ruler |
-| Site Plan Drawing | Yes | fa-drafting-compass |
-| Schematic Design Renderings | Yes | fa-image |
-| Elevation Drawings | Yes | fa-building |
-| Structural Calculation | No | fa-calculator |
-| Phase 3 Customer Sign-off | Yes | fa-signature |
-
-### Step 4 - Quotation
-| Document | Required | Icon |
-|----------|----------|------|
-| Detailed Quotation | Yes | fa-file-invoice-dollar |
-| Signed Contract | Yes | fa-file-contract |
-| Deposit Receipt (50%) | Yes | fa-receipt |
-| Compliance Package | Yes | fa-shield-alt |
-| Phase 4 Customer Sign-off | Yes | fa-signature |
-
-### Step 5 - Production
-| Document | Required | Icon |
-|----------|----------|------|
-| Factory QC Report | Yes | fa-clipboard-check |
-| Pre-Assembly Photos | Yes | fa-camera-retro |
-| Production Payment Receipt (40%) | Yes | fa-receipt |
-| Delivery Receipt | Yes | fa-truck |
-| Phase 5 Sign-off | Yes | fa-signature |
-
-### Step 6 - Installation
-| Document | Required | Icon |
-|----------|----------|------|
-| Installation Progress Photos | Yes | fa-hard-hat |
-| Certificate of Occupancy | Yes | fa-certificate |
-| Final Inspection Report | Yes | fa-search |
-| Final Acceptance Sign-off | Yes | fa-signature |
-| Final Payment Receipt (10%) | Yes | fa-receipt |
-| Warranty & Manuals | Yes | fa-book |
+### 第四阶段 (v2.0)
+- [ ] 多租户支持 (合作伙伴/渠道商切换)
+- [ ] 基于角色的访问控制 (RBAC)
+- [ ] 高级分析仪表板 (图表、趋势、预测)
+- [ ] 项目时间线日历视图
+- [ ] 项目排期甘特图
+- [ ] 邮件/短信通知集成
+- [ ] 面向客户的门户 (项目状态追踪)
+- [ ] 与工厂 ERP 系统的 API 集成
 
 ---
 
-## Appendix B: Project Data Model (UX Reference)
+## 9. 设计决策日志
+
+| 日期 | 决策 | 原因 |
+|------|------|------|
+| 2026-03-18 | 将订单/客户/产品合并进公司概览 | 减少侧边栏混乱；这些是概要级视图，非独立工作流 |
+| 2026-03-18 | 服务工作流移入项目详情 (不再独立页面) | 工作流始终与项目关联；独立页面冗余 |
+| 2026-03-18 | 项目管理采用主从详情布局 | 高效浏览项目；减少页面切换；借鉴邮件客户端 UX |
+| 2026-03-18 | 营收卡片为静态 (不可点击) | 营收是 KPI 指标；详细分析计划在第二阶段实现 |
+| 2026-03-18 | 智能体和设置保留为独立侧边栏区块 | 智能体页面足够复杂需独立视图；后续会重构 |
+| 2026-03-16 | 手动测量为主要方式 (第3步) | 激光三维扫描尚不可行；手动工具可靠且经过验证 |
+
+---
+
+## 附录 A: 每个工作流步骤的文件上传类型
+
+### 第1步 - 意向
+| 文档 | 是否必需 | 图标 |
+|------|---------|------|
+| 意向金收据 ($100) | 是 | fa-receipt |
+| 第1阶段客户签收 | 是 | fa-signature |
+
+### 第2步 - 设计
+| 文档 | 是否必需 | 图标 |
+|------|---------|------|
+| 现场照片 (多角度) | 是 | fa-camera |
+| 风格参考照片 | 否 | fa-images |
+| AI 概念设计效果图 | 是 | fa-paint-brush |
+| 设计费收据 ($500-$1K) | 是 | fa-receipt |
+| 第2阶段客户签收 | 是 | fa-signature |
+
+### 第3步 - 测量
+| 文档 | 是否必需 | 图标 |
+|------|---------|------|
+| 测量报告 | 是 | fa-ruler |
+| 场地平面图 | 是 | fa-drafting-compass |
+| 方案设计效果图 | 是 | fa-image |
+| 立面图 | 是 | fa-building |
+| 结构计算书 | 否 | fa-calculator |
+| 第3阶段客户签收 | 是 | fa-signature |
+
+### 第4步 - 报价
+| 文档 | 是否必需 | 图标 |
+|------|---------|------|
+| 详细报价单 | 是 | fa-file-invoice-dollar |
+| 签署合同 | 是 | fa-file-contract |
+| 定金收据 (50%) | 是 | fa-receipt |
+| 合规文件包 | 是 | fa-shield-alt |
+| 第4阶段客户签收 | 是 | fa-signature |
+
+### 第5步 - 生产
+| 文档 | 是否必需 | 图标 |
+|------|---------|------|
+| 工厂 QC 报告 | 是 | fa-clipboard-check |
+| 预组装照片 | 是 | fa-camera-retro |
+| 生产付款收据 (40%) | 是 | fa-receipt |
+| 发货单 | 是 | fa-truck |
+| 第5阶段签收 | 是 | fa-signature |
+
+### 第6步 - 安装
+| 文档 | 是否必需 | 图标 |
+|------|---------|------|
+| 安装过程照片 | 是 | fa-hard-hat |
+| 使用许可证 (CO) | 是 | fa-certificate |
+| 最终检验报告 | 是 | fa-search |
+| 最终验收签收 | 是 | fa-signature |
+| 尾款收据 (10%) | 是 | fa-receipt |
+| 保修文件 & 手册 | 是 | fa-book |
+
+---
+
+## 附录 B: 项目数据模型 (UX 参考)
 
 ```
-Project
-├── id, name, type (Sunroom/Pergola/ADU/Zip Blinds)
+Project (项目)
+├── id, name, type (阳光房/凉亭/ADU/Zip百叶)
 ├── workflowStep (1-6)
-├── stage (intent/design/measurement/quotation/production/installation)
-├── riskLevel (high/medium/low)
+├── stage (意向/设计/测量/报价/生产/安装)
+├── riskLevel (高/中/低)
 ├── budget, paid, timeline, startDate
-├── Customer
+├── Customer (客户)
 │   ├── name, email, phone, address
-│   └── status (VIP/Active/New)
-├── Order
+│   └── status (VIP/活跃/新客户)
+├── Order (订单)
 │   ├── id, product, total, status, date
-│   └── paymentPlan (intent/design/deposit/production/final)
-├── Risks[]
-│   ├── title, severity (high/medium/low), status (open/monitoring/resolved)
-├── Issues[]
-│   ├── title, priority, status (open/in_progress/resolved)
+│   └── paymentPlan (意向金/设计费/定金/生产款/尾款)
+├── Risks[] (风险)
+│   ├── title, severity (高/中/低), status (未解决/监控中/已解决)
+├── Issues[] (问题)
+│   ├── title, priority, status (未解决/处理中/已解决)
 │   ├── assignedTo, dueDate
-└── Documents[] (per workflow step)
+└── Documents[] (文档，按工作流步骤)
     ├── key, label, icon, required, uploadedAt, fileUrl
 ```
 
 ---
 
-*This document is continuously evolving. Update it whenever UX decisions are made, new pages are designed, or user feedback drives changes.*
+*本文档持续演进。每当做出 UX 决策、设计新页面或收到用户反馈时请及时更新。*
