@@ -427,6 +427,59 @@ graph TB
 - 推荐计划管理
 - 在线评价引导
 
+### 11.7 项目管理模块：创建新项目 (Create New Project)
+
+> **功能说明**：B2B 运营后台允许销售人员快速创建新项目，系统自动初始化 Step 1 所需的全部子组件，确保项目从创建即进入标准化工作流。
+
+#### 11.7.1 创建项目表单字段
+
+| 字段分类 | 字段名 | 类型 | 必填 | 说明 |
+|---------|--------|------|------|------|
+| **项目信息** | Project Name | 文本 | ✅ | 项目名称，如 "Johnson Residence Sunroom" |
+| | Product Type | 单选卡片 | ✅ | Sunroom / Pergola / Zip Blinds / ADU |
+| **客户信息** | Customer Name | 文本 | ✅ | 客户姓名（Mr./Ms.） |
+| | Phone | 电话 | ✅ | 客户联系电话 |
+| | Email | 邮箱 | ✅ | 客户电子邮箱 |
+| | Project Address | 文本 | 选填 | 项目安装地址 |
+| **预算与时间** | Budget Range | 下拉选择 | ✅ | $10K–$20K / $20K–$35K / $35K–$50K / $50K–$75K / $75K–$100K / $100K+ |
+| | Ideal Start | 下拉选择 | ✅ | ASAP / 1–3 月 / 3–6 月 / 未确定 |
+| **备注** | Notes | 多行文本 | 选填 | 初始备注信息 |
+
+#### 11.7.2 项目创建时自动初始化的子组件
+
+当用户点击 **"+ Create Project"** 按钮后，系统自动完成以下初始化：
+
+| 子组件 | 初始化内容 | 说明 |
+|--------|-----------|------|
+| **项目基础数据** | `id`: 自动生成（格式 `PRJ-YYYYMMDD-XXX`） | 唯一项目编号 |
+| | `workflowStep`: 1 | 新项目默认进入 Step 1 (Intent) |
+| | `stage`: 'intent' | 阶段状态 |
+| | `riskLevel`: 'low' | 新项目默认低风险 |
+| | `paid`: 0 | 已支付金额初始为 0 |
+| | `startDate`: 当天日期 | 项目启动日期 |
+| **Step 1 检查清单** | `initial_communication`: false | 初步沟通与产品演示 |
+| | `intake_questionnaire`: false | 客户设计需求表填写 |
+| | `hoa_precheck`: false | HOA/社区合规预沟通 |
+| | `intent_fee_collected`: false | 意向金收取 |
+| | `client_signoff`: false | 客户签字确认 |
+| **问卷模块追踪** | `questionnaire.status`: 'not_started' | 问卷整体状态 |
+| | `questionnaire.modules`: {a1–a8: false} | 8 大模块完成状态 |
+| **支付追踪** | `payments.intent_fee`: {amount: 100, status: 'pending'} | $100 意向金待收 |
+| **文档与风险** | `documents`: [] | 空文档列表 |
+| | `risks`: [] | 空风险列表 |
+| | `issues`: [] | 空问题列表 |
+
+#### 11.7.3 创建后的自动行为
+
+1. **项目列表更新**：新项目自动添加到列表顶部
+2. **自动选中**：创建完成后自动选中该项目，显示项目详情
+3. **项目列表收缩**：自动收缩左侧项目列表面板，为详情视图腾出空间
+4. **Step 1 可展开**：项目详情中的 Service Workflow 显示 Step 1 为当前步骤，可点击展开查看：
+   - 6 项 Core Actions
+   - 3 项 Key Deliverables
+   - 8 模块 Client Design Intake Questionnaire（交互式表单）
+   - AI Agent 协作支持
+
 ---
 
 ## 附件 A：客户设计需求表 (Client Design Intake Questionnaire)
@@ -595,6 +648,7 @@ graph TB
 | **2.0** | **2026-03-14** | **重大重构**：采用六步法替代 16 步流程；新增 5 个付款节点（含意向金 $100）；全流程融入合规前置策略（HOA + 政府许可）；新增激光三维扫描规划（占位）；增加 AI Agent 支持映射；新增责任矩阵；适用产品：Sunroom + Pergola |
 | **2.1** | **2026-03-16** | **对齐白皮书 v2.2.0（Larry Zhang 反馈）**：Step 3 新增测量能力三阶段演进表（MVP→激光扫描→AI+激光融合）；Step 3 产出升级为设计赋能全矩阵（7 种产出）；Step 2 产出增加概念级 Site Plan 和 Before-After 动画；Step 4 合规资料包与设计矩阵对齐；AI Agent 支持能力更新 |
 | **3.0** | **2026-03-16** | **整合三份新文档**：Step 3 当前以手动精准测量为主（激光扫描仍为近期规划）；Step 1 产出引用附件 A（8 模块完整问卷）；Step 4 报价明细扩充（运费含关税、基础建设费用提示）；Step 5 新增远程验收；新增附件 A（Client Design Intake Questionnaire）；新增附件 B（Project Management Checklist 全 6 阶段含签字确认）；三维点云模型列为设计矩阵产出（远期） |
+| **3.1** | **2026-03-18** | **新增项目管理模块（11.7）**：Create New Project 功能规范；项目创建表单字段定义（项目信息、客户信息、预算与时间）；项目创建时自动初始化的子组件（检查清单、问卷模块追踪、支付追踪、文档与风险列表）；创建后的自动行为（列表更新、自动选中、Step 1 展开） |
 
 ---
 
