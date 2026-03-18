@@ -277,28 +277,12 @@
                 <div class="nav-section">
                     <div class="nav-section-title">Main Menu</div>
                     <a href="#" class="nav-item active" data-page="dashboard">
-                        <i class="fas fa-home"></i>
-                        <span>Overview</span>
-                    </a>
-                    <a href="#" class="nav-item" data-page="workflow">
-                        <i class="fas fa-project-diagram"></i>
-                        <span>Service Workflow</span>
+                        <i class="fas fa-building"></i>
+                        <span>Company Overview</span>
                     </a>
                     <a href="#" class="nav-item" data-page="projects">
-                        <i class="fas fa-folder"></i>
+                        <i class="fas fa-folder-open"></i>
                         <span>Projects</span>
-                    </a>
-                    <a href="#" class="nav-item" data-page="orders">
-                        <i class="fas fa-file-invoice"></i>
-                        <span>Orders</span>
-                    </a>
-                    <a href="#" class="nav-item" data-page="customers">
-                        <i class="fas fa-users"></i>
-                        <span>Customers</span>
-                    </a>
-                    <a href="#" class="nav-item" data-page="products">
-                        <i class="fas fa-box-open"></i>
-                        <span>Products</span>
                     </a>
                 </div>
 
@@ -373,164 +357,196 @@
             <!-- Content -->
             <div class="content">
 
-                <!-- ===== Dashboard Overview Page ===== -->
+                <!-- ===== Company Overview Page ===== -->
                 <div class="page-content active" id="page-dashboard">
-                    <!-- Stats Grid -->
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-header">
-                                <span class="stat-title">Active Projects</span>
-                                <div class="stat-icon blue"><i class="fas fa-folder-open"></i></div>
-                            </div>
-                            <div class="stat-value">12</div>
-                            <div class="stat-change"><i class="fas fa-arrow-up"></i> +3 this month</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-header">
-                                <span class="stat-title">Monthly Orders</span>
-                                <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
-                            </div>
-                            <div class="stat-value">8</div>
-                            <div class="stat-change"><i class="fas fa-arrow-up"></i> +2 vs last month</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-header">
-                                <span class="stat-title">Pending Quotes</span>
-                                <div class="stat-icon yellow"><i class="fas fa-clock"></i></div>
-                            </div>
-                            <div class="stat-value">5</div>
-                            <div class="stat-change negative"><i class="fas fa-arrow-down"></i> Follow up needed</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-header">
-                                <span class="stat-title">Monthly Revenue</span>
-                                <div class="stat-icon purple"><i class="fas fa-dollar-sign"></i></div>
-                            </div>
-                            <div class="stat-value">$128K</div>
-                            <div class="stat-change"><i class="fas fa-arrow-up"></i> +15% vs last month</div>
-                        </div>
-                    </div>
+                    <div class="max-w-7xl mx-auto">
 
-                    <!-- Content Grid -->
-                    <div class="content-grid">
-                        <!-- Recent Projects -->
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">Recent Projects</h3>
-                                <a href="#" class="card-action">View All</a>
+                        <!-- Summary Cards Row -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+                            <!-- Orders Card -->
+                            <div class="overview-card bg-white rounded-xl border-2 border-gray-200 p-5 cursor-pointer hover:border-blue-400 hover:shadow-lg transition-all duration-200" data-section="orders" onclick="toggleOverviewSection('orders')">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="w-11 h-11 bg-blue-50 rounded-xl flex items-center justify-center">
+                                        <i class="fas fa-file-invoice text-blue-600 text-lg"></i>
+                                    </div>
+                                    <i class="fas fa-chevron-down text-gray-400 text-xs overview-arrow transition-transform duration-200"></i>
+                                </div>
+                                <div class="text-2xl font-bold text-gray-900">156</div>
+                                <div class="text-sm text-gray-500 mt-1">Total Orders</div>
+                                <div class="flex items-center gap-3 mt-3 text-xs">
+                                    <span class="text-amber-600 font-medium">12 Pending</span>
+                                    <span class="text-blue-600 font-medium">8 In Production</span>
+                                </div>
                             </div>
-                            <div class="card-body">
-                                <table class="data-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Project</th>
-                                            <th>Client</th>
-                                            <th>Status</th>
-                                            <th>Updated</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <div class="project-info">
-                                                    <div class="project-avatar">🏠</div>
-                                                    <div>
-                                                        <div class="project-name">Sunshine Villa Sunroom</div>
-                                                        <div class="project-type">Residential Sunroom</div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>Mr. Johnson</td>
-                                            <td>
-                                                <span class="status-badge in-progress">
-                                                    <i class="fas fa-circle" style="font-size: 6px;"></i>
-                                                    In Progress
-                                                </span>
-                                            </td>
-                                            <td>2 hrs ago</td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="project-info">
-                                                    <div class="project-avatar">🏢</div>
-                                                    <div>
-                                                        <div class="project-name">Commercial Outdoor Dining</div>
-                                                        <div class="project-type">Commercial Pergola</div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>Ms. Smith</td>
-                                            <td>
-                                                <span class="status-badge pending">
-                                                    <i class="fas fa-circle" style="font-size: 6px;"></i>
-                                                    Pending
-                                                </span>
-                                            </td>
-                                            <td>Yesterday</td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="project-info">
-                                                    <div class="project-avatar">🏊</div>
-                                                    <div>
-                                                        <div class="project-name">Private Pool Zip Blinds</div>
-                                                        <div class="project-type">Zip Blinds</div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>Mrs. Davis</td>
-                                            <td>
-                                                <span class="status-badge completed">
-                                                    <i class="fas fa-circle" style="font-size: 6px;"></i>
-                                                    Completed
-                                                </span>
-                                            </td>
-                                            <td>3 days ago</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
 
-                        <!-- Recent Activity -->
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">Recent Activity</h3>
-                                <a href="#" class="card-action">View All</a>
+                            <!-- Customers Card -->
+                            <div class="overview-card bg-white rounded-xl border-2 border-gray-200 p-5 cursor-pointer hover:border-green-400 hover:shadow-lg transition-all duration-200" data-section="customers" onclick="toggleOverviewSection('customers')">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="w-11 h-11 bg-green-50 rounded-xl flex items-center justify-center">
+                                        <i class="fas fa-users text-green-600 text-lg"></i>
+                                    </div>
+                                    <i class="fas fa-chevron-down text-gray-400 text-xs overview-arrow transition-transform duration-200"></i>
+                                </div>
+                                <div class="text-2xl font-bold text-gray-900">482</div>
+                                <div class="text-sm text-gray-500 mt-1">Total Customers</div>
+                                <div class="flex items-center gap-3 mt-3 text-xs">
+                                    <span class="text-green-600 font-medium">324 Active</span>
+                                    <span class="text-purple-600 font-medium">28 New This Month</span>
+                                </div>
                             </div>
-                            <div class="card-body">
-                                <div class="activity-list">
-                                    <div class="activity-item">
-                                        <div class="activity-icon create"><i class="fas fa-plus"></i></div>
-                                        <div class="activity-content">
-                                            <div class="activity-text"><strong>Mr. Johnson</strong> created new project <strong>Sunshine Villa Sunroom</strong></div>
-                                            <div class="activity-time">2 hours ago</div>
-                                        </div>
+
+                            <!-- Products Card -->
+                            <div class="overview-card bg-white rounded-xl border-2 border-gray-200 p-5 cursor-pointer hover:border-purple-400 hover:shadow-lg transition-all duration-200" data-section="products" onclick="toggleOverviewSection('products')">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="w-11 h-11 bg-purple-50 rounded-xl flex items-center justify-center">
+                                        <i class="fas fa-box-open text-purple-600 text-lg"></i>
                                     </div>
-                                    <div class="activity-item">
-                                        <div class="activity-icon update"><i class="fas fa-edit"></i></div>
-                                        <div class="activity-content">
-                                            <div class="activity-text"><strong>Ms. Smith</strong> updated quote for <strong>Commercial Outdoor Dining</strong></div>
-                                            <div class="activity-time">5 hours ago</div>
-                                        </div>
+                                    <i class="fas fa-chevron-down text-gray-400 text-xs overview-arrow transition-transform duration-200"></i>
+                                </div>
+                                <div class="text-2xl font-bold text-gray-900">24</div>
+                                <div class="text-sm text-gray-500 mt-1">Total Products</div>
+                                <div class="flex items-center gap-3 mt-3 text-xs">
+                                    <span class="text-green-600 font-medium">18 Active</span>
+                                    <span class="text-gray-500 font-medium">4 Categories</span>
+                                </div>
+                            </div>
+
+                            <!-- Revenue Card (Static) -->
+                            <div class="bg-white rounded-xl border-2 border-gray-200 p-5">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="w-11 h-11 bg-amber-50 rounded-xl flex items-center justify-center">
+                                        <i class="fas fa-dollar-sign text-amber-600 text-lg"></i>
                                     </div>
-                                    <div class="activity-item">
-                                        <div class="activity-icon complete"><i class="fas fa-check"></i></div>
-                                        <div class="activity-content">
-                                            <div class="activity-text"><strong>Mrs. Davis</strong> approved design for <strong>Private Pool Zip Blinds</strong></div>
-                                            <div class="activity-time">Yesterday</div>
-                                        </div>
-                                    </div>
-                                    <div class="activity-item">
-                                        <div class="activity-icon create"><i class="fas fa-user-plus"></i></div>
-                                        <div class="activity-content">
-                                            <div class="activity-text"><strong>System</strong> new team member <strong>Alex</strong> joined</div>
-                                            <div class="activity-time">2 days ago</div>
-                                        </div>
-                                    </div>
+                                    <span class="text-xs text-green-600 font-semibold bg-green-50 px-2 py-0.5 rounded-full"><i class="fas fa-arrow-up mr-1"></i>+15%</span>
+                                </div>
+                                <div class="text-2xl font-bold text-gray-900">$128K</div>
+                                <div class="text-sm text-gray-500 mt-1">Monthly Revenue</div>
+                                <!-- Mini Revenue Trend -->
+                                <div class="flex items-end gap-1 mt-3 h-8">
+                                    <div class="flex-1 bg-amber-200 rounded-t" style="height:40%"></div>
+                                    <div class="flex-1 bg-amber-200 rounded-t" style="height:55%"></div>
+                                    <div class="flex-1 bg-amber-300 rounded-t" style="height:45%"></div>
+                                    <div class="flex-1 bg-amber-300 rounded-t" style="height:70%"></div>
+                                    <div class="flex-1 bg-amber-400 rounded-t" style="height:60%"></div>
+                                    <div class="flex-1 bg-amber-500 rounded-t" style="height:85%"></div>
+                                    <div class="flex-1 bg-amber-600 rounded-t" style="height:100%"></div>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- ===== Detail Sections (toggled by card click) ===== -->
+
+                        <!-- Orders Detail Section -->
+                        <div id="overview-section-orders" class="overview-detail-section hidden mb-8">
+                            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                                <div class="flex items-center justify-between p-5 border-b border-gray-100">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-file-invoice text-blue-600"></i>
+                                        </div>
+                                        <h3 class="text-lg font-semibold text-gray-900">Orders</h3>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <div class="relative">
+                                            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                                            <input type="text" placeholder="Search orders..." class="pl-9 pr-3 py-1.5 border border-gray-200 rounded-lg text-sm w-48 focus:ring-2 focus:ring-blue-300 focus:border-blue-300">
+                                        </div>
+                                        <select class="px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-300">
+                                            <option value="">All Status</option>
+                                            <option>Pending</option>
+                                            <option>Confirmed</option>
+                                            <option>In Production</option>
+                                            <option>Shipped</option>
+                                            <option>Completed</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full">
+                                        <thead>
+                                            <tr class="border-b border-gray-100 bg-gray-50/50">
+                                                <th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Order</th>
+                                                <th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Customer</th>
+                                                <th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Product</th>
+                                                <th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Total</th>
+                                                <th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                                                <th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="overviewOrdersBody">
+                                            <!-- Populated by JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Customers Detail Section -->
+                        <div id="overview-section-customers" class="overview-detail-section hidden mb-8">
+                            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                                <div class="flex items-center justify-between p-5 border-b border-gray-100">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-users text-green-600"></i>
+                                        </div>
+                                        <h3 class="text-lg font-semibold text-gray-900">Customers</h3>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <div class="relative">
+                                            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                                            <input type="text" placeholder="Search customers..." class="pl-9 pr-3 py-1.5 border border-gray-200 rounded-lg text-sm w-48 focus:ring-2 focus:ring-green-300 focus:border-green-300">
+                                        </div>
+                                        <div class="flex gap-1">
+                                            <button class="px-3 py-1 bg-gray-900 text-white text-xs rounded-full">All</button>
+                                            <button class="px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50">Active</button>
+                                            <button class="px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50">VIP</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full">
+                                        <thead>
+                                            <tr class="border-b border-gray-100 bg-gray-50/50">
+                                                <th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Customer</th>
+                                                <th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Email</th>
+                                                <th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Location</th>
+                                                <th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Projects</th>
+                                                <th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Spent</th>
+                                                <th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="overviewCustomersBody">
+                                            <!-- Populated by JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Products Detail Section -->
+                        <div id="overview-section-products" class="overview-detail-section hidden mb-8">
+                            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                                <div class="flex items-center justify-between p-5 border-b border-gray-100">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-box-open text-purple-600"></i>
+                                        </div>
+                                        <h3 class="text-lg font-semibold text-gray-900">Products</h3>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <button class="px-3 py-1 bg-gray-900 text-white text-xs rounded-full">All</button>
+                                        <button class="px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50">Sunroom</button>
+                                        <button class="px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50">Pergola</button>
+                                        <button class="px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50">Zip Blinds</button>
+                                        <button class="px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50">ADU</button>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-5" id="overviewProductsGrid">
+                                    <!-- Populated by JS -->
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
@@ -630,7 +646,7 @@
                 <!-- Project Detail Modal (Hidden) -->
                 <div id="projectDetailModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-start justify-center pt-8 overflow-y-auto">
                     <div class="bg-white rounded-2xl w-full max-w-4xl mx-4 mb-8 shadow-xl">
-                        <div id="projectDetailContent">
+                        <div id="wfProjectDetailContent">
                             <!-- Populated dynamically -->
                         </div>
                     </div>
@@ -3528,245 +3544,127 @@
                     </div>
                 </div>
 
-                <!-- Projects Management Page -->
-        <div class="page-content" id="page-projects">
-            <div class="max-w-7xl mx-auto">
-                <!-- Header -->
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
-                    <div>
-                        <h2 class="text-2xl font-bold text-gray-900">Projects</h2>
-                        <p class="text-gray-500 text-sm mt-1">Manage all active projects, track issues, and mitigate risks</p>
-                    </div>
-                    <button class="px-6 py-3 bg-gray-900 text-white rounded-xl font-medium hover:bg-gray-800 transition flex items-center gap-2 self-start">
-                        <i class="fas fa-plus"></i>
-                        <span>New Project</span>
-                    </button>
-                </div>
+                <!-- ===== Projects Page (Master-Detail Layout) ===== -->
+                <div class="page-content" id="page-projects">
+                    <div class="flex gap-0 h-[calc(100vh-80px)]">
 
-                <!-- Stats Row -->
-                <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-                    <div class="bg-white rounded-xl border border-gray-200 p-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-folder text-blue-600"></i>
+                        <!-- Left Panel: Project List -->
+                        <div class="w-80 flex-shrink-0 border-r border-gray-200 bg-white flex flex-col">
+                            <div class="p-4 border-b border-gray-100">
+                                <div class="relative">
+                                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                                    <input type="text" id="projectListSearch" placeholder="Search projects..." class="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-300" oninput="filterProjectList()">
+                                </div>
+                                <div class="flex gap-1.5 mt-3">
+                                    <button class="proj-filter-btn px-2.5 py-1 bg-gray-900 text-white text-xs rounded-full" data-filter="all" onclick="filterProjectListByStatus('all')">All</button>
+                                    <button class="proj-filter-btn px-2.5 py-1 bg-white border text-gray-500 text-xs rounded-full hover:bg-gray-50" data-filter="active" onclick="filterProjectListByStatus('active')">Active</button>
+                                    <button class="proj-filter-btn px-2.5 py-1 bg-white border text-gray-500 text-xs rounded-full hover:bg-gray-50" data-filter="completed" onclick="filterProjectListByStatus('completed')">Done</button>
+                                </div>
                             </div>
-                            <div>
-                                <div class="text-2xl font-bold text-gray-900">12</div>
-                                <div class="text-xs text-gray-500">Active Projects</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-xl border border-gray-200 p-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-yellow-50 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-exclamation-triangle text-yellow-600"></i>
-                            </div>
-                            <div>
-                                <div class="text-2xl font-bold text-gray-900">5</div>
-                                <div class="text-xs text-gray-500">Open Issues</div>
+                            <div class="flex-1 overflow-y-auto" id="projectListContainer">
+                                <!-- Populated by JS -->
                             </div>
                         </div>
-                    </div>
-                    <div class="bg-white rounded-xl border border-gray-200 p-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-red-50 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-fire text-red-600"></i>
-                            </div>
-                            <div>
-                                <div class="text-2xl font-bold text-gray-900">2</div>
-                                <div class="text-xs text-gray-500">High Risks</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-xl border border-gray-200 p-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-check-circle text-green-600"></i>
-                            </div>
-                            <div>
-                                <div class="text-2xl font-bold text-gray-900">98%</div>
-                                <div class="text-xs text-gray-500">On-Time Rate</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-xl border border-gray-200 p-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-dollar-sign text-purple-600"></i>
-                            </div>
-                            <div>
-                                <div class="text-2xl font-bold text-gray-900">$485K</div>
-                                <div class="text-xs text-gray-500">Total Value</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Risk Heat Map -->
-                <div class="bg-white rounded-xl border border-gray-200 p-6 mb-8">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-semibold text-gray-900">Risk Heat Map</h3>
-                        <button class="text-sm text-gray-500 hover:text-gray-700">
-                            <i class="fas fa-info-circle mr-1"></i>View Details
-                        </button>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <!-- High Risk -->
-                        <div class="border border-red-200 rounded-xl p-4 bg-red-50/50">
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-3 h-3 bg-red-500 rounded-full"></div>
-                                    <span class="font-medium text-red-700">High Risk</span>
-                                </div>
-                                <span class="text-xs font-medium text-red-600 bg-red-100 px-2 py-0.5 rounded-full">2 Projects</span>
+                        <!-- Right Panel: Project Detail -->
+                        <div class="flex-1 overflow-y-auto bg-gray-50/50 p-6" id="projectDetailPanel">
+                            <!-- Default empty state -->
+                            <div id="projectDetailEmpty" class="flex flex-col items-center justify-center h-full text-gray-400">
+                                <i class="fas fa-folder-open text-5xl mb-4"></i>
+                                <p class="text-lg font-medium">Select a project</p>
+                                <p class="text-sm mt-1">Choose a project from the list to view details</p>
                             </div>
-                            <div class="space-y-2">
-                                <div class="flex items-center justify-between text-sm">
-                                    <span class="text-gray-700">Johnson Residence</span>
-                                    <span class="text-red-600 font-medium">Permit Delay</span>
-                                </div>
-                                <div class="flex items-center justify-between text-sm">
-                                    <span class="text-gray-700">Martinez ADU</span>
-                                    <span class="text-red-600 font-medium">HOA Approval</span>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Medium Risk -->
-                        <div class="border border-yellow-200 rounded-xl p-4 bg-yellow-50/50">
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                                    <span class="font-medium text-yellow-700">Medium Risk</span>
-                                </div>
-                                <span class="text-xs font-medium text-yellow-600 bg-yellow-100 px-2 py-0.5 rounded-full">3 Projects</span>
-                            </div>
-                            <div class="space-y-2">
-                                <div class="flex items-center justify-between text-sm">
-                                    <span class="text-gray-700">Smith Sunroom</span>
-                                    <span class="text-yellow-600 font-medium">Material Delay</span>
-                                </div>
-                                <div class="flex items-center justify-between text-sm">
-                                    <span class="text-gray-700">Chen Pergola</span>
-                                    <span class="text-yellow-600 font-medium">Weather</span>
-                                </div>
-                                <div class="flex items-center justify-between text-sm">
-                                    <span class="text-gray-700">Davis Commercial</span>
-                                    <span class="text-yellow-600 font-medium">Budget Review</span>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Low Risk -->
-                        <div class="border border-green-200 rounded-xl p-4 bg-green-50/50">
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
-                                    <span class="font-medium text-green-700">Low Risk</span>
-                                </div>
-                                <span class="text-xs font-medium text-green-600 bg-green-100 px-2 py-0.5 rounded-full">5 Projects</span>
-                            </div>
-                            <div class="text-sm text-gray-600">
-                                <div class="flex items-center justify-between py-1">
-                                    <span>Wilson Residence</span>
-                                    <i class="fas fa-check text-green-500"></i>
-                                </div>
-                                <div class="flex items-center justify-between py-1">
-                                    <span>Taylor Backyard</span>
-                                    <i class="fas fa-check text-green-500"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- On Track -->
-                        <div class="border border-gray-200 rounded-xl p-4 bg-gray-50">
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-3 h-3 bg-gray-400 rounded-full"></div>
-                                    <span class="font-medium text-gray-700">On Track</span>
-                                </div>
-                                <span class="text-xs font-medium text-gray-600 bg-gray-200 px-2 py-0.5 rounded-full">2 Projects</span>
-                            </div>
-                            <div class="text-sm text-gray-600">
-                                <div class="flex items-center justify-between py-1">
-                                    <span>Anderson Patio</span>
-                                    <i class="fas fa-check text-gray-400"></i>
-                                </div>
-                                <div class="flex items-center justify-between py-1">
-                                    <span>Thomas Deck</span>
-                                    <i class="fas fa-check text-gray-400"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Issues Tracker -->
-                <div class="bg-white rounded-xl border border-gray-200 p-6 mb-8">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-semibold text-gray-900">Issues Tracker</h3>
-                        <button onclick="openIssueModal()" class="text-sm text-gray-900 bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg transition flex items-center gap-2">
-                            <i class="fas fa-plus"></i>
-                            Report Issue
-                        </button>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead>
-                                <tr class="border-b border-gray-200">
-                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Issue ID</th>
-                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Project</th>
-                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Title</th>
-                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Priority</th>
-                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Status</th>
-                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Assigned To</th>
-                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Due Date</th>
-                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="issuesTableBody">
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                            <!-- Project Detail Content (hidden initially) -->
+                            <div id="projectDetailContent" class="hidden max-w-5xl">
+                                <!-- Project Header -->
+                                <div class="flex items-start justify-between mb-6">
+                                    <div>
+                                        <h2 class="text-xl font-bold text-gray-900" id="projDetailName"></h2>
+                                        <p class="text-sm text-gray-500 mt-1" id="projDetailMeta"></p>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs font-medium px-3 py-1 rounded-full" id="projDetailStatus"></span>
+                                    </div>
+                                </div>
 
-                <!-- Projects List -->
-                <div class="bg-white rounded-xl border border-gray-200">
-                    <div class="flex items-center justify-between p-6 border-b border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-900">All Projects</h3>
-                        <div class="flex items-center gap-3">
-                            <div class="relative">
-                                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                                <input type="text" placeholder="Search projects..." class="pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-300">
+                                <!-- Service Workflow Section -->
+                                <div class="bg-white rounded-xl border border-gray-200 mb-5 overflow-hidden">
+                                    <div class="flex items-center gap-2 px-5 py-3 border-b border-gray-100 bg-gray-50/70">
+                                        <i class="fas fa-project-diagram text-blue-600 text-sm"></i>
+                                        <h3 class="text-sm font-semibold text-gray-700">Service Workflow</h3>
+                                    </div>
+                                    <div class="p-5">
+                                        <div class="flex items-center justify-between gap-2" id="projWorkflowSteps">
+                                            <!-- 6-step pipeline rendered by JS -->
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Risk List Section -->
+                                <div class="bg-white rounded-xl border border-gray-200 mb-5 overflow-hidden">
+                                    <div class="flex items-center justify-between px-5 py-3 border-b border-gray-100 bg-gray-50/70">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fas fa-exclamation-triangle text-amber-500 text-sm"></i>
+                                            <h3 class="text-sm font-semibold text-gray-700">Risk List</h3>
+                                        </div>
+                                        <span class="text-xs text-gray-400" id="projRiskCount"></span>
+                                    </div>
+                                    <div class="divide-y divide-gray-50" id="projRiskList">
+                                        <!-- Populated by JS -->
+                                    </div>
+                                </div>
+
+                                <!-- Issue List Section -->
+                                <div class="bg-white rounded-xl border border-gray-200 mb-5 overflow-hidden">
+                                    <div class="flex items-center justify-between px-5 py-3 border-b border-gray-100 bg-gray-50/70">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fas fa-bug text-red-500 text-sm"></i>
+                                            <h3 class="text-sm font-semibold text-gray-700">Issue List</h3>
+                                        </div>
+                                        <span class="text-xs text-gray-400" id="projIssueCount"></span>
+                                    </div>
+                                    <div class="divide-y divide-gray-50" id="projIssueList">
+                                        <!-- Populated by JS -->
+                                    </div>
+                                </div>
+
+                                <!-- Customer Section -->
+                                <div class="bg-white rounded-xl border border-gray-200 mb-5 overflow-hidden">
+                                    <div class="flex items-center gap-2 px-5 py-3 border-b border-gray-100 bg-gray-50/70">
+                                        <i class="fas fa-user text-green-600 text-sm"></i>
+                                        <h3 class="text-sm font-semibold text-gray-700">Customer</h3>
+                                    </div>
+                                    <div class="p-5" id="projCustomerInfo">
+                                        <!-- Populated by JS -->
+                                    </div>
+                                </div>
+
+                                <!-- Order Section -->
+                                <div class="bg-white rounded-xl border border-gray-200 mb-5 overflow-hidden">
+                                    <div class="flex items-center gap-2 px-5 py-3 border-b border-gray-100 bg-gray-50/70">
+                                        <i class="fas fa-file-invoice text-blue-600 text-sm"></i>
+                                        <h3 class="text-sm font-semibold text-gray-700">Order</h3>
+                                    </div>
+                                    <div class="p-5" id="projOrderInfo">
+                                        <!-- Populated by JS -->
+                                    </div>
+                                </div>
+
+                                <!-- Revenue Section -->
+                                <div class="bg-white rounded-xl border border-gray-200 mb-5 overflow-hidden">
+                                    <div class="flex items-center gap-2 px-5 py-3 border-b border-gray-100 bg-gray-50/70">
+                                        <i class="fas fa-dollar-sign text-amber-600 text-sm"></i>
+                                        <h3 class="text-sm font-semibold text-gray-700">Revenue</h3>
+                                    </div>
+                                    <div class="p-5" id="projRevenueInfo">
+                                        <!-- Populated by JS -->
+                                    </div>
+                                </div>
                             </div>
-                            <select class="px-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-300">
-                                <option value="">All Statuses</option>
-                                <option value="design">Design</option>
-                                <option value="permit">Permit</option>
-                                <option value="manufacturing">Manufacturing</option>
-                                <option value="installation">Installation</option>
-                                <option value="completed">Completed</option>
-                            </select>
                         </div>
                     </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead>
-                                <tr class="border-b border-gray-200 bg-gray-50">
-                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Project Name</th>
-                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Customer</th>
-                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Type</th>
-                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Stage</th>
-                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Budget</th>
-                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Timeline</th>
-                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Risk Level</th>
-                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="projectsTableBody">
-                            </tbody>
-                        </table>
-                    </div>
                 </div>
-            </div>
-        </div>
 
         <!-- Team Management Page -->
         <div class="page-content" id="page-team">
@@ -6294,10 +6192,376 @@
             renderKBDocuments();
         }
 
+        // ===== Company Overview: Toggle Detail Sections =====
+        let activeOverviewSection = null;
+
+        function toggleOverviewSection(section) {
+            const allSections = document.querySelectorAll('.overview-detail-section');
+            const allCards = document.querySelectorAll('.overview-card');
+
+            if (activeOverviewSection === section) {
+                // Collapse if clicking same card
+                allSections.forEach(s => s.classList.add('hidden'));
+                allCards.forEach(c => {
+                    c.classList.remove('border-blue-400', 'border-green-400', 'border-purple-400', 'shadow-lg');
+                    c.classList.add('border-gray-200');
+                    c.querySelector('.overview-arrow').style.transform = '';
+                });
+                activeOverviewSection = null;
+                return;
+            }
+
+            // Hide all, show selected
+            allSections.forEach(s => s.classList.add('hidden'));
+            allCards.forEach(c => {
+                c.classList.remove('border-blue-400', 'border-green-400', 'border-purple-400', 'shadow-lg');
+                c.classList.add('border-gray-200');
+                c.querySelector('.overview-arrow').style.transform = '';
+            });
+
+            const target = document.getElementById('overview-section-' + section);
+            if (target) {
+                target.classList.remove('hidden');
+                target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+
+            const card = document.querySelector(`.overview-card[data-section="${section}"]`);
+            if (card) {
+                const colorMap = { orders: 'border-blue-400', customers: 'border-green-400', products: 'border-purple-400' };
+                card.classList.remove('border-gray-200');
+                card.classList.add(colorMap[section], 'shadow-lg');
+                card.querySelector('.overview-arrow').style.transform = 'rotate(180deg)';
+            }
+
+            activeOverviewSection = section;
+
+            // Populate data on first open
+            if (section === 'orders') renderOverviewOrders();
+            if (section === 'customers') renderOverviewCustomers();
+            if (section === 'products') renderOverviewProducts();
+        }
+
+        // ===== Company Overview: Dummy Data =====
+        const overviewOrdersData = [
+            { id: 'ORD-2024-0156', customer: 'Mr. Johnson', email: 'johnson@email.com', product: 'Classic Sunroom', total: '$18,500', status: 'In Production', statusColor: 'blue', date: 'Mar 10, 2026' },
+            { id: 'ORD-2024-0155', customer: 'Ms. Chen', email: 'chen@email.com', product: 'Studio Pergola', total: '$6,900', status: 'Pending', statusColor: 'amber', date: 'Mar 8, 2026' },
+            { id: 'ORD-2024-0154', customer: 'Mrs. Davis', email: 'davis@email.com', product: 'Zip Blinds Set', total: '$4,200', status: 'Shipped', statusColor: 'purple', date: 'Mar 5, 2026' },
+            { id: 'ORD-2024-0153', customer: 'Mr. Smith', email: 'smith@email.com', product: 'Premium Sunroom', total: '$32,000', status: 'Completed', statusColor: 'green', date: 'Feb 28, 2026' },
+            { id: 'ORD-2024-0152', customer: 'Ms. Garcia', email: 'garcia@email.com', product: 'ADU Studio', total: '$85,000', status: 'In Production', statusColor: 'blue', date: 'Feb 25, 2026' },
+            { id: 'ORD-2024-0151', customer: 'Mr. Wilson', email: 'wilson@email.com', product: 'Classic Pergola', total: '$9,500', status: 'Completed', statusColor: 'green', date: 'Feb 20, 2026' }
+        ];
+
+        const overviewCustomersData = [
+            { name: 'Mr. Johnson', email: 'johnson@email.com', location: '123 Sunshine Ave, Los Angeles, CA', projects: 3, spent: '$42,500', status: 'VIP', avatar: 'J' },
+            { name: 'Ms. Chen', email: 'chen@email.com', location: '456 Oak Dr, Frederick, MD', projects: 1, spent: '$6,900', status: 'Active', avatar: 'C' },
+            { name: 'Mrs. Davis', email: 'davis@email.com', location: '789 Pool Ln, Scottsdale, AZ', projects: 2, spent: '$12,800', status: 'Active', avatar: 'D' },
+            { name: 'Mr. Smith', email: 'smith@email.com', location: '321 Elm St, Austin, TX', projects: 1, spent: '$32,000', status: 'VIP', avatar: 'S' },
+            { name: 'Ms. Garcia', email: 'garcia@email.com', location: '654 Pine Rd, San Diego, CA', projects: 1, spent: '$85,000', status: 'New', avatar: 'G' },
+            { name: 'Mr. Wilson', email: 'wilson@email.com', location: '987 Cedar Ct, Portland, OR', projects: 2, spent: '$18,200', status: 'Active', avatar: 'W' }
+        ];
+
+        const overviewProductsData = [
+            { name: 'Classic Sunroom', category: 'Sunroom', price: '$85/sqft', status: 'Active', image: 'fas fa-sun', color: 'blue' },
+            { name: 'Premium Sunroom', category: 'Sunroom', price: '$120/sqft', status: 'Active', image: 'fas fa-sun', color: 'indigo' },
+            { name: 'Studio Pergola', category: 'Pergola', price: '$45/sqft', status: 'Active', image: 'fas fa-warehouse', color: 'green' },
+            { name: 'Classic Pergola', category: 'Pergola', price: '$65/sqft', status: 'Active', image: 'fas fa-warehouse', color: 'teal' },
+            { name: 'Standard Zip Blinds', category: 'Zip Blinds', price: '$35/sqft', status: 'Active', image: 'fas fa-blinds', color: 'purple' },
+            { name: 'ADU Studio', category: 'ADU', price: '$180/sqft', status: 'Active', image: 'fas fa-home', color: 'amber' }
+        ];
+
+        function renderOverviewOrders() {
+            const tbody = document.getElementById('overviewOrdersBody');
+            if (!tbody || tbody.children.length > 0) return;
+            tbody.innerHTML = overviewOrdersData.map(o => `
+                <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition">
+                    <td class="py-3 px-5"><span class="text-sm font-medium text-gray-900">${o.id}</span></td>
+                    <td class="py-3 px-5"><div class="text-sm font-medium text-gray-900">${o.customer}</div><div class="text-xs text-gray-400">${o.email}</div></td>
+                    <td class="py-3 px-5 text-sm text-gray-700">${o.product}</td>
+                    <td class="py-3 px-5 text-sm font-semibold text-gray-900">${o.total}</td>
+                    <td class="py-3 px-5"><span class="px-2.5 py-0.5 bg-${o.statusColor}-50 text-${o.statusColor}-700 text-xs font-medium rounded-full">${o.status}</span></td>
+                    <td class="py-3 px-5 text-sm text-gray-500">${o.date}</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderOverviewCustomers() {
+            const tbody = document.getElementById('overviewCustomersBody');
+            if (!tbody || tbody.children.length > 0) return;
+            tbody.innerHTML = overviewCustomersData.map(c => `
+                <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition">
+                    <td class="py-3 px-5"><div class="flex items-center gap-2.5"><div class="w-8 h-8 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-bold">${c.avatar}</div><span class="text-sm font-medium text-gray-900">${c.name}</span></div></td>
+                    <td class="py-3 px-5 text-sm text-gray-600">${c.email}</td>
+                    <td class="py-3 px-5 text-sm text-gray-600">${c.location}</td>
+                    <td class="py-3 px-5 text-sm font-medium text-gray-900">${c.projects}</td>
+                    <td class="py-3 px-5 text-sm font-semibold text-gray-900">${c.spent}</td>
+                    <td class="py-3 px-5"><span class="px-2.5 py-0.5 ${c.status === 'VIP' ? 'bg-amber-50 text-amber-700' : c.status === 'New' ? 'bg-blue-50 text-blue-700' : 'bg-green-50 text-green-700'} text-xs font-medium rounded-full">${c.status}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        function renderOverviewProducts() {
+            const grid = document.getElementById('overviewProductsGrid');
+            if (!grid || grid.children.length > 0) return;
+            grid.innerHTML = overviewProductsData.map(p => `
+                <div class="border border-gray-100 rounded-xl p-4 hover:shadow-md hover:border-gray-200 transition cursor-pointer">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 bg-${p.color}-50 rounded-lg flex items-center justify-center">
+                            <i class="${p.image} text-${p.color}-600"></i>
+                        </div>
+                        <div>
+                            <div class="text-sm font-semibold text-gray-900">${p.name}</div>
+                            <div class="text-xs text-gray-400">${p.category}</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-bold text-gray-900">${p.price}</span>
+                        <span class="px-2 py-0.5 bg-green-50 text-green-700 text-xs font-medium rounded-full">${p.status}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ===== Projects Page: Master-Detail =====
+        const allProjectsData = [
+            { id: 'PRJ-001', name: 'Johnson Residence Sunroom', customer: 'Mr. Johnson', customerEmail: 'johnson@email.com', customerPhone: '(310) 555-0101', customerAddress: '123 Sunshine Ave, Los Angeles, CA', type: 'Sunroom', workflowStep: 3, stage: 'measurement', riskLevel: 'high', budget: 35000, paid: 18500, timeline: '6 weeks', startDate: '2026-01-15', risks: [{title:'Permit approval delayed by city', severity:'high', status:'open'},{title:'HOA design review pending', severity:'medium', status:'monitoring'}], issues: [{id:'ISS-001', title:'Permit approval delayed by city', priority:'high', status:'open', assignedTo:'John Smith', dueDate:'2026-03-15'},{title:'HOA documentation incomplete', priority:'medium', status:'in_progress', assignedTo:'Emily Davis', dueDate:'2026-03-20'}], order: {id:'ORD-2024-0156', product:'Classic Sunroom', total:'$18,500', status:'In Production', date:'Mar 10, 2026'} },
+            { id: 'PRJ-002', name: 'Martinez ADU Project', customer: 'Ms. Martinez', customerEmail: 'martinez@email.com', customerPhone: '(415) 555-0202', customerAddress: '456 Oak Dr, San Francisco, CA', type: 'ADU', workflowStep: 2, stage: 'design', riskLevel: 'high', budget: 95000, paid: 1100, timeline: '12 weeks', startDate: '2026-02-01', risks: [{title:'HOA approval uncertain', severity:'high', status:'open'}], issues: [{title:'Zoning variance needed', priority:'high', status:'open', assignedTo:'John Smith', dueDate:'2026-03-25'}], order: {id:'ORD-2024-0152', product:'ADU Studio', total:'$85,000', status:'Pending', date:'Feb 25, 2026'} },
+            { id: 'PRJ-003', name: 'Smith Premium Sunroom', customer: 'Mr. Smith', customerEmail: 'smith@email.com', customerPhone: '(512) 555-0303', customerAddress: '321 Elm St, Austin, TX', type: 'Sunroom', workflowStep: 5, stage: 'production', riskLevel: 'medium', budget: 42000, paid: 37800, timeline: '8 weeks', startDate: '2025-12-10', risks: [{title:'Material supply chain delay', severity:'medium', status:'monitoring'}], issues: [{title:'Glass panel backorder 2 weeks', priority:'medium', status:'in_progress', assignedTo:'Mike Johnson', dueDate:'2026-03-10'}], order: {id:'ORD-2024-0153', product:'Premium Sunroom', total:'$32,000', status:'In Production', date:'Feb 28, 2026'} },
+            { id: 'PRJ-004', name: 'Chen Pergola Space', customer: 'Ms. Chen', customerEmail: 'chen@email.com', customerPhone: '(301) 555-0404', customerAddress: '456 Oak Dr, Frederick, MD', type: 'Pergola', workflowStep: 4, stage: 'quotation', riskLevel: 'medium', budget: 12000, paid: 7400, timeline: '4 weeks', startDate: '2026-01-20', risks: [{title:'Weather delay possible', severity:'low', status:'monitoring'}], issues: [], order: {id:'ORD-2024-0155', product:'Studio Pergola', total:'$6,900', status:'Confirmed', date:'Mar 8, 2026'} },
+            { id: 'PRJ-005', name: 'Davis Pool Zip Blinds', customer: 'Mrs. Davis', customerEmail: 'davis@email.com', customerPhone: '(480) 555-0505', customerAddress: '789 Pool Ln, Scottsdale, AZ', type: 'Zip Blinds', workflowStep: 6, stage: 'installation', riskLevel: 'low', budget: 8500, paid: 7650, timeline: '3 weeks', startDate: '2026-01-05', risks: [], issues: [], order: {id:'ORD-2024-0154', product:'Zip Blinds Set', total:'$4,200', status:'Shipped', date:'Mar 5, 2026'} },
+            { id: 'PRJ-006', name: 'Wilson Residence Pergola', customer: 'Mr. Wilson', customerEmail: 'wilson@email.com', customerPhone: '(503) 555-0606', customerAddress: '987 Cedar Ct, Portland, OR', type: 'Pergola', workflowStep: 6, stage: 'installation', riskLevel: 'low', budget: 15000, paid: 15000, timeline: '5 weeks', startDate: '2025-11-20', risks: [], issues: [], order: {id:'ORD-2024-0151', product:'Classic Pergola', total:'$9,500', status:'Completed', date:'Feb 20, 2026'} },
+            { id: 'PRJ-007', name: 'Taylor Backyard Sunroom', customer: 'Mr. Taylor', customerEmail: 'taylor@email.com', customerPhone: '(206) 555-0707', customerAddress: '159 Birch Ave, Seattle, WA', type: 'Sunroom', workflowStep: 5, stage: 'production', riskLevel: 'low', budget: 28000, paid: 25200, timeline: '6 weeks', startDate: '2025-12-15', risks: [], issues: [], order: {id:'ORD-2024-0149', product:'Classic Sunroom', total:'$28,000', status:'In Production', date:'Feb 15, 2026'} },
+            { id: 'PRJ-008', name: 'Garcia Outdoor ADU', customer: 'Ms. Garcia', customerEmail: 'garcia@email.com', customerPhone: '(619) 555-0808', customerAddress: '654 Pine Rd, San Diego, CA', type: 'ADU', workflowStep: 1, stage: 'intent', riskLevel: 'low', budget: 110000, paid: 100, timeline: '16 weeks', startDate: '2026-03-01', risks: [], issues: [], order: {id:'ORD-2024-0158', product:'ADU Studio', total:'$85,000', status:'Pending', date:'Mar 12, 2026'} }
+        ];
+
+        let currentProjectFilter = 'all';
+
+        function renderProjectList() {
+            const container = document.getElementById('projectListContainer');
+            if (!container) return;
+            const searchVal = (document.getElementById('projectListSearch')?.value || '').toLowerCase();
+            const filtered = allProjectsData.filter(p => {
+                const matchesSearch = p.name.toLowerCase().includes(searchVal) || p.customer.toLowerCase().includes(searchVal);
+                const matchesFilter = currentProjectFilter === 'all' || 
+                    (currentProjectFilter === 'active' && p.workflowStep < 6) ||
+                    (currentProjectFilter === 'completed' && p.workflowStep === 6 && p.stage === 'installation');
+                return matchesSearch && matchesFilter;
+            });
+
+            const riskColors = { high: 'red', medium: 'amber', low: 'green' };
+            const stepNames = ['', 'Intent', 'Design', 'Measurement', 'Quotation', 'Production', 'Installation'];
+
+            container.innerHTML = filtered.map(p => `
+                <div class="project-list-item p-4 border-b border-gray-100 hover:bg-blue-50/40 cursor-pointer transition" data-project-id="${p.id}" onclick="selectProject('${p.id}')">
+                    <div class="flex items-start justify-between mb-1.5">
+                        <div class="font-medium text-sm text-gray-900 leading-tight">${p.name}</div>
+                        <div class="w-2 h-2 rounded-full bg-${riskColors[p.riskLevel]}-500 flex-shrink-0 mt-1.5 ml-2"></div>
+                    </div>
+                    <div class="text-xs text-gray-500 mb-2">${p.customer} &middot; ${p.type}</div>
+                    <div class="flex items-center gap-2">
+                        <div class="flex-1 bg-gray-100 rounded-full h-1.5">
+                            <div class="bg-blue-500 rounded-full h-1.5 transition-all" style="width:${Math.round((p.workflowStep / 6) * 100)}%"></div>
+                        </div>
+                        <span class="text-xs text-gray-400 flex-shrink-0">Step ${p.workflowStep}/6</span>
+                    </div>
+                </div>
+            `).join('');
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="p-6 text-center text-gray-400 text-sm">No projects found</div>';
+            }
+        }
+
+        function filterProjectList() { renderProjectList(); }
+
+        function filterProjectListByStatus(status) {
+            currentProjectFilter = status;
+            document.querySelectorAll('.proj-filter-btn').forEach(btn => {
+                btn.classList.toggle('bg-gray-900', btn.dataset.filter === status);
+                btn.classList.toggle('text-white', btn.dataset.filter === status);
+                btn.classList.toggle('bg-white', btn.dataset.filter !== status);
+                btn.classList.toggle('border', btn.dataset.filter !== status);
+                btn.classList.toggle('text-gray-500', btn.dataset.filter !== status);
+            });
+            renderProjectList();
+        }
+
+        function selectProject(projectId) {
+            const project = allProjectsData.find(p => p.id === projectId);
+            if (!project) return;
+
+            // Highlight selected in list
+            document.querySelectorAll('.project-list-item').forEach(el => {
+                el.classList.toggle('bg-blue-50', el.dataset.projectId === projectId);
+                el.classList.toggle('border-l-4', el.dataset.projectId === projectId);
+                el.classList.toggle('border-l-blue-500', el.dataset.projectId === projectId);
+            });
+
+            // Show detail panel
+            document.getElementById('projectDetailEmpty').classList.add('hidden');
+            document.getElementById('projectDetailContent').classList.remove('hidden');
+
+            // Header
+            document.getElementById('projDetailName').textContent = project.name;
+            document.getElementById('projDetailMeta').textContent = `${project.customer} · ${project.type} · Started ${project.startDate} · Budget $${project.budget.toLocaleString()}`;
+            const statusEl = document.getElementById('projDetailStatus');
+            const riskColors = { high: 'bg-red-50 text-red-700', medium: 'bg-amber-50 text-amber-700', low: 'bg-green-50 text-green-700' };
+            statusEl.className = 'text-xs font-medium px-3 py-1 rounded-full ' + (riskColors[project.riskLevel] || 'bg-gray-100 text-gray-700');
+            statusEl.textContent = project.riskLevel.charAt(0).toUpperCase() + project.riskLevel.slice(1) + ' Risk';
+
+            // Service Workflow
+            renderProjectWorkflow(project);
+
+            // Risk List
+            renderProjectRisks(project);
+
+            // Issue List
+            renderProjectIssues(project);
+
+            // Customer
+            renderProjectCustomer(project);
+
+            // Order
+            renderProjectOrder(project);
+
+            // Revenue
+            renderProjectRevenue(project);
+        }
+
+        function renderProjectWorkflow(project) {
+            const container = document.getElementById('projWorkflowSteps');
+            const stepNames = ['Intent', 'Design', 'Measurement', 'Quotation', 'Production', 'Installation'];
+            const stepIcons = ['fa-handshake', 'fa-palette', 'fa-ruler-combined', 'fa-file-contract', 'fa-industry', 'fa-tools'];
+            const stepColors = ['blue', 'indigo', 'purple', 'orange', 'yellow', 'green'];
+
+            container.innerHTML = stepNames.map((name, i) => {
+                const step = i + 1;
+                const isCompleted = step < project.workflowStep;
+                const isCurrent = step === project.workflowStep;
+                const isFuture = step > project.workflowStep;
+                const baseColor = stepColors[i];
+
+                let classes = 'flex-1 flex flex-col items-center p-3 rounded-xl transition ';
+                if (isCurrent) classes += `bg-${baseColor}-50 border-2 border-${baseColor}-300`;
+                else if (isCompleted) classes += 'bg-green-50/50';
+                else classes += 'opacity-40';
+
+                const icon = isCompleted ? 'fa-check-circle text-green-500' : `${stepIcons[i]} text-${baseColor}-500`;
+
+                return `
+                    <div class="${classes}">
+                        <i class="fas ${icon} text-lg mb-1.5"></i>
+                        <span class="text-xs font-semibold text-gray-700">${name}</span>
+                        <span class="text-[10px] text-gray-400 mt-0.5">Step ${step}</span>
+                    </div>
+                    ${step < 6 ? '<div class="flex items-center"><i class="fas fa-chevron-right text-gray-300 text-xs"></i></div>' : ''}
+                `;
+            }).join('');
+        }
+
+        function renderProjectRisks(project) {
+            const container = document.getElementById('projRiskList');
+            document.getElementById('projRiskCount').textContent = project.risks.length + ' risk(s)';
+            if (project.risks.length === 0) {
+                container.innerHTML = '<div class="p-4 text-sm text-gray-400 text-center">No risks identified</div>';
+                return;
+            }
+            const sevColors = { high: 'red', medium: 'amber', low: 'green' };
+            container.innerHTML = project.risks.map(r => `
+                <div class="flex items-center justify-between px-5 py-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-2 h-2 rounded-full bg-${sevColors[r.severity]}-500"></div>
+                        <span class="text-sm text-gray-700">${r.title}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="px-2 py-0.5 bg-${sevColors[r.severity]}-50 text-${sevColors[r.severity]}-700 text-xs font-medium rounded-full">${r.severity}</span>
+                        <span class="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full">${r.status}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderProjectIssues(project) {
+            const container = document.getElementById('projIssueList');
+            document.getElementById('projIssueCount').textContent = project.issues.length + ' issue(s)';
+            if (project.issues.length === 0) {
+                container.innerHTML = '<div class="p-4 text-sm text-gray-400 text-center">No open issues</div>';
+                return;
+            }
+            const prioColors = { high: 'red', medium: 'amber', low: 'green' };
+            container.innerHTML = project.issues.map(iss => `
+                <div class="flex items-center justify-between px-5 py-3">
+                    <div class="flex items-center gap-3 flex-1 min-w-0">
+                        <span class="w-1.5 h-1.5 rounded-full bg-${prioColors[iss.priority]}-500 flex-shrink-0"></span>
+                        <span class="text-sm text-gray-700 truncate">${iss.title}</span>
+                    </div>
+                    <div class="flex items-center gap-2 flex-shrink-0 ml-3">
+                        <span class="text-xs text-gray-500">${iss.assignedTo}</span>
+                        <span class="px-2 py-0.5 ${iss.status === 'open' ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600'} text-xs rounded-full">${iss.status}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderProjectCustomer(project) {
+            document.getElementById('projCustomerInfo').innerHTML = `
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 bg-gray-900 text-white rounded-full flex items-center justify-center text-lg font-bold flex-shrink-0">${project.customer.charAt(project.customer.indexOf(' ') + 1) || project.customer.charAt(0)}</div>
+                    <div class="flex-1 grid grid-cols-2 gap-y-2 gap-x-6">
+                        <div><div class="text-xs text-gray-400">Name</div><div class="text-sm font-medium text-gray-900">${project.customer}</div></div>
+                        <div><div class="text-xs text-gray-400">Email</div><div class="text-sm text-gray-700">${project.customerEmail}</div></div>
+                        <div><div class="text-xs text-gray-400">Phone</div><div class="text-sm text-gray-700">${project.customerPhone}</div></div>
+                        <div><div class="text-xs text-gray-400">Address</div><div class="text-sm text-gray-700">${project.customerAddress}</div></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderProjectOrder(project) {
+            const o = project.order;
+            const statusColors = { 'In Production': 'blue', 'Pending': 'amber', 'Shipped': 'purple', 'Completed': 'green', 'Confirmed': 'blue' };
+            const sc = statusColors[o.status] || 'gray';
+            document.getElementById('projOrderInfo').innerHTML = `
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div><div class="text-xs text-gray-400">Order ID</div><div class="text-sm font-medium text-gray-900">${o.id}</div></div>
+                    <div><div class="text-xs text-gray-400">Product</div><div class="text-sm text-gray-700">${o.product}</div></div>
+                    <div><div class="text-xs text-gray-400">Total</div><div class="text-sm font-bold text-gray-900">${o.total}</div></div>
+                    <div><div class="text-xs text-gray-400">Status</div><span class="px-2.5 py-0.5 bg-${sc}-50 text-${sc}-700 text-xs font-medium rounded-full">${o.status}</span></div>
+                </div>
+            `;
+        }
+
+        function renderProjectRevenue(project) {
+            const paidPct = project.budget > 0 ? Math.round((project.paid / project.budget) * 100) : 0;
+            const remaining = project.budget - project.paid;
+            document.getElementById('projRevenueInfo').innerHTML = `
+                <div class="grid grid-cols-3 gap-4 mb-4">
+                    <div><div class="text-xs text-gray-400">Budget</div><div class="text-lg font-bold text-gray-900">$${project.budget.toLocaleString()}</div></div>
+                    <div><div class="text-xs text-gray-400">Collected</div><div class="text-lg font-bold text-green-600">$${project.paid.toLocaleString()}</div></div>
+                    <div><div class="text-xs text-gray-400">Remaining</div><div class="text-lg font-bold text-amber-600">$${remaining.toLocaleString()}</div></div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="flex-1 bg-gray-100 rounded-full h-2.5">
+                        <div class="bg-green-500 rounded-full h-2.5 transition-all" style="width:${paidPct}%"></div>
+                    </div>
+                    <span class="text-sm font-medium text-gray-600">${paidPct}%</span>
+                </div>
+            `;
+        }
+
+        function initCompanyOverview() {
+            // Company Overview is ready with static HTML; detail sections populated on click
+        }
+
+        function initNewProjectsPage() {
+            renderProjectList();
+        }
+
         // ===== Initialize =====
         document.addEventListener('DOMContentLoaded', function() {
             if (checkAuth()) {
                 loadDashboardData();
+                initCompanyOverview();
+                initNewProjectsPage();
                 initAIDesignerPage();
                 initPricingAgentPage();
                 initCompliancePage();
