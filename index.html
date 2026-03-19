@@ -1034,7 +1034,7 @@
 
                         <!-- Learn More Button -->
                         <div class="text-center mt-8">
-                            <button onclick="openPergolaGallery('residential')" class="inline-flex items-center gap-2 px-6 py-3 bg-[--light-text] text-white rounded-full font-medium hover:bg-[--primary-dark] transition-all duration-300">
+                            <button onclick="openPergolaGallery()" class="inline-flex items-center gap-2 px-6 py-3 bg-[--light-text] text-white rounded-full font-medium hover:bg-[--primary-dark] transition-all duration-300">
                                 <span class="lang-text" data-zh="查看更多案例" data-en="Learn More">Learn More</span>
                                 <i class="fas fa-arrow-right"></i>
                             </button>
@@ -1140,7 +1140,7 @@
 
                         <!-- Learn More Button -->
                         <div class="text-center mt-8">
-                            <button onclick="openPergolaGallery('commercial')" class="inline-flex items-center gap-2 px-6 py-3 bg-[--light-text] text-white rounded-full font-medium hover:bg-[--primary-dark] transition-all duration-300">
+                            <button onclick="openPergolaGallery()" class="inline-flex items-center gap-2 px-6 py-3 bg-[--light-text] text-white rounded-full font-medium hover:bg-[--primary-dark] transition-all duration-300">
                                 <span class="lang-text" data-zh="查看更多案例" data-en="Learn More">Learn More</span>
                                 <i class="fas fa-arrow-right"></i>
                             </button>
@@ -1259,7 +1259,7 @@
 
                         <!-- Learn More Button -->
                         <div class="text-center mt-8">
-                            <button onclick="openZipblindsGallery('residence')" class="inline-flex items-center gap-2 px-6 py-3 bg-[--light-text] text-white rounded-full font-medium hover:bg-[--primary-dark] transition-all duration-300">
+                            <button onclick="openZipblindsGallery()" class="inline-flex items-center gap-2 px-6 py-3 bg-[--light-text] text-white rounded-full font-medium hover:bg-[--primary-dark] transition-all duration-300">
                                 <span class="lang-text" data-zh="查看更多案例" data-en="Learn More">Learn More</span>
                                 <i class="fas fa-arrow-right"></i>
                             </button>
@@ -1361,7 +1361,7 @@
 
                         <!-- Learn More Button -->
                         <div class="text-center mt-8">
-                            <button onclick="openZipblindsGallery('pergola')" class="inline-flex items-center gap-2 px-6 py-3 bg-[--light-text] text-white rounded-full font-medium hover:bg-[--primary-dark] transition-all duration-300">
+                            <button onclick="openZipblindsGallery()" class="inline-flex items-center gap-2 px-6 py-3 bg-[--light-text] text-white rounded-full font-medium hover:bg-[--primary-dark] transition-all duration-300">
                                 <span class="lang-text" data-zh="查看更多案例" data-en="Learn More">Learn More</span>
                                 <i class="fas fa-arrow-right"></i>
                             </button>
@@ -3465,40 +3465,21 @@
         });
 
         // ===== Zip Blinds Gallery Modal =====
-        function openZipblindsGallery(type) {
+        function openZipblindsGallery() {
             const modal = document.getElementById('zipblindsGalleryModal');
             const grid = document.getElementById('zipblindsGalleryGrid');
             const titleEl = document.getElementById('zipblindsGalleryTitle');
 
-            const galleryData = {
-                residence: {
-                    title: 'Zip Blinds — Residence Gallery',
-                    images: [
-                        { src: '/images/products/zip-blinds/zipblinds-gallery-1.jpg', title: 'Modern Balcony Zip Screen' },
-                        { src: '/images/products/zip-blinds/zipblinds-gallery-2.jpg', title: 'Enclosed Living Space' },
-                        { src: '/images/products/zip-blinds/zipblinds-gallery-3.jpg', title: 'Clear View Design' },
-                        { src: '/images/products/zip-blinds/zipblinds-gallery-4.jpg', title: 'Patio Zip Blinds' },
-                        { src: '/images/products/zip-blinds/zipblinds-gallery-5.jpg', title: 'Interior Zip Screen' },
-                        { src: '/images/products/zip-blinds/zipblinds-gallery-6.jpg', title: 'Full Coverage System' }
-                    ]
-                },
-                pergola: {
-                    title: 'Zip Blinds — Pergola Gallery',
-                    images: [
-                        { src: '/images/products/zip-blinds/zipblinds-gallery-4.jpg', title: 'Pergola Zip Blinds' },
-                        { src: '/images/products/zip-blinds/zipblinds-gallery-5.jpg', title: 'Side Enclosure System' },
-                        { src: '/images/products/zip-blinds/zipblinds-gallery-6.jpg', title: 'Full Coverage Design' },
-                        { src: '/images/products/zip-blinds/zipblinds-gallery-1.jpg', title: 'Modern Zip Screen' },
-                        { src: '/images/products/zip-blinds/zipblinds-gallery-2.jpg', title: 'Enclosed Outdoor Space' },
-                        { src: '/images/products/zip-blinds/zipblinds-gallery-3.jpg', title: 'Weather Protection' }
-                    ]
-                }
-            };
+            const images = [
+                { src: '/images/products/zip-blinds/zipblinds-gallery-5.jpg', title: 'Elegant Interior Shading' },
+                { src: '/images/products/zip-blinds/zipblinds-gallery-1.jpg', title: 'Urban Balcony Enclosure' },
+                { src: '/images/products/zip-blinds/zipblinds-gallery-2.jpg', title: 'Full-Length Privacy Screen' },
+                { src: '/images/products/zip-blinds/zipblinds-gallery-3.jpg', title: 'Outdoor Terrace Protection' }
+            ];
 
-            const data = galleryData[type] || galleryData.residence;
-            if (titleEl) titleEl.textContent = data.title;
+            if (titleEl) titleEl.textContent = 'Zip Blinds Gallery';
 
-            grid.innerHTML = data.images.map(img => `
+            grid.innerHTML = images.map(img => `
                 <div class="group relative aspect-[4/3] rounded-xl overflow-hidden cursor-pointer">
                     <img src="${img.src}" alt="${img.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -3520,24 +3501,19 @@
         }
 
         // ===== Pergola Gallery Modal =====
-        function openPergolaGallery(type) {
+        function openPergolaGallery() {
             const modal = document.getElementById('pergolaGalleryModal');
             const title = document.getElementById('galleryTitle');
             const grid = document.getElementById('galleryGrid');
 
-            const images = type === 'residential' ? [
-                { src: '/images/products/pergola/matrix/Residential Pergola Sample 1.jpg?v=20260312', title: 'Modern Garden Pergola' },
-                { src: '/images/products/pergola/matrix/Residential Pergola Sample 2.jpg?v=20260312', title: 'Wooden Louver Design' },
-                { src: '/images/products/pergola/matrix/Residential Pergola Sample 3.jpg?v=20260312', title: 'Evening Lighting Setup' },
-                { src: '/images/products/pergola/matrix/Residential Pergola Sample 4.jpg?v=20260312', title: 'Carport Application' }
-            ] : [
-                { src: '/images/products/pergola/matrix/Residential Pergola Sample 3.jpg?v=20260312', title: 'Large Span Commercial' },
-                { src: '/images/products/pergola/matrix/Residential Pergola Sample 1.jpg?v=20260312', title: 'Restaurant Outdoor' },
-                { src: '/images/products/pergola/matrix/Residential Pergola Sample 2.jpg?v=20260312', title: 'Hotel Courtyard' },
-                { src: '/images/products/pergola/matrix/Residential Pergola Sample 4.jpg?v=20260312', title: 'Event Venue' }
+            const images = [
+                { src: '/images/products/pergola/matrix/Residential Pergola Sample 1.jpg?v=20260312', title: 'Contemporary Outdoor Living' },
+                { src: '/images/products/pergola/matrix/Residential Pergola Sample 2.jpg?v=20260312', title: 'Adjustable Louver Design' },
+                { src: '/images/products/pergola/matrix/Residential Pergola Sample 3.jpg?v=20260312', title: 'Ambient Evening Setting' },
+                { src: '/images/products/pergola/matrix/Residential Pergola Sample 4.jpg?v=20260312', title: 'Versatile Covered Space' }
             ];
 
-            title.textContent = type === 'residential' ? 'Residential Pergola Gallery' : 'Commercial Pergola Gallery';
+            title.textContent = 'Pergola Gallery';
             grid.innerHTML = images.map(img => `
                 <div class="group relative aspect-[4/3] rounded-xl overflow-hidden cursor-pointer">
                     <img src="${img.src}" alt="${img.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
