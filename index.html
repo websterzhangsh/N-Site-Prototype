@@ -1151,102 +1151,223 @@
 
             <!-- Zip Blinds Content -->
             <div id="product-zipblinds" class="product-content hidden">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-                    <!-- Before -->
-                    <div class="group bg-white rounded-2xl overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-500">
-                        <div class="relative aspect-[4/3] overflow-hidden">
-                            <img src="/images/products/zip-blinds/zipblinds-01-before.jpg" alt="Pergola before Zip Blinds installation" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                            <div class="absolute top-4 left-4 px-3 py-1.5 bg-white/90 backdrop-blur-sm rounded-full text-xs font-semibold text-[--light-text]">
-                                <i class="fas fa-camera mr-1.5"></i>
-                                <span class="lang-text" data-zh="安装前" data-en="Before">Before</span>
+                <!-- Sub-tabs: Residence (02) / Pergola (01) -->
+                <div class="flex justify-center mb-8">
+                    <div class="inline-flex bg-white rounded-full p-1 border border-gray-200 shadow-sm">
+                        <button class="zb-tab active px-8 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 bg-[--light-text] text-white" data-zb="residence">
+                            <i class="fas fa-home mr-2"></i>
+                            <span class="lang-text" data-zh="别墅" data-en="Residence">Residence</span>
+                            <span class="ml-1.5 text-xs opacity-75">· 02</span>
+                        </button>
+                        <button class="zb-tab px-8 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 text-[--light-accent] hover:text-[--light-text]" data-zb="pergola-zb">
+                            <i class="fas fa-umbrella-beach mr-2"></i>
+                            <span class="lang-text" data-zh="凉亭" data-en="Pergola">Pergola</span>
+                            <span class="ml-1.5 text-xs opacity-75">· 01</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Residence (02 Series) Content -->
+                <div id="zb-residence" class="zb-content active">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                        <!-- Before -->
+                        <div class="group bg-white rounded-2xl overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-500">
+                            <div class="relative aspect-[4/3] overflow-hidden">
+                                <img src="/images/products/zip-blinds/zipblinds-02-before.jpg" alt="Residence patio before Zip Blinds installation" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
+                                <div class="absolute top-4 left-4 px-3 py-1.5 bg-white/90 backdrop-blur-sm rounded-full text-xs font-semibold text-[--light-text]">
+                                    <i class="fas fa-camera mr-1.5"></i>
+                                    <span class="lang-text" data-zh="安装前" data-en="Before">Before</span>
+                                </div>
+                            </div>
+                            <div class="p-5">
+                                <h4 class="font-semibold text-[--light-text] mb-2 lang-text" data-zh="开放式露台" data-en="Open Patio">Open Patio</h4>
+                                <p class="text-sm text-[--light-accent] lang-text" data-zh="别墅户外空间，缺少侧面围合" data-en="Exposed outdoor living area without side enclosure">Exposed outdoor living area without side enclosure</p>
                             </div>
                         </div>
-                        <div class="p-5">
-                            <h4 class="font-semibold text-[--light-text] mb-2 lang-text" data-zh="安装前" data-en="Open Pergola">Open Pergola</h4>
-                            <p class="text-sm text-[--light-accent] lang-text" data-zh="敞开式凉亭，缺少侧面遮挡" data-en="Exposed sides with no wind or weather protection">Exposed sides with no wind or weather protection</p>
+
+                        <!-- After -->
+                        <div class="group bg-white rounded-2xl overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-500">
+                            <div class="relative aspect-[4/3] overflow-hidden">
+                                <img src="/images/products/zip-blinds/zipblinds-02-after.jpg" alt="Residence patio with Zip Blinds installed" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
+                                <div class="absolute top-4 left-4 px-3 py-1.5 bg-[--light-text] rounded-full text-xs font-semibold text-white">
+                                    <i class="fas fa-magic mr-1.5"></i>
+                                    <span class="lang-text" data-zh="安装后" data-en="After">After</span>
+                                </div>
+                            </div>
+                            <div class="p-5">
+                                <h4 class="font-semibold text-[--light-text] mb-2 lang-text" data-zh="Zip Blinds 安装后" data-en="With Zip Blinds">With Zip Blinds</h4>
+                                <p class="text-sm text-[--light-accent] lang-text" data-zh="全方位遮挡，打造私密舒适的户外空间" data-en="Full enclosure creating a private, comfortable outdoor room">Full enclosure creating a private, comfortable outdoor room</p>
+                            </div>
+                        </div>
+
+                        <!-- Animation Video -->
+                        <div class="group bg-white rounded-2xl overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-500">
+                            <div class="relative aspect-[4/3] overflow-hidden bg-gray-900">
+                                <video class="w-full h-full object-cover" poster="/images/products/zip-blinds/zipblinds-02-after.jpg" controls playsinline>
+                                    <source src="/images/products/zip-blinds/zipblinds-02-animation.mp4" type="video/mp4">
+                                </video>
+                                <div class="absolute top-4 left-4 px-3 py-1.5 bg-white/90 backdrop-blur-sm rounded-full text-xs font-semibold text-[--light-text]">
+                                    <i class="fas fa-play-circle mr-1.5"></i>
+                                    <span class="lang-text" data-zh="产品动画" data-en="Animation">Animation</span>
+                                </div>
+                            </div>
+                            <div class="p-5">
+                                <h4 class="font-semibold text-[--light-text] mb-2 lang-text" data-zh="Zip Blinds 动画展示" data-en="Zip Blinds in Action">Zip Blinds in Action</h4>
+                                <p class="text-sm text-[--light-accent] lang-text" data-zh="查看别墅 Zip Blinds 升降演示" data-en="Watch the motorized blinds transform your patio space">Watch the motorized blinds transform your patio space</p>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- After -->
-                    <div class="group bg-white rounded-2xl overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-500">
-                        <div class="relative aspect-[4/3] overflow-hidden">
-                            <img src="/images/products/zip-blinds/zipblinds-01-after.jpg" alt="Pergola after Zip Blinds installation" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                            <div class="absolute top-4 left-4 px-3 py-1.5 bg-[--light-text] rounded-full text-xs font-semibold text-white">
-                                <i class="fas fa-magic mr-1.5"></i>
-                                <span class="lang-text" data-zh="安装后" data-en="After">After</span>
+                    <!-- Product Features - Icon Row -->
+                    <div class="mt-10 max-w-4xl mx-auto">
+                        <div class="flex flex-wrap justify-center gap-6 md:gap-10">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-[--light-text] rounded-full flex items-center justify-center">
+                                    <i class="fas fa-wind text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-[--light-text] lang-text" data-zh="防风防雨" data-en="Wind & Rain Proof">Wind & Rain Proof</div>
+                                    <div class="text-xs text-[--light-accent] lang-text" data-zh="全天候保护" data-en="All-Weather Protection">All-Weather Protection</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-[--light-text] rounded-full flex items-center justify-center">
+                                    <i class="fas fa-bolt text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-[--light-text] lang-text" data-zh="电动升降" data-en="Motorized Control">Motorized Control</div>
+                                    <div class="text-xs text-[--light-accent] lang-text" data-zh="一键操控" data-en="One-Touch Operation">One-Touch Operation</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-[--light-text] rounded-full flex items-center justify-center">
+                                    <i class="fas fa-eye text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-[--light-text] lang-text" data-zh="通透视野" data-en="Clear View">Clear View</div>
+                                    <div class="text-xs text-[--light-accent] lang-text" data-zh="防风不挡景" data-en="Protection Without Blocking">Protection Without Blocking</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-[--light-text] rounded-full flex items-center justify-center">
+                                    <i class="fas fa-award text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-[--light-text] lang-text" data-zh="5年质保" data-en="5-Year Warranty">5-Year Warranty</div>
+                                    <div class="text-xs text-[--light-accent] lang-text" data-zh="品质保障" data-en="Quality Assured">Quality Assured</div>
+                                </div>
                             </div>
                         </div>
-                        <div class="p-5">
-                            <h4 class="font-semibold text-[--light-text] mb-2 lang-text" data-zh="Zip Blinds 安装后" data-en="With Zip Blinds">With Zip Blinds</h4>
-                            <p class="text-sm text-[--light-accent] lang-text" data-zh="一键升降防风卷帘，全方位遮挡风雨" data-en="Motorized zip blinds providing full weather protection on all sides">Motorized zip blinds providing full weather protection on all sides</p>
-                        </div>
-                    </div>
 
-                    <!-- Animation Video -->
-                    <div class="group bg-white rounded-2xl overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-500">
-                        <div class="relative aspect-[4/3] overflow-hidden bg-gray-900">
-                            <video class="w-full h-full object-cover" poster="/images/products/zip-blinds/zipblinds-01-after.jpg" controls playsinline>
-                                <source src="/images/products/zip-blinds/zipblinds-01-animation.mp4" type="video/mp4">
-                            </video>
-                            <div class="absolute top-4 left-4 px-3 py-1.5 bg-white/90 backdrop-blur-sm rounded-full text-xs font-semibold text-[--light-text]">
-                                <i class="fas fa-play-circle mr-1.5"></i>
-                                <span class="lang-text" data-zh="产品动画" data-en="Animation">Animation</span>
-                            </div>
-                        </div>
-                        <div class="p-5">
-                            <h4 class="font-semibold text-[--light-text] mb-2 lang-text" data-zh="Zip Blinds 动画展示" data-en="Zip Blinds in Action">Zip Blinds in Action</h4>
-                            <p class="text-sm text-[--light-accent] lang-text" data-zh="查看 Zip Blinds 升降演示效果" data-en="Watch the motorized zip blinds raise and lower smoothly">Watch the motorized zip blinds raise and lower smoothly</p>
+                        <!-- Learn More Button -->
+                        <div class="text-center mt-8">
+                            <button onclick="openZipblindsGallery('residence')" class="inline-flex items-center gap-2 px-6 py-3 bg-[--light-text] text-white rounded-full font-medium hover:bg-[--primary-dark] transition-all duration-300">
+                                <span class="lang-text" data-zh="查看更多案例" data-en="Learn More">Learn More</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Product Features - Icon Row -->
-                <div class="mt-10 max-w-4xl mx-auto">
-                    <div class="flex flex-wrap justify-center gap-6 md:gap-10">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-[--light-text] rounded-full flex items-center justify-center">
-                                <i class="fas fa-wind text-white text-sm"></i>
+                <!-- Pergola (01 Series) Content -->
+                <div id="zb-pergola-zb" class="zb-content hidden">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                        <!-- Before -->
+                        <div class="group bg-white rounded-2xl overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-500">
+                            <div class="relative aspect-[4/3] overflow-hidden">
+                                <img src="/images/products/zip-blinds/zipblinds-01-before.jpg" alt="Pergola before Zip Blinds installation" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
+                                <div class="absolute top-4 left-4 px-3 py-1.5 bg-white/90 backdrop-blur-sm rounded-full text-xs font-semibold text-[--light-text]">
+                                    <i class="fas fa-camera mr-1.5"></i>
+                                    <span class="lang-text" data-zh="安装前" data-en="Before">Before</span>
+                                </div>
                             </div>
-                            <div>
-                                <div class="text-sm font-semibold text-[--light-text] lang-text" data-zh="防风防雨" data-en="Wind & Rain Proof">Wind & Rain Proof</div>
-                                <div class="text-xs text-[--light-accent] lang-text" data-zh="全天候保护" data-en="All-Weather Protection">All-Weather Protection</div>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-[--light-text] rounded-full flex items-center justify-center">
-                                <i class="fas fa-bolt text-white text-sm"></i>
-                            </div>
-                            <div>
-                                <div class="text-sm font-semibold text-[--light-text] lang-text" data-zh="电动升降" data-en="Motorized Control">Motorized Control</div>
-                                <div class="text-xs text-[--light-accent] lang-text" data-zh="一键操控" data-en="One-Touch Operation">One-Touch Operation</div>
+                            <div class="p-5">
+                                <h4 class="font-semibold text-[--light-text] mb-2 lang-text" data-zh="开放式凉亭" data-en="Open Pergola">Open Pergola</h4>
+                                <p class="text-sm text-[--light-accent] lang-text" data-zh="敞开式凉亭，缺少侧面遮挡" data-en="Exposed sides with no wind or weather protection">Exposed sides with no wind or weather protection</p>
                             </div>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-[--light-text] rounded-full flex items-center justify-center">
-                                <i class="fas fa-eye text-white text-sm"></i>
+
+                        <!-- After -->
+                        <div class="group bg-white rounded-2xl overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-500">
+                            <div class="relative aspect-[4/3] overflow-hidden">
+                                <img src="/images/products/zip-blinds/zipblinds-01-after.jpg" alt="Pergola with Zip Blinds installed" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
+                                <div class="absolute top-4 left-4 px-3 py-1.5 bg-[--light-text] rounded-full text-xs font-semibold text-white">
+                                    <i class="fas fa-magic mr-1.5"></i>
+                                    <span class="lang-text" data-zh="安装后" data-en="After">After</span>
+                                </div>
                             </div>
-                            <div>
-                                <div class="text-sm font-semibold text-[--light-text] lang-text" data-zh="通透视野" data-en="Clear View">Clear View</div>
-                                <div class="text-xs text-[--light-accent] lang-text" data-zh="防风不挡景" data-en="Protection Without Blocking">Protection Without Blocking</div>
+                            <div class="p-5">
+                                <h4 class="font-semibold text-[--light-text] mb-2 lang-text" data-zh="Zip Blinds 安装后" data-en="With Zip Blinds">With Zip Blinds</h4>
+                                <p class="text-sm text-[--light-accent] lang-text" data-zh="一键升降防风卷帘，全方位遮挡风雨" data-en="Motorized zip blinds providing full weather protection on all sides">Motorized zip blinds providing full weather protection on all sides</p>
                             </div>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-[--light-text] rounded-full flex items-center justify-center">
-                                <i class="fas fa-award text-white text-sm"></i>
+
+                        <!-- Animation Video -->
+                        <div class="group bg-white rounded-2xl overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-500">
+                            <div class="relative aspect-[4/3] overflow-hidden bg-gray-900">
+                                <video class="w-full h-full object-cover" poster="/images/products/zip-blinds/zipblinds-01-after.jpg" controls playsinline>
+                                    <source src="/images/products/zip-blinds/zipblinds-01-animation.mp4" type="video/mp4">
+                                </video>
+                                <div class="absolute top-4 left-4 px-3 py-1.5 bg-white/90 backdrop-blur-sm rounded-full text-xs font-semibold text-[--light-text]">
+                                    <i class="fas fa-play-circle mr-1.5"></i>
+                                    <span class="lang-text" data-zh="产品动画" data-en="Animation">Animation</span>
+                                </div>
                             </div>
-                            <div>
-                                <div class="text-sm font-semibold text-[--light-text] lang-text" data-zh="5年质保" data-en="5-Year Warranty">5-Year Warranty</div>
-                                <div class="text-xs text-[--light-accent] lang-text" data-zh="品质保障" data-en="Quality Assured">Quality Assured</div>
+                            <div class="p-5">
+                                <h4 class="font-semibold text-[--light-text] mb-2 lang-text" data-zh="Zip Blinds 动画展示" data-en="Zip Blinds in Action">Zip Blinds in Action</h4>
+                                <p class="text-sm text-[--light-accent] lang-text" data-zh="查看 Zip Blinds 升降演示效果" data-en="Watch the motorized zip blinds raise and lower smoothly">Watch the motorized zip blinds raise and lower smoothly</p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Learn More Button -->
-                    <div class="text-center mt-8">
-                        <button onclick="openZipblindsGallery()" class="inline-flex items-center gap-2 px-6 py-3 bg-[--light-text] text-white rounded-full font-medium hover:bg-[--primary-dark] transition-all duration-300">
-                            <span class="lang-text" data-zh="了解更多" data-en="Learn More">Learn More</span>
-                            <i class="fas fa-arrow-right"></i>
-                        </button>
+                    <!-- Product Features - Icon Row -->
+                    <div class="mt-10 max-w-4xl mx-auto">
+                        <div class="flex flex-wrap justify-center gap-6 md:gap-10">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-[--light-text] rounded-full flex items-center justify-center">
+                                    <i class="fas fa-wind text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-[--light-text] lang-text" data-zh="防风防雨" data-en="Wind & Rain Proof">Wind & Rain Proof</div>
+                                    <div class="text-xs text-[--light-accent] lang-text" data-zh="全天候保护" data-en="All-Weather Protection">All-Weather Protection</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-[--light-text] rounded-full flex items-center justify-center">
+                                    <i class="fas fa-bolt text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-[--light-text] lang-text" data-zh="电动升降" data-en="Motorized Control">Motorized Control</div>
+                                    <div class="text-xs text-[--light-accent] lang-text" data-zh="一键操控" data-en="One-Touch Operation">One-Touch Operation</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-[--light-text] rounded-full flex items-center justify-center">
+                                    <i class="fas fa-eye text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-[--light-text] lang-text" data-zh="通透视野" data-en="Clear View">Clear View</div>
+                                    <div class="text-xs text-[--light-accent] lang-text" data-zh="防风不挡景" data-en="Protection Without Blocking">Protection Without Blocking</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-[--light-text] rounded-full flex items-center justify-center">
+                                    <i class="fas fa-award text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-[--light-text] lang-text" data-zh="5年质保" data-en="5-Year Warranty">5-Year Warranty</div>
+                                    <div class="text-xs text-[--light-accent] lang-text" data-zh="品质保障" data-en="Quality Assured">Quality Assured</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Learn More Button -->
+                        <div class="text-center mt-8">
+                            <button onclick="openZipblindsGallery('pergola')" class="inline-flex items-center gap-2 px-6 py-3 bg-[--light-text] text-white rounded-full font-medium hover:bg-[--primary-dark] transition-all duration-300">
+                                <span class="lang-text" data-zh="查看更多案例" data-en="Learn More">Learn More</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2280,7 +2401,7 @@
                 });
             });
 
-            // Scenario tabs (Residential/Commercial)
+            // Scenario tabs (Residential/Commercial) for Pergola
             const scenarioTabs = document.querySelectorAll('.scenario-tab');
             const scenarioContents = document.querySelectorAll('.scenario-content');
 
@@ -2288,7 +2409,6 @@
                 tab.addEventListener('click', () => {
                     const scenario = tab.dataset.scenario;
 
-                    // Update tab styles
                     scenarioTabs.forEach(t => {
                         t.classList.remove('active', 'bg-[--light-text]', 'text-white');
                         t.classList.add('text-[--light-accent]');
@@ -2296,12 +2416,38 @@
                     tab.classList.add('active', 'bg-[--light-text]', 'text-white');
                     tab.classList.remove('text-[--light-accent]');
 
-                    // Show corresponding content
                     scenarioContents.forEach(content => {
                         content.classList.add('hidden');
                         content.classList.remove('active');
                     });
                     const activeContent = document.getElementById(`scenario-${scenario}`);
+                    if (activeContent) {
+                        activeContent.classList.remove('hidden');
+                        activeContent.classList.add('active');
+                    }
+                });
+            });
+
+            // Zip Blinds sub-tabs (Residence / Pergola)
+            const zbTabs = document.querySelectorAll('.zb-tab');
+            const zbContents = document.querySelectorAll('.zb-content');
+
+            zbTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const zbType = tab.dataset.zb;
+
+                    zbTabs.forEach(t => {
+                        t.classList.remove('active', 'bg-[--light-text]', 'text-white');
+                        t.classList.add('text-[--light-accent]');
+                    });
+                    tab.classList.add('active', 'bg-[--light-text]', 'text-white');
+                    tab.classList.remove('text-[--light-accent]');
+
+                    zbContents.forEach(content => {
+                        content.classList.add('hidden');
+                        content.classList.remove('active');
+                    });
+                    const activeContent = document.getElementById(`zb-${zbType}`);
                     if (activeContent) {
                         activeContent.classList.remove('hidden');
                         activeContent.classList.add('active');
@@ -3321,20 +3467,40 @@
         });
 
         // ===== Zip Blinds Gallery Modal =====
-        function openZipblindsGallery() {
+        function openZipblindsGallery(type) {
             const modal = document.getElementById('zipblindsGalleryModal');
             const grid = document.getElementById('zipblindsGalleryGrid');
+            const titleEl = document.getElementById('zipblindsGalleryTitle');
 
-            const images = [
-                { src: '/images/products/zip-blinds/zipblinds-gallery-1.jpg', title: 'Modern Balcony Zip Screen' },
-                { src: '/images/products/zip-blinds/zipblinds-gallery-2.jpg', title: 'Enclosed Living Space' },
-                { src: '/images/products/zip-blinds/zipblinds-gallery-3.jpg', title: 'Clear View Design' },
-                { src: '/images/products/zip-blinds/zipblinds-gallery-4.jpg', title: 'Patio Zip Blinds' },
-                { src: '/images/products/zip-blinds/zipblinds-gallery-5.jpg', title: 'Interior Zip Screen' },
-                { src: '/images/products/zip-blinds/zipblinds-gallery-6.jpg', title: 'Full Coverage System' }
-            ];
+            const galleryData = {
+                residence: {
+                    title: 'Zip Blinds — Residence Gallery',
+                    images: [
+                        { src: '/images/products/zip-blinds/zipblinds-gallery-1.jpg', title: 'Modern Balcony Zip Screen' },
+                        { src: '/images/products/zip-blinds/zipblinds-gallery-2.jpg', title: 'Enclosed Living Space' },
+                        { src: '/images/products/zip-blinds/zipblinds-gallery-3.jpg', title: 'Clear View Design' },
+                        { src: '/images/products/zip-blinds/zipblinds-gallery-4.jpg', title: 'Patio Zip Blinds' },
+                        { src: '/images/products/zip-blinds/zipblinds-gallery-5.jpg', title: 'Interior Zip Screen' },
+                        { src: '/images/products/zip-blinds/zipblinds-gallery-6.jpg', title: 'Full Coverage System' }
+                    ]
+                },
+                pergola: {
+                    title: 'Zip Blinds — Pergola Gallery',
+                    images: [
+                        { src: '/images/products/zip-blinds/zipblinds-gallery-4.jpg', title: 'Pergola Zip Blinds' },
+                        { src: '/images/products/zip-blinds/zipblinds-gallery-5.jpg', title: 'Side Enclosure System' },
+                        { src: '/images/products/zip-blinds/zipblinds-gallery-6.jpg', title: 'Full Coverage Design' },
+                        { src: '/images/products/zip-blinds/zipblinds-gallery-1.jpg', title: 'Modern Zip Screen' },
+                        { src: '/images/products/zip-blinds/zipblinds-gallery-2.jpg', title: 'Enclosed Outdoor Space' },
+                        { src: '/images/products/zip-blinds/zipblinds-gallery-3.jpg', title: 'Weather Protection' }
+                    ]
+                }
+            };
 
-            grid.innerHTML = images.map(img => `
+            const data = galleryData[type] || galleryData.residence;
+            if (titleEl) titleEl.textContent = data.title;
+
+            grid.innerHTML = data.images.map(img => `
                 <div class="group relative aspect-[4/3] rounded-xl overflow-hidden cursor-pointer">
                     <img src="${img.src}" alt="${img.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -3416,7 +3582,7 @@
     <div id="zipblindsGalleryModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm" onclick="if(event.target === this) closeZipblindsGallery()">
         <div class="bg-white rounded-2xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
             <div class="flex items-center justify-between p-6 border-b border-gray-200">
-                <h3 class="text-xl font-bold text-[--light-text]">Zip Blinds Gallery</h3>
+                <h3 id="zipblindsGalleryTitle" class="text-xl font-bold text-[--light-text]">Zip Blinds Gallery</h3>
                 <button onclick="closeZipblindsGallery()" class="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition">
                     <i class="fas fa-times text-gray-600"></i>
                 </button>
