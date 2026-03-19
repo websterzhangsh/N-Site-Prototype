@@ -6457,6 +6457,126 @@
         let intakeFormData = {};  // In-memory storage keyed by project_id
         let intakeUploadedFiles = {}; // Simulated file references keyed by project_id
 
+        // ===== Pre-populated Demo Data for Chen Pergola Space (PRJ-004) =====
+        intakeFormData['PRJ-004'] = {
+            // A.1 Customer Basics
+            a1_client_name: 'Ms. Emily Chen',
+            a1_address_street: '456 Oak Dr',
+            a1_address_city: 'Frederick',
+            a1_address_state: 'MD',
+            a1_address_zip: '21701',
+            a1_phone: '(301) 555-0404',
+            a1_email: 'chen@email.com',
+            a1_preferred_contact: 'email',
+            a1_other_decision_makers: 'David Chen / Spouse',
+            // A.2 Project Overview
+            a2_usage_scenario: 'residential_house',
+            a2_install_location: 'patio_ground',
+            a2_primary_usage: ['dining', 'leisure', 'entertaining'],
+            a2_wall_connected: 'false',
+            a2_dimension_length_ft: '18',
+            a2_dimension_width_ft: '14',
+            a2_dimension_height_ft: '10',
+            a2_special_constraints: 'Large oak tree 6ft from planned area; underground sprinkler line on east side',
+            // A.3 Usage & Lifestyle
+            a3_usage_duration: 'three_season',
+            a3_household_size: '4',
+            a3_frequent_visitors: 'true',
+            a3_activities: ['dining', 'entertaining', 'reading'],
+            a3_functional_needs: ['shade_blinds', 'lighting', 'outdoor_kitchen'],
+            // A.4 Budget & Timeline
+            a4_budget_range: '10k_20k',
+            a4_ideal_start: '1_3_months',
+            a4_important_dates: 'Would like it ready for July 4th cookout',
+            // A.5 Community & HOA Compliance
+            a5_has_hoa: 'yes',
+            a5_hoa_name: 'Oak Grove Community HOA',
+            a5_hoa_design_guidelines: 'has_can_provide',
+            a5_setback_awareness: 'need_help',
+            // A.6 Style & Aesthetic Preferences
+            a6_style_preference: 'Modern minimalist pergola with clean lines; prefer open-air feel with retractable shade',
+            a6_color_preference: 'Dark bronze frame / charcoal gray canopy',
+            // A.7 Decision Process
+            a7_decision_maker: 'spouse_together',
+            a7_decision_timeline: '2_4_weeks',
+            // A.8 Additional Notes
+            a8_additional_notes: 'We entertain frequently in summer. Need enough shade coverage for 8-person dining table. Interested in integrated LED lighting.',
+            // Module completion tracking
+            _modules: { 'A.1': 'completed', 'A.2': 'completed', 'A.3': 'completed', 'A.4': 'completed', 'A.5': 'completed', 'A.6': 'completed', 'A.7': 'completed', 'A.8': 'completed' }
+        };
+
+        // Pre-populated Demo Data for Johnson Residence Sunroom (PRJ-001) — Steps 1-3 complete
+        intakeFormData['PRJ-001'] = {
+            a1_client_name: 'Mr. Robert Johnson',
+            a1_address_street: '123 Sunshine Ave',
+            a1_address_city: 'Los Angeles',
+            a1_address_state: 'CA',
+            a1_address_zip: '90024',
+            a1_phone: '(310) 555-0101',
+            a1_email: 'johnson@email.com',
+            a1_preferred_contact: 'phone',
+            a2_usage_scenario: 'residential_house',
+            a2_install_location: 'patio_ground',
+            a2_primary_usage: ['leisure', 'dining', 'garden'],
+            a2_wall_connected: 'true',
+            a2_dimension_length_ft: '24',
+            a2_dimension_width_ft: '16',
+            a2_dimension_height_ft: '10',
+            a2_special_constraints: 'Roof overhang at 9ft on attachment wall; gas line runs along south side',
+            a3_usage_duration: 'year_round',
+            a3_household_size: '5',
+            a3_frequent_visitors: 'true',
+            a3_activities: ['reading', 'dining', 'gardening', 'entertaining'],
+            a3_functional_needs: ['motorized_windows', 'smart_control', 'lighting', 'hvac'],
+            a4_budget_range: '35k_50k',
+            a4_ideal_start: 'asap',
+            a5_has_hoa: 'yes',
+            a5_hoa_name: 'Westside Estates HOA',
+            a5_hoa_design_guidelines: 'has_can_provide',
+            a5_setback_awareness: 'aware',
+            a6_style_preference: 'Contemporary retractable sunroom with full-height glass panels; seamless indoor-outdoor transition',
+            a6_color_preference: 'White frame / clear glass',
+            a7_decision_maker: 'self',
+            a7_decision_timeline: '1_week',
+            _modules: { 'A.1': 'completed', 'A.2': 'completed', 'A.3': 'completed', 'A.4': 'completed', 'A.5': 'completed', 'A.6': 'completed', 'A.7': 'completed', 'A.8': 'completed' }
+        };
+
+        // Pre-populated Demo Data for Martinez ADU Project (PRJ-002) — at Step 2
+        intakeFormData['PRJ-002'] = {
+            a1_client_name: 'Ms. Sofia Martinez',
+            a1_address_street: '456 Oak Dr',
+            a1_address_city: 'San Francisco',
+            a1_address_state: 'CA',
+            a1_address_zip: '94110',
+            a1_phone: '(415) 555-0202',
+            a1_email: 'martinez@email.com',
+            a1_preferred_contact: 'video',
+            a2_usage_scenario: 'residential_house',
+            a2_install_location: 'patio_ground',
+            a2_primary_usage: ['study', 'leisure', 'kids_play'],
+            a2_wall_connected: 'false',
+            a2_dimension_length_ft: '30',
+            a2_dimension_width_ft: '20',
+            a2_dimension_height_ft: '12',
+            a2_special_constraints: 'Hillside lot with 8% slope; sewer easement on north boundary',
+            a3_usage_duration: 'year_round',
+            a3_household_size: '3',
+            a3_frequent_visitors: 'false',
+            a3_activities: ['reading', 'exercise'],
+            a3_functional_needs: ['smart_control', 'hvac', 'lighting'],
+            a4_budget_range: '75k_100k',
+            a4_ideal_start: '1_3_months',
+            a5_has_hoa: 'unsure',
+            a5_hoa_design_guidelines: 'unsure',
+            a5_setback_awareness: 'need_help',
+            a6_style_preference: 'Modern ADU studio — flat roof, large windows, energy efficient',
+            a6_color_preference: 'Natural wood cladding / matte black trim',
+            a7_decision_maker: 'self',
+            a7_decision_timeline: '2_4_weeks',
+            a8_additional_notes: 'Planning to use as home office + guest suite. Need proper insulation and HVAC.',
+            _modules: { 'A.1': 'completed', 'A.2': 'completed', 'A.3': 'completed', 'A.4': 'completed', 'A.5': 'completed', 'A.6': 'completed', 'A.7': 'completed', 'A.8': 'partial' }
+        };
+
         const INTAKE_MODULE_FIELDS = {
             'A.1': {
                 title: 'Customer Basics',
@@ -6913,6 +7033,15 @@
                 const renderCount = status.renderingsGenerated || 0;
 
                 // Build inherited data summary
+                const VALUE_LABELS = {
+                    'patio_ground': 'Patio (Ground Level)', 'terrace_upper': 'Terrace (Upper Floor)',
+                    'raised_platform': 'Raised Platform', 'rooftop': 'Rooftop',
+                    'commercial_space': 'Commercial Space',
+                    'true': 'Yes (Attached)', 'false': 'No (Freestanding)',
+                    'yes': 'Yes', 'no': 'No', 'unsure': 'Not Sure',
+                    'residential_house': 'Residential (House)', 'residential_apartment': 'Residential (Apartment)',
+                    'phone': 'Phone', 'sms': 'SMS', 'email': 'Email', 'video': 'Video Call'
+                };
                 const inheritedRows = inherited.map(f => {
                     let val = '—';
                     if (f.source === 'project.type') {
@@ -6924,7 +7053,7 @@
                             if (fields.length > 1 && fields[0].includes('dimension')) {
                                 val = vals.join(' × ') + ' ft';
                             } else {
-                                val = vals.join(', ');
+                                val = vals.map(v => VALUE_LABELS[v] || v).join(', ');
                             }
                         }
                     }
