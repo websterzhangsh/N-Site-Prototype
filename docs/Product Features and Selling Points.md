@@ -10,7 +10,7 @@
 ### I. Common Strengths (Across All Products)
 
 - **Custom-Tailored Design**: AI-powered design delivers the best customized scene solutions within 24 hours, based on each client's specific needs
-- **Direct Factory Sourcing**: Carefully selected source factories with centralized procurement ensure the best value for money
+- **Professional Procurement**: Professionally curated source factories with centralized procurement ensure the best value for money
 - **Local Operations**: US-based engineering & technical service center with regional dealer networks providing after-sales support
 - **Quality Assurance**: Manufactured by leading brand-name factories with proven quality standards
 - **AI Measurement**: Precise, efficient, and labor-saving site measurement powered by AI
