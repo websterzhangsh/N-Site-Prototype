@@ -1434,14 +1434,211 @@
                 </div>
             </div>
 
-            <!-- Sunroom Content (Placeholder) -->
+            <!-- Sunroom Content -->
             <div id="product-sunroom" class="product-content active">
-                <div class="max-w-4xl mx-auto text-center py-16 bg-[--darker-bg] rounded-2xl border border-gray-200 border-dashed">
-                    <div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-sun text-gray-400 text-2xl"></i>
+                <!-- Scenario Tabs -->
+                <div class="flex justify-center mb-8">
+                    <div class="inline-flex bg-white rounded-full p-1 border border-gray-200 shadow-sm">
+                        <button class="scenario-tab active px-8 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 bg-[--light-text] text-white" data-scenario="sunroom-residential">
+                            <i class="fas fa-home mr-2"></i>
+                            <span class="lang-text" data-zh="住宅" data-en="Residential">Residential</span>
+                        </button>
+                        <button class="scenario-tab px-8 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 text-[--light-accent] hover:text-[--light-text]" data-scenario="sunroom-commercial">
+                            <i class="fas fa-building mr-2"></i>
+                            <span class="lang-text" data-zh="商业" data-en="Commercial">Commercial</span>
+                        </button>
                     </div>
-                    <h4 class="text-lg font-semibold text-[--light-text] mb-2 lang-text" data-zh="阳光房案例即将上线" data-en="Sunroom Cases Coming Soon">Sunroom Cases Coming Soon</h4>
-                    <p class="text-[--light-accent] lang-text" data-zh="四季阳光房，让阳光成为家的一部分" data-en="Year-round sunrooms, bringing sunlight into your home">四季阳光房，让阳光成为家的一部分</p>
+                </div>
+
+                <!-- Residential Content -->
+                <div id="scenario-sunroom-residential" class="scenario-content active">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                        <!-- Before: Original Space -->
+                        <div class="group bg-white rounded-2xl overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-500">
+                            <div class="relative aspect-[4/3] overflow-hidden">
+                                <img src="public/images/products/sunroom/matrix/Sunroom-01-Before.jpg?v=20260321" alt="Original space before sunroom design" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                                <div class="absolute top-4 left-4 px-3 py-1.5 bg-white/90 backdrop-blur-sm rounded-full text-xs font-semibold text-[--light-text]">
+                                    <i class="fas fa-camera mr-1.5"></i>
+                                    <span class="lang-text" data-zh="设计前" data-en="Before">Before</span>
+                                </div>
+                            </div>
+                            <div class="p-5">
+                                <h4 class="font-semibold text-[--light-text] mb-2 lang-text" data-zh="原始空间" data-en="Original Space">Original Space</h4>
+                                <p class="text-sm text-[--light-accent] lang-text" data-zh="露台空间，等待阳光房改造" data-en="Terrace space awaiting sunroom transformation">Terrace space awaiting sunroom transformation</p>
+                            </div>
+                        </div>
+
+                        <!-- After: AI Design (Opened) -->
+                        <div class="group bg-white rounded-2xl overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-500">
+                            <div class="relative aspect-[4/3] overflow-hidden">
+                                <img src="public/images/products/sunroom/matrix/Sunroom-01-After-open.jpg?v=20260321" alt="AI sunroom design with panels opened" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                                <div class="absolute top-4 left-4 px-3 py-1.5 bg-[--light-text] rounded-full text-xs font-semibold text-white">
+                                    <i class="fas fa-magic mr-1.5"></i>
+                                    <span class="lang-text" data-zh="设计后" data-en="After">After</span>
+                                </div>
+                            </div>
+                            <div class="p-5">
+                                <h4 class="font-semibold text-[--light-text] mb-2 lang-text" data-zh="AI 设计（开启）" data-en="AI Design (Opened)">AI Design (Opened)</h4>
+                                <p class="text-sm text-[--light-accent] lang-text" data-zh="阳光房开启状态，通风采光两不误" data-en="Sunroom with panels opened for ventilation and natural light">Sunroom with panels opened for ventilation and natural light</p>
+                            </div>
+                        </div>
+
+                        <!-- After: AI Design (Closed) -->
+                        <div class="group bg-white rounded-2xl overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-500">
+                            <div class="relative aspect-[4/3] overflow-hidden">
+                                <img src="public/images/products/sunroom/matrix/Sunroom-01-After-Closed.jpg?v=20260321" alt="AI sunroom design with panels closed" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                                <div class="absolute top-4 left-4 px-3 py-1.5 bg-[--light-text] rounded-full text-xs font-semibold text-white">
+                                    <i class="fas fa-magic mr-1.5"></i>
+                                    <span class="lang-text" data-zh="设计后" data-en="After">After</span>
+                                </div>
+                            </div>
+                            <div class="p-5">
+                                <h4 class="font-semibold text-[--light-text] mb-2 lang-text" data-zh="AI 设计（关闭）" data-en="AI Design (Closed)">AI Design (Closed)</h4>
+                                <p class="text-sm text-[--light-accent] lang-text" data-zh="阳光房关闭状态，全封闭保温隔音" data-en="Sunroom with panels closed for full insulation and soundproofing">Sunroom with panels closed for full insulation and soundproofing</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Video: Terrace -->
+                    <div class="mt-8 max-w-2xl mx-auto">
+                        <div class="group bg-white rounded-2xl overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-500">
+                            <div class="relative aspect-video overflow-hidden bg-gray-900">
+                                <video class="w-full h-full object-cover" controls playsinline>
+                                    <source src="public/images/products/sunroom/matrix/Trim02-Residential-Terrace-Balcony.mp4?v=20260321" type="video/mp4">
+                                </video>
+                                <div class="absolute top-4 left-4 px-3 py-1.5 bg-white/90 backdrop-blur-sm rounded-full text-xs font-semibold text-[--light-text]">
+                                    <i class="fas fa-play-circle mr-1.5"></i>
+                                    <span class="lang-text" data-zh="产品视频" data-en="Video">Video</span>
+                                </div>
+                            </div>
+                            <div class="p-5 text-center">
+                                <h4 class="font-semibold text-[--light-text] mb-2 lang-text" data-zh="阳台露台阳光房" data-en="Terrace">Terrace</h4>
+                                <p class="text-sm text-[--light-accent] lang-text" data-zh="阳台露台场景下的阳光房产品展示" data-en="Sunroom product showcase for terrace and balcony settings">Sunroom product showcase for terrace and balcony settings</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product Features - Icon Row -->
+                    <div class="mt-10 max-w-4xl mx-auto">
+                        <div class="flex flex-wrap justify-center gap-6 md:gap-10">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-[--light-text] rounded-full flex items-center justify-center">
+                                    <i class="fas fa-sun text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-[--light-text] lang-text" data-zh="全景采光" data-en="Full Sunlight">Full Sunlight</div>
+                                    <div class="text-xs text-[--light-accent] lang-text" data-zh="360°通透视野" data-en="360° Panoramic View">360° Panoramic View</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-[--light-text] rounded-full flex items-center justify-center">
+                                    <i class="fas fa-wind text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-[--light-text] lang-text" data-zh="可伸缩设计" data-en="Retractable">Retractable</div>
+                                    <div class="text-xs text-[--light-accent] lang-text" data-zh="自由开合" data-en="Open & Close Freely">Open & Close Freely</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-[--light-text] rounded-full flex items-center justify-center">
+                                    <i class="fas fa-temperature-low text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-[--light-text] lang-text" data-zh="四季适用" data-en="Year-Round">Year-Round</div>
+                                    <div class="text-xs text-[--light-accent] lang-text" data-zh="隔热保温" data-en="Thermal Insulation">Thermal Insulation</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-[--light-text] rounded-full flex items-center justify-center">
+                                    <i class="fas fa-award text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-[--light-text] lang-text" data-zh="10年质保" data-en="10-Year Warranty">10-Year Warranty</div>
+                                    <div class="text-xs text-[--light-accent] lang-text" data-zh="品质保障" data-en="Quality Assured">Quality Assured</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Learn More Button -->
+                        <div class="text-center mt-8">
+                            <a href="#contact" class="inline-flex items-center gap-2 px-6 py-3 bg-[--light-text] text-white rounded-full font-medium hover:bg-[--primary-dark] transition-all duration-300">
+                                <span class="lang-text" data-zh="开始您的项目" data-en="Start Your Project">Start Your Project</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Commercial Content -->
+                <div id="scenario-sunroom-commercial" class="scenario-content hidden">
+                    <!-- Video: Rooftop Restaurant -->
+                    <div class="max-w-2xl mx-auto">
+                        <div class="group bg-white rounded-2xl overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-500">
+                            <div class="relative aspect-video overflow-hidden bg-gray-900">
+                                <video class="w-full h-full object-cover" controls playsinline>
+                                    <source src="public/images/products/sunroom/matrix/Trim01-Comercial-Rooftop-Restaurant.mp4?v=20260321" type="video/mp4">
+                                </video>
+                                <div class="absolute top-4 left-4 px-3 py-1.5 bg-white/90 backdrop-blur-sm rounded-full text-xs font-semibold text-[--light-text]">
+                                    <i class="fas fa-play-circle mr-1.5"></i>
+                                    <span class="lang-text" data-zh="产品视频" data-en="Video">Video</span>
+                                </div>
+                            </div>
+                            <div class="p-5 text-center">
+                                <h4 class="font-semibold text-[--light-text] mb-2 lang-text" data-zh="屋顶餐厅" data-en="Rooftop Restaurant">Rooftop Restaurant</h4>
+                                <p class="text-sm text-[--light-accent] lang-text" data-zh="商业场景下的阳光房解决方案，打造全天候屋顶餐饮空间" data-en="Commercial sunroom solution for all-weather rooftop dining spaces">Commercial sunroom solution for all-weather rooftop dining spaces</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product Features - Icon Row -->
+                    <div class="mt-10 max-w-4xl mx-auto">
+                        <div class="flex flex-wrap justify-center gap-6 md:gap-10">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-[--light-text] rounded-full flex items-center justify-center">
+                                    <i class="fas fa-expand-arrows-alt text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-[--light-text] lang-text" data-zh="大跨度设计" data-en="Large Span">Large Span</div>
+                                    <div class="text-xs text-[--light-accent] lang-text" data-zh="适合商业空间" data-en="For Commercial Spaces">For Commercial Spaces</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-[--light-text] rounded-full flex items-center justify-center">
+                                    <i class="fas fa-cloud-rain text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-[--light-text] lang-text" data-zh="全天候防护" data-en="All-Weather">All-Weather</div>
+                                    <div class="text-xs text-[--light-accent] lang-text" data-zh="防风防雨" data-en="Wind & Rain Proof">Wind & Rain Proof</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-[--light-text] rounded-full flex items-center justify-center">
+                                    <i class="fas fa-utensils text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-[--light-text] lang-text" data-zh="餐饮空间" data-en="Dining Space">Dining Space</div>
+                                    <div class="text-xs text-[--light-accent] lang-text" data-zh="提升用餐体验" data-en="Enhanced Experience">Enhanced Experience</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-[--light-text] rounded-full flex items-center justify-center">
+                                    <i class="fas fa-award text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-[--light-text] lang-text" data-zh="商业质保" data-en="Commercial Grade">Commercial Grade</div>
+                                    <div class="text-xs text-[--light-accent] lang-text" data-zh="15年商业保修" data-en="15-Year Warranty">15-Year Warranty</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Start Project Button -->
+                        <div class="text-center mt-8">
+                            <a href="#contact" class="inline-flex items-center gap-2 px-6 py-3 bg-[--light-text] text-white rounded-full font-medium hover:bg-[--primary-dark] transition-all duration-300">
+                                <span class="lang-text" data-zh="开始您的项目" data-en="Start Your Project">Start Your Project</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -2463,22 +2660,23 @@
                 });
             });
 
-            // Scenario tabs (Residential/Commercial) for Pergola
+            // Scenario tabs (Residential/Commercial) - scoped to parent product section
             const scenarioTabs = document.querySelectorAll('.scenario-tab');
-            const scenarioContents = document.querySelectorAll('.scenario-content');
 
             scenarioTabs.forEach(tab => {
                 tab.addEventListener('click', () => {
                     const scenario = tab.dataset.scenario;
+                    const parentProduct = tab.closest('.product-content');
 
-                    scenarioTabs.forEach(t => {
+                    // Only toggle tabs within the same product section
+                    parentProduct.querySelectorAll('.scenario-tab').forEach(t => {
                         t.classList.remove('active', 'bg-[--light-text]', 'text-white');
                         t.classList.add('text-[--light-accent]');
                     });
                     tab.classList.add('active', 'bg-[--light-text]', 'text-white');
                     tab.classList.remove('text-[--light-accent]');
 
-                    scenarioContents.forEach(content => {
+                    parentProduct.querySelectorAll('.scenario-content').forEach(content => {
                         content.classList.add('hidden');
                         content.classList.remove('active');
                     });
