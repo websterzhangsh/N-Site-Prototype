@@ -403,10 +403,10 @@
                                     </div>
                                     <i class="fas fa-chevron-down text-gray-400 text-xs overview-arrow transition-transform duration-200"></i>
                                 </div>
-                                <div class="text-2xl font-bold text-gray-900">24</div>
+                                <div class="text-2xl font-bold text-gray-900">12</div>
                                 <div class="text-sm text-gray-500 mt-1">Total Products</div>
                                 <div class="flex items-center gap-3 mt-3 text-xs">
-                                    <span class="text-green-600 font-medium">18 Active</span>
+                                    <span class="text-green-600 font-medium">11 Active</span>
                                     <span class="text-gray-500 font-medium">4 Categories</span>
                                 </div>
                             </div>
@@ -534,14 +534,14 @@
                                         <h3 class="text-lg font-semibold text-gray-900">Products</h3>
                                     </div>
                                     <div class="flex gap-2">
-                                        <button class="px-3 py-1 bg-gray-900 text-white text-xs rounded-full">All</button>
-                                        <button class="px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50">Sunroom</button>
-                                        <button class="px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50">Pergola</button>
-                                        <button class="px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50">Zip Blinds</button>
-                                        <button class="px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50">ADU</button>
+                                        <button class="ov-product-filter-btn px-3 py-1 bg-gray-900 text-white text-xs rounded-full" data-filter="all">All</button>
+                                        <button class="ov-product-filter-btn px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50" data-filter="sunroom">Sunroom</button>
+                                        <button class="ov-product-filter-btn px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50" data-filter="pergola">Pergola</button>
+                                        <button class="ov-product-filter-btn px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50" data-filter="blinds">Zip Blinds</button>
+                                        <button class="ov-product-filter-btn px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50" data-filter="adu">ADU</button>
                                     </div>
                                 </div>
-                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-5" id="overviewProductsGrid">
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 p-5" id="overviewProductsGrid">
                                     <!-- Populated by JS -->
                                 </div>
                             </div>
@@ -2193,7 +2193,7 @@
                             <div class="flex items-center justify-between">
                                 <div>
                                     <div class="text-sm text-gray-500">Total Products</div>
-                                    <div class="text-2xl font-bold text-gray-900">24</div>
+                                    <div class="text-2xl font-bold text-gray-900">12</div>
                                 </div>
                                 <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                                     <i class="fas fa-box text-blue-600"></i>
@@ -2204,7 +2204,7 @@
                             <div class="flex items-center justify-between">
                                 <div>
                                     <div class="text-sm text-gray-500">Active</div>
-                                    <div class="text-2xl font-bold text-green-600">18</div>
+                                    <div class="text-2xl font-bold text-green-600">11</div>
                                 </div>
                                 <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                                     <i class="fas fa-check-circle text-green-600"></i>
@@ -2249,9 +2249,9 @@
                                 <div class="flex gap-2 mt-3">
                                     <button class="product-filter-btn px-3 py-1 bg-gray-900 text-white text-xs rounded-full" data-filter="all">All</button>
                                     <button class="product-filter-btn px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50" data-filter="sunroom">Sunroom</button>
-                                    <button class="product-filter-btn px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50" data-filter="adu">ADU</button>
                                     <button class="product-filter-btn px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50" data-filter="pergola">Pergola</button>
-                                    <button class="product-filter-btn px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50" data-filter="blinds">Blinds</button>
+                                    <button class="product-filter-btn px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50" data-filter="blinds">Zip Blinds</button>
+                                    <button class="product-filter-btn px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50" data-filter="adu">ADU</button>
                                 </div>
                             </div>
 
@@ -2259,141 +2259,17 @@
                             <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
                                 <div class="p-3 border-b border-gray-200 flex items-center justify-between">
                                     <span class="font-medium text-gray-900 text-sm">Product Catalog</span>
-                                    <span class="text-xs text-gray-500">24 items</span>
+                                    <span class="text-xs text-gray-500" id="productCount">12 items</span>
                                 </div>
-                                <div id="productList" class="divide-y divide-gray-100 max-h-[600px] overflow-y-auto">
-                                    <!-- Product Item 1 -->
-                                    <div class="product-item p-4 hover:bg-gray-50 cursor-pointer bg-blue-50/50 border-l-4 border-blue-500" data-product="prod-001">
-                                        <div class="flex items-start gap-3">
-                                            <div class="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
-                                                <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=100&q=80" alt="Sunroom" class="w-full h-full object-cover">
-                                            </div>
-                                            <div class="flex-1 min-w-0">
-                                                <div class="flex items-center justify-between">
-                                                    <span class="font-medium text-gray-900 text-sm">Classic Sunroom</span>
-                                                    <span class="text-xs text-green-600 font-medium">Active</span>
-                                                </div>
-                                                <p class="text-xs text-gray-500 mt-0.5">Sunroom • Standard Series</p>
-                                                <div class="flex items-center gap-2 mt-1">
-                                                    <span class="text-xs font-semibold text-gray-900">$85/sqft</span>
-                                                    <span class="text-xs text-gray-400">•</span>
-                                                    <span class="text-xs text-gray-500">12 files</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Product Item 2 -->
-                                    <div class="product-item p-4 hover:bg-gray-50 cursor-pointer" data-product="prod-002">
-                                        <div class="flex items-start gap-3">
-                                            <div class="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
-                                                <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=100&q=80" alt="Premium Sunroom" class="w-full h-full object-cover">
-                                            </div>
-                                            <div class="flex-1 min-w-0">
-                                                <div class="flex items-center justify-between">
-                                                    <span class="font-medium text-gray-900 text-sm">Premium Sunroom</span>
-                                                    <span class="text-xs text-green-600 font-medium">Active</span>
-                                                </div>
-                                                <p class="text-xs text-gray-500 mt-0.5">Sunroom • Premium Series</p>
-                                                <div class="flex items-center gap-2 mt-1">
-                                                    <span class="text-xs font-semibold text-gray-900">$120/sqft</span>
-                                                    <span class="text-xs text-gray-400">•</span>
-                                                    <span class="text-xs text-gray-500">18 files</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Product Item 3 -->
-                                    <div class="product-item p-4 hover:bg-gray-50 cursor-pointer" data-product="prod-003">
-                                        <div class="flex items-start gap-3">
-                                            <div class="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
-                                                <img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=100&q=80" alt="ADU" class="w-full h-full object-cover">
-                                            </div>
-                                            <div class="flex-1 min-w-0">
-                                                <div class="flex items-center justify-between">
-                                                    <span class="font-medium text-gray-900 text-sm">Studio ADU</span>
-                                                    <span class="text-xs text-green-600 font-medium">Active</span>
-                                                </div>
-                                                <p class="text-xs text-gray-500 mt-0.5">ADU • Standard Series</p>
-                                                <div class="flex items-center gap-2 mt-1">
-                                                    <span class="text-xs font-semibold text-gray-900">$180/sqft</span>
-                                                    <span class="text-xs text-gray-400">•</span>
-                                                    <span class="text-xs text-gray-500">24 files</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Product Item 4 -->
-                                    <div class="product-item p-4 hover:bg-gray-50 cursor-pointer" data-product="prod-004">
-                                        <div class="flex items-start gap-3">
-                                            <div class="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
-                                                <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=100&q=80" alt="Pergola" class="w-full h-full object-cover">
-                                            </div>
-                                            <div class="flex-1 min-w-0">
-                                                <div class="flex items-center justify-between">
-                                                    <span class="font-medium text-gray-900 text-sm">Garden Pergola</span>
-                                                    <span class="text-xs text-green-600 font-medium">Active</span>
-                                                </div>
-                                                <p class="text-xs text-gray-500 mt-0.5">Pergola • Standard Series</p>
-                                                <div class="flex items-center gap-2 mt-1">
-                                                    <span class="text-xs font-semibold text-gray-900">$45/sqft</span>
-                                                    <span class="text-xs text-gray-400">•</span>
-                                                    <span class="text-xs text-gray-500">8 files</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Product Item 5 -->
-                                    <div class="product-item p-4 hover:bg-gray-50 cursor-pointer" data-product="prod-005">
-                                        <div class="flex items-start gap-3">
-                                            <div class="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
-                                                <img src="https://images.unsplash.com/photo-1600607687644-c7171b42498f?w=100&q=80" alt="Zip Blinds" class="w-full h-full object-cover">
-                                            </div>
-                                            <div class="flex-1 min-w-0">
-                                                <div class="flex items-center justify-between">
-                                                    <span class="font-medium text-gray-900 text-sm">Zip Blinds Pro</span>
-                                                    <span class="text-xs text-green-600 font-medium">Active</span>
-                                                </div>
-                                                <p class="text-xs text-gray-500 mt-0.5">Blinds • Premium Series</p>
-                                                <div class="flex items-center gap-2 mt-1">
-                                                    <span class="text-xs font-semibold text-gray-900">$35/sqft</span>
-                                                    <span class="text-xs text-gray-400">•</span>
-                                                    <span class="text-xs text-gray-500">15 files</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Product Item 6 -->
-                                    <div class="product-item p-4 hover:bg-gray-50 cursor-pointer" data-product="prod-006">
-                                        <div class="flex items-start gap-3">
-                                            <div class="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
-                                                <img src="https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=100&q=80" alt="Two-Bed ADU" class="w-full h-full object-cover">
-                                            </div>
-                                            <div class="flex-1 min-w-0">
-                                                <div class="flex items-center justify-between">
-                                                    <span class="font-medium text-gray-900 text-sm">Two-Bedroom ADU</span>
-                                                    <span class="text-xs text-amber-600 font-medium">Draft</span>
-                                                </div>
-                                                <p class="text-xs text-gray-500 mt-0.5">ADU • Premium Series</p>
-                                                <div class="flex items-center gap-2 mt-1">
-                                                    <span class="text-xs font-semibold text-gray-900">$220/sqft</span>
-                                                    <span class="text-xs text-gray-400">•</span>
-                                                    <span class="text-xs text-gray-500">6 files</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div id="productList" class="max-h-[640px] overflow-y-auto">
+                                    <!-- Dynamically populated by renderProductList() -->
                                 </div>
                             </div>
                         </div>
 
                         <!-- ========== RIGHT: Product Detail ========== -->
                         <div class="lg:col-span-2 space-y-6">
-                            <!-- Product Info Card -->
+                            <!-- Product Info & Specs Card -->
                             <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
                                 <div class="p-4 border-b border-gray-200 flex items-center justify-between">
                                     <h3 class="font-semibold text-gray-900">Product Information</h3>
@@ -2406,85 +2282,8 @@
                                         </button>
                                     </div>
                                 </div>
-
-                                <div class="p-5">
-                                    <div class="flex gap-6">
-                                        <!-- Product Image -->
-                                        <div class="w-48 h-48 bg-gray-100 rounded-xl overflow-hidden flex-shrink-0">
-                                            <img id="productDetailImage" src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&q=80" alt="Product" class="w-full h-full object-cover">
-                                        </div>
-
-                                        <!-- Product Details -->
-                                        <div class="flex-1">
-                                            <div class="flex items-center gap-3 mb-2">
-                                                <h2 id="productDetailName" class="text-xl font-bold text-gray-900">Classic Sunroom</h2>
-                                                <span id="productDetailStatus" class="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full">Active</span>
-                                            </div>
-                                            <p id="productDetailCategory" class="text-sm text-gray-500 mb-4">Sunroom • Standard Series</p>
-
-                                            <div class="grid grid-cols-3 gap-4 mb-4">
-                                                <div>
-                                                    <label class="text-xs text-gray-500">Base Price</label>
-                                                    <div id="productDetailPrice" class="text-lg font-bold text-gray-900">$85/sqft</div>
-                                                </div>
-                                                <div>
-                                                    <label class="text-xs text-gray-500">Min Size</label>
-                                                    <div id="productDetailMinSize" class="text-lg font-bold text-gray-900">100 sqft</div>
-                                                </div>
-                                                <div>
-                                                    <label class="text-xs text-gray-500">Lead Time</label>
-                                                    <div id="productDetailLeadTime" class="text-lg font-bold text-gray-900">2-3 weeks</div>
-                                                </div>
-                                            </div>
-
-                                            <p id="productDetailDesc" class="text-sm text-gray-600">High-quality aluminum frame sunroom with tempered glass panels. Perfect for year-round outdoor living space extension.</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Pricing Configuration -->
-                            <div class="bg-white rounded-xl border border-gray-200 p-5">
-                                <h3 class="font-semibold text-gray-900 mb-4">Pricing Configuration</h3>
-
-                                <div class="grid grid-cols-2 gap-6">
-                                    <!-- Base Pricing -->
-                                    <div>
-                                        <h4 class="text-sm font-medium text-gray-700 mb-3">Base Pricing</h4>
-                                        <div class="space-y-3">
-                                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                                <span class="text-sm text-gray-600">Standard Frame</span>
-                                                <span class="font-medium text-gray-900">$85/sqft</span>
-                                            </div>
-                                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                                <span class="text-sm text-gray-600">Premium Frame</span>
-                                                <span class="font-medium text-gray-900">$110/sqft</span>
-                                            </div>
-                                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                                <span class="text-sm text-gray-600">Installation Labor</span>
-                                                <span class="font-medium text-gray-900">$15/sqft</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Add-ons -->
-                                    <div>
-                                        <h4 class="text-sm font-medium text-gray-700 mb-3">Available Add-ons</h4>
-                                        <div class="space-y-3">
-                                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                                <span class="text-sm text-gray-600">Low-E Glass</span>
-                                                <span class="font-medium text-gray-900">+$800</span>
-                                            </div>
-                                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                                <span class="text-sm text-gray-600">Ceiling Fan Prep</span>
-                                                <span class="font-medium text-gray-900">+$450</span>
-                                            </div>
-                                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                                <span class="text-sm text-gray-600">LED Lighting</span>
-                                                <span class="font-medium text-gray-900">+$680</span>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div class="p-5" id="productDetailContent">
+                                    <!-- Dynamically populated by updateProductDetail() -->
                                 </div>
                             </div>
 
@@ -2497,7 +2296,6 @@
                                         <span>Upload Files</span>
                                     </button>
                                 </div>
-
                                 <!-- Upload Area (Hidden by default) -->
                                 <div id="fileUploadArea" class="p-5 border-b border-gray-200 hidden">
                                     <div id="fileDropZone" class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-blue-400 hover:bg-blue-50/50 transition cursor-pointer">
@@ -2506,8 +2304,6 @@
                                         <p class="text-gray-600 font-medium">Drag & drop files here or click to browse</p>
                                         <p class="text-gray-400 text-sm mt-1">Supported: Images, PDF, DWG, DXF, SKP, OBJ (Max 50MB each)</p>
                                     </div>
-
-                                    <!-- Upload Progress -->
                                     <div id="uploadProgress" class="mt-4 hidden">
                                         <div class="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
                                             <i class="fas fa-spinner fa-spin text-blue-600"></i>
@@ -2520,132 +2316,8 @@
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- Files List -->
-                                <div id="productFilesList" class="divide-y divide-gray-100 max-h-64 overflow-y-auto">
-                                    <!-- File Item 1 -->
-                                    <div class="flex items-center justify-between p-4 hover:bg-gray-50">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                                                <i class="fas fa-image text-blue-600"></i>
-                                            </div>
-                                            <div>
-                                                <div class="text-sm font-medium text-gray-900">sunroom-front-view.jpg</div>
-                                                <div class="text-xs text-gray-500">2.4 MB • Image • Uploaded Mar 10</div>
-                                            </div>
-                                        </div>
-                                        <div class="flex items-center gap-2">
-                                            <button class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition">
-                                                <i class="fas fa-download"></i>
-                                            </button>
-                                            <button class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <!-- File Item 2 -->
-                                    <div class="flex items-center justify-between p-4 hover:bg-gray-50">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                                                <i class="fas fa-file-pdf text-red-600"></i>
-                                            </div>
-                                            <div>
-                                                <div class="text-sm font-medium text-gray-900">sunroom-specifications.pdf</div>
-                                                <div class="text-xs text-gray-500">1.8 MB • PDF • Uploaded Mar 8</div>
-                                            </div>
-                                        </div>
-                                        <div class="flex items-center gap-2">
-                                            <button class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition">
-                                                <i class="fas fa-download"></i>
-                                            </button>
-                                            <button class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <!-- File Item 3 -->
-                                    <div class="flex items-center justify-between p-4 hover:bg-gray-50">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                                                <i class="fas fa-drafting-compass text-green-600"></i>
-                                            </div>
-                                            <div>
-                                                <div class="text-sm font-medium text-gray-900">sunroom-cad.dwg</div>
-                                                <div class="text-xs text-gray-500">4.2 MB • CAD • Uploaded Mar 5</div>
-                                            </div>
-                                        </div>
-                                        <div class="flex items-center gap-2">
-                                            <button class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition">
-                                                <i class="fas fa-download"></i>
-                                            </button>
-                                            <button class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <!-- File Item 4 -->
-                                    <div class="flex items-center justify-between p-4 hover:bg-gray-50">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                                                <i class="fas fa-cube text-purple-600"></i>
-                                            </div>
-                                            <div>
-                                                <div class="text-sm font-medium text-gray-900">sunroom-3d-model.skp</div>
-                                                <div class="text-xs text-gray-500">12.5 MB • SketchUp • Uploaded Mar 3</div>
-                                            </div>
-                                        </div>
-                                        <div class="flex items-center gap-2">
-                                            <button class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition">
-                                                <i class="fas fa-download"></i>
-                                            </button>
-                                            <button class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <!-- File Item 5 -->
-                                    <div class="flex items-center justify-between p-4 hover:bg-gray-50">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                                                <i class="fas fa-image text-blue-600"></i>
-                                            </div>
-                                            <div>
-                                                <div class="text-sm font-medium text-gray-900">sunroom-interior.jpg</div>
-                                                <div class="text-xs text-gray-500">3.1 MB • Image • Uploaded Mar 1</div>
-                                            </div>
-                                        </div>
-                                        <div class="flex items-center gap-2">
-                                            <button class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition">
-                                                <i class="fas fa-download"></i>
-                                            </button>
-                                            <button class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="p-3 border-t border-gray-200 bg-gray-50 text-center">
-                                    <span class="text-xs text-gray-500">Showing 5 of 12 files • Total size: 24.0 MB</span>
+                                <div class="p-4 text-center text-sm text-gray-400">
+                                    <i class="fas fa-folder-open mr-1"></i> Files will appear here after upload
                                 </div>
                             </div>
 
@@ -5336,103 +5008,231 @@
 
         // ===== Products Page Functions =====
         const productsState = {
-            selectedProduct: 'prod-001',
+            selectedProduct: 'sr-l-classic',
             filter: 'all',
             uploadVisible: false
         };
 
-        // Dummy product data
-        const dummyProducts = {
-            'prod-001': {
-                name: 'Classic Sunroom',
-                category: 'Sunroom',
-                series: 'Standard Series',
-                status: 'Active',
-                price: '$85/sqft',
-                minSize: '100 sqft',
-                leadTime: '2-3 weeks',
-                description: 'High-quality aluminum frame sunroom with tempered glass panels. Perfect for year-round outdoor living space extension.',
-                image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&q=80',
-                fileCount: 12
+        // Product Catalog Data (from 产品选型与报价表.xlsx)
+        const productCatalog = {
+            // ===== SUNROOM 可移动阳光房 =====
+            'sr-l-classic': {
+                name: 'L-Classic Sunroom', category: 'sunroom', catLabel: 'Sunroom',
+                series: 'Classic Series', shape: 'L-Type', control: 'Manual',
+                status: 'Active', leadTime: '3-4 weeks', fileCount: 15,
+                icon: '/images/products/icons/sunroom-l-type.png',
+                image: '/images/gallery/sunroom-elegant.jpg',
+                desc: 'L-shaped retractable sunroom with manual slide operation. Premium aluminum alloy frame with polycarbonate panels, doors, windows, and precision track mechanism.',
+                components: ['Aluminum alloy profiles', 'Polycarbonate (PC) panels', 'Doors & windows', 'Slide track & rail system', 'Connectors & hardware'],
+                colors: 'Standard & Non-standard',
+                spans: ['≤4m', '≤5m', '≤6m', '≤7m', '>7m'],
+                extras: [], optionSet: 'sunroom', noteSet: 'sunroom'
             },
-            'prod-002': {
-                name: 'Premium Sunroom',
-                category: 'Sunroom',
-                series: 'Premium Series',
-                status: 'Active',
-                price: '$120/sqft',
-                minSize: '150 sqft',
-                leadTime: '3-4 weeks',
-                description: 'Luxury sunroom with premium frame materials, Low-E glass, and advanced insulation. Includes smart home integration ready.',
-                image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400&q=80',
-                fileCount: 18
+            'sr-l-smart': {
+                name: 'L-Smart Sunroom', category: 'sunroom', catLabel: 'Sunroom',
+                series: 'Smart Series', shape: 'L-Type', control: 'Motorized',
+                status: 'Active', leadTime: '4-5 weeks', fileCount: 18,
+                image: '/images/hero/sunroom-living.jpg',
+                desc: 'L-shaped retractable sunroom with motorized operation. One-touch retraction via motor and drive control system. Premium aluminum alloy frame with polycarbonate panels.',
+                components: ['Aluminum alloy profiles', 'Polycarbonate (PC) panels', 'Doors & windows', 'Slide track & rail system', 'Motor & drive control system', 'Connectors & hardware'],
+                colors: 'Standard & Non-standard',
+                spans: ['≤4m', '≤5m', '≤6m', '≤7m', '>7m'],
+                extras: ['Motor & drive control system'], optionSet: 'sunroom', noteSet: 'sunroom'
             },
-            'prod-003': {
-                name: 'Studio ADU',
-                category: 'ADU',
-                series: 'Standard Series',
-                status: 'Active',
-                price: '$180/sqft',
-                minSize: '300 sqft',
-                leadTime: '8-12 weeks',
-                description: 'Complete studio ADU with kitchenette and full bathroom. Perfect for rental income or guest housing.',
+            'sr-l-pro': {
+                name: 'L-Pro Sunroom', category: 'sunroom', catLabel: 'Sunroom',
+                series: 'Pro Series', shape: 'L-Type', control: 'Solar + Motor',
+                status: 'Active', leadTime: '5-6 weeks', fileCount: 22,
+                image: '/images/gallery/sunroom-pool.jpg',
+                desc: 'L-shaped retractable sunroom with integrated solar power & energy storage system. The most advanced model featuring photovoltaic capability for sustainable, off-grid operation.',
+                components: ['Aluminum alloy profiles', 'Polycarbonate (PC) panels', 'Doors & windows', 'Slide track & rail system', '(Motor & drive control system)', 'Solar power & energy storage system', 'Connectors & hardware'],
+                colors: 'Standard & Non-standard',
+                spans: ['≤4m', '≤5m', '≤6m', '≤7m', '>7m'],
+                extras: ['Solar power & energy storage system', '(Motor & drive control system)'], optionSet: 'sunroom', noteSet: 'sunroom'
+            },
+            'sr-m-classic': {
+                name: 'M-Classic Sunroom', category: 'sunroom', catLabel: 'Sunroom',
+                series: 'Classic Series', shape: 'M-Type', control: 'Manual',
+                status: 'Active', leadTime: '3-4 weeks', fileCount: 12,
+                image: '/images/gallery/sunroom-commercial.jpg',
+                desc: 'M-shaped retractable sunroom with manual slide operation. Designed for broader spans and commercial applications with premium aluminum alloy construction.',
+                components: ['Aluminum alloy profiles', 'Polycarbonate (PC) panels', 'Doors & windows', 'Slide track & rail system', 'Connectors & hardware'],
+                colors: 'Standard & Non-standard',
+                spans: ['≤4m', '≤5m', '≤6m', '≤7m', '>7m'],
+                extras: [], optionSet: 'sunroom', noteSet: 'sunroom'
+            },
+            'sr-m-smart': {
+                name: 'M-Smart Sunroom', category: 'sunroom', catLabel: 'Sunroom',
+                series: 'Smart Series', shape: 'M-Type', control: 'Motorized',
+                status: 'Active', leadTime: '4-5 weeks', fileCount: 14,
+                image: '/images/gallery/sunroom-pool-villa.jpg',
+                desc: 'M-shaped retractable sunroom with motorized operation. Ideal for commercial and swimming pool enclosures with full motor and drive control system.',
+                components: ['Aluminum alloy profiles', 'Polycarbonate (PC) panels', 'Doors & windows', 'Slide track & rail system', 'Motor & drive control system', 'Connectors & hardware'],
+                colors: 'Standard & Non-standard',
+                spans: ['≤4m', '≤5m', '≤6m', '≤7m', '>7m'],
+                extras: ['Motor & drive control system'], optionSet: 'sunroom', noteSet: 'sunroom'
+            },
+            'sr-m-pro': {
+                name: 'M-Pro Sunroom', category: 'sunroom', catLabel: 'Sunroom',
+                series: 'Pro Series', shape: 'M-Type', control: 'Solar + Motor',
+                status: 'Active', leadTime: '5-6 weeks', fileCount: 20,
+                image: '/images/gallery/sunroom-pool.jpg',
+                desc: 'M-shaped retractable sunroom with solar power storage and optional motorized operation. Premium model for commercial and large residential projects.',
+                components: ['Aluminum alloy profiles', 'Polycarbonate (PC) panels', 'Doors & windows', 'Slide track & rail system', '(Motor & drive control system)', 'Solar power & energy storage system', 'Connectors & hardware'],
+                colors: 'Standard & Non-standard',
+                spans: ['≤4m', '≤5m', '≤6m', '≤7m', '>7m'],
+                extras: ['Solar power & energy storage system', '(Motor & drive control system)'], optionSet: 'sunroom', noteSet: 'sunroom'
+            },
+            // ===== PERGOLA 凉亭 =====
+            'pg-basic': {
+                name: 'Pergola Basic', category: 'pergola', catLabel: 'Pergola',
+                series: 'Basic Type', shape: '', control: 'Manual (Fixed Roof)',
+                status: 'Active', leadTime: '2-3 weeks', fileCount: 10,
+                image: '/images/gallery/pavilion-garden.jpg',
+                desc: 'Manual pergola with fixed aluminum alloy roof and integrated LED control system. Clean, durable design perfect for residential outdoor living spaces.',
+                components: ['Aluminum alloy frame', 'Fixed aluminum roof panels', 'LED lighting control system', 'Connectors & hardware'],
+                colors: 'Standard & Non-standard',
+                spans: ['≤3m', '≤4m', '≤5m', '≤6m', '>6m'],
+                extras: [], optionSet: 'pergola', noteSet: 'pergola'
+            },
+            'pg-classic': {
+                name: 'Pergola Classic', category: 'pergola', catLabel: 'Pergola',
+                series: 'Classic Type', shape: '', control: 'Motorized Louvers',
+                status: 'Active', leadTime: '3-4 weeks', fileCount: 14,
+                image: '/images/hero/pavilion-dining.jpg',
+                desc: 'Motorized pergola with rotating aluminum louver roof and integrated motor/LED control system. Adjustable louvers provide flexible shade and weather control for all-season comfort.',
+                components: ['Aluminum alloy frame', 'Motorized rotating louvers', 'Motor & LED control system', 'Connectors & hardware'],
+                colors: 'Standard & Non-standard',
+                spans: ['≤3m', '≤4m', '≤5m', '≤6m', '>6m'],
+                extras: ['Motorized rotating louver system', 'Motor control system'], optionSet: 'pergola', noteSet: 'pergola'
+            },
+            // ===== ZIP BLINDS 防风卷帘 =====
+            'zb-manual': {
+                name: 'Zip Blinds Standard', category: 'blinds', catLabel: 'Zip Blinds',
+                series: 'Standard', shape: '', control: 'Manual',
+                status: 'Active', leadTime: '1-2 weeks', fileCount: 8,
+                image: '/images/products/zip-blinds/zipblinds-gallery-5.jpg',
+                desc: 'Manual zip blind system for outdoor wind and weather protection. Aluminum alloy frame with premium fabric and guide channels for secure, windproof operation.',
+                components: ['Aluminum alloy frame channels', 'Premium outdoor fabric', 'Square tube posts', 'Corner posts', 'Guide rail system'],
+                colors: 'Standard & Non-standard',
+                spans: ['≤3.8m', '≤5.5m', '>5.5m'],
+                extras: [], optionSet: 'blinds', noteSet: 'blinds'
+            },
+            'zb-motorized': {
+                name: 'Zip Blinds Motorized', category: 'blinds', catLabel: 'Zip Blinds',
+                series: 'Motorized', shape: '', control: 'Electric Motor',
+                status: 'Active', leadTime: '2-3 weeks', fileCount: 12,
+                image: '/images/products/zip-blinds/zipblinds-gallery-1.jpg',
+                desc: 'Motorized zip blind system with electric motor for effortless remote control operation. Same premium construction with added convenience of smart motor control.',
+                components: ['Aluminum alloy frame channels', 'Premium outdoor fabric', 'Square tube posts', 'Corner posts', 'Guide rail system', 'Electric motor & control system'],
+                colors: 'Standard & Non-standard',
+                spans: ['≤3.8m', '≤5.5m', '>5.5m'],
+                extras: ['Electric motor & control system'], optionSet: 'blinds', noteSet: 'blinds'
+            },
+            // ===== ADU =====
+            'adu-studio': {
+                name: 'Studio ADU', category: 'adu', catLabel: 'ADU',
+                series: 'Standard', shape: '', control: 'N/A',
+                status: 'Active', leadTime: '100 days', fileCount: 24,
                 image: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=400&q=80',
-                fileCount: 24
+                desc: 'Complete studio ADU with kitchenette and full bathroom. Modular design enables 100-day delivery. Perfect for rental income or guest housing.',
+                components: ['Modular steel frame', 'Insulated wall panels', 'Roofing system', 'Kitchenette', 'Full bathroom', 'Electrical & plumbing'],
+                colors: 'Custom design options',
+                spans: ['300-500 sqft'],
+                extras: [], optionSet: 'adu', noteSet: 'adu'
             },
-            'prod-004': {
-                name: 'Garden Pergola',
-                category: 'Pergola',
-                series: 'Standard Series',
-                status: 'Active',
-                price: '$45/sqft',
-                minSize: '100 sqft',
-                leadTime: '1-2 weeks',
-                description: 'Open-air pergola structure with weather-resistant materials. Ideal for outdoor entertaining and dining.',
-                image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&q=80',
-                fileCount: 8
-            },
-            'prod-005': {
-                name: 'Zip Blinds Pro',
-                category: 'Blinds',
-                series: 'Premium Series',
-                status: 'Active',
-                price: '$35/sqft',
-                minSize: '50 sqft',
-                leadTime: '1 week',
-                description: 'Motorized zip blinds with remote control and wind sensor. Premium weather protection for any outdoor space.',
-                image: 'https://images.unsplash.com/photo-1600607687644-c7171b42498f?w=400&q=80',
-                fileCount: 15
-            },
-            'prod-006': {
-                name: 'Two-Bedroom ADU',
-                category: 'ADU',
-                series: 'Premium Series',
-                status: 'Draft',
-                price: '$220/sqft',
-                minSize: '500 sqft',
-                leadTime: '12-16 weeks',
-                description: 'Full two-bedroom ADU with complete kitchen, two bathrooms, and separate entrance. Maximize rental potential.',
+            'adu-2bed': {
+                name: 'Two-Bedroom ADU', category: 'adu', catLabel: 'ADU',
+                series: 'Premium', shape: '', control: 'N/A',
+                status: 'Draft', leadTime: '120 days', fileCount: 6,
                 image: 'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=400&q=80',
-                fileCount: 6
+                desc: 'Full two-bedroom ADU with complete kitchen, two bathrooms, and separate entrance. Modular design for fast delivery. Maximize rental potential.',
+                components: ['Modular steel frame', 'Insulated wall panels', 'Roofing system', 'Full kitchen', 'Two bathrooms', 'Two bedrooms', 'Living area', 'Electrical & plumbing'],
+                colors: 'Custom design options',
+                spans: ['500-800 sqft'],
+                extras: [], optionSet: 'adu', noteSet: 'adu'
             }
         };
 
+        // Shared option sets for each product category
+        const productOptionSets = {
+            sunroom: [
+                { name: 'Honeycomb Shade — Top (Manual)', icon: 'fa-sun', desc: 'Aluminum foil honeycomb shade for roof' },
+                { name: 'Honeycomb Shade — Top (Electric)', icon: 'fa-bolt', desc: 'Motorized honeycomb shade with control' },
+                { name: 'Facade Shade — Manual', icon: 'fa-grip-lines', desc: 'Manual facade shading system' },
+                { name: 'Facade Shade — Electric', icon: 'fa-sliders-h', desc: 'Electric facade shading system' },
+                { name: 'LED Strip Lighting', icon: 'fa-lightbulb', desc: 'Ambient LED strip system' },
+                { name: 'Flooring', icon: 'fa-border-all', desc: 'Composite decking floor' }
+            ],
+            pergola: [
+                { name: 'Zip Blinds — Basic (Manual)', icon: 'fa-window-maximize', desc: 'Manual zip blind side enclosure' },
+                { name: 'Zip Blinds — Classic (Electric)', icon: 'fa-window-restore', desc: 'Motorized zip blind side enclosure' },
+                { name: 'Weather Sensor (Rain & Wind)', icon: 'fa-cloud-rain', desc: 'Auto-close on weather detection' },
+                { name: 'WiFi / Phone Control', icon: 'fa-wifi', desc: 'Smart home integration' },
+                { name: 'Flooring', icon: 'fa-border-all', desc: 'Composite decking floor' }
+            ],
+            blinds: [
+                { name: 'Material & Aperture Rate', icon: 'fa-th', desc: 'Custom fabric material and openness selection' }
+            ],
+            adu: [
+                { name: 'Custom Layout Design', icon: 'fa-pencil-ruler', desc: 'Tailored floor plan within modular constraints' },
+                { name: 'Solar Panel System', icon: 'fa-solar-panel', desc: 'Rooftop solar power system' },
+                { name: 'Smart Home Package', icon: 'fa-wifi', desc: 'IoT-ready smart home integration' }
+            ]
+        };
+
+        // Shared notes for each product category
+        const productNotes = {
+            sunroom: [
+                'L/W/H refer to interior net dimensions of the sunroom',
+                'Prices are for product only — installation fee not included',
+                'Foundation/base installation required — additional cost applies'
+            ],
+            pergola: [
+                'L/W/H refer to exterior outline dimensions',
+                'Prices are for product only — installation fee not included',
+                'Foundation/base installation required — additional cost applies'
+            ],
+            blinds: [
+                'Width refers to the span of the blind opening',
+                'Custom material and aperture rate options available'
+            ],
+            adu: [
+                'Modular design — delivery timeline starts from permit approval',
+                'Fully customizable layout within modular constraints',
+                'Building permits and site preparation not included'
+            ]
+        };
+
+        // Category display config
+        const productCategories = [
+            { key: 'sunroom', label: 'Sunroom', icon: 'fa-sun', color: 'amber' },
+            { key: 'pergola', label: 'Pergola', icon: 'fa-warehouse', color: 'green' },
+            { key: 'blinds', label: 'Zip Blinds', icon: 'fa-align-justify', color: 'purple' },
+            { key: 'adu', label: 'ADU', icon: 'fa-home', color: 'blue' }
+        ];
+
+        // Product 3D icon mapping (per product ID → icon path)
+        const productIcons = {
+            'sr-l-classic': 'images/products/icons/sunroom-l-type.png',
+            'sr-l-smart':   'images/products/icons/sunroom-l-type.png',
+            'sr-l-pro':     'images/products/icons/sunroom-l-type.png',
+            'sr-m-classic': 'images/products/icons/sunroom-m-type.png',
+            'sr-m-smart':   'images/products/icons/sunroom-m-type.png',
+            'sr-m-pro':     'images/products/icons/sunroom-m-type.png',
+            'pg-basic':     'images/products/icons/pergola.png',
+            'pg-classic':   'images/products/icons/pergola.png',
+            'zb-manual':    'images/products/icons/zip-blinds.png',
+            'zb-motorized': 'images/products/icons/zip-blinds.png',
+            'adu-studio':   'images/products/icons/adu-studio.png',
+            'adu-2bed':     'images/products/icons/adu-2bed.png'
+        };
+
         function initProductsPage() {
-            // Product item selection
-            document.querySelectorAll('.product-item').forEach(item => {
-                item.addEventListener('click', function() {
-                    const productId = this.dataset.product;
-                    productsState.selectedProduct = productId;
-
-                    // Update active state
-                    document.querySelectorAll('.product-item').forEach(i => {
-                        i.classList.remove('bg-blue-50/50', 'border-l-4', 'border-blue-500');
-                    });
-                    this.classList.add('bg-blue-50/50', 'border-l-4', 'border-blue-500');
-
-                    updateProductDetail(productId);
-                });
-            });
+            // Render product list from catalog data
+            renderProductList();
+            // Render initial product detail
+            updateProductDetail(productsState.selectedProduct);
 
             // Filter buttons
             document.querySelectorAll('.product-filter-btn').forEach(btn => {
@@ -5443,7 +5243,6 @@
                     });
                     this.classList.remove('bg-white', 'border', 'text-gray-600');
                     this.classList.add('bg-gray-900', 'text-white');
-
                     productsState.filter = this.dataset.filter;
                     filterProducts(this.dataset.filter);
                 });
@@ -5453,8 +5252,7 @@
             const searchInput = document.getElementById('productSearch');
             if (searchInput) {
                 searchInput.addEventListener('input', function() {
-                    const query = this.value.toLowerCase();
-                    searchProducts(query);
+                    searchProducts(this.value.toLowerCase());
                 });
             }
 
@@ -5471,81 +5269,206 @@
             // File drop zone
             const dropZone = document.getElementById('fileDropZone');
             const fileInput = document.getElementById('productFileInput');
-
             if (dropZone && fileInput) {
                 dropZone.addEventListener('click', () => fileInput.click());
-
-                dropZone.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                    dropZone.classList.add('border-blue-400', 'bg-blue-50');
-                });
-
-                dropZone.addEventListener('dragleave', () => {
-                    dropZone.classList.remove('border-blue-400', 'bg-blue-50');
-                });
-
-                dropZone.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    dropZone.classList.remove('border-blue-400', 'bg-blue-50');
-                    if (e.dataTransfer.files.length) {
-                        handleFileUpload(e.dataTransfer.files);
-                    }
-                });
-
-                fileInput.addEventListener('change', function() {
-                    if (this.files.length) {
-                        handleFileUpload(this.files);
-                    }
-                });
+                dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-blue-400', 'bg-blue-50'); });
+                dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('border-blue-400', 'bg-blue-50'); });
+                dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('border-blue-400', 'bg-blue-50'); if (e.dataTransfer.files.length) handleFileUpload(e.dataTransfer.files); });
+                fileInput.addEventListener('change', function() { if (this.files.length) handleFileUpload(this.files); });
             }
 
             // Add product button
             const addBtn = document.getElementById('addProductBtn');
-            if (addBtn) {
-                addBtn.addEventListener('click', () => {
-                    showToast('Add Product modal will be implemented. This will open a form to create new products.', 'info');
-                });
-            }
+            if (addBtn) addBtn.addEventListener('click', () => showToast('Add Product form will open here — create new product entries.', 'info'));
 
             // Edit product button
             const editBtn = document.getElementById('editProductBtn');
-            if (editBtn) {
-                editBtn.addEventListener('click', () => {
-                    showToast('Edit Product modal will be implemented. This will open a form to edit product details.', 'info');
+            if (editBtn) editBtn.addEventListener('click', () => showToast('Edit Product form will open here — modify product details.', 'info'));
+        }
+
+        // Render grouped product list from productCatalog
+        function renderProductList() {
+            const list = document.getElementById('productList');
+            if (!list) return;
+            const totalProducts = Object.keys(productCatalog).length;
+            const countEl = document.getElementById('productCount');
+            if (countEl) countEl.textContent = totalProducts + ' items';
+
+            let html = '';
+            productCategories.forEach(cat => {
+                const products = Object.entries(productCatalog).filter(([k, p]) => p.category === cat.key);
+                if (products.length === 0) return;
+                html += `<div class="product-category" data-cat="${cat.key}">
+                    <div class="px-4 py-2 bg-gray-50/80 flex items-center justify-between border-b border-gray-100">
+                        <div class="flex items-center gap-2">
+                            <i class="fas ${cat.icon} text-${cat.color}-500 text-xs"></i>
+                            <span class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">${cat.label}</span>
+                        </div>
+                        <span class="text-[10px] text-gray-400 bg-gray-200/80 px-1.5 py-0.5 rounded font-medium">${products.length}</span>
+                    </div>`;
+                products.forEach(([id, p]) => {
+                    const sel = productsState.selectedProduct === id;
+                    const iconSrc = productIcons[id] || p.image;
+                    html += `<div class="product-item p-3 hover:bg-blue-50/30 cursor-pointer transition-all ${sel ? 'bg-blue-50/50 border-l-4 border-blue-500' : 'border-l-4 border-transparent'}" data-product="${id}" data-category="${p.category}">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-white rounded-lg overflow-hidden flex-shrink-0 border border-gray-100 p-0.5">
+                                <img src="${iconSrc}" alt="${p.name}" class="w-full h-full object-contain">
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="text-sm font-medium text-gray-900 truncate">${p.name}</div>
+                                <div class="text-xs text-gray-400 truncate">${p.series}${p.shape ? ' · ' + p.shape : ''} · ${p.control}</div>
+                            </div>
+                            <span class="text-[10px] ${p.status === 'Active' ? 'text-green-600 bg-green-50' : 'text-amber-600 bg-amber-50'} font-semibold flex-shrink-0 px-1.5 py-0.5 rounded-full">${p.status}</span>
+                        </div>
+                    </div>`;
                 });
-            }
+                html += '</div>';
+            });
+            list.innerHTML = html;
+
+            // Bind click events
+            list.querySelectorAll('.product-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const productId = this.dataset.product;
+                    productsState.selectedProduct = productId;
+                    list.querySelectorAll('.product-item').forEach(i => {
+                        i.classList.remove('bg-blue-50/50', 'border-blue-500');
+                        i.classList.add('border-transparent');
+                    });
+                    this.classList.remove('border-transparent');
+                    this.classList.add('bg-blue-50/50', 'border-blue-500');
+                    updateProductDetail(productId);
+                });
+            });
         }
 
+        // Update the product detail panel
         function updateProductDetail(productId) {
-            const product = dummyProducts[productId];
-            if (!product) return;
+            const p = productCatalog[productId];
+            if (!p) return;
+            const opts = productOptionSets[p.optionSet] || [];
+            const notes = productNotes[p.noteSet] || [];
+            const container = document.getElementById('productDetailContent');
+            if (!container) return;
+            const iconSrc = productIcons[productId] || p.image;
 
-            document.getElementById('productDetailImage').src = product.image;
-            document.getElementById('productDetailName').textContent = product.name;
-            document.getElementById('productDetailCategory').textContent = product.category + ' • ' + product.series;
-            document.getElementById('productDetailPrice').textContent = product.price;
-            document.getElementById('productDetailMinSize').textContent = product.minSize;
-            document.getElementById('productDetailLeadTime').textContent = product.leadTime;
-            document.getElementById('productDetailDesc').textContent = product.description;
+            container.innerHTML = `
+                <!-- Product Header -->
+                <div class="flex gap-6 mb-6">
+                    <div class="w-44 h-44 bg-white rounded-xl overflow-hidden flex-shrink-0 shadow-sm border border-gray-100 p-2">
+                        <img src="${iconSrc}" alt="${p.name}" class="w-full h-full object-contain">
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-3 mb-1.5">
+                            <h2 class="text-xl font-bold text-gray-900">${p.name}</h2>
+                            <span class="px-2.5 py-0.5 ${p.status === 'Active' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'} text-xs font-medium rounded-full">${p.status}</span>
+                        </div>
+                        <p class="text-sm text-gray-500 mb-4">${p.catLabel} · ${p.series}${p.shape ? ' · ' + p.shape : ''}</p>
+                        <div class="grid grid-cols-3 gap-4 mb-4">
+                            <div class="bg-gray-50 rounded-lg p-2.5">
+                                <label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Control</label>
+                                <div class="text-sm font-bold text-gray-900 mt-0.5">${p.control}</div>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-2.5">
+                                <label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Colors</label>
+                                <div class="text-sm font-bold text-gray-900 mt-0.5">${p.colors}</div>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-2.5">
+                                <label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Lead Time</label>
+                                <div class="text-sm font-bold text-gray-900 mt-0.5">${p.leadTime}</div>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-600 leading-relaxed">${p.desc}</p>
+                    </div>
+                </div>
 
-            const statusEl = document.getElementById('productDetailStatus');
-            if (product.status === 'Active') {
-                statusEl.className = 'px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full';
-                statusEl.textContent = 'Active';
-            } else {
-                statusEl.className = 'px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-medium rounded-full';
-                statusEl.textContent = 'Draft';
-            }
+                <!-- Specifications -->
+                <div class="border border-gray-100 rounded-xl p-5 mb-5">
+                    <h4 class="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                        <i class="fas fa-cog text-gray-400"></i> Product Specifications
+                    </h4>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <h5 class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-3">Components Included</h5>
+                            <div class="space-y-2">
+                                ${p.components.map(c => `
+                                    <div class="flex items-center gap-2.5">
+                                        <div class="w-5 h-5 rounded-full ${p.extras.includes(c) ? 'bg-blue-100' : 'bg-green-100'} flex items-center justify-center flex-shrink-0">
+                                            <i class="fas ${p.extras.includes(c) ? 'fa-star text-blue-500' : 'fa-check text-green-500'}" style="font-size:9px"></i>
+                                        </div>
+                                        <span class="text-sm ${p.extras.includes(c) ? 'text-blue-700 font-medium' : 'text-gray-700'}">${c}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            ${p.extras.length > 0 ? '<p class="text-[11px] text-blue-500 mt-3 flex items-center gap-1"><i class="fas fa-star" style="font-size:8px"></i> Highlighted = series-specific upgrade</p>' : ''}
+                        </div>
+                        <div>
+                            <h5 class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-3">Span / Size Options</h5>
+                            <div class="flex flex-wrap gap-2 mb-3">
+                                ${p.spans.map(s => `
+                                    <div class="px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-center hover:border-blue-300 hover:bg-blue-50/50 transition cursor-default">
+                                        <div class="text-sm font-bold text-gray-900">${s}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <p class="text-[11px] text-gray-400">
+                                ${p.category === 'sunroom' ? 'Span = interior net width of the sunroom' : p.category === 'pergola' ? 'Span = exterior outline width of the pergola' : p.category === 'blinds' ? 'Width = span of the blind opening' : 'Size = total livable area'}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                ${opts.length > 0 ? `
+                <!-- Configuration Options -->
+                <div class="border border-gray-100 rounded-xl p-5 mb-5">
+                    <h4 class="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                        <i class="fas fa-puzzle-piece text-gray-400"></i> Configuration Options
+                    </h4>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-2.5">
+                        ${opts.map(o => `
+                            <label class="flex items-center gap-3 p-3 bg-gray-50/80 rounded-lg hover:bg-blue-50/50 hover:border-blue-200 cursor-pointer transition border border-transparent">
+                                <input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                                <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center border border-gray-200 flex-shrink-0">
+                                    <i class="fas ${o.icon} text-gray-500 text-sm"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <div class="text-sm font-medium text-gray-800">${o.name}</div>
+                                    <div class="text-[11px] text-gray-400">${o.desc}</div>
+                                </div>
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>` : ''}
+
+                ${notes.length > 0 ? `
+                <!-- Important Notes -->
+                <div class="border border-amber-200/60 bg-amber-50/40 rounded-xl p-4">
+                    <h4 class="text-sm font-semibold text-amber-800 mb-2.5 flex items-center gap-2">
+                        <i class="fas fa-info-circle text-amber-500"></i> Important Notes
+                    </h4>
+                    <ul class="space-y-1.5">
+                        ${notes.map(n => `
+                            <li class="text-sm text-amber-700 flex items-start gap-2">
+                                <span class="text-amber-400 mt-0.5 flex-shrink-0">•</span>
+                                <span>${n}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>` : ''}
+            `;
         }
 
+        // Filter products by category
         function filterProducts(filter) {
+            document.querySelectorAll('.product-category').forEach(cat => {
+                if (filter === 'all' || cat.dataset.cat === filter) {
+                    cat.style.display = '';
+                } else {
+                    cat.style.display = 'none';
+                }
+            });
             document.querySelectorAll('.product-item').forEach(item => {
-                const productId = item.dataset.product;
-                const product = dummyProducts[productId];
-                if (!product) return;
-
-                const category = product.category.toLowerCase();
-                if (filter === 'all' || category === filter) {
+                if (filter === 'all' || item.dataset.category === filter) {
                     item.style.display = '';
                 } else {
                     item.style.display = 'none';
@@ -5553,19 +5476,22 @@
             });
         }
 
+        // Search products by name, category, series
         function searchProducts(query) {
+            if (!query) {
+                document.querySelectorAll('.product-category, .product-item').forEach(el => el.style.display = '');
+                return;
+            }
             document.querySelectorAll('.product-item').forEach(item => {
-                const productId = item.dataset.product;
-                const product = dummyProducts[productId];
-                if (!product) return;
-
-                const name = product.name.toLowerCase();
-                const category = product.category.toLowerCase();
-                if (name.includes(query) || category.includes(query)) {
-                    item.style.display = '';
-                } else {
-                    item.style.display = 'none';
-                }
+                const p = productCatalog[item.dataset.product];
+                if (!p) return;
+                const searchStr = (p.name + ' ' + p.catLabel + ' ' + p.series + ' ' + p.control + ' ' + (p.shape || '')).toLowerCase();
+                item.style.display = searchStr.includes(query) ? '' : 'none';
+            });
+            // Hide empty category headers
+            document.querySelectorAll('.product-category').forEach(cat => {
+                const visible = cat.querySelectorAll('.product-item[style=""], .product-item:not([style])');
+                cat.style.display = visible.length > 0 ? '' : 'none';
             });
         }
 
@@ -6287,12 +6213,18 @@
         ];
 
         const overviewProductsData = [
-            { name: 'Classic Sunroom', category: 'Sunroom', price: '$85/sqft', status: 'Active', image: 'fas fa-sun', color: 'blue' },
-            { name: 'Premium Sunroom', category: 'Sunroom', price: '$120/sqft', status: 'Active', image: 'fas fa-sun', color: 'indigo' },
-            { name: 'Studio Pergola', category: 'Pergola', price: '$45/sqft', status: 'Active', image: 'fas fa-warehouse', color: 'green' },
-            { name: 'Classic Pergola', category: 'Pergola', price: '$65/sqft', status: 'Active', image: 'fas fa-warehouse', color: 'teal' },
-            { name: 'Standard Zip Blinds', category: 'Zip Blinds', price: '$35/sqft', status: 'Active', image: 'fas fa-blinds', color: 'purple' },
-            { name: 'ADU Studio', category: 'ADU', price: '$180/sqft', status: 'Active', image: 'fas fa-home', color: 'amber' }
+            { name: 'L-Classic Sunroom', category: 'Sunroom · Classic', price: 'Manual', status: 'Active', color: 'amber', filterKey: 'sunroom', catalogId: 'sr-l-classic' },
+            { name: 'L-Smart Sunroom', category: 'Sunroom · Smart', price: 'Motorized', status: 'Active', color: 'amber', filterKey: 'sunroom', catalogId: 'sr-l-smart' },
+            { name: 'L-Pro Sunroom', category: 'Sunroom · Pro', price: 'Solar+Motor', status: 'Active', color: 'amber', filterKey: 'sunroom', catalogId: 'sr-l-pro' },
+            { name: 'M-Classic Sunroom', category: 'Sunroom · Classic', price: 'Manual', status: 'Active', color: 'blue', filterKey: 'sunroom', catalogId: 'sr-m-classic' },
+            { name: 'M-Smart Sunroom', category: 'Sunroom · Smart', price: 'Motorized', status: 'Active', color: 'blue', filterKey: 'sunroom', catalogId: 'sr-m-smart' },
+            { name: 'M-Pro Sunroom', category: 'Sunroom · Pro', price: 'Solar+Motor', status: 'Active', color: 'blue', filterKey: 'sunroom', catalogId: 'sr-m-pro' },
+            { name: 'Pergola Basic', category: 'Pergola · Basic', price: 'Manual', status: 'Active', color: 'green', filterKey: 'pergola', catalogId: 'pg-basic' },
+            { name: 'Pergola Classic', category: 'Pergola · Classic', price: 'Motorized', status: 'Active', color: 'green', filterKey: 'pergola', catalogId: 'pg-classic' },
+            { name: 'Zip Blinds Standard', category: 'Zip Blinds', price: 'Manual', status: 'Active', color: 'purple', filterKey: 'blinds', catalogId: 'zb-manual' },
+            { name: 'Zip Blinds Motorized', category: 'Zip Blinds', price: 'Electric', status: 'Active', color: 'purple', filterKey: 'blinds', catalogId: 'zb-motorized' },
+            { name: 'Studio ADU', category: 'ADU · Standard', price: '100 days', status: 'Active', color: 'indigo', filterKey: 'adu', catalogId: 'adu-studio' },
+            { name: 'Two-Bedroom ADU', category: 'ADU · Premium', price: '120 days', status: 'Draft', color: 'indigo', filterKey: 'adu', catalogId: 'adu-2bed' }
         ];
 
         function renderOverviewOrders() {
@@ -6327,12 +6259,13 @@
 
         function renderOverviewProducts() {
             const grid = document.getElementById('overviewProductsGrid');
-            if (!grid || grid.children.length > 0) return;
+            if (!grid) return;
+            // Always re-render to support filtering
             grid.innerHTML = overviewProductsData.map(p => `
-                <div class="border border-gray-100 rounded-xl p-4 hover:shadow-md hover:border-gray-200 transition cursor-pointer">
+                <div class="ov-product-card border border-gray-100 rounded-xl p-4 hover:shadow-md hover:border-gray-200 transition cursor-pointer" data-category="${p.filterKey}" data-catalog-id="${p.catalogId}">
                     <div class="flex items-center gap-3 mb-3">
-                        <div class="w-10 h-10 bg-${p.color}-50 rounded-lg flex items-center justify-center">
-                            <i class="${p.image} text-${p.color}-600"></i>
+                        <div class="w-12 h-12 bg-white rounded-lg overflow-hidden flex-shrink-0 border border-gray-100 p-1">
+                            <img src="${productIcons[p.catalogId] || ''}" alt="${p.name}" class="w-full h-full object-contain">
                         </div>
                         <div>
                             <div class="text-sm font-semibold text-gray-900">${p.name}</div>
@@ -6340,11 +6273,44 @@
                         </div>
                     </div>
                     <div class="flex items-center justify-between">
-                        <span class="text-sm font-bold text-gray-900">${p.price}</span>
-                        <span class="px-2 py-0.5 bg-green-50 text-green-700 text-xs font-medium rounded-full">${p.status}</span>
+                        <span class="text-xs text-gray-500 font-medium">${p.price}</span>
+                        <span class="px-2 py-0.5 ${p.status === 'Active' ? 'bg-green-50 text-green-700' : 'bg-amber-50 text-amber-700'} text-xs font-medium rounded-full">${p.status}</span>
                     </div>
                 </div>
             `).join('');
+
+            // --- Card click: navigate to Products page with that product selected ---
+            grid.querySelectorAll('.ov-product-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const catalogId = this.dataset.catalogId;
+                    if (catalogId && productCatalog[catalogId]) {
+                        productsState.selectedProduct = catalogId;
+                        navigateToPage('products');
+                        setTimeout(() => {
+                            renderProductList();
+                            updateProductDetail(catalogId);
+                            const selectedItem = document.querySelector('.product-item[data-id="' + catalogId + '"]');
+                            if (selectedItem) selectedItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }, 50);
+                    }
+                });
+            });
+
+            // --- Overview filter buttons ---
+            document.querySelectorAll('.ov-product-filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.ov-product-filter-btn').forEach(b => {
+                        b.classList.remove('bg-gray-900', 'text-white');
+                        b.classList.add('bg-white', 'border', 'text-gray-600');
+                    });
+                    this.classList.remove('bg-white', 'border', 'text-gray-600');
+                    this.classList.add('bg-gray-900', 'text-white');
+                    const filter = this.dataset.filter;
+                    grid.querySelectorAll('.ov-product-card').forEach(card => {
+                        card.style.display = (filter === 'all' || card.dataset.category === filter) ? '' : 'none';
+                    });
+                });
+            });
         }
 
         // ===== Step Detail Data (per-step core actions & key deliverables) =====
