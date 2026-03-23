@@ -5361,7 +5361,7 @@
                             <span class="px-2.5 py-0.5 ${p.status === 'Active' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'} text-xs font-medium rounded-full">${p.status}</span>
                         </div>
                         <p class="text-sm text-gray-500 mb-4">${p.catLabel} · ${p.series}${p.shape ? ' · ' + p.shape : ''}</p>
-                        <div class="grid grid-cols-3 gap-4 mb-4">
+                        <div class="grid grid-cols-4 gap-4 mb-4">
                             <div class="bg-gray-50 rounded-lg p-2.5">
                                 <label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Control</label>
                                 <div class="text-sm font-bold text-gray-900 mt-0.5">${p.control}</div>
@@ -5369,6 +5369,10 @@
                             <div class="bg-gray-50 rounded-lg p-2.5">
                                 <label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Colors</label>
                                 <div class="text-sm font-bold text-gray-900 mt-0.5">${p.colors}</div>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-2.5">
+                                <label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Price</label>
+                                <div class="text-sm font-bold text-gray-900 mt-0.5">${p.price || '—'}</div>
                             </div>
                             <div class="bg-gray-50 rounded-lg p-2.5">
                                 <label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Lead Time</label>
