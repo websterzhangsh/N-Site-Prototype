@@ -1053,6 +1053,13 @@
                                             <span class="font-medium text-gray-900 ml-2">Los Angeles, CA</span>
                                         </div>
                                     </div>
+                                    <div class="mt-3 pt-3 border-t border-gray-200">
+                                        <button id="viewMaterialCostBtn" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-emerald-200 text-emerald-700 text-sm font-medium rounded-lg hover:bg-emerald-50 hover:border-emerald-300 transition">
+                                            <i class="fas fa-box-open text-emerald-500"></i>
+                                            View Material Cost
+                                            <i class="fas fa-arrow-right text-xs text-emerald-400"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
@@ -4200,6 +4207,35 @@
                 projectSelect.addEventListener('change', function() {
                     pricingAgentState.selectedProject = this.value;
                     updatePricingProjectInfo(this.value);
+                });
+            }
+
+            // "View Material Cost" button → jump to Products page
+            const viewMaterialCostBtn = document.getElementById('viewMaterialCostBtn');
+            if (viewMaterialCostBtn) {
+                viewMaterialCostBtn.addEventListener('click', function() {
+                    // Map project type to a default product in productCatalog
+                    const projectId = pricingAgentState.selectedProject;
+                    const project = dummyProjects[projectId];
+                    const typeToProduct = {
+                        'sunroom': 'sr-l-classic',
+                        'pergola': 'pg-basic',
+                        'blinds': 'zb-manual',
+                        'adu': 'adu-studio'
+                    };
+                    const targetProduct = project ? (typeToProduct[project.type] || 'sr-l-classic') : 'sr-l-classic';
+
+                    // Set selected product and navigate
+                    if (typeof productsState !== 'undefined') {
+                        productsState.selectedProduct = targetProduct;
+                    }
+                    navigateToPage('products');
+                    setTimeout(() => {
+                        if (typeof renderProductList === 'function') renderProductList();
+                        if (typeof updateProductDetail === 'function') updateProductDetail(targetProduct);
+                        const selectedItem = document.querySelector('.product-item[data-product="' + targetProduct + '"]');
+                        if (selectedItem) selectedItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 50);
                 });
             }
 
