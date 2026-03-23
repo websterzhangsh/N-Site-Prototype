@@ -1033,6 +1033,16 @@
                                     <option value="proj-004">Lakeside Retreat - Mrs. Davis (Zip Blinds)</option>
                                 </select>
 
+                                <!-- Product Model Selector (dynamic, filters by project type) -->
+                                <div class="mt-4">
+                                    <label class="text-sm font-medium text-gray-700 mb-2 block">
+                                        <i class="fas fa-box-open text-emerald-500 mr-1"></i>Product Model
+                                    </label>
+                                    <select id="pricingProductSelect" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-gray-700">
+                                        <!-- Dynamically populated from productCatalog -->
+                                    </select>
+                                </div>
+
                                 <!-- Project Budget Info -->
                                 <div id="pricingProjectInfo" class="mt-4 p-4 bg-gray-50 rounded-lg">
                                     <div class="grid grid-cols-2 gap-4 text-sm">
@@ -4163,6 +4173,7 @@
         // ===== Pricing Agent Page Functions =====
         const pricingAgentState = {
             selectedProject: 'proj-001',
+            selectedProduct: 'sr-l-classic',
             width: 14,
             depth: 20,
             height: 12,
@@ -4207,23 +4218,34 @@
                 projectSelect.addEventListener('change', function() {
                     pricingAgentState.selectedProject = this.value;
                     updatePricingProjectInfo(this.value);
+                    // Auto-update product selector based on project type
+                    const project = dummyProjects[this.value];
+                    if (project) {
+                        populatePricingProductSelect(project.type);
+                    }
                 });
+            }
+
+            // Product model selector
+            const productSelect = document.getElementById('pricingProductSelect');
+            if (productSelect) {
+                productSelect.addEventListener('change', function() {
+                    pricingAgentState.selectedProduct = this.value;
+                });
+            }
+
+            // Initialize product selector for default project
+            const defaultProject = dummyProjects[pricingAgentState.selectedProject];
+            if (defaultProject) {
+                populatePricingProductSelect(defaultProject.type);
             }
 
             // "View Material Cost" button → jump to Products page
             const viewMaterialCostBtn = document.getElementById('viewMaterialCostBtn');
             if (viewMaterialCostBtn) {
                 viewMaterialCostBtn.addEventListener('click', function() {
-                    // Map project type to a default product in productCatalog
-                    const projectId = pricingAgentState.selectedProject;
-                    const project = dummyProjects[projectId];
-                    const typeToProduct = {
-                        'sunroom': 'sr-l-classic',
-                        'pergola': 'pg-basic',
-                        'blinds': 'zb-manual',
-                        'adu': 'adu-studio'
-                    };
-                    const targetProduct = project ? (typeToProduct[project.type] || 'sr-l-classic') : 'sr-l-classic';
+                    // Use the selected product from the dropdown
+                    const targetProduct = pricingAgentState.selectedProduct || 'sr-l-classic';
 
                     // Set selected product and navigate
                     if (typeof productsState !== 'undefined') {
@@ -4336,6 +4358,39 @@
             }
         }
 
+        // Populate the product model dropdown based on project type
+        function populatePricingProductSelect(projectType) {
+            const select = document.getElementById('pricingProductSelect');
+            if (!select) return;
+
+            // Filter products by matching category (project type → product category)
+            const typeToCategory = {
+                'sunroom': 'sunroom',
+                'pergola': 'pergola',
+                'blinds': 'blinds',
+                'adu': 'adu'
+            };
+            const category = typeToCategory[projectType] || 'sunroom';
+            const matchingProducts = Object.entries(productCatalog).filter(([id, p]) => p.category === category);
+
+            // Build options HTML
+            let html = '';
+            matchingProducts.forEach(([id, p]) => {
+                const priceHint = p.pricing && p.pricing.tiers.length > 0
+                    ? ' ($' + p.pricing.tiers[0].priceRange[0] + '-' + p.pricing.tiers[p.pricing.tiers.length - 1].priceRange[1] + '/' + p.pricing.unit + ')'
+                    : '';
+                html += '<option value="' + id + '">' + p.name + ' — ' + p.series + (p.shape ? ' · ' + p.shape : '') + priceHint + '</option>';
+            });
+
+            select.innerHTML = html;
+
+            // Auto-select first product and update state
+            if (matchingProducts.length > 0) {
+                pricingAgentState.selectedProduct = matchingProducts[0][0];
+                select.value = matchingProducts[0][0];
+            }
+        }
+
         function updatePricingProjectInfo(projectId) {
             const project = dummyProjects[projectId];
             if (!project) return;
@@ -4365,7 +4420,32 @@
                             <span class="font-medium text-gray-900 ml-2">${location}</span>
                         </div>
                     </div>
+                    <div class="mt-3 pt-3 border-t border-gray-200">
+                        <button id="viewMaterialCostBtn" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-emerald-200 text-emerald-700 text-sm font-medium rounded-lg hover:bg-emerald-50 hover:border-emerald-300 transition">
+                            <i class="fas fa-box-open text-emerald-500"></i>
+                            View Material Cost
+                            <i class="fas fa-arrow-right text-xs text-emerald-400"></i>
+                        </button>
+                    </div>
                 `;
+
+                // Re-attach View Material Cost button event
+                const btn = document.getElementById('viewMaterialCostBtn');
+                if (btn) {
+                    btn.addEventListener('click', function() {
+                        const targetProduct = pricingAgentState.selectedProduct || 'sr-l-classic';
+                        if (typeof productsState !== 'undefined') {
+                            productsState.selectedProduct = targetProduct;
+                        }
+                        navigateToPage('products');
+                        setTimeout(() => {
+                            if (typeof renderProductList === 'function') renderProductList();
+                            if (typeof updateProductDetail === 'function') updateProductDetail(targetProduct);
+                            const selectedItem = document.querySelector('.product-item[data-product="' + targetProduct + '"]');
+                            if (selectedItem) selectedItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }, 50);
+                    });
+                }
             }
         }
 
@@ -5060,7 +5140,18 @@
                 components: ['Aluminum alloy profiles', 'Polycarbonate (PC) panels', 'Doors & windows', 'Slide track & rail system', 'Connectors & hardware'],
                 colors: 'Standard & Non-standard',
                 spans: ['≤4m', '≤5m', '≤6m', '≤7m', '>7m'],
-                extras: [], optionSet: 'sunroom', noteSet: 'sunroom'
+                extras: [], optionSet: 'sunroom', noteSet: 'sunroom',
+                pricing: {
+                    unit: 'sqft', currency: 'USD',
+                    tiers: [
+                        { span: '≤4m', priceRange: [26, 30] },
+                        { span: '≤5m', priceRange: [28, 32] },
+                        { span: '≤6m', priceRange: [30, 35] },
+                        { span: '≤7m', priceRange: [33, 38] },
+                        { span: '>7m',  priceRange: [36, 42] }
+                    ],
+                    note: 'Material cost only — installation, foundation, and permits not included.'
+                }
             },
             'sr-l-smart': {
                 name: 'L-Smart Sunroom', category: 'sunroom', catLabel: 'Sunroom',
@@ -5071,7 +5162,18 @@
                 components: ['Aluminum alloy profiles', 'Polycarbonate (PC) panels', 'Doors & windows', 'Slide track & rail system', 'Motor & drive control system', 'Connectors & hardware'],
                 colors: 'Standard & Non-standard',
                 spans: ['≤4m', '≤5m', '≤6m', '≤7m', '>7m'],
-                extras: ['Motor & drive control system'], optionSet: 'sunroom', noteSet: 'sunroom'
+                extras: ['Motor & drive control system'], optionSet: 'sunroom', noteSet: 'sunroom',
+                pricing: {
+                    unit: 'sqft', currency: 'USD',
+                    tiers: [
+                        { span: '≤4m', priceRange: [32, 36] },
+                        { span: '≤5m', priceRange: [34, 39] },
+                        { span: '≤6m', priceRange: [36, 42] },
+                        { span: '≤7m', priceRange: [40, 46] },
+                        { span: '>7m',  priceRange: [44, 52] }
+                    ],
+                    note: 'Material cost only — installation, foundation, and permits not included.'
+                }
             },
             'sr-l-pro': {
                 name: 'L-Pro Sunroom', category: 'sunroom', catLabel: 'Sunroom',
@@ -5082,7 +5184,18 @@
                 components: ['Aluminum alloy profiles', 'Polycarbonate (PC) panels', 'Doors & windows', 'Slide track & rail system', '(Motor & drive control system)', 'Solar power & energy storage system', 'Connectors & hardware'],
                 colors: 'Standard & Non-standard',
                 spans: ['≤4m', '≤5m', '≤6m', '≤7m', '>7m'],
-                extras: ['Solar power & energy storage system', '(Motor & drive control system)'], optionSet: 'sunroom', noteSet: 'sunroom'
+                extras: ['Solar power & energy storage system', '(Motor & drive control system)'], optionSet: 'sunroom', noteSet: 'sunroom',
+                pricing: {
+                    unit: 'sqft', currency: 'USD',
+                    tiers: [
+                        { span: '≤4m', priceRange: [40, 46] },
+                        { span: '≤5m', priceRange: [43, 49] },
+                        { span: '≤6m', priceRange: [46, 53] },
+                        { span: '≤7m', priceRange: [50, 58] },
+                        { span: '>7m',  priceRange: [55, 65] }
+                    ],
+                    note: 'Material cost only — installation, foundation, and permits not included.'
+                }
             },
             'sr-m-classic': {
                 name: 'M-Classic Sunroom', category: 'sunroom', catLabel: 'Sunroom',
@@ -5093,7 +5206,18 @@
                 components: ['Aluminum alloy profiles', 'Polycarbonate (PC) panels', 'Doors & windows', 'Slide track & rail system', 'Connectors & hardware'],
                 colors: 'Standard & Non-standard',
                 spans: ['≤4m', '≤5m', '≤6m', '≤7m', '>7m'],
-                extras: [], optionSet: 'sunroom', noteSet: 'sunroom'
+                extras: [], optionSet: 'sunroom', noteSet: 'sunroom',
+                pricing: {
+                    unit: 'sqft', currency: 'USD',
+                    tiers: [
+                        { span: '≤4m', priceRange: [27, 31] },
+                        { span: '≤5m', priceRange: [29, 34] },
+                        { span: '≤6m', priceRange: [31, 37] },
+                        { span: '≤7m', priceRange: [35, 40] },
+                        { span: '>7m',  priceRange: [38, 44] }
+                    ],
+                    note: 'Material cost only — installation, foundation, and permits not included.'
+                }
             },
             'sr-m-smart': {
                 name: 'M-Smart Sunroom', category: 'sunroom', catLabel: 'Sunroom',
@@ -5104,7 +5228,18 @@
                 components: ['Aluminum alloy profiles', 'Polycarbonate (PC) panels', 'Doors & windows', 'Slide track & rail system', 'Motor & drive control system', 'Connectors & hardware'],
                 colors: 'Standard & Non-standard',
                 spans: ['≤4m', '≤5m', '≤6m', '≤7m', '>7m'],
-                extras: ['Motor & drive control system'], optionSet: 'sunroom', noteSet: 'sunroom'
+                extras: ['Motor & drive control system'], optionSet: 'sunroom', noteSet: 'sunroom',
+                pricing: {
+                    unit: 'sqft', currency: 'USD',
+                    tiers: [
+                        { span: '≤4m', priceRange: [33, 38] },
+                        { span: '≤5m', priceRange: [36, 41] },
+                        { span: '≤6m', priceRange: [38, 44] },
+                        { span: '≤7m', priceRange: [42, 48] },
+                        { span: '>7m',  priceRange: [46, 54] }
+                    ],
+                    note: 'Material cost only — installation, foundation, and permits not included.'
+                }
             },
             'sr-m-pro': {
                 name: 'M-Pro Sunroom', category: 'sunroom', catLabel: 'Sunroom',
@@ -5115,7 +5250,18 @@
                 components: ['Aluminum alloy profiles', 'Polycarbonate (PC) panels', 'Doors & windows', 'Slide track & rail system', '(Motor & drive control system)', 'Solar power & energy storage system', 'Connectors & hardware'],
                 colors: 'Standard & Non-standard',
                 spans: ['≤4m', '≤5m', '≤6m', '≤7m', '>7m'],
-                extras: ['Solar power & energy storage system', '(Motor & drive control system)'], optionSet: 'sunroom', noteSet: 'sunroom'
+                extras: ['Solar power & energy storage system', '(Motor & drive control system)'], optionSet: 'sunroom', noteSet: 'sunroom',
+                pricing: {
+                    unit: 'sqft', currency: 'USD',
+                    tiers: [
+                        { span: '≤4m', priceRange: [42, 48] },
+                        { span: '≤5m', priceRange: [45, 51] },
+                        { span: '≤6m', priceRange: [48, 56] },
+                        { span: '≤7m', priceRange: [52, 60] },
+                        { span: '>7m',  priceRange: [58, 68] }
+                    ],
+                    note: 'Material cost only — installation, foundation, and permits not included.'
+                }
             },
             // ===== PERGOLA 凉亭 =====
             'pg-basic': {
@@ -5127,7 +5273,18 @@
                 components: ['Aluminum alloy frame', 'Fixed aluminum roof panels', 'LED lighting control system', 'Connectors & hardware'],
                 colors: 'Standard & Non-standard',
                 spans: ['≤3m', '≤4m', '≤5m', '≤6m', '>6m'],
-                extras: [], optionSet: 'pergola', noteSet: 'pergola'
+                extras: [], optionSet: 'pergola', noteSet: 'pergola',
+                pricing: {
+                    unit: 'sqft', currency: 'USD',
+                    tiers: [
+                        { span: '≤3m', priceRange: [18, 22] },
+                        { span: '≤4m', priceRange: [20, 24] },
+                        { span: '≤5m', priceRange: [22, 27] },
+                        { span: '≤6m', priceRange: [24, 30] },
+                        { span: '>6m',  priceRange: [27, 34] }
+                    ],
+                    note: 'Material cost only — installation, foundation, and permits not included.'
+                }
             },
             'pg-classic': {
                 name: 'Pergola Classic', category: 'pergola', catLabel: 'Pergola',
@@ -5138,7 +5295,18 @@
                 components: ['Aluminum alloy frame', 'Motorized rotating louvers', 'Motor & LED control system', 'Connectors & hardware'],
                 colors: 'Standard & Non-standard',
                 spans: ['≤3m', '≤4m', '≤5m', '≤6m', '>6m'],
-                extras: ['Motorized rotating louver system', 'Motor control system'], optionSet: 'pergola', noteSet: 'pergola'
+                extras: ['Motorized rotating louver system', 'Motor control system'], optionSet: 'pergola', noteSet: 'pergola',
+                pricing: {
+                    unit: 'sqft', currency: 'USD',
+                    tiers: [
+                        { span: '≤3m', priceRange: [28, 33] },
+                        { span: '≤4m', priceRange: [30, 36] },
+                        { span: '≤5m', priceRange: [33, 39] },
+                        { span: '≤6m', priceRange: [36, 43] },
+                        { span: '>6m',  priceRange: [40, 48] }
+                    ],
+                    note: 'Material cost only — installation, foundation, and permits not included.'
+                }
             },
             // ===== ZIP BLINDS 防风卷帘 =====
             'zb-manual': {
@@ -5150,7 +5318,16 @@
                 components: ['Aluminum alloy frame channels', 'Premium outdoor fabric', 'Square tube posts', 'Corner posts', 'Guide rail system'],
                 colors: 'Standard & Non-standard',
                 spans: ['≤3.8m', '≤5.5m', '>5.5m'],
-                extras: [], optionSet: 'blinds', noteSet: 'blinds'
+                extras: [], optionSet: 'blinds', noteSet: 'blinds',
+                pricing: {
+                    unit: 'sqft', currency: 'USD',
+                    tiers: [
+                        { span: '≤3.8m', priceRange: [12, 15] },
+                        { span: '≤5.5m', priceRange: [14, 18] },
+                        { span: '>5.5m',  priceRange: [17, 22] }
+                    ],
+                    note: 'Material cost only — installation not included.'
+                }
             },
             'zb-motorized': {
                 name: 'Zip Blinds Motorized', category: 'blinds', catLabel: 'Zip Blinds',
@@ -5161,7 +5338,16 @@
                 components: ['Aluminum alloy frame channels', 'Premium outdoor fabric', 'Square tube posts', 'Corner posts', 'Guide rail system', 'Electric motor & control system'],
                 colors: 'Standard & Non-standard',
                 spans: ['≤3.8m', '≤5.5m', '>5.5m'],
-                extras: ['Electric motor & control system'], optionSet: 'blinds', noteSet: 'blinds'
+                extras: ['Electric motor & control system'], optionSet: 'blinds', noteSet: 'blinds',
+                pricing: {
+                    unit: 'sqft', currency: 'USD',
+                    tiers: [
+                        { span: '≤3.8m', priceRange: [18, 22] },
+                        { span: '≤5.5m', priceRange: [21, 26] },
+                        { span: '>5.5m',  priceRange: [25, 32] }
+                    ],
+                    note: 'Material cost only — installation not included.'
+                }
             },
             // ===== ADU =====
             'adu-studio': {
@@ -5173,7 +5359,14 @@
                 components: ['Modular steel frame', 'Insulated wall panels', 'Roofing system', 'Kitchenette', 'Full bathroom', 'Electrical & plumbing'],
                 colors: 'Custom design options',
                 spans: ['300-500 sqft'],
-                extras: [], optionSet: 'adu', noteSet: 'adu'
+                extras: [], optionSet: 'adu', noteSet: 'adu',
+                pricing: {
+                    unit: 'sqft', currency: 'USD',
+                    tiers: [
+                        { span: '300-500 sqft', priceRange: [180, 220] }
+                    ],
+                    note: 'Turnkey material cost per sqft — permits, site prep, and utility connections not included.'
+                }
             },
             'adu-2bed': {
                 name: 'Two-Bedroom ADU', category: 'adu', catLabel: 'ADU',
@@ -5184,7 +5377,14 @@
                 components: ['Modular steel frame', 'Insulated wall panels', 'Roofing system', 'Full kitchen', 'Two bathrooms', 'Two bedrooms', 'Living area', 'Electrical & plumbing'],
                 colors: 'Custom design options',
                 spans: ['500-800 sqft'],
-                extras: [], optionSet: 'adu', noteSet: 'adu'
+                extras: [], optionSet: 'adu', noteSet: 'adu',
+                pricing: {
+                    unit: 'sqft', currency: 'USD',
+                    tiers: [
+                        { span: '500-800 sqft', priceRange: [200, 250] }
+                    ],
+                    note: 'Turnkey material cost per sqft — permits, site prep, and utility connections not included.'
+                }
             }
         };
 
@@ -5384,6 +5584,9 @@
             const container = document.getElementById('productDetailContent');
             if (!container) return;
             const iconSrc = productIcons[productId] || p.image;
+            const priceSummary = p.pricing && p.pricing.tiers.length > 0
+                ? ('$' + p.pricing.tiers[0].priceRange[0] + ' – $' + p.pricing.tiers[p.pricing.tiers.length - 1].priceRange[1] + '/' + p.pricing.unit)
+                : '—';
 
             container.innerHTML = `
                 <!-- Product Header -->
@@ -5408,7 +5611,7 @@
                             </div>
                             <div class="bg-gray-50 rounded-lg p-2.5">
                                 <label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Price</label>
-                                <div class="text-sm font-bold text-gray-900 mt-0.5">${p.price || '—'}</div>
+                                <div class="text-sm font-bold text-emerald-700 mt-0.5">${priceSummary}</div>
                             </div>
                             <div class="bg-gray-50 rounded-lg p-2.5">
                                 <label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Lead Time</label>
@@ -5440,7 +5643,32 @@
                             ${p.extras.length > 0 ? '<p class="text-[11px] text-blue-500 mt-3 flex items-center gap-1"><i class="fas fa-star" style="font-size:8px"></i> Highlighted = series-specific upgrade</p>' : ''}
                         </div>
                         <div>
-                            <h5 class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-3">Span / Size Options</h5>
+                            <h5 class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-3">
+                                ${p.pricing ? '<i class="fas fa-dollar-sign mr-1"></i>Material Cost by Span' : 'Span / Size Options'}
+                            </h5>
+                            ${p.pricing ? `
+                            <div class="space-y-1.5 mb-3">
+                                <div class="flex items-center justify-between px-3 py-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                                    <span>Span / Size</span>
+                                    <span>Material Cost (${p.pricing.currency}/${p.pricing.unit})</span>
+                                </div>
+                                ${p.pricing.tiers.map((t, i) => `
+                                <div class="flex items-center justify-between px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg hover:border-emerald-300 hover:bg-emerald-50/30 transition group">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold">${i + 1}</span>
+                                        <span class="text-sm font-semibold text-gray-900">${t.span}</span>
+                                    </div>
+                                    <div class="text-sm font-bold text-emerald-700 group-hover:text-emerald-800">
+                                        ${t.priceRange ? '$' + t.priceRange[0] + ' – $' + t.priceRange[1] : '<span class="text-gray-400 font-normal">TBD</span>'}
+                                    </div>
+                                </div>
+                                `).join('')}
+                            </div>
+                            <p class="text-[11px] text-amber-600 bg-amber-50 rounded-lg px-3 py-2 flex items-start gap-1.5">
+                                <i class="fas fa-info-circle mt-0.5 flex-shrink-0"></i>
+                                <span>${p.pricing.note}</span>
+                            </p>
+                            ` : `
                             <div class="flex flex-wrap gap-2 mb-3">
                                 ${p.spans.map(s => `
                                     <div class="px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-center hover:border-blue-300 hover:bg-blue-50/50 transition cursor-default">
@@ -5451,6 +5679,7 @@
                             <p class="text-[11px] text-gray-400">
                                 ${p.category === 'sunroom' ? 'Span = interior net width of the sunroom' : p.category === 'pergola' ? 'Span = exterior outline width of the pergola' : p.category === 'blinds' ? 'Width = span of the blind opening' : 'Size = total livable area'}
                             </p>
+                            `}
                         </div>
                     </div>
                 </div>
