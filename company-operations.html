@@ -403,11 +403,11 @@
                                     </div>
                                     <i class="fas fa-chevron-down text-gray-400 text-xs overview-arrow transition-transform duration-200"></i>
                                 </div>
-                                <div class="text-2xl font-bold text-gray-900">12</div>
+                                <div class="text-2xl font-bold text-gray-900">10</div>
                                 <div class="text-sm text-gray-500 mt-1">Total Products</div>
                                 <div class="flex items-center gap-3 mt-3 text-xs">
-                                    <span class="text-green-600 font-medium">11 Active</span>
-                                    <span class="text-gray-500 font-medium">4 Categories</span>
+                                    <span class="text-green-600 font-medium">10 Active</span>
+                                    <span class="text-gray-500 font-medium">3 Categories</span>
                                 </div>
                             </div>
 
@@ -538,7 +538,6 @@
                                         <button class="ov-product-filter-btn px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50" data-filter="sunroom">Sunroom</button>
                                         <button class="ov-product-filter-btn px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50" data-filter="pergola">Pergola</button>
                                         <button class="ov-product-filter-btn px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50" data-filter="blinds">Zip Blinds</button>
-                                        <button class="ov-product-filter-btn px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50" data-filter="adu">ADU</button>
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 p-5" id="overviewProductsGrid">
@@ -2193,7 +2192,7 @@
                             <div class="flex items-center justify-between">
                                 <div>
                                     <div class="text-sm text-gray-500">Total Products</div>
-                                    <div class="text-2xl font-bold text-gray-900">12</div>
+                                    <div class="text-2xl font-bold text-gray-900">10</div>
                                 </div>
                                 <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                                     <i class="fas fa-box text-blue-600"></i>
@@ -2204,7 +2203,7 @@
                             <div class="flex items-center justify-between">
                                 <div>
                                     <div class="text-sm text-gray-500">Active</div>
-                                    <div class="text-2xl font-bold text-green-600">11</div>
+                                    <div class="text-2xl font-bold text-green-600">10</div>
                                 </div>
                                 <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                                     <i class="fas fa-check-circle text-green-600"></i>
@@ -2215,7 +2214,7 @@
                             <div class="flex items-center justify-between">
                                 <div>
                                     <div class="text-sm text-gray-500">Categories</div>
-                                    <div class="text-2xl font-bold text-purple-600">4</div>
+                                    <div class="text-2xl font-bold text-purple-600">3</div>
                                 </div>
                                 <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
                                     <i class="fas fa-tags text-purple-600"></i>
@@ -2251,7 +2250,6 @@
                                     <button class="product-filter-btn px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50" data-filter="sunroom">Sunroom</button>
                                     <button class="product-filter-btn px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50" data-filter="pergola">Pergola</button>
                                     <button class="product-filter-btn px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50" data-filter="blinds">Zip Blinds</button>
-                                    <button class="product-filter-btn px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50" data-filter="adu">ADU</button>
                                 </div>
                             </div>
 
@@ -5208,8 +5206,7 @@
         const productCategories = [
             { key: 'sunroom', label: 'Sunroom', icon: 'fa-sun', color: 'amber' },
             { key: 'pergola', label: 'Pergola', icon: 'fa-warehouse', color: 'green' },
-            { key: 'blinds', label: 'Zip Blinds', icon: 'fa-align-justify', color: 'purple' },
-            { key: 'adu', label: 'ADU', icon: 'fa-home', color: 'blue' }
+            { key: 'blinds', label: 'Zip Blinds', icon: 'fa-align-justify', color: 'purple' }
         ];
 
         // Product 3D icon mapping (per product ID → icon path)
@@ -6222,9 +6219,7 @@
             { name: 'Pergola Basic', category: 'Pergola · Basic', price: 'Manual', status: 'Active', color: 'green', filterKey: 'pergola', catalogId: 'pg-basic' },
             { name: 'Pergola Classic', category: 'Pergola · Classic', price: 'Motorized', status: 'Active', color: 'green', filterKey: 'pergola', catalogId: 'pg-classic' },
             { name: 'Zip Blinds Standard', category: 'Zip Blinds', price: 'Manual', status: 'Active', color: 'purple', filterKey: 'blinds', catalogId: 'zb-manual' },
-            { name: 'Zip Blinds Motorized', category: 'Zip Blinds', price: 'Electric', status: 'Active', color: 'purple', filterKey: 'blinds', catalogId: 'zb-motorized' },
-            { name: 'Studio ADU', category: 'ADU · Standard', price: '100 days', status: 'Active', color: 'indigo', filterKey: 'adu', catalogId: 'adu-studio' },
-            { name: 'Two-Bedroom ADU', category: 'ADU · Premium', price: '120 days', status: 'Draft', color: 'indigo', filterKey: 'adu', catalogId: 'adu-2bed' }
+            { name: 'Zip Blinds Motorized', category: 'Zip Blinds', price: 'Electric', status: 'Active', color: 'purple', filterKey: 'blinds', catalogId: 'zb-motorized' }
         ];
 
         function renderOverviewOrders() {
