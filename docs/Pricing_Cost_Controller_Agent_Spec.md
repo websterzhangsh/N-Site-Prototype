@@ -1,194 +1,290 @@
-# Pricing & Cost Controller Agent - Requirement Specification
+# 定价与成本控制器 Agent — 需求规格说明书
 
-**Version:** 1.0.0
-**Last Updated:** 2024-03-11
-**Status:** Draft
-
----
-
-## 1. Overview
-
-### 1.1 Purpose
-Pricing & Cost Controller Agent is an intelligent quotation system that automatically calculates project costs, suggests optimal pricing strategies, and protects profit margins. It enables small business owners to generate accurate, competitive quotes in seconds while maintaining profitability.
-
-### 1.2 Target Users
-- Small business owners in outdoor living industry
-- Sales representatives creating quotes
-- Project managers estimating costs
-
-### 1.3 Key Value Proposition
-- **OUTPUT**: Generate profit-protected quotes in <60 seconds with AI-optimized pricing
-- **Differentiator**: Smart pricing suggestions based on market data, not guesswork
+**版本：** 2.0.0
+**最后更新：** 2026-03-23
+**状态：** 草稿
 
 ---
 
-## 2. User Stories
+## 1. 概述
 
-### 2.1 Primary User Stories
+### 1.1 目的
+定价与成本控制器 Agent 是一套智能报价系统，能够自动计算项目成本、建议最优定价策略并保护利润率。它帮助小型企业主在数秒内生成准确、有竞争力的报价，同时确保盈利能力。
 
-| ID | User Story | Priority |
-|----|------------|----------|
-| US-001 | As a business owner, I want to calculate project costs automatically so I can quote accurately | P0 |
-| US-002 | As a sales rep, I want to see material, labor, and permit costs broken down so I understand the pricing | P0 |
-| US-003 | As a business owner, I want AI-suggested pricing options so I can choose the best strategy | P0 |
-| US-004 | As a sales rep, I want to see profit margin analysis so I know if the deal is worth pursuing | P0 |
-| US-005 | As a business owner, I want to adjust discounts and surcharges so I can customize pricing | P1 |
-| US-006 | As a sales rep, I want risk alerts on pricing so I avoid unprofitable deals | P1 |
+### 1.2 目标用户
+- 户外生活行业的小型企业主
+- 创建报价的销售代表
+- 估算成本的项目经理
 
-### 2.2 Secondary User Stories
-
-| ID | User Story | Priority |
-|----|------------|----------|
-| US-007 | As a user, I want to save quotes to project history so I can retrieve them later | P2 |
-| US-008 | As a user, I want to send quotes directly to clients so I can close deals faster | P2 |
-| US-009 | As a user, I want to generate contracts from quotes so I can formalize agreements | P2 |
-| US-010 | As a user, I want to see historical pricing trends so I can make better decisions | P3 |
+### 1.3 核心价值主张
+- **输出**：通过 AI 优化定价，在 60 秒内生成利润保护型报价
+- **差异化**：基于市场数据的智能定价建议，而非凭感觉报价
 
 ---
 
-## 3. Functional Requirements
+## 2. Products × Pricing 整合架构
 
-### 3.1 Input Module
+### 2.1 核心理念
 
-#### 3.1.1 Project Selection
-| Req ID | Requirement | Priority |
-|--------|-------------|----------|
-| FR-001 | System shall display dropdown of active projects with client and product info | P0 |
-| FR-002 | System shall show project budget range on selection | P0 |
-| FR-003 | System shall display yard size and location for context | P1 |
+```
+Products 页 = 产品目录 + 材料成本价（BOM Cost）
+Pricing Controller = 完整报价引擎（材料 + 人工 + 设备 + 利润 + 附加选项）
+```
 
-#### 3.1.2 Product Configuration
-| Req ID | Requirement | Priority |
-|--------|-------------|----------|
-| FR-004 | System shall provide dimension inputs (Width, Depth, Height) in feet | P0 |
-| FR-005 | System shall calculate and display total square footage automatically | P0 |
-| FR-006 | System shall provide material selection (Aluminum, Vinyl) with pricing context | P0 |
-| FR-007 | System shall provide glass type selection with cost add-ons displayed | P1 |
-| FR-008 | System shall update estimated costs in real-time as configuration changes | P1 |
+两者通过 **productCatalog 的产品 ID** 作为纽带串联。
 
-#### 3.1.3 Additional Options
-| Req ID | Requirement | Priority |
-|--------|-------------|----------|
-| FR-009 | System shall display checkbox options with individual costs (Ceiling Fan, LED Lighting, Electrical Outlets, Permit Handling) | P0 |
-| FR-010 | System shall show total additional options cost | P1 |
-| FR-011 | System shall persist selected options in session state | P1 |
+### 2.2 数据流架构
 
-#### 3.1.4 Pricing Adjustments
-| Req ID | Requirement | Priority |
-|--------|-------------|----------|
-| FR-012 | System shall provide discount slider (0-20%) with real-time preview | P0 |
-| FR-013 | System shall provide urgency surcharge dropdown (Standard/Express/Rush) | P0 |
-| FR-014 | System shall allow notes input for special requirements | P2 |
-| FR-015 | System shall warn when discount exceeds profit margin threshold | P1 |
+```
+┌─────────────────────────────────────────────────┐
+│  productCatalog（产品主数据）                      │
+│  每个 SKU 包含: pricing.tiers 字段                 │
+│  → 按跨度区间定义材料成本基准价                      │
+└──────────────┬──────────────────────────────────┘
+               │
+       ┌───────┴───────┐
+       ▼               ▼
+┌──────────────┐  ┌──────────────────────────────┐
+│ Products 页   │  │ Pricing & Cost Controller     │
+│              │  │                               │
+│ 显示:         │  │ 读取 Products 的 baseCost     │
+│ · 材料成本价   │  │ + 叠加:                       │
+│   (per span)  │  │   · 人工费 (labor)            │
+│ · "Get Quote" │  │   · 设备费 (equipment)        │
+│   按钮 →      │──│   · 许可费 (permits)          │
+│   跳转定价页   │  │   · 配置选项 (options)         │
+│              │  │   · 利润率 (margin)            │
+│              │  │   · 折扣 (discount)            │
+│              │  │ = 最终报价                      │
+└──────────────┘  └──────────────────────────────┘
+```
 
-### 3.2 Output Module
+### 2.3 价格分层结构
 
-#### 3.2.1 Cost Breakdown
-| Req ID | Requirement | Priority |
-|--------|-------------|----------|
-| FR-016 | System shall display line-item costs: Materials, Labor, Equipment, Permits, Additional Options | P0 |
-| FR-017 | System shall show total cost prominently | P0 |
-| FR-018 | System shall update breakdown when inputs change | P0 |
+| 层级 | 数据来源 | 显示位置 |
+|------|---------|---------|
+| **材料成本价** (BOM) | `productCatalog[id].pricing.tiers` | Products 详情页 |
+| **完整成本** (COGS) | 材料 + 人工 + 设备 | Pricing Controller - 成本分解 |
+| **建议报价** (Quote) | COGS × (1 + 利润率%) | Pricing Controller - 智能报价 |
+| **最终报价** (Final) | Quote - 折扣 + 加急附加费 | Pricing Controller - 合同生成 |
 
-#### 3.2.2 Profit Analysis
-| Req ID | Requirement | Priority |
-|--------|-------------|----------|
-| FR-019 | System shall display suggested price | P0 |
-| FR-020 | System shall display net profit amount | P0 |
-| FR-021 | System shall display profit margin percentage | P0 |
-| FR-022 | System shall show visual margin indicator (Risk Zone / Healthy / Premium) | P1 |
+### 2.4 productCatalog 定价扩展字段
 
-#### 3.2.3 Smart Quote Suggestions
-| Req ID | Requirement | Priority |
-|--------|-------------|----------|
-| FR-023 | System shall provide three pricing tiers: Conservative, Recommended, Premium | P0 |
-| FR-024 | System shall display margin and profit for each tier | P0 |
-| FR-025 | System shall highlight "Best Match" recommendation | P0 |
-| FR-026 | System shall show rationale for each suggestion (e.g., "Within budget range") | P1 |
+```javascript
+// 每个产品 SKU 新增 pricing 字段
+'sr-l-classic': {
+    // ...现有字段（name, category, components 等）...
+    pricing: {
+        unit: 'sqft',        // 计价单位
+        currency: 'USD',
+        tiers: [
+            { span: '≤4m', priceRange: null },  // null = 待定价
+            { span: '≤5m', priceRange: null },
+            { span: '≤6m', priceRange: null },
+            { span: '≤7m', priceRange: null },
+            { span: '>7m',  priceRange: null }
+        ],
+        note: '仅材料成本价，不含安装费、基座费和许可费。'
+    }
+}
+```
 
-#### 3.2.4 Risk Alerts
-| Req ID | Requirement | Priority |
-|--------|-------------|----------|
-| FR-027 | System shall display risk alerts panel with warnings | P1 |
-| FR-028 | System shall show material price increase predictions | P1 |
-| FR-029 | System shall show permit processing time estimates | P1 |
-| FR-030 | System shall highlight risks affecting profitability | P1 |
+### 2.5 页面跳转联动
 
-#### 3.2.5 Actions
-| Req ID | Requirement | Priority |
-|--------|-------------|----------|
-| FR-031 | System shall provide "Save Quote" action | P1 |
-| FR-032 | System shall provide "Send to Client" action | P2 |
-| FR-033 | System shall provide "Generate Contract" action | P2 |
+- Products 详情页底部新增 **"计算完整报价"** 按钮
+- 点击后自动跳转到 Pricing Controller 页面
+- 自动携带：产品类型、跨度选择、组件列表
+- Pricing Controller 读取 `baseCost` 后叠加人工、设备、利润等计算完整报价
 
----
+### 2.6 Pricing Controller 数据源升级
 
-## 4. Non-Functional Requirements
+| 现状 | 目标 |
+|------|------|
+| 硬编码 `costData`（aluminum: $28/sqft） | 从 `productCatalog` 动态读取材料基准价 |
+| 硬编码 `optionCosts`（ceilingFan: $450） | 从 `productOptionSets` 按类别动态加载 |
+| `dummyProjects` 选择器 | 从 `productCatalog` 动态加载产品列表 |
 
-### 4.1 Performance
-| Req ID | Requirement | Target |
-|--------|-------------|--------|
-| NFR-001 | Cost calculation time | <2 seconds |
-| NFR-002 | Page load time | <2 seconds |
-| NFR-003 | Real-time update latency | <500ms |
+### 2.7 实施优先级
 
-### 4.2 Accuracy
-| Req ID | Requirement |
-|--------|-------------|
-| NFR-004 | Cost estimates within 10% of actual |
-| NFR-005 | Material prices updated weekly |
-| NFR-006 | Labor rates reflect local market |
-
-### 4.3 Usability
-| Req ID | Requirement |
-|--------|-------------|
-| NFR-007 | Complete quote generation in <60 seconds |
-| NFR-008 | Clear visual hierarchy for costs |
-| NFR-009 | Mobile-responsive for on-site quoting |
-
-### 4.4 Security
-| Req ID | Requirement |
-|--------|-------------|
-| NFR-010 | Quote data encrypted at rest |
-| NFR-011 | Access controlled by tenant isolation |
-| NFR-012 | Audit trail for pricing changes |
+| 优先级 | 改动 | 复杂度 |
+|--------|------|--------|
+| **P0** | Products 页 Span 区域加价格列（先留空 "—"） | 低 |
+| **P0** | Products 详情加 "计算完整报价" 跳转按钮 | 低 |
+| **P1** | Pricing Controller 产品选择器改为读 productCatalog | 中 |
+| **P1** | 配置选项从 productOptionSets 动态加载 | 中 |
+| **P2** | 填入实际材料价格到 pricing.tiers | 取决于业务 |
+| **P2** | 报价历史记录 + 导出 PDF 功能 | 高 |
 
 ---
 
-## 5. UI/UX Specifications
+## 3. 用户故事
 
-### 5.1 Layout
-- **Desktop**: Two-column grid (Input left, Output right)
-- **Mobile**: Stacked layout
-- **Breakpoint**: lg:grid-cols-2 at 1024px
+### 3.1 主要用户故事
 
-### 5.2 Color Scheme
-- Primary accent: Emerald (#10B981)
-- Profit positive: Green
-- Profit warning: Amber
-- Profit risk: Red
-- Quote tiers: Blue (Conservative), Emerald (Recommended), Purple (Premium)
+| ID | 用户故事 | 优先级 |
+|----|---------|--------|
+| US-001 | 作为企业主，我希望系统自动计算项目成本，以便准确报价 | P0 |
+| US-002 | 作为销售代表，我希望看到材料、人工、许可费的分项明细，以便理解定价构成 | P0 |
+| US-003 | 作为企业主，我希望获得 AI 建议的定价选项，以便选择最佳策略 | P0 |
+| US-004 | 作为销售代表，我希望看到利润率分析，以便判断交易是否值得推进 | P0 |
+| US-005 | 作为企业主，我希望调整折扣和附加费，以便自定义定价 | P1 |
+| US-006 | 作为销售代表，我希望获得定价风险提醒，以避免亏损交易 | P1 |
 
-### 5.3 Typography
-- Currency values: font-bold, text-lg
-- Percentages: font-medium
-- Labels: text-gray-500, text-sm
+### 3.2 次要用户故事
 
-### 5.4 Components
-- Cost line items: Icon + label + right-aligned value
-- Quote cards: Selectable with border highlight
-- Margin indicator: Horizontal gradient bar with position marker
-- Risk alerts: Amber background with warning icon
+| ID | 用户故事 | 优先级 |
+|----|---------|--------|
+| US-007 | 作为用户，我希望将报价保存到项目历史，以便后续检索 | P2 |
+| US-008 | 作为用户，我希望将报价直接发送给客户，以便更快达成交易 | P2 |
+| US-009 | 作为用户，我希望从报价生成合同，以便正式确认协议 | P2 |
+| US-010 | 作为用户，我希望查看历史定价趋势，以便做出更好的决策 | P3 |
 
 ---
 
-## 6. Data Models
+## 4. 功能需求
 
-### 6.1 Pricing Session
+### 4.1 输入模块
+
+#### 4.1.1 产品选择（从 productCatalog 驱动）
+| 需求 ID | 需求描述 | 优先级 |
+|---------|---------|--------|
+| FR-001 | 系统应显示来自 productCatalog 的产品下拉列表，包含类别、系列和型号信息 | P0 |
+| FR-002 | 选择产品后，系统应自动加载该产品的跨度区间和材料成本基准价 | P0 |
+| FR-003 | 系统应显示关联项目的预算范围和场地信息 | P1 |
+
+#### 4.1.2 产品配置
+| 需求 ID | 需求描述 | 优先级 |
+|---------|---------|--------|
+| FR-004 | 系统应提供尺寸输入（宽度、深度、高度），单位为英尺 | P0 |
+| FR-005 | 系统应自动计算并显示总面积（平方英尺） | P0 |
+| FR-006 | 系统应根据选中产品自动设置材料类型（铝合金 / 乙烯基），并显示定价参考 | P0 |
+| FR-007 | 系统应提供玻璃类型选择，并显示成本加成 | P1 |
+| FR-008 | 系统应在配置变更时实时更新预估成本 | P1 |
+
+#### 4.1.3 附加选项（从 productOptionSets 驱动）
+| 需求 ID | 需求描述 | 优先级 |
+|---------|---------|--------|
+| FR-009 | 系统应根据选中产品的类别，从 productOptionSets 动态加载配置选项（如遮阳帘、LED 灯带、地板等） | P0 |
+| FR-010 | 系统应显示附加选项的总成本 | P1 |
+| FR-011 | 系统应在会话状态中持久化已选选项 | P1 |
+
+#### 4.1.4 定价调整
+| 需求 ID | 需求描述 | 优先级 |
+|---------|---------|--------|
+| FR-012 | 系统应提供折扣滑块（0-20%）并实时预览 | P0 |
+| FR-013 | 系统应提供加急附加费下拉选项（标准 / 加急 / 紧急） | P0 |
+| FR-014 | 系统应允许输入特殊需求备注 | P2 |
+| FR-015 | 当折扣超过利润率阈值时，系统应发出警告 | P1 |
+
+### 4.2 输出模块
+
+#### 4.2.1 成本分解
+| 需求 ID | 需求描述 | 优先级 |
+|---------|---------|--------|
+| FR-016 | 系统应显示分项成本：材料费、人工费、设备费、许可费、附加选项 | P0 |
+| FR-017 | 系统应醒目显示总成本 | P0 |
+| FR-018 | 输入变更时，系统应同步更新成本分解 | P0 |
+
+#### 4.2.2 利润分析
+| 需求 ID | 需求描述 | 优先级 |
+|---------|---------|--------|
+| FR-019 | 系统应显示建议售价 | P0 |
+| FR-020 | 系统应显示净利润金额 | P0 |
+| FR-021 | 系统应显示利润率百分比 | P0 |
+| FR-022 | 系统应展示可视化利润率指标（风险区 / 健康 / 高端） | P1 |
+
+#### 4.2.3 智能报价建议
+| 需求 ID | 需求描述 | 优先级 |
+|---------|---------|--------|
+| FR-023 | 系统应提供三个定价层级：保守型、推荐型、高端型 | P0 |
+| FR-024 | 系统应显示每个层级的利润率和利润额 | P0 |
+| FR-025 | 系统应高亮标注"最佳匹配"推荐 | P0 |
+| FR-026 | 系统应显示每个建议的理由（如"在预算范围内"） | P1 |
+
+#### 4.2.4 风险提醒
+| 需求 ID | 需求描述 | 优先级 |
+|---------|---------|--------|
+| FR-027 | 系统应显示风险提醒面板 | P1 |
+| FR-028 | 系统应显示材料价格上涨预测 | P1 |
+| FR-029 | 系统应显示许可审批时间预估 | P1 |
+| FR-030 | 系统应高亮影响盈利能力的风险因素 | P1 |
+
+#### 4.2.5 操作按钮
+| 需求 ID | 需求描述 | 优先级 |
+|---------|---------|--------|
+| FR-031 | 系统应提供"保存报价"操作 | P1 |
+| FR-032 | 系统应提供"发送给客户"操作 | P2 |
+| FR-033 | 系统应提供"生成合同"操作 | P2 |
+
+---
+
+## 5. 非功能需求
+
+### 5.1 性能
+| 需求 ID | 需求描述 | 目标 |
+|---------|---------|------|
+| NFR-001 | 成本计算时间 | <2 秒 |
+| NFR-002 | 页面加载时间 | <2 秒 |
+| NFR-003 | 实时更新延迟 | <500 毫秒 |
+
+### 5.2 准确性
+| 需求 ID | 需求描述 |
+|---------|---------|
+| NFR-004 | 成本估算误差在实际值 10% 以内 |
+| NFR-005 | 材料价格每周更新 |
+| NFR-006 | 人工费率反映当地市场行情 |
+
+### 5.3 易用性
+| 需求 ID | 需求描述 |
+|---------|---------|
+| NFR-007 | 60 秒内完成完整报价生成 |
+| NFR-008 | 成本展示具有清晰的视觉层次 |
+| NFR-009 | 移动端响应式设计，支持现场报价 |
+
+### 5.4 安全性
+| 需求 ID | 需求描述 |
+|---------|---------|
+| NFR-010 | 报价数据静态加密存储 |
+| NFR-011 | 访问控制通过租户隔离实现 |
+| NFR-012 | 定价变更的审计追踪 |
+
+---
+
+## 6. UI/UX 规格
+
+### 6.1 布局
+- **桌面端**：双列网格（左侧输入，右侧输出）
+- **移动端**：堆叠布局
+- **响应式断点**：lg:grid-cols-2（1024px）
+
+### 6.2 配色方案
+- 主强调色：翡翠绿（#10B981）
+- 利润正值：绿色
+- 利润警告：琥珀色
+- 利润风险：红色
+- 报价层级：蓝色（保守型）、翡翠绿（推荐型）、紫色（高端型）
+
+### 6.3 字体规范
+- 金额数值：font-bold, text-lg
+- 百分比：font-medium
+- 标签文字：text-gray-500, text-sm
+
+### 6.4 组件
+- 成本行项：图标 + 标签 + 右对齐数值
+- 报价卡片：可选中，选中时带边框高亮
+- 利润率指标：水平渐变条带位置标记
+- 风险提醒：琥珀色背景带警告图标
+
+---
+
+## 7. 数据模型
+
+### 7.1 定价会话
 ```typescript
 interface PricingSession {
   id: string;
   projectId: string;
+  productId: string;          // 关联 productCatalog 的产品 ID
   configuration: ProductConfiguration;
   adjustments: PricingAdjustments;
   costBreakdown: CostBreakdown;
@@ -200,183 +296,185 @@ interface PricingSession {
 }
 ```
 
-### 6.2 Product Configuration
+### 7.2 产品配置
 ```typescript
 interface ProductConfiguration {
-  width: number;
-  depth: number;
-  height: number;
+  width: number;          // 宽度（英尺）
+  depth: number;          // 深度（英尺）
+  height: number;         // 高度（英尺）
   material: 'aluminum' | 'vinyl';
   glassType: 'tempered' | 'low-e' | 'tinted' | 'double-paned';
-  options: {
-    ceilingFan: boolean;
-    lighting: boolean;
-    electrical: boolean;
-    permit: boolean;
-  };
+  options: Record<string, boolean>;  // 从 productOptionSets 动态加载
 }
 ```
 
-### 6.3 Cost Breakdown
+### 7.3 成本分解
 ```typescript
 interface CostBreakdown {
-  materials: number;
-  labor: number;
-  equipment: number;
-  permits: number;
-  additionalOptions: number;
-  total: number;
+  materials: number;        // 材料费（来自 productCatalog.pricing.tiers）
+  labor: number;            // 人工费
+  equipment: number;        // 设备费
+  permits: number;          // 许可费
+  additionalOptions: number; // 附加选项费
+  total: number;            // 总成本
 }
 ```
 
-### 6.4 Quote Suggestion
+### 7.4 报价建议
 ```typescript
 interface QuoteSuggestion {
   type: 'conservative' | 'recommended' | 'premium';
-  price: number;
-  profit: number;
-  margin: number;
-  rationale: string;
+  price: number;      // 建议售价
+  profit: number;     // 净利润
+  margin: number;     // 利润率（%）
+  rationale: string;  // 建议理由
 }
 ```
 
 ---
 
-## 7. Pricing Algorithm
+## 8. 定价算法
 
-### 7.1 Cost Calculation Formula
+### 8.1 成本计算公式
 ```
-Materials = (Width × Depth) × MaterialRatePerSqft + GlassUpcharge
-Labor = (Width × Depth) × LaborRatePerSqft
-Equipment = (Width × Depth) × EquipmentRatePerSqft
-Permits = BasePermitFee + (ElectricalPermitFee if applicable)
-AdditionalOptions = Sum(selected options)
+材料费 = (宽度 × 深度) × 材料单价/平方英尺 + 玻璃升级费
+人工费 = (宽度 × 深度) × 人工单价/平方英尺
+设备费 = (宽度 × 深度) × 设备单价/平方英尺
+许可费 = 基础许可费 + (电气许可费，如适用)
+附加选项 = 所选选项费用之和
 
-TotalCost = Materials + Labor + Equipment + Permits + AdditionalOptions
-```
-
-### 7.2 Quote Generation
-```
-Conservative = TotalCost × 1.10  (10% margin)
-Recommended = TotalCost × 1.183  (18% margin)
-Premium = TotalCost × 1.34       (25% margin)
+总成本 = 材料费 + 人工费 + 设备费 + 许可费 + 附加选项
 ```
 
-### 7.3 Risk Assessment
-- Material price volatility (tariff impacts)
-- Permit processing delays by jurisdiction
-- Seasonal demand fluctuations
-- Labor availability
+### 8.2 报价生成
+```
+保守型 = 总成本 × 1.10  （10% 利润率）
+推荐型 = 总成本 × 1.183 （18% 利润率）
+高端型 = 总成本 × 1.34  （25% 利润率）
+```
+
+### 8.3 风险评估
+- 材料价格波动（关税影响）
+- 各辖区许可审批延迟
+- 季节性需求波动
+- 人工可用性
 
 ---
 
-## 8. API Endpoints
+## 9. API 端点
 
-### 8.1 Calculate Pricing
+### 9.1 计算定价
 ```
 POST /api/v1/pricing/calculate
-Request: { projectId, configuration, adjustments }
-Response: { costBreakdown, profitAnalysis, suggestedQuotes, riskAlerts }
+请求: { projectId, productId, configuration, adjustments }
+响应: { costBreakdown, profitAnalysis, suggestedQuotes, riskAlerts }
 ```
 
-### 8.2 Save Quote
+### 9.2 保存报价
 ```
 POST /api/v1/quotes
-Request: { pricingSession, projectId }
-Response: { quoteId, status }
+请求: { pricingSession, projectId }
+响应: { quoteId, status }
 ```
 
-### 8.3 Send Quote
+### 9.3 发送报价
 ```
 POST /api/v1/quotes/{quoteId}/send
-Request: { recipientEmail, message? }
-Response: { status, sentAt }
+请求: { recipientEmail, message? }
+响应: { status, sentAt }
 ```
 
-### 8.4 Generate Contract
+### 9.4 生成合同
 ```
 POST /api/v1/quotes/{quoteId}/contract
-Response: { contractId, downloadUrl }
+响应: { contractId, downloadUrl }
 ```
 
 ---
 
-## 9. Integration Points
+## 10. 集成接口
 
-### 9.1 Internal Integrations
-| System | Integration Type | Purpose |
-|--------|-----------------|---------|
-| AI Designer | Receive data | Import design specifications |
-| Compliance Manager | API call | Fetch permit requirements |
-| Project Management | Data read/write | Save quotes to projects |
-| Contract Generator | Deep link | Create contracts from quotes |
+### 10.1 内部集成
+| 系统 | 集成方式 | 用途 |
+|------|---------|------|
+| Products 产品目录 | 数据读取 | 获取产品规格、材料成本价和配置选项 |
+| AI 设计师 | 接收数据 | 导入设计规格 |
+| 合规管理器 | API 调用 | 获取许可需求 |
+| 项目管理 | 数据读写 | 将报价保存到项目 |
+| 合同生成器 | 深度链接 | 从报价创建合同 |
 
-### 9.2 External Integrations
-| System | Integration Type | Purpose |
-|--------|-----------------|---------|
-| Material Supplier API | API | Real-time material pricing |
-| Market Data Service | API | Local labor rate benchmarks |
-
----
-
-## 10. Success Metrics
-
-| Metric | Target | Measurement |
-|--------|--------|-------------|
-| Quote generation time | <60 seconds | System logs |
-| Quote accuracy | >90% within 10% | Post-project analysis |
-| Quote-to-close rate | >40% | CRM analytics |
-| Average profit margin | 15-25% | Financial reports |
-| User adoption rate | >80% | Active users / Total users |
+### 10.2 外部集成
+| 系统 | 集成方式 | 用途 |
+|------|---------|------|
+| 材料供应商 API | API | 实时材料定价 |
+| 市场数据服务 | API | 当地人工费率基准 |
 
 ---
 
-## 11. Implementation Roadmap
+## 11. 成功指标
 
-### Phase 1: MVP (Current)
-- [x] Basic UI with Input/Output sections
-- [x] Cost calculation logic
-- [x] Quote suggestion tiers
-- [x] Dummy data for testing
-- [ ] Backend API integration
-- [ ] Real material pricing
-
-### Phase 2: Enhancement
-- [ ] Historical pricing analytics
-- [ ] Market rate integration
-- [ ] Quote templates
-- [ ] Bulk quoting
-
-### Phase 3: Advanced
-- [ ] Predictive pricing AI
-- [ ] Competitive analysis
-- [ ] Dynamic pricing optimization
-- [ ] Multi-currency support
+| 指标 | 目标 | 衡量方式 |
+|------|------|---------|
+| 报价生成时间 | <60 秒 | 系统日志 |
+| 报价准确率 | >90% 在 10% 误差内 | 项目完成后分析 |
+| 报价转化率 | >40% | CRM 分析 |
+| 平均利润率 | 15-25% | 财务报表 |
+| 用户采用率 | >80% | 活跃用户 / 总用户 |
 
 ---
 
-## 12. Dependencies
+## 12. 实施路线图
 
-| Dependency | Type | Status |
-|------------|------|--------|
-| Material Pricing Database | Internal | Pending |
-| Labor Rate Service | External | Evaluation |
-| Contract Template Engine | Internal | Available |
-| Email Service | Internal | Available |
+### 第一阶段：MVP（当前）
+- [x] 基础 UI — 输入/输出双栏布局
+- [x] 成本计算逻辑
+- [x] 报价建议层级（保守/推荐/高端）
+- [x] 测试用模拟数据
+- [ ] Products 页 Span 区域加价格列（先留空）
+- [ ] Products 详情加"计算完整报价"跳转按钮
+- [ ] 后端 API 集成
+- [ ] 真实材料定价数据
+
+### 第二阶段：增强
+- [ ] Pricing Controller 产品选择器改为读 productCatalog
+- [ ] 配置选项从 productOptionSets 动态加载
+- [ ] 历史定价分析
+- [ ] 市场费率集成
+- [ ] 报价模板
+
+### 第三阶段：高级功能
+- [ ] 预测性定价 AI
+- [ ] 竞品分析
+- [ ] 动态定价优化
+- [ ] 多币种支持
+- [ ] 报价历史记录 + 导出 PDF
 
 ---
 
-## 13. Risks & Mitigations
+## 13. 依赖项
 
-| Risk | Impact | Mitigation |
-|------|--------|------------|
-| Material price volatility | High | Real-time pricing feeds, buffer recommendations |
-| Inaccurate labor estimates | Medium | Local rate database, manual override option |
-| Quote undercutting | Medium | Margin protection alerts, value proposition guidance |
-| Data staleness | Medium | Weekly price updates, last-updated timestamps |
+| 依赖项 | 类型 | 状态 |
+|--------|------|------|
+| productCatalog 产品主数据 | 内部 | ✅ 已完成 |
+| productOptionSets 配置选项 | 内部 | ✅ 已完成 |
+| 材料定价数据库 | 内部 | 待定 |
+| 人工费率服务 | 外部 | 评估中 |
+| 合同模板引擎 | 内部 | 可用 |
+| 邮件服务 | 内部 | 可用 |
 
 ---
 
-**Document Owner:** Product Team
-**Review Cycle:** Quarterly
-**Next Review:** Q2 2024
+## 14. 风险与缓解措施
+
+| 风险 | 影响 | 缓解措施 |
+|------|------|---------|
+| 材料价格波动 | 高 | 实时价格源、缓冲建议 |
+| 人工费估算不准确 | 中 | 本地费率数据库、手动覆盖选项 |
+| 报价恶性竞争 | 中 | 利润保护提醒、价值主张引导 |
+| 数据陈旧 | 中 | 每周价格更新、最后更新时间戳 |
+
+---
+
+**文档负责人：** 产品团队
+**审核周期：** 每季度
+**下次审核：** 2026 年 Q2
