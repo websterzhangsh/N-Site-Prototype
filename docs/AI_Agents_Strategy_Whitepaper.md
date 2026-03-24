@@ -1,17 +1,18 @@
 # Nestopia AI Agents Strategy Whitepaper
 # Nestopia AI Agent 战略白皮书
 
-**Version**: 2.1.0  
-**Last Updated**: 2026-03-13  
+**Version**: 2.2.0  
+**Last Updated**: 2026-03-24  
 **Status**: Active — Living Document  
 **Maintainer**: websterzhangsh  
 **Related Docs**:
-- `docs/REQUIREMENTS.md` (v6.0.0) — Feature specs & roadmap
-- `docs/DATA_AI_STRATEGY.md` (v3.0) — Data architecture & knowledge base
+- `docs/REQUIREMENTS.md` (v6.1.0) — Feature specs & roadmap
+- `docs/DATA_AI_STRATEGY.md` (v3.1) — Data architecture & knowledge base
 - `docs/AI_Designer_Agent_Spec.md` — AI Designer detailed spec
 - `docs/Pricing_Cost_Controller_Agent_Spec.md` — Pricing Agent detailed spec
 - `docs/Compliance_Manager_Agent_Spec.md` — Compliance Manager detailed spec
 - `docs/Customer_Service_Executive_Agent_Spec.md` — CS Executive detailed spec
+- `docs/Chatbot_Agent_Spec_CN.md` — Chatbot / Intelligent Conversation Assistant detailed spec
 
 ---
 
@@ -90,6 +91,13 @@ Nestopia's proprietary training data creates an **irreplicable competitive moat*
                                │
                                ▼
 ┌──────────────────────────────────────────────────────────────────┐
+│         🤖 CHATBOT — Unified Conversation Entry (✅ MVP UI Done) │
+│         Intent Detection → Agent Routing → 5 Agent Badges        │
+│         Floating FAB Widget / Full-Page Dual Mode                │
+└──────────────────────────────────────────────────────────────────┘
+                               │
+                               ▼
+┌──────────────────────────────────────────────────────────────────┐
 │                    AI AGENT EXECUTION LAYER                       │
 │                                                                  │
 │  ┌────────────┐ ┌──────────┐ ┌────────────┐ ┌────────────────┐  │
@@ -114,6 +122,7 @@ Nestopia's proprietary training data creates an **irreplicable competitive moat*
 └──────────────────────────────────────────────────────────────────┘
 ```
 
+**Chatbot sits between the UI and Agent Execution Layer** — it is the unified conversation entry point, routing user requests to the appropriate agent via intent detection.
 **Knowledge Base Builder sits at the foundation** — it ingests, processes, and serves domain knowledge to the other four agents via RAG and semantic search.
 
 ---
@@ -355,6 +364,88 @@ This agent doesn't just answer questions — it proactively identifies growth op
 | Repurchase prediction | Customer features + behavior | Predict repurchase probability and timing |
 
 **Priority**: **P1 — High**. Target: customer satisfaction 95%+.
+
+---
+
+## 7.5 Agent Extension: Chatbot / Intelligent Conversation Assistant (NEW — v2.2.0)
+
+> **Implementation Status**: ✅ MVP UI Complete (2026-03-24) — See `Chatbot_Agent_Spec_CN.md` v1.1.0
+
+### 7.5.1 Strategic Positioning
+
+**From "passive Q&A" to "proactive business accelerator".**
+
+The Chatbot is not a simple FAQ bot — it is a **full-process conversation entry point** that spans every step of the 6-Step Service Workflow. It serves as the dealer's "pocket advisor" and the customer's "24/7 expert consultant".
+
+### 7.5.2 Why Chatbot Must Be a Core Component
+
+| Scenario | Without Chatbot | With Chatbot |
+|----------|----------------|-------------|
+| Late-night customer inquiry | No response, lead lost | Instant reply + auto-booking, dealer sees ready schedule next morning |
+| Dealer on-site question | Call HQ, wait half a day | Photo + ask Chatbot: "Does this HOA allow sunrooms?" → instant compliance advice |
+| Price negotiation stall | Discount by experience, risk losses | Ask Chatbot: "Client wants 15% off, what's the floor?" → Pricing Agent smart advice |
+| Installation-site doubt | Flip through manuals | Ask Chatbot: "What's the drainage slope for this model?" → instant technical answer |
+
+### 7.5.3 Architecture
+
+The Chatbot is a **routing layer + conversation UI** — it does not have its own AI model. It serves as the unified entry point that orchestrates all 5 Agents behind the scenes.
+
+```
+┌──────────────────────────────────────────────────┐
+│              Chatbot Conversation UI               │
+│        (Text / Voice / Image Upload)               │
+└───────────────────────┬──────────────────────────┘
+                        │
+                        ▼
+┌──────────────────────────────────────────────────┐
+│          Intent Detection + Routing Layer          │
+│  ┌──────────┐ ┌──────────┐ ┌──────────────────┐  │
+│  │ Design   │ │ Pricing  │ │ Compliance/Tech  │  │
+│  └─────┬────┘ └─────┬────┘ └────────┬─────────┘  │
+│        ▼            ▼               ▼              │
+│   AI Designer  Pricing Agent  Compliance Agent     │
+│                                                    │
+│  ┌──────────────────┐ ┌────────────────────────┐  │
+│  │ Customer Service │ │ Knowledge Base         │  │
+│  └──────────────────┘ └────────────────────────┘  │
+└──────────────────────────────────────────────────┘
+```
+
+### 7.5.4 Phased Implementation
+
+| Phase | Capability | Approach | Timeline | Status |
+|-------|-----------|----------|----------|--------|
+| **MVP** | Dual-mode UI + intent routing + 5 Agent badges | Floating FAB + full-page layout; keyword intent detection; `/api/chat` LLM API | 1-2 mo | ✅ **Done** |
+| **Enhanced** | Smart routing via LLM Function Calling | Intent classifier upgrade + Agent API chain + conversation persistence | 3-4 mo | ⏳ Planned |
+| **Advanced** | Proactive push based on project status | Event triggers + conversation push + ProactivePush model | 5-6 mo | ⏳ Planned |
+
+#### MVP Deliverables (2026-03-24)
+
+| Component | Status | Detail |
+|-----------|--------|--------|
+| Floating FAB (🤖) + expandable chat panel | ✅ | Fixed bottom-right, 400×560px panel |
+| Full-page layout (session list + chat area) | ✅ | Master-detail, 280px sidebar + flex main |
+| Intent detection → 5 Agent routing badges | ✅ | Keyword regex: purple/green/blue/yellow/gray |
+| Quick Action chips (5 types) | ✅ | Design / Quote / Compliance / Customer / Product |
+| Image upload → AI Designer auto-response | ✅ | FileReader → preview + Designer prompt |
+| Session management (create/switch/clear) | ✅ | Frontend sessions with 3 demo conversations |
+| LLM API integration + fallback | ✅ | `/api/chat` Qwen API + keyword fallback |
+
+**Pending backend integration**: Conversation persistence (`chat_sessions` + `chat_messages` tables), KB document injection, real Agent API routing, RLS tenant isolation.
+
+### 7.5.5 Chatbot and Existing Agent Relationship
+
+The Chatbot **does not replace** the 5 existing Agents — it serves as their **unified conversation entry point**:
+
+| User Says | Chatbot Routes To | Agent Returns | Badge Color |
+|-----------|------------------|--------------|-------------|
+| "Help me see what fits this photo" | AI Designer | Scene-fused render | 🟣 Purple |
+| "How much for this plan?" | Pricing Agent | 3-tier quote | 🟢 Green |
+| "What permits for a sunroom in Irvine, CA?" | Compliance Agent | Compliance checklist | 🔵 Blue |
+| "What did Mr. Zhang say last time?" | CS Agent | Conversation history + follow-up | 🟡 Yellow |
+| "What's the waterproof rating of our sunroom?" | Knowledge Base | Product spec answer | ⚪ Gray |
+
+**Priority**: **P1 — High**. The Chatbot is the highest-frequency touchpoint for dealers in daily operations.
 
 ---
 
@@ -699,6 +790,7 @@ Every interaction feeds back into the training pipeline:
 | 1.0.0 | 2026-03-11 | Initial whitepaper — 4 AI Agents strategy, co-working model, fine-tune roadmap, digital measurement partnership |
 | 2.0.0 | 2026-03-12 | **Added Agent 5: Knowledge Base Builder** ("智识引擎"); Updated agent count from 4 to 5; Full KB Builder spec; Architecture diagrams |
 | 2.1.0 | 2026-03-13 | **Startup Reality Check**: Added Section 2.4 pragmatic AI strategy; Revised Section 10.3 moat evolution; Rewrote Section 11 implementation roadmap (LLM-first, fine-tuning later); Added Section 12 key principles; Reduced data requirements from 100K/500K to 10-50 documents for MVP |
+| 2.2.0 | 2026-03-24 | **B2B Chatbot MVP UI Complete**: Added Section 7.5 Chatbot / Intelligent Conversation Assistant with full MVP deliverables table; Updated Section 3 architecture diagram to include Chatbot as unified conversation entry layer between UI and Agent Execution Layer; Added Chatbot_Agent_Spec_CN.md to related documents; Updated version references |
 
 ---
 

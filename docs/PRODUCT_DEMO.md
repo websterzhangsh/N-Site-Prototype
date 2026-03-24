@@ -1,9 +1,9 @@
 # Nestopia B2B Platform - Product Demo
 ## 平台功能演示脚本
 
-**演示日期**: 2026-03-12  
-**版本**: v3.0.0  
-**演示时长**: 约 15-20 分钟  
+**演示日期**: 2026-03-24  
+**版本**: v3.1.0  
+**演示时长**: 约 18-22 分钟  
 **Live URL**: https://n-site-prototype.pages.dev
 
 ---
@@ -13,7 +13,7 @@
 向利益相关者展示 Nestopia B2B 合作伙伴平台的核心功能，包括：
 1. 公共网站产品展示（Product Matrix with Before/After + 3D Video）
 2. 多租户架构下的完整数据隔离
-3. **5 个 AI Agent** 的业务流程集成（含 Knowledge Base Builder）
+3. **5 个 AI Agent + Chatbot 统一入口** 的业务流程集成（含 Knowledge Base Builder）
 4. Projects 项目管理（Issues Tracker + Risk Heat Map）
 5. Team Management 团队管理
 6. Settings 系统设置
@@ -43,12 +43,13 @@
 - Team Management 团队成员、角色、绩效
 - Settings 公司信息、集成、通知、计费
 
-### 第五部分：5 个 AI Agent (5 分钟)
+### 第五部分：5 个 AI Agent + Chatbot (6 分钟)
 - AI Designer Agent
 - Pricing & Cost Controller Agent
 - Compliance Manager Agent
 - Customer Service Executive Agent
-- **Knowledge Base Builder Agent（新增）**
+- **Knowledge Base Builder Agent**
+- **B2B Chatbot 统一对话入口（新增 2026-03-24）**
 
 ### 第六部分：技术架构 (3 分钟)
 - 数据库 Schema 设计
@@ -224,6 +225,29 @@
 **旁白**:
 > "Knowledge Base Builder 是第五个 Agent，也是其他四个 Agent 的'智识引擎'。上传公司私有领域数据——产品手册、合规法规、定价分析、设计指南——AI 自动分类、切片、向量化、索引，构建 RAG 知识库。每份文档可以路由到特定 Agent，让 AI Designer 了解产品规格，让 Compliance Manager 掌握最新法规。目前已索引 47 份文档，覆盖 6 大分类。"
 
+#### B2B Chatbot — "统一对话入口" (NEW — 2026-03-24)
+
+**画面**: 在 Company Operations 任意页面，展示右下角浮动气泡
+
+**操作**:
+1. 展示右下角 🤖 浮动 FAB 按钮
+2. 点击打开浮动对话面板
+3. 展示面板头部：Nestopia Assistant · Online · Routes to 5 Agents
+4. 在浮动面板中输入 "How much for a 400 sqft sunroom?"
+5. 展示 AI 回复 + **Via Pricing Agent** 彩色 Badge
+6. 点击 Quick Action 芯片 "Compliance"
+7. 点击面板中的 ↗ 展开按钮 → 自动跳转到全页面模式
+8. 展示全页面布局：左侧会话列表 + 右侧聊天区域
+9. 切换左侧 3 个 Demo 会话：
+   - "Sunshine Villa — Design & Quote" (Via Pricing Agent)
+   - "CA Sunroom Compliance Check" (Via Compliance Mgr)
+   - "Pergola Product Specs" (Via Knowledge Base)
+10. 点击 "+ New Chat" 创建新对话
+11. 展示图片上传功能（📷 按钮）→ 触发 AI Designer 流程
+
+**旁白**:
+> "B2B Chatbot 是统一对话入口，嵌入在 Company Operations 中。经销商不需要学习 5 个 Agent 界面——在一个对话框里用自然语言提问，Chatbot 自动识别意图并路由到对应 Agent。每条回复标注来源 Agent（紫色=设计、绿色=报价、蓝色=合规、黄色=客服、灰色=知识库）。浮动气泡在任何页面可快速对话，全页面模式提供会话管理和深度交互。"
+
 ---
 
 ### 【第六部分：技术架构 - 2分钟】
@@ -286,12 +310,13 @@
 - 复合唯一约束
 - 租户上下文注入
 
-### 3. 5 个 AI Agent
+### 3. 5 个 AI Agent + Chatbot 统一入口
 - AI Designer — 场景融合渲染
 - Pricing & Cost Controller — 动态报价与利润保护
 - Compliance Manager — 合规扫描与许可导航
 - Customer Service Executive — 全生命周期客户管理
 - **Knowledge Base Builder — RAG 知识库构建与管理**
+- **B2B Chatbot — 统一对话入口（浮动气泡 + 全页面双模式，意图识别 + Agent 路由 Badge）**
 
 ### 4. 项目管理
 - Risk Heat Map（四级风险可视化）
@@ -337,19 +362,20 @@
 
 ### 核心页面
 - `index.html` — 公共首页（产品展示、Hero Carousel、Product Matrix）
-- `company-operations.html` — Company Operations（Overview, Projects, Team, Settings, 5 Agents）
+- `company-operations.html` — Company Operations（Overview, Projects, Team, Settings, 5 Agents, **B2B Chatbot**）
 - `login.html` — 多租户登录
 - `partners.html` — 合作伙伴注册
 - `team-management.html` — 团队管理
 
 ### 文档体系
-- `docs/REQUIREMENTS.md` (v6.0.0) — 需求规格说明书
+- `docs/REQUIREMENTS.md` (v6.1.0) — 需求规格说明书
 - `docs/DATA_AI_STRATEGY.md` (v3.0) — Data + AI 战略
 - `docs/AI_Agents_Strategy_Whitepaper.docx` — Agent 战略白皮书
 - `docs/AI_Designer_Agent_Spec.md` — AI Designer 规格
 - `docs/Pricing_Cost_Controller_Agent_Spec.md` — Pricing Agent 规格
 - `docs/Compliance_Manager_Agent_Spec.md` — Compliance Agent 规格
 - `docs/Customer_Service_Executive_Agent_Spec.md` — CS Agent 规格
+- `docs/Chatbot_Agent_Spec_CN.md` (v1.1.0) — **Chatbot 对话助手规格**
 - `docs/multi-tenant-architecture.md` — 多租户架构
 - `docs/business-workflow.md` — 业务流程
 
@@ -361,6 +387,6 @@
 
 ---
 
-**文档版本**: 3.0.0  
-**最后更新**: 2026-03-12  
+**文档版本**: 3.1.0  
+**最后更新**: 2026-03-24  
 **维护者**: Qoder AI Assistant

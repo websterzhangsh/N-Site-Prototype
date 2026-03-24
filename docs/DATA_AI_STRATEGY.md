@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-This document outlines the comprehensive data and AI strategy for Nestopia's outdoor living customization platform. It covers data architecture, AI agent implementation, knowledge management, and the integration of private domain data for RAG (Retrieval-Augmented Generation), embeddings, and fine-tuning purposes. The platform is powered by **five AI Agents**: AI Designer, Pricing & Cost Controller, Compliance Manager, Customer Service Executive, and **Knowledge Base Builder**.
+This document outlines the comprehensive data and AI strategy for Nestopia's outdoor living customization platform. It covers data architecture, AI agent implementation, knowledge management, and the integration of private domain data for RAG (Retrieval-Augmented Generation), embeddings, and fine-tuning purposes. The platform is powered by **five AI Agents**: AI Designer, Pricing & Cost Controller, Compliance Manager, Customer Service Executive, and **Knowledge Base Builder** — coordinated through a **Chatbot unified conversation entry point** (✅ MVP UI complete, 2026-03-24).
 
 **Strategic Pivot (v3.1)**: Following industry insights from Anthropic and modern LLM capabilities, we adopt a **LLM-First, Fine-Tuning Later** approach:
 - **Short-term (0-6 months)**: Depend on public LLM APIs (GPT-4, Claude, Qwen) with prompt engineering

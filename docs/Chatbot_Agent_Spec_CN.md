@@ -1,8 +1,8 @@
 # Chatbot / 智能对话助手 Agent — 需求规格说明书
 
-**版本**: 1.0.0  
-**最后更新**: 2026-03-16  
-**状态**: 草案  
+**版本**: 1.1.0  
+**最后更新**: 2026-03-24  
+**状态**: 实施中（MVP UI 已完成）  
 **来源**: Nestopia 智能体战略白皮书 v2.2.0 第 7.5 节（基于 Larry Zhang 反馈 2026-03-15）  
 **关联文档**:
 - `docs/Nestopia智能体战略白皮书.md` (v2.2.0) — 战略白皮书
@@ -395,16 +395,24 @@ GET /api/v1/chat/suggestions?sessionId={sessionId}
 
 ## 10. 分阶段实施路线图
 
-### 阶段 1：MVP（1-2 月）
-- [ ] 基础对话界面（Web）
-- [ ] 文字输入 + 图片上传
-- [ ] 基础问答：产品 FAQ、流程指引、合规常见问题
+### 阶段 1：MVP（1-2 月） — ✅ UI 已完成（2026-03-24）
+- [x] 基础对话界面（Web）— 浮动气泡 + 全页面双模式
+- [x] 文字输入 + 图片上传
+- [ ] 基础问答：产品 FAQ、流程指引、合规常见问题 — ⏳ 需后端 KB 注入
 - [ ] Knowledge Base 文档注入（System Prompt 方式）
-- [ ] GPT-4 / Claude API 集成
-- [ ] 对话历史保存和查阅
-- [ ] 租户隔离（RLS）
+- [x] LLM API 集成（已接 `/api/chat` Qwen，含 fallback）
+- [x] 对话历史保存和查阅（前端会话管理）
+- [x] 租户隔离（RLS）— 数据模型含 tenantId，待后端表
 
-**MVP 交付标准**：经销商可以通过对话获得产品信息、流程指引和基础合规问答。
+**MVP UI 交付物**（`company-operations.html`）：
+- 浮动 FAB（🤖）+ 展开对话面板
+- 全页面布局（左侧会话列表 + 右侧聊天区）
+- 意图识别 + 5 Agent 路由 Badge（紫/绿/蓝/黄/灰）
+- Quick Action 芯片（Design / Quote / Compliance / Customer / Product）
+- 图片上传触发 AI Designer 流程
+- 3 组预置 Demo 对话 + 打字指示器
+
+**待后端集成**：对话持久化（chat_sessions + chat_messages 表）、KB 文档注入、真实 Agent API 路由。
 
 ### 阶段 2：智能路由（3-4 月）
 - [ ] 意图识别引擎（LLM Function Calling）
@@ -495,6 +503,7 @@ GET /api/v1/chat/suggestions?sessionId={sessionId}
 | 版本 | 日期 | 变更内容 |
 |------|------|---------|
 | 1.0.0 | 2026-03-16 | 初始版本 — 基于白皮书 v2.2.0 第 7.5 节创建，覆盖完整需求规格 |
+| 1.1.0 | 2026-03-24 | MVP UI 已实现 — B2B Chatbot 双模式（浮动气泡 + 全页面）嵌入 `company-operations.html`；更新阶段 1 交付状态；新增 MVP 交付物清单 |
 
 ---
 

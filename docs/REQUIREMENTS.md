@@ -2,8 +2,8 @@
 # Nestopia Platform 需求规格说明书
 
 **Project Name**: Nestopia Platform (N-Site-Prototype)  
-**Version**: 6.0.0  
-**Last Updated**: 2026-03-12  
+**Version**: 6.1.0  
+**Last Updated**: 2026-03-24  
 **Maintainer**: websterzhangsh  
 **Live URL**: https://n-site-prototype.pages.dev  
 **Repository**: https://github.com/websterzhangsh/N-Site-Prototype
@@ -179,6 +179,7 @@ team-management.html → Team management page
 | FR-057 | User Menu | Sign-out confirmation dialog | ✅ |
 | FR-058 | Mobile Responsive | Collapsible sidebar on mobile | ✅ |
 | FR-059 | AI Agents (sidebar) | 5 agent nav items: AI Designer, Pricing & Cost Controller, Compliance Manager, Customer Service Executive, Knowledge Base Builder | ✅ UI only |
+| FR-059B | **B2B Chatbot UI** | Dual-mode chatbot: floating FAB widget + full-page layout; intent detection with 5-agent routing badges; session management; image upload; Quick Action chips; LLM API integration with fallback | ✅ |
 
 ### 3.5 Team Management (`team-management.html`) — ⏳ In Progress
 
@@ -671,7 +672,7 @@ Every interaction feeds back into the training pipeline:
 
 ### Phase I — Public Website & Partner Portal (Current) ✅
 - [x] Homepage with product showcase and contact form
-- [x] AI chatbot (Qwen integration)
+- [x] AI chatbot (Qwen integration — homepage 2C + **B2B company-operations** dual deployment)
 - [x] Partner Program page with registration
 - [x] Login page (multi-tenant aware)
 - [x] Dashboard with overview and workflow
@@ -824,6 +825,7 @@ public/images/
 | Pricing_Cost_Controller_Agent_Spec.md | `docs/` | Pricing Agent detailed spec |
 | Compliance_Manager_Agent_Spec.md | `docs/` | Compliance Manager detailed spec |
 | Customer_Service_Executive_Agent_Spec.md | `docs/` | CS Executive detailed spec |
+| Chatbot_Agent_Spec_CN.md | `docs/` | Chatbot / 智能对话助手 detailed spec (v1.1.0) |
 | AI_Designer_Feasibility_Study.docx | `docs/` | Market feasibility, use cases, UX design, technical feasibility, partnership strategy |
 | US_Regional_Compliance_Requirements.docx | `docs/` | US federal/state/local building codes, HOA requirements, Compliance Manager specs |
 | Gap_Analysis_Report.docx | `docs/` | Third-party proposal vs current implementation analysis |
@@ -852,6 +854,7 @@ public/images/
 | 3.0.0 | 2026-03-11 | Reverse-engineered requirements reflecting actual implementation | websterzhangsh |
 | 4.0.0 | 2026-03-11 | Major update: Integrated AI Agent strategy (OUTPUT > HOW philosophy, 4 agent detailed specs, fine-tune roadmap, co-working model, digital measurement partnership, platform IP strategy); Added comprehensive US regional compliance requirements (IRC, CA/FL/TX specifics, HOA coverage); Added Phase I+/IV to roadmap; Moved to docs/ folder; Added documentation artifacts inventory | websterzhangsh |
 | 6.0.0 | 2026-03-12 | Added Agent 5: Knowledge Base Builder ("智识引擎"); updated agent count from 4 to 5; added Section 7.6 with full spec (capabilities, document categories, agent mapping, use scenarios, fine-tune strategy); updated fine-tune priority table; renumbered sections 7.6→7.7, 7.7→7.8 | websterzhangsh |
+| 6.1.0 | 2026-03-24 | Added FR-059B: B2B Chatbot UI (dual-mode floating widget + full-page layout with 5-agent routing badges, session management, intent detection, image upload, Quick Action chips); updated Phase I roadmap to reflect chatbot dual deployment (2C homepage + B2B company-operations); added Chatbot_Agent_Spec_CN.md to documentation artifacts | websterzhangsh |
 
 ---
 
