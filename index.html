@@ -2908,7 +2908,8 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     message: message,
-                    history: chatHistory.slice(-6)
+                    history: chatHistory.slice(-6),
+                    mode: '2c'
                 })
             })
             .then(res => res.json())
@@ -2945,7 +2946,8 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     message: quickReplyText,
-                    history: chatHistory.slice(-6)
+                    history: chatHistory.slice(-6),
+                    mode: '2c'
                 })
             })
             .then(res => res.json())

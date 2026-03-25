@@ -2,7 +2,8 @@
  * Cloudflare Pages Function - LLM Chat API
  * Path: /api/chat
  * 
- * Uses unified LLM interface - provider agnostic
+ * Supports dual mode: 2C (consumer) and 2B (dealer partner)
+ * Documentation: docs/LLM_System_Prompts.md
  */
 
 import { createLLMService } from '../lib/llm-factory.js';
@@ -22,7 +23,7 @@ export async function onRequestOptions() {
 export async function onRequestPost(context) {
   try {
     const body = await context.request.json();
-    const { message, history } = body;
+    const { message, history, mode } = body;
 
     if (!message) {
       return new Response(
@@ -39,6 +40,13 @@ export async function onRequestPost(context) {
       );
     }
 
+    // Resolve mode: '2b' for B2B dealer partners, '2c' (default) for consumers
+    const chatMode = mode === '2b' ? '2b' : '2c';
+    const modeConfig = LLM_CONFIG.modes[chatMode] || LLM_CONFIG.modes['2c'];
+    const systemPrompt = chatMode === '2b' 
+      ? LLM_CONFIG.systemPrompt2B 
+      : LLM_CONFIG.systemPrompt2C;
+
     // Create LLM service using unified interface
     const llmService = createLLMService({
       provider: LLM_CONFIG.provider,
@@ -48,9 +56,10 @@ export async function onRequestPost(context) {
     // Build messages array with conversation history
     const messages = [];
 
-    // Add recent history (last 6 turns to stay within token limits)
+    // Add recent history (limited by mode config)
+    const maxHistory = modeConfig.historyTurns || 6;
     if (Array.isArray(history)) {
-      const recentHistory = history.slice(-6);
+      const recentHistory = history.slice(-maxHistory);
       for (const h of recentHistory) {
         messages.push({ role: h.role, content: h.content });
       }
@@ -59,18 +68,20 @@ export async function onRequestPost(context) {
     // Add current user message
     messages.push({ role: 'user', content: message });
 
-    // Call LLM via unified interface
+    // Call LLM via unified interface with mode-specific settings
     const response = await llmService.chat(messages, {
-      systemPrompt: LLM_CONFIG.systemPrompt,
-      temperature: LLM_CONFIG.defaults.temperature,
-      maxTokens: LLM_CONFIG.defaults.maxTokens
+      systemPrompt: systemPrompt,
+      temperature: modeConfig.temperature,
+      maxTokens: modeConfig.maxTokens,
+      topP: modeConfig.topP
     });
 
     return new Response(
       JSON.stringify({ 
         success: true, 
         reply: response.content,
-        usage: response.usage
+        usage: response.usage,
+        mode: chatMode
       }),
       { status: 200, headers: corsHeaders }
     );

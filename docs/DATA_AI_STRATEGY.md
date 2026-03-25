@@ -513,8 +513,9 @@ The Knowledge Base serves as a **private domain data repository** that feeds our
 |------|---------|
 | `supabase/schema.sql` | Multi-tenant database schema |
 | `supabase/seed_data.sql` | Test data including 47 KB documents |
-| `company-operations.html` | Knowledge Base UI implementation |
+| `company-operations.html` | Knowledge Base UI + B2B Chatbot UI implementation |
 | `docs/DATA_AI_STRATEGY.md` | This document |
+| `docs/Chatbot_Agent_Spec_CN.md` | Chatbot Agent specification (v1.1.0) |
 
 ### 10.2 Related Documents
 
