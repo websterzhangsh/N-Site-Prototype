@@ -237,6 +237,21 @@
             color: var(--light-accent) !important;
         }
 
+        /* Fix: Override browser default :visited styling for nav links in all states */
+        #heroHeader nav a,
+        #heroHeader nav a:visited {
+            background: transparent !important;
+            -webkit-text-fill-color: inherit;
+        }
+
+        #heroHeader nav a:visited {
+            color: rgba(255, 255, 255, 0.8) !important;
+        }
+
+        #heroHeader.scrolled nav a:visited {
+            color: var(--light-text) !important;
+        }
+
         /* Chatbot Styles */
         .chatbot-container {
             position: fixed;
