@@ -81,6 +81,105 @@
             font-size: 11px; padding: 2px 6px; border-radius: 10px;
         }
 
+        /* Sidebar Project List (v1.2.0) */
+        .sidebar-project-list {
+            flex: 1; overflow-y: auto; padding: 4px 12px;
+        }
+        .sidebar-project-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 12px; border-radius: 8px; cursor: pointer;
+            transition: all 0.2s; border-left: 3px solid transparent; margin-bottom: 2px;
+        }
+        .sidebar-project-item:hover { background: #f3f4f6; }
+        .sidebar-project-item.selected {
+            background: #f3f4f6; border-left-color: var(--primary);
+        }
+        .sidebar-project-item .proj-avatar {
+            width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 11px; font-weight: 600; background: #e5e7eb; color: #4b5563;
+        }
+        .sidebar-project-item .proj-info { flex: 1; min-width: 0; }
+        .sidebar-project-item .proj-name {
+            font-size: 13px; font-weight: 500; color: #111827;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .sidebar-project-item .proj-meta {
+            font-size: 11px; color: #9ca3af; margin-top: 1px;
+        }
+        .sidebar-project-item .proj-risk-dot {
+            width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+        }
+        .sidebar-project-search {
+            padding: 8px 12px;
+        }
+        .sidebar-project-search input {
+            width: 100%; padding: 7px 10px 7px 32px; border: 1px solid #e5e7eb;
+            border-radius: 8px; font-size: 12px; outline: none; transition: border 0.2s;
+        }
+        .sidebar-project-search input:focus { border-color: #9ca3af; }
+        .sidebar-new-project-btn {
+            display: flex; align-items: center; gap: 8px;
+            padding: 10px 12px; margin: 4px 12px 8px; border-radius: 8px;
+            color: #9ca3af; font-size: 13px; cursor: pointer; transition: all 0.2s;
+            border: 1px dashed #e5e7eb;
+        }
+        .sidebar-new-project-btn:hover { color: #4b5563; border-color: #9ca3af; background: #f9fafb; }
+
+        /* Agent Toolbar (v1.2.0) */
+        .agent-toolbar {
+            display: flex; gap: 12px; padding: 16px 0; margin-bottom: 16px;
+        }
+        .agent-toolbar-card {
+            flex: 1; min-width: 0; padding: 14px 12px; border-radius: 10px;
+            border: 1px solid transparent; background: #f9fafb;
+            cursor: pointer; text-align: center; transition: all 0.2s;
+        }
+        .agent-toolbar-card:hover {
+            background: white; border-color: #e5e7eb;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .agent-toolbar-card.active {
+            border-color: var(--agent-border, #e5e7eb);
+            background: var(--agent-bg, #f9fafb);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .agent-toolbar-card.disabled {
+            opacity: 0.4; cursor: not-allowed; pointer-events: none;
+        }
+        .agent-toolbar-card i {
+            font-size: 20px; display: block; margin-bottom: 6px;
+            color: var(--agent-icon, #6b7280);
+        }
+        .agent-toolbar-card .agent-label {
+            font-size: 11px; font-weight: 500; color: #4b5563;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .agent-toolbar-card.active i { color: var(--agent-icon); }
+
+        /* Agent Panel (expandable area below toolbar) */
+        .agent-panel-container {
+            max-height: 0; overflow: hidden;
+            transition: max-height 0.35s ease-out, opacity 0.25s ease-out;
+            opacity: 0; margin-bottom: 0;
+        }
+        .agent-panel-container.open {
+            max-height: 2000px; opacity: 1; margin-bottom: 20px;
+            transition: max-height 0.4s ease-in, opacity 0.3s ease-in;
+        }
+        .agent-panel-inner {
+            background: white; border: 1px solid #e5e7eb; border-radius: 12px;
+            padding: 20px; position: relative;
+        }
+        .agent-panel-close {
+            position: absolute; top: 12px; right: 12px;
+            width: 28px; height: 28px; border-radius: 6px; border: none;
+            background: #f3f4f6; color: #6b7280; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        .agent-panel-close:hover { background: #e5e7eb; color: #111827; }
+
         /* Main Content */
         .main-content {
             flex: 1; margin-left: var(--sidebar-width);
@@ -487,49 +586,34 @@
                 </div>
             </div>
 
-            <nav class="nav-menu">
+            <nav class="nav-menu" style="display:flex;flex-direction:column;height:calc(100vh - 73px);">
                 <div class="nav-section">
                     <div class="nav-section-title">Main Menu</div>
                     <a href="#" class="nav-item active" data-page="dashboard">
                         <i class="fas fa-building"></i>
                         <span>Company Overview</span>
                     </a>
-                    <a href="#" class="nav-item" data-page="projects">
-                        <i class="fas fa-folder-open"></i>
-                        <span>Projects</span>
-                    </a>
                 </div>
 
-                <div class="nav-section">
-                    <div class="nav-section-title">Agents</div>
-                    <a href="#" class="nav-item" data-page="ai-designer">
-                        <i class="fas fa-palette"></i>
-                        <span>AI Designer</span>
-                    </a>
-                    <a href="#" class="nav-item" data-page="pricing-agent">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Pricing and Cost Controller</span>
-                    </a>
-                    <a href="#" class="nav-item" data-page="compliance-agent">
-                        <i class="fas fa-shield-alt"></i>
-                        <span>Compliance Manager</span>
-                    </a>
-                    <a href="#" class="nav-item" data-page="customer-service-agent">
-                        <i class="fas fa-headset"></i>
-                        <span>Customer Service Executive</span>
-                    </a>
-                    <a href="#" class="nav-item" data-page="knowledge-base">
-                        <i class="fas fa-brain"></i>
-                        <span>Knowledge Base Builder</span>
-                    </a>
-                    <a href="#" class="nav-item" data-page="chatbot">
-                        <i class="fas fa-robot"></i>
-                        <span>Chatbot</span>
-                        <span class="nav-badge" style="background: #059669;">AI</span>
-                    </a>
+                <!-- v1.2.0: Projects list in sidebar -->
+                <div class="nav-section" style="flex:1;display:flex;flex-direction:column;min-height:0;">
+                    <div class="nav-section-title">Projects</div>
+                    <div class="sidebar-project-search">
+                        <div style="position:relative;">
+                            <i class="fas fa-search" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:11px;"></i>
+                            <input type="text" id="sidebarProjectSearch" placeholder="Search projects..." oninput="renderSidebarProjects()">
+                        </div>
+                    </div>
+                    <div class="sidebar-project-list" id="sidebarProjectList">
+                        <!-- Populated by JS -->
+                    </div>
+                    <div class="sidebar-new-project-btn" onclick="openCreateProjectModal()">
+                        <i class="fas fa-plus" style="font-size:11px;"></i>
+                        <span>New Project</span>
+                    </div>
                 </div>
 
-                <div class="nav-section">
+                <div class="nav-section" style="flex-shrink:0;">
                     <div class="nav-section-title">Settings</div>
                     <a href="#" class="nav-item" data-page="team">
                         <i class="fas fa-user-cog"></i>
@@ -1213,24 +1297,46 @@
                     </div>
                 </div>
 
-                <!-- ===== Pricing & Cost Controller Page ===== -->
+                <!-- ===== Pricing & Cost Controller Page (v2.0 — Zip Blinds 6-Strategy Engine) ===== -->
                 <div class="page-content" id="page-pricing-agent">
+                    <!-- Back to Project Button -->
+                    <button id="pricingBackBtn" onclick="goBackFromPricing()" class="mb-4 inline-flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition group">
+                        <i class="fas fa-arrow-left text-xs group-hover:-translate-x-0.5 transition-transform"></i>
+                        <span>Back to Project</span>
+                    </button>
+
                     <!-- Pricing Agent Header -->
                     <div class="flex items-center justify-between mb-6">
                         <div>
                             <h2 class="text-2xl font-bold text-gray-900">Pricing & Cost Controller</h2>
-                            <p class="text-gray-500 mt-1">Smart pricing with profit protection</p>
+                            <p class="text-gray-500 mt-1">Modular pricing engine with 6-strategy intelligence for Zip Blinds</p>
                         </div>
                         <div class="flex gap-3">
+                            <!-- Strategy 6: Retail / Wholesale Toggle (Dual Price List) -->
+                            <div class="flex items-center bg-gray-100 rounded-lg p-1">
+                                <button id="priceModeRetail" class="px-4 py-2 text-sm font-medium rounded-md bg-white shadow text-gray-900 transition" onclick="setPricingMode('retail')">
+                                    <i class="fas fa-store mr-1"></i>Retail
+                                </button>
+                                <button id="priceModeWholesale" class="px-4 py-2 text-sm font-medium rounded-md text-gray-500 transition" onclick="setPricingMode('wholesale')">
+                                    <i class="fas fa-warehouse mr-1"></i>Wholesale
+                                </button>
+                            </div>
                             <button class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition flex items-center gap-2">
                                 <i class="fas fa-history"></i>
                                 <span>History</span>
                             </button>
-                            <button class="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition flex items-center gap-2">
-                                <i class="fas fa-calculator"></i>
-                                <span>Quick Quote</span>
-                            </button>
                         </div>
+                    </div>
+
+                    <!-- Strategy Banner -->
+                    <div class="mb-6 p-4 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-lightbulb text-emerald-600 text-sm"></i>
+                            </div>
+                            <span class="font-semibold text-emerald-900">Pricing Philosophy</span>
+                        </div>
+                        <p class="text-sm text-emerald-800 ml-11">Fabric attracts &middot; Drive upgrades profit &middot; Volume tiers encourage scale &middot; Dual price lists control margins</p>
                     </div>
 
                     <!-- Main Grid: Input + Output -->
@@ -1238,6 +1344,7 @@
 
                         <!-- ========== INPUT SECTION ========== -->
                         <div class="space-y-6">
+
                             <!-- Step 1: Select Project -->
                             <div class="bg-white rounded-xl border border-gray-200 p-6">
                                 <div class="flex items-center gap-3 mb-4">
@@ -1246,182 +1353,290 @@
                                 </div>
                                 <select id="pricingProjectSelect" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-gray-700">
                                     <option value="">-- Select a project --</option>
-                                    <option value="proj-001" selected>Sunshine Villa - Mr. Johnson (Sunroom)</option>
+                                    <option value="proj-001">Sunshine Villa - Mr. Johnson (Sunroom)</option>
                                     <option value="proj-002">Riverside Estate - Ms. Chen (ADU)</option>
                                     <option value="proj-003">Oak Garden - Mr. Williams (Pergola)</option>
-                                    <option value="proj-004">Lakeside Retreat - Mrs. Davis (Zip Blinds)</option>
+                                    <option value="proj-004" selected>Lakeside Retreat - Mrs. Davis (Zip Blinds)</option>
                                 </select>
 
-                                <!-- Product Model Selector (dynamic, filters by project type) -->
-                                <div class="mt-4">
-                                    <label class="text-sm font-medium text-gray-700 mb-2 block">
-                                        <i class="fas fa-box-open text-emerald-500 mr-1"></i>Product Model
-                                    </label>
-                                    <select id="pricingProductSelect" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-gray-700">
-                                        <!-- Dynamically populated from productCatalog -->
-                                    </select>
-                                </div>
-
-                                <!-- Project Budget Info -->
                                 <div id="pricingProjectInfo" class="mt-4 p-4 bg-gray-50 rounded-lg">
                                     <div class="grid grid-cols-2 gap-4 text-sm">
                                         <div>
                                             <span class="text-gray-500">Client Budget:</span>
-                                            <span class="font-medium text-gray-900 ml-2">$15,000 - $25,000</span>
+                                            <span class="font-medium text-gray-900 ml-2">$2,500 - $6,000</span>
                                         </div>
                                         <div>
                                             <span class="text-gray-500">Product:</span>
-                                            <span class="font-medium text-gray-900 ml-2">Sunroom</span>
+                                            <span class="font-medium text-gray-900 ml-2">Zip Blinds</span>
                                         </div>
                                         <div>
-                                            <span class="text-gray-500">Yard Size:</span>
-                                            <span class="font-medium text-gray-900 ml-2">~400 sq ft</span>
+                                            <span class="text-gray-500">Windows:</span>
+                                            <span class="font-medium text-gray-900 ml-2">4 units (balcony)</span>
                                         </div>
                                         <div>
                                             <span class="text-gray-500">Location:</span>
-                                            <span class="font-medium text-gray-900 ml-2">Los Angeles, CA</span>
+                                            <span class="font-medium text-gray-900 ml-2">San Diego, CA</span>
                                         </div>
                                     </div>
-                                    <div class="mt-3 pt-3 border-t border-gray-200">
-                                        <button id="viewMaterialCostBtn" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-emerald-200 text-emerald-700 text-sm font-medium rounded-lg hover:bg-emerald-50 hover:border-emerald-300 transition">
-                                            <i class="fas fa-box-open text-emerald-500"></i>
-                                            View Material Cost
-                                            <i class="fas fa-arrow-right text-xs text-emerald-400"></i>
+                                </div>
+                            </div>
+
+                            <!-- Step 2: Product Line — Strategy 5: Good / Better / Best Tiering -->
+                            <div class="bg-white rounded-xl border border-gray-200 p-6">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <div class="w-8 h-8 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center font-bold text-sm">2</div>
+                                    <h3 class="font-semibold text-gray-900">Product Line</h3>
+                                    <span class="ml-auto px-2 py-0.5 bg-purple-100 text-purple-700 text-xs font-medium rounded-full">Strategy: Good-Better-Best</span>
+                                </div>
+                                <p class="text-xs text-gray-500 mb-4 ml-11">Three tiers with escalating margins &mdash; entry-level attracts, mid-tier converts, premium profits.</p>
+
+                                <div class="grid grid-cols-3 gap-3">
+                                    <!-- Good -->
+                                    <div class="product-tier-card cursor-pointer" data-tier="good" onclick="selectProductTier('good')">
+                                        <div class="p-4 border-2 border-gray-200 rounded-xl hover:border-emerald-300 transition text-center">
+                                            <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Good</div>
+                                            <div class="text-sm font-semibold text-gray-900">ZB-100</div>
+                                            <div class="text-xs text-gray-500 mt-1">Standard</div>
+                                            <div class="mt-2 text-xs text-gray-400">65mm tube</div>
+                                            <div class="mt-2 text-emerald-600 font-bold text-sm">from $38/sqm</div>
+                                        </div>
+                                    </div>
+                                    <!-- Better (default) -->
+                                    <div class="product-tier-card cursor-pointer" data-tier="better" onclick="selectProductTier('better')">
+                                        <div class="p-4 border-2 border-emerald-500 bg-emerald-50 rounded-xl transition text-center relative">
+                                            <span class="absolute -top-2 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-emerald-500 text-white text-[10px] font-bold rounded-full whitespace-nowrap">POPULAR</span>
+                                            <div class="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-1">Better</div>
+                                            <div class="text-sm font-semibold text-gray-900">ZB-200</div>
+                                            <div class="text-xs text-gray-500 mt-1">Professional</div>
+                                            <div class="mt-2 text-xs text-gray-400">65-75mm tube</div>
+                                            <div class="mt-2 text-emerald-600 font-bold text-sm">from $52/sqm</div>
+                                        </div>
+                                    </div>
+                                    <!-- Best -->
+                                    <div class="product-tier-card cursor-pointer" data-tier="best" onclick="selectProductTier('best')">
+                                        <div class="p-4 border-2 border-gray-200 rounded-xl hover:border-emerald-300 transition text-center">
+                                            <div class="text-xs font-bold text-amber-500 uppercase tracking-wider mb-1">Best</div>
+                                            <div class="text-sm font-semibold text-gray-900">ZB-300</div>
+                                            <div class="text-xs text-gray-500 mt-1">Elite</div>
+                                            <div class="mt-2 text-xs text-gray-400">75mm tube</div>
+                                            <div class="mt-2 text-emerald-600 font-bold text-sm">from $58/sqm</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Fabric sub-selector -->
+                                <div class="mt-4">
+                                    <label class="text-sm font-medium text-gray-700 mb-2 block">
+                                        <i class="fas fa-layer-group text-emerald-500 mr-1"></i>Fabric
+                                    </label>
+                                    <select id="zbFabricSelect" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 text-gray-700">
+                                        <option value="np4000" selected>NP-Standard &mdash; Openness 5% (included)</option>
+                                        <option value="np6000">NP-Premium &mdash; Openness 3%, UV block (+$8/sqm)</option>
+                                        <option value="np8000">NP-Elite &mdash; Openness 1%, blackout (+$18/sqm)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Step 3: Dimensions & Area — Strategy 2: Volume-Tiered Pricing + Strategy 3: Min Charge -->
+                            <div class="bg-white rounded-xl border border-gray-200 p-6">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <div class="w-8 h-8 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center font-bold text-sm">3</div>
+                                    <h3 class="font-semibold text-gray-900">Dimensions & Area</h3>
+                                    <span class="ml-auto px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">Strategy: Volume Tiers</span>
+                                </div>
+                                <p class="text-xs text-gray-500 mb-4 ml-11">Area-based tiered pricing &mdash; larger areas get better per-sqm rates, encouraging upsizing.</p>
+
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="text-xs text-gray-500 mb-1 block">Width (meters)</label>
+                                        <input type="number" id="zbWidth" value="2.4" step="0.1" min="0.3" max="6" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500" oninput="updateZbArea()">
+                                    </div>
+                                    <div>
+                                        <label class="text-xs text-gray-500 mb-1 block">Drop Height (meters)</label>
+                                        <input type="number" id="zbDropHeight" value="2.0" step="0.1" min="0.3" max="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500" oninput="updateZbArea()">
+                                    </div>
+                                </div>
+
+                                <!-- Quantity -->
+                                <div class="mt-4">
+                                    <label class="text-xs text-gray-500 mb-1 block">Number of Units</label>
+                                    <div class="flex items-center gap-3">
+                                        <button class="w-10 h-10 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 flex items-center justify-center" onclick="adjustZbQty(-1)">
+                                            <i class="fas fa-minus text-xs"></i>
+                                        </button>
+                                        <input type="number" id="zbQuantity" value="4" min="1" max="20" class="w-20 text-center px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 font-semibold" oninput="updateZbArea()">
+                                        <button class="w-10 h-10 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 flex items-center justify-center" onclick="adjustZbQty(1)">
+                                            <i class="fas fa-plus text-xs"></i>
                                         </button>
                                     </div>
                                 </div>
-                            </div>
 
-                            <!-- Step 2: Product Configuration -->
-                            <div class="bg-white rounded-xl border border-gray-200 p-6">
-                                <div class="flex items-center gap-3 mb-4">
-                                    <div class="w-8 h-8 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center font-bold text-sm">2</div>
-                                    <h3 class="font-semibold text-gray-900">Product Configuration</h3>
-                                </div>
-
-                                <div class="space-y-4">
-                                    <!-- Size Input -->
-                                    <div>
-                                        <label class="text-sm font-medium text-gray-700 mb-2 block">Dimensions</label>
-                                        <div class="grid grid-cols-3 gap-3">
-                                            <div>
-                                                <label class="text-xs text-gray-500">Width (ft)</label>
-                                                <input type="number" id="configWidth" value="14" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500">
-                                            </div>
-                                            <div>
-                                                <label class="text-xs text-gray-500">Depth (ft)</label>
-                                                <input type="number" id="configDepth" value="20" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500">
-                                            </div>
-                                            <div>
-                                                <label class="text-xs text-gray-500">Height (ft)</label>
-                                                <input type="number" id="configHeight" value="12" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500">
-                                            </div>
+                                <!-- Area Calculation Result -->
+                                <div class="mt-4 p-4 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <div class="text-sm text-gray-500">Per Unit Area</div>
+                                            <div class="text-lg font-bold text-gray-900" id="zbUnitArea">4.80 sqm</div>
                                         </div>
-                                        <div class="mt-2 text-sm text-gray-500">
-                                            <i class="fas fa-ruler-combined mr-1"></i>Total: <span id="totalSqft" class="font-medium text-gray-700">280 sq ft</span>
+                                        <div class="text-right">
+                                            <div class="text-sm text-gray-500">Total Area (all units)</div>
+                                            <div class="text-lg font-bold text-gray-900" id="zbTotalArea">19.20 sqm</div>
                                         </div>
                                     </div>
-
-                                    <!-- Material Selection -->
-                                    <div>
-                                        <label class="text-sm font-medium text-gray-700 mb-2 block">Frame Material</label>
-                                        <div class="grid grid-cols-2 gap-2">
-                                            <div class="material-card selected cursor-pointer" data-material="aluminum">
-                                                <div class="p-3 border-2 border-emerald-500 bg-emerald-50 rounded-lg">
-                                                    <div class="font-medium text-gray-900">Aluminum</div>
-                                                    <div class="text-xs text-gray-500">Premium, durable</div>
-                                                </div>
-                                            </div>
-                                            <div class="material-card cursor-pointer" data-material="vinyl">
-                                                <div class="p-3 border-2 border-gray-200 rounded-lg hover:border-gray-300">
-                                                    <div class="font-medium text-gray-900">Vinyl</div>
-                                                    <div class="text-xs text-gray-500">Budget-friendly</div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <!-- Tier Badge -->
+                                    <div class="mt-3 pt-3 border-t border-gray-200 flex items-center gap-2" id="zbTierBadge">
+                                        <span class="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-full">
+                                            <i class="fas fa-tag mr-1"></i>Tier: &ge;5 sqm rate applied
+                                        </span>
+                                        <span class="text-xs text-emerald-600 font-medium">-16% vs small-area rate</span>
                                     </div>
-
-                                    <!-- Glass Type -->
-                                    <div>
-                                        <label class="text-sm font-medium text-gray-700 mb-2 block">Glass Type</label>
-                                        <select id="glassType" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 text-gray-700">
-                                            <option value="tempered" selected>Tempered Glass (Standard)</option>
-                                            <option value="low-e">Low-E Energy Efficient (+$800)</option>
-                                            <option value="tinted">Tinted Glass (+$500)</option>
-                                            <option value="double-paned">Double-paned Insulated (+$1,200)</option>
-                                        </select>
+                                    <!-- Min Charge Warning (hidden by default) -->
+                                    <div class="mt-2 hidden" id="zbMinChargeWarning">
+                                        <span class="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">
+                                            <i class="fas fa-exclamation-triangle mr-1"></i>Min. charge: area &lt; 1 sqm billed as 1 sqm
+                                        </span>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Step 3: Additional Options -->
+                            <!-- Step 4: Drive System — Strategy 1: Modular Pricing -->
                             <div class="bg-white rounded-xl border border-gray-200 p-6">
-                                <div class="flex items-center gap-3 mb-4">
-                                    <div class="w-8 h-8 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center font-bold text-sm">3</div>
-                                    <h3 class="font-semibold text-gray-900">Additional Options</h3>
-                                </div>
-
-                                <div class="space-y-3">
-                                    <label class="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition">
-                                        <div class="flex items-center gap-3">
-                                            <input type="checkbox" id="optCeilingFan" class="w-4 h-4 text-emerald-600 rounded">
-                                            <span class="text-sm text-gray-700">Ceiling Fan Installation</span>
-                                        </div>
-                                        <span class="text-sm font-medium text-gray-500">+$450</span>
-                                    </label>
-                                    <label class="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition">
-                                        <div class="flex items-center gap-3">
-                                            <input type="checkbox" id="optLighting" class="w-4 h-4 text-emerald-600 rounded">
-                                            <span class="text-sm text-gray-700">LED Lighting Package</span>
-                                        </div>
-                                        <span class="text-sm font-medium text-gray-500">+$680</span>
-                                    </label>
-                                    <label class="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition">
-                                        <div class="flex items-center gap-3">
-                                            <input type="checkbox" id="optElectrical" class="w-4 h-4 text-emerald-600 rounded" checked>
-                                            <span class="text-sm text-gray-700">Electrical Outlets (4)</span>
-                                        </div>
-                                        <span class="text-sm font-medium text-gray-500">+$320</span>
-                                    </label>
-                                    <label class="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition">
-                                        <div class="flex items-center gap-3">
-                                            <input type="checkbox" id="optPermit" class="w-4 h-4 text-emerald-600 rounded" checked>
-                                            <span class="text-sm text-gray-700">Permit Handling Service</span>
-                                        </div>
-                                        <span class="text-sm font-medium text-gray-500">+$750</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <!-- Step 4: Pricing Adjustments -->
-                            <div class="bg-white rounded-xl border border-gray-200 p-6">
-                                <div class="flex items-center gap-3 mb-4">
+                                <div class="flex items-center gap-3 mb-2">
                                     <div class="w-8 h-8 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center font-bold text-sm">4</div>
-                                    <h3 class="font-semibold text-gray-900">Pricing Adjustments</h3>
+                                    <h3 class="font-semibold text-gray-900">Drive System</h3>
+                                    <span class="ml-auto px-2 py-0.5 bg-orange-100 text-orange-700 text-xs font-medium rounded-full">Strategy: Modular Pricing</span>
+                                </div>
+                                <p class="text-xs text-gray-500 mb-4 ml-11">Drive priced independently from fabric &mdash; low entry price, high upgrade margin ($18 &rarr; $215 per unit).</p>
+
+                                <div class="space-y-2" id="driveSystemOptions">
+                                    <!-- Manual Group -->
+                                    <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-1 mt-1">Manual</div>
+                                    <label class="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition drive-option" data-drive="bead-chain">
+                                        <div class="flex items-center gap-3">
+                                            <input type="radio" name="driveSystem" value="bead-chain" class="w-4 h-4 text-emerald-600">
+                                            <div>
+                                                <span class="text-sm text-gray-700 font-medium">Bead Chain</span>
+                                                <span class="text-xs text-gray-400 ml-2">Basic manual</span>
+                                            </div>
+                                        </div>
+                                        <span class="text-sm font-semibold text-gray-700">$18<span class="text-xs text-gray-400 font-normal">/unit</span></span>
+                                    </label>
+                                    <label class="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition drive-option" data-drive="spring-crank">
+                                        <div class="flex items-center gap-3">
+                                            <input type="radio" name="driveSystem" value="spring-crank" class="w-4 h-4 text-emerald-600">
+                                            <div>
+                                                <span class="text-sm text-gray-700 font-medium">Spring Crank</span>
+                                                <span class="text-xs text-gray-400 ml-2">Smooth manual</span>
+                                            </div>
+                                        </div>
+                                        <span class="text-sm font-semibold text-gray-700">$35<span class="text-xs text-gray-400 font-normal">/unit</span></span>
+                                    </label>
+
+                                    <!-- Electric Group -->
+                                    <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-1 mt-3">Electric</div>
+                                    <label class="flex items-center justify-between p-3 bg-emerald-50 rounded-lg cursor-pointer hover:bg-emerald-100 transition drive-option border border-emerald-200" data-drive="electric-std">
+                                        <div class="flex items-center gap-3">
+                                            <input type="radio" name="driveSystem" value="electric-std" class="w-4 h-4 text-emerald-600" checked>
+                                            <div>
+                                                <span class="text-sm text-gray-700 font-medium">Standard Electric</span>
+                                                <span class="px-1.5 py-0.5 bg-emerald-500 text-white text-[10px] rounded ml-1">Recommended</span>
+                                            </div>
+                                        </div>
+                                        <span class="text-sm font-semibold text-emerald-700">$68<span class="text-xs text-gray-400 font-normal">/unit</span></span>
+                                    </label>
+                                    <label class="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition drive-option" data-drive="electric-prem">
+                                        <div class="flex items-center gap-3">
+                                            <input type="radio" name="driveSystem" value="electric-prem" class="w-4 h-4 text-emerald-600">
+                                            <div>
+                                                <span class="text-sm text-gray-700 font-medium">Premium Electric</span>
+                                                <span class="text-xs text-gray-400 ml-2">Quiet, waterproof</span>
+                                            </div>
+                                        </div>
+                                        <span class="text-sm font-semibold text-gray-700">$92<span class="text-xs text-gray-400 font-normal">/unit</span></span>
+                                    </label>
+
+                                    <!-- Premium Group -->
+                                    <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-1 mt-3">Premium</div>
+                                    <label class="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition drive-option" data-drive="dual-mode">
+                                        <div class="flex items-center gap-3">
+                                            <input type="radio" name="driveSystem" value="dual-mode" class="w-4 h-4 text-emerald-600">
+                                            <div>
+                                                <span class="text-sm text-gray-700 font-medium">Dual Mode</span>
+                                                <span class="text-xs text-gray-400 ml-2">Electric + manual backup</span>
+                                            </div>
+                                        </div>
+                                        <span class="text-sm font-semibold text-gray-700">$165<span class="text-xs text-gray-400 font-normal">/unit</span></span>
+                                    </label>
+                                    <label class="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition drive-option" data-drive="solar-kit">
+                                        <div class="flex items-center gap-3">
+                                            <input type="radio" name="driveSystem" value="solar-kit" class="w-4 h-4 text-emerald-600">
+                                            <div>
+                                                <span class="text-sm text-gray-700 font-medium">Solar Power Kit</span>
+                                                <span class="text-xs text-gray-400 ml-2">No wiring needed</span>
+                                            </div>
+                                        </div>
+                                        <span class="text-sm font-semibold text-gray-700">$215<span class="text-xs text-gray-400 font-normal">/unit</span></span>
+                                    </label>
                                 </div>
 
-                                <div class="space-y-4">
-                                    <div>
-                                        <label class="text-sm font-medium text-gray-700 mb-2 block">Discount (%)</label>
-                                        <div class="flex items-center gap-3">
-                                            <input type="range" id="discountSlider" min="0" max="20" value="5" class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
-                                            <span id="discountValue" class="text-sm font-bold text-emerald-600 w-12 text-right">5%</span>
+                                <!-- Drive Price Spread Info -->
+                                <div class="mt-3 p-3 bg-blue-50 rounded-lg text-xs text-blue-700 flex items-center gap-2">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>Drive system spans $18 &rarr; $215 per unit (<strong>12&times; upgrade range</strong>) &mdash; fabric is the entry point, drive is the profit lever.</span>
+                                </div>
+                            </div>
+
+                            <!-- Step 5: Surcharges & Adjustments — Strategy 4: Dimensional Surcharges -->
+                            <div class="bg-white rounded-xl border border-gray-200 p-6">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <div class="w-8 h-8 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center font-bold text-sm">5</div>
+                                    <h3 class="font-semibold text-gray-900">Adjustments</h3>
+                                    <span class="ml-auto px-2 py-0.5 bg-red-100 text-red-700 text-xs font-medium rounded-full">Strategy: Surcharges</span>
+                                </div>
+
+                                <!-- Height Surcharge (auto-calculated) -->
+                                <div class="p-4 rounded-lg mb-4" id="zbHeightSurchargeBox" style="background:#f0fdf4;border:1px solid #bbf7d0;">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fas fa-ruler-vertical text-emerald-600"></i>
+                                            <span class="text-sm font-medium text-emerald-800">Height Surcharge</span>
                                         </div>
+                                        <span class="text-sm font-bold text-emerald-800" id="zbHeightSurchargeLabel">None &mdash; standard height</span>
                                     </div>
+                                    <div class="mt-2 text-xs text-emerald-700" id="zbHeightSurchargeDetail">
+                                        Drop height 2.0m exceeds 1.5m baseline &mdash; no surcharge applies.
+                                    </div>
+                                    <div class="mt-2 grid grid-cols-4 gap-1 text-[10px] text-center">
+                                        <div class="p-1 bg-red-100 text-red-700 rounded">&le;1.0m: +$15/sqm</div>
+                                        <div class="p-1 bg-orange-100 text-orange-700 rounded">1.01-1.3m: +$8/sqm</div>
+                                        <div class="p-1 bg-yellow-100 text-yellow-700 rounded">1.31-1.5m: +$4/sqm</div>
+                                        <div class="p-1 bg-green-100 text-green-700 rounded font-bold">&ge;1.51m: $0</div>
+                                    </div>
+                                </div>
 
-                                    <div>
-                                        <label class="text-sm font-medium text-gray-700 mb-2 block">Urgency Surcharge</label>
-                                        <select id="urgencySurcharge" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 text-gray-700">
-                                            <option value="0">Standard Timeline (No surcharge)</option>
-                                            <option value="500">Express (+2 weeks) +$500</option>
-                                            <option value="1200">Rush (+1 week) +$1,200</option>
-                                        </select>
+                                <!-- Discount -->
+                                <div class="mb-4">
+                                    <label class="text-sm font-medium text-gray-700 mb-2 block">Dealer Discount</label>
+                                    <div class="flex items-center gap-3">
+                                        <input type="range" id="discountSlider" min="0" max="20" value="5" class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" oninput="document.getElementById('discountValue').textContent=this.value+'%'">
+                                        <span id="discountValue" class="text-sm font-bold text-emerald-600 w-12 text-right">5%</span>
                                     </div>
+                                </div>
 
-                                    <div>
-                                        <label class="text-sm font-medium text-gray-700 mb-2 block">Notes</label>
-                                        <textarea id="pricingNotes" rows="2" placeholder="Special requirements, customer preferences..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm"></textarea>
-                                    </div>
+                                <!-- Installation -->
+                                <div class="mb-4">
+                                    <label class="text-sm font-medium text-gray-700 mb-2 block">Installation</label>
+                                    <select id="zbInstallation" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 text-gray-700">
+                                        <option value="0">Customer self-install ($0)</option>
+                                        <option value="45" selected>Standard install ($45/unit)</option>
+                                        <option value="85">Premium install with demo ($85/unit)</option>
+                                    </select>
+                                </div>
+
+                                <!-- Notes -->
+                                <div>
+                                    <label class="text-sm font-medium text-gray-700 mb-2 block">Notes</label>
+                                    <textarea id="pricingNotes" rows="2" placeholder="Custom color, special mounting, client preferences..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm"></textarea>
                                 </div>
                             </div>
 
@@ -1434,67 +1649,126 @@
 
                         <!-- ========== OUTPUT SECTION ========== -->
                         <div class="space-y-6">
-                            <!-- Cost Breakdown -->
+
+                            <!-- Modular Cost Breakdown -->
                             <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
                                 <div class="p-4 border-b border-gray-200">
                                     <div class="flex items-center justify-between">
-                                        <h3 class="font-semibold text-gray-900">Cost Breakdown</h3>
+                                        <h3 class="font-semibold text-gray-900">Modular Cost Breakdown</h3>
                                         <span class="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-full">
-                                            <i class="fas fa-check-circle mr-1"></i>Calculated
+                                            <i class="fas fa-cubes mr-1"></i>Modular Split
                                         </span>
                                     </div>
                                 </div>
 
-                                <div class="p-5 space-y-3">
-                                    <!-- Materials -->
+                                <div class="p-5 space-y-3" id="costBreakdownBody">
+                                    <!-- Fabric Cost -->
                                     <div class="flex items-center justify-between py-2 border-b border-gray-100">
                                         <div class="flex items-center gap-2">
-                                            <i class="fas fa-box text-gray-400 w-5"></i>
-                                            <span class="text-sm text-gray-700">Materials</span>
+                                            <i class="fas fa-scroll text-emerald-500 w-5"></i>
+                                            <div>
+                                                <span class="text-sm text-gray-700">Fabric</span>
+                                                <span class="text-xs text-gray-400 ml-1" id="costFabricDetail">(ZB-200 &middot; $52/sqm &times; 4.80 sqm &times; 4 units)</span>
+                                            </div>
                                         </div>
-                                        <span class="font-medium text-gray-900">$8,450</span>
+                                        <span class="font-medium text-gray-900" id="costFabricValue">$998</span>
                                     </div>
 
-                                    <!-- Labor -->
+                                    <!-- Drive System -->
                                     <div class="flex items-center justify-between py-2 border-b border-gray-100">
                                         <div class="flex items-center gap-2">
-                                            <i class="fas fa-hard-hat text-gray-400 w-5"></i>
-                                            <span class="text-sm text-gray-700">Labor</span>
+                                            <i class="fas fa-cog text-blue-500 w-5"></i>
+                                            <div>
+                                                <span class="text-sm text-gray-700">Drive System</span>
+                                                <span class="text-xs text-gray-400 ml-1" id="costDriveDetail">(Standard Electric &middot; $68 &times; 4 units)</span>
+                                            </div>
                                         </div>
-                                        <span class="font-medium text-gray-900">$4,200</span>
+                                        <span class="font-medium text-gray-900" id="costDriveValue">$272</span>
                                     </div>
 
-                                    <!-- Equipment -->
+                                    <!-- Fabric Upgrade -->
+                                    <div class="flex items-center justify-between py-2 border-b border-gray-100" id="costFabricUpgradeRow" style="display:none;">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fas fa-arrow-up text-purple-500 w-5"></i>
+                                            <span class="text-sm text-gray-700">Fabric Upgrade</span>
+                                        </div>
+                                        <span class="font-medium text-purple-600" id="costFabricUpgradeValue">$0</span>
+                                    </div>
+
+                                    <!-- Height Surcharge -->
+                                    <div class="flex items-center justify-between py-2 border-b border-gray-100" id="costHeightRow" style="display:none;">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fas fa-ruler-vertical text-amber-500 w-5"></i>
+                                            <span class="text-sm text-gray-700">Height Surcharge</span>
+                                        </div>
+                                        <span class="font-medium text-amber-600" id="costHeightValue">$0</span>
+                                    </div>
+
+                                    <!-- Min Charge Adj -->
+                                    <div class="flex items-center justify-between py-2 border-b border-gray-100 hidden" id="costMinChargeRow">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fas fa-exclamation-circle text-red-500 w-5"></i>
+                                            <span class="text-sm text-gray-700">Min. Charge Adjustment</span>
+                                        </div>
+                                        <span class="font-medium text-red-600" id="costMinChargeValue">$0</span>
+                                    </div>
+
+                                    <!-- Installation -->
+                                    <div class="flex items-center justify-between py-2 border-b border-gray-100">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fas fa-wrench text-gray-400 w-5"></i>
+                                            <span class="text-sm text-gray-700">Installation</span>
+                                        </div>
+                                        <span class="font-medium text-gray-900" id="costInstallValue">$180</span>
+                                    </div>
+
+                                    <!-- Hardware & Accessories -->
                                     <div class="flex items-center justify-between py-2 border-b border-gray-100">
                                         <div class="flex items-center gap-2">
                                             <i class="fas fa-tools text-gray-400 w-5"></i>
-                                            <span class="text-sm text-gray-700">Equipment Rental</span>
+                                            <span class="text-sm text-gray-700">Hardware & Accessories</span>
                                         </div>
-                                        <span class="font-medium text-gray-900">$850</span>
+                                        <span class="font-medium text-gray-900" id="costHardwareValue">$120</span>
                                     </div>
 
-                                    <!-- Permits -->
-                                    <div class="flex items-center justify-between py-2 border-b border-gray-100">
-                                        <div class="flex items-center gap-2">
-                                            <i class="fas fa-file-alt text-gray-400 w-5"></i>
-                                            <span class="text-sm text-gray-700">Permits & Fees</span>
-                                        </div>
-                                        <span class="font-medium text-gray-900">$1,070</span>
-                                    </div>
-
-                                    <!-- Additional Options -->
-                                    <div class="flex items-center justify-between py-2 border-b border-gray-100">
-                                        <div class="flex items-center gap-2">
-                                            <i class="fas fa-plus-circle text-gray-400 w-5"></i>
-                                            <span class="text-sm text-gray-700">Additional Options</span>
-                                        </div>
-                                        <span class="font-medium text-gray-900">$1,070</span>
-                                    </div>
-
-                                    <!-- Subtotal -->
+                                    <!-- Total Cost -->
                                     <div class="flex items-center justify-between py-3 bg-gray-50 rounded-lg px-3 mt-2">
                                         <span class="font-semibold text-gray-700">Total Cost</span>
-                                        <span class="font-bold text-lg text-gray-900">$15,640</span>
+                                        <span class="font-bold text-lg text-gray-900" id="costTotalValue">$1,570</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Active Pricing Strategies -->
+                            <div class="bg-white rounded-xl border border-gray-200 p-5">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h3 class="font-semibold text-gray-900">Active Strategies</h3>
+                                    <span class="text-xs text-gray-500"><i class="fas fa-brain mr-1"></i>Auto-detected</span>
+                                </div>
+                                <div class="space-y-2" id="activeStrategies">
+                                    <div class="flex items-center gap-2 p-2 bg-emerald-50 rounded-lg text-xs">
+                                        <i class="fas fa-check-circle text-emerald-500"></i>
+                                        <span class="text-emerald-800"><strong>Modular Split</strong> &mdash; Fabric $998 + Drive $272 quoted separately</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 p-2 bg-blue-50 rounded-lg text-xs">
+                                        <i class="fas fa-check-circle text-blue-500"></i>
+                                        <span class="text-blue-800"><strong>Volume Tier</strong> &mdash; &ge;5 sqm per unit rate applied, saving 16% vs &lt;5 sqm rate</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 p-2 bg-purple-50 rounded-lg text-xs">
+                                        <i class="fas fa-check-circle text-purple-500"></i>
+                                        <span class="text-purple-800"><strong>Product Tier</strong> &mdash; &ldquo;Better&rdquo; (ZB-200) selected, mid-tier conversion play</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 p-2 bg-gray-50 rounded-lg text-xs text-gray-400">
+                                        <i class="fas fa-minus-circle"></i>
+                                        <span><strong>Height Surcharge</strong> &mdash; Not triggered (drop &gt; 1.5m)</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 p-2 bg-gray-50 rounded-lg text-xs text-gray-400">
+                                        <i class="fas fa-minus-circle"></i>
+                                        <span><strong>Min. Charge</strong> &mdash; Not triggered (area &ge; 1 sqm)</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 p-2 bg-orange-50 rounded-lg text-xs">
+                                        <i class="fas fa-check-circle text-orange-500"></i>
+                                        <span class="text-orange-800" id="strategyDualPrice"><strong>Dual Price List</strong> &mdash; Retail mode active (Wholesale saves ~19%)</span>
                                     </div>
                                 </div>
                             </div>
@@ -1505,15 +1779,15 @@
 
                                 <div class="grid grid-cols-3 gap-4 mb-4">
                                     <div class="text-center p-3 bg-blue-50 rounded-lg">
-                                        <div class="text-2xl font-bold text-blue-600">$18.5K</div>
+                                        <div class="text-2xl font-bold text-blue-600" id="profitPrice">$1.9K</div>
                                         <div class="text-xs text-gray-500 mt-1">Suggested Price</div>
                                     </div>
                                     <div class="text-center p-3 bg-emerald-50 rounded-lg">
-                                        <div class="text-2xl font-bold text-emerald-600">$2,860</div>
+                                        <div class="text-2xl font-bold text-emerald-600" id="profitAmount">$284</div>
                                         <div class="text-xs text-gray-500 mt-1">Net Profit</div>
                                     </div>
                                     <div class="text-center p-3 bg-purple-50 rounded-lg">
-                                        <div class="text-2xl font-bold text-purple-600">18.3%</div>
+                                        <div class="text-2xl font-bold text-purple-600" id="profitMargin">15.2%</div>
                                         <div class="text-xs text-gray-500 mt-1">Profit Margin</div>
                                     </div>
                                 </div>
@@ -1521,7 +1795,7 @@
                                 <!-- Margin Indicator -->
                                 <div class="relative h-3 bg-gray-200 rounded-full overflow-hidden">
                                     <div class="absolute left-0 top-0 h-full bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 w-full"></div>
-                                    <div id="marginIndicator" class="absolute top-0 h-full w-1 bg-gray-900 shadow-lg" style="left: 65%"></div>
+                                    <div id="marginIndicator" class="absolute top-0 h-full w-1 bg-gray-900 shadow-lg" style="left: 50%"></div>
                                 </div>
                                 <div class="flex justify-between text-xs text-gray-500 mt-1">
                                     <span>Risk Zone (&lt;10%)</span>
@@ -1542,11 +1816,11 @@
                                     <div class="quote-option p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-emerald-300 transition" data-quote="conservative">
                                         <div class="flex items-center justify-between mb-2">
                                             <span class="font-medium text-gray-900">Conservative</span>
-                                            <span class="text-lg font-bold text-gray-900">$17,200</span>
+                                            <span class="text-lg font-bold text-gray-900" id="quoteConservativePrice">$1,727</span>
                                         </div>
                                         <div class="flex items-center justify-between text-xs">
-                                            <span class="text-gray-500">10% margin • Fast approval likely</span>
-                                            <span class="text-emerald-600 font-medium">$1,560 profit</span>
+                                            <span class="text-gray-500">10% margin &middot; Fast approval likely</span>
+                                            <span class="text-emerald-600 font-medium" id="quoteConservativeProfit">$157 profit</span>
                                         </div>
                                     </div>
 
@@ -1557,11 +1831,11 @@
                                                 <span class="font-medium text-gray-900">Recommended</span>
                                                 <span class="px-2 py-0.5 bg-emerald-500 text-white text-xs rounded-full">Best Match</span>
                                             </div>
-                                            <span class="text-lg font-bold text-emerald-600">$18,500</span>
+                                            <span class="text-lg font-bold text-emerald-600" id="quoteRecommendedPrice">$1,854</span>
                                         </div>
                                         <div class="flex items-center justify-between text-xs">
-                                            <span class="text-gray-500">18% margin • Within budget range</span>
-                                            <span class="text-emerald-600 font-medium">$2,860 profit</span>
+                                            <span class="text-gray-500">18% margin &middot; Within budget range</span>
+                                            <span class="text-emerald-600 font-medium" id="quoteRecommendedProfit">$284 profit</span>
                                         </div>
                                     </div>
 
@@ -1569,11 +1843,11 @@
                                     <div class="quote-option p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-emerald-300 transition" data-quote="premium">
                                         <div class="flex items-center justify-between mb-2">
                                             <span class="font-medium text-gray-900">Premium</span>
-                                            <span class="text-lg font-bold text-gray-900">$21,000</span>
+                                            <span class="text-lg font-bold text-gray-900" id="quotePremiumPrice">$2,120</span>
                                         </div>
                                         <div class="flex items-center justify-between text-xs">
-                                            <span class="text-gray-500">25% margin • High perceived value</span>
-                                            <span class="text-emerald-600 font-medium">$5,360 profit</span>
+                                            <span class="text-gray-500">25% margin &middot; High perceived value</span>
+                                            <span class="text-emerald-600 font-medium" id="quotePremiumProfit">$550 profit</span>
                                         </div>
                                     </div>
                                 </div>
@@ -1587,9 +1861,10 @@
                                     </div>
                                     <div class="flex-1">
                                         <h4 class="font-semibold text-amber-800 mb-1">Risk Alerts</h4>
-                                        <ul class="space-y-1 text-sm text-amber-700">
-                                            <li><i class="fas fa-info-circle mr-1"></i>Material prices may increase 3-5% in Q2 (aluminum tariff)</li>
-                                            <li><i class="fas fa-info-circle mr-1"></i>Permit processing in LA averages 3-4 weeks currently</li>
+                                        <ul class="space-y-1 text-sm text-amber-700" id="pricingRiskAlerts">
+                                            <li><i class="fas fa-info-circle mr-1"></i>Fabric lead time currently 2-3 weeks for NP-Premium grade</li>
+                                            <li><i class="fas fa-info-circle mr-1"></i>Solar kit availability limited &mdash; confirm stock before quoting</li>
+                                            <li><i class="fas fa-info-circle mr-1"></i>Width &gt;4m requires 75mm tube upgrade (auto-applied for ZB-200/300)</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -3450,119 +3725,129 @@
                     </div>
                 </div>
 
-                <!-- ===== Projects Page (Master-Detail Layout) ===== -->
+                <!-- ===== Projects Page (v1.2.0 Full-Width Workbench) ===== -->
                 <div class="page-content" id="page-projects">
-                    <div class="flex gap-0 h-[calc(100vh-80px)]">
+                    <div class="overflow-y-auto" style="height:calc(100vh - 80px); padding: 24px;">
 
-                        <!-- Left Panel: Project List -->
-                        <div id="projectListPanel" class="w-80 flex-shrink-0 border-r border-gray-200 bg-white flex flex-col transition-all duration-300 ease-in-out overflow-hidden">
-                            <!-- Full list header (shown when expanded) -->
-                            <div id="projListHeaderFull" class="p-4 border-b border-gray-100">
-                                <div class="flex items-center gap-2 mb-3">
-                                    <div class="relative flex-1">
-                                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
-                                        <input type="text" id="projectListSearch" placeholder="Search projects..." class="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-300" oninput="filterProjectList()">
-                                    </div>
-                                    <button onclick="openCreateProjectModal()" class="w-9 h-9 rounded-lg bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center transition shadow-sm flex-shrink-0" title="Create New Project">
-                                        <i class="fas fa-plus text-sm"></i>
-                                    </button>
-                                </div>
-                                <div class="flex gap-1.5 mt-3">
-                                    <button class="proj-filter-btn px-2.5 py-1 bg-gray-900 text-white text-xs rounded-full" data-filter="all" onclick="filterProjectListByStatus('all')">All</button>
-                                    <button class="proj-filter-btn px-2.5 py-1 bg-white border text-gray-500 text-xs rounded-full hover:bg-gray-50" data-filter="active" onclick="filterProjectListByStatus('active')">Active</button>
-                                    <button class="proj-filter-btn px-2.5 py-1 bg-white border text-gray-500 text-xs rounded-full hover:bg-gray-50" data-filter="completed" onclick="filterProjectListByStatus('completed')">Done</button>
-                                </div>
-                            </div>
-                            <!-- Collapsed header (shown when collapsed) -->
-                            <div id="projListHeaderCollapsed" class="hidden flex-col items-center py-3 px-1 border-b border-gray-100 gap-2">
-                                <button onclick="toggleProjectListPanel()" class="w-9 h-9 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition" title="Expand project list">
-                                    <i class="fas fa-chevron-right text-gray-500 text-xs"></i>
-                                </button>
-                            </div>
-                            <!-- Full list container -->
-                            <div class="flex-1 overflow-y-auto" id="projectListContainer">
-                                <!-- Populated by JS -->
-                            </div>
-                            <!-- Collapsed list container -->
-                            <div id="projectListCollapsed" class="hidden flex-1 overflow-y-auto">
-                                <!-- Populated by JS: mini avatars -->
-                            </div>
+                        <!-- Default empty state (no project selected) -->
+                        <div id="projectDetailEmpty" class="flex flex-col items-center justify-center text-gray-400" style="height:60vh;">
+                            <i class="fas fa-folder-open text-6xl mb-4" style="color:#d1d5db;"></i>
+                            <p class="text-lg font-medium">Select a project to get started</p>
+                            <p class="text-sm mt-1">Choose from the sidebar or create a new project.</p>
+                            <button onclick="openCreateProjectModal()" class="mt-5 px-5 py-2.5 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition">
+                                <i class="fas fa-plus mr-2 text-xs"></i>New Project
+                            </button>
                         </div>
 
-                        <!-- Right Panel: Project Detail -->
-                        <div class="flex-1 overflow-y-auto bg-gray-50/50 p-6 transition-all duration-300" id="projectDetailPanel">
-                            <!-- Default empty state -->
-                            <div id="projectDetailEmpty" class="flex flex-col items-center justify-center h-full text-gray-400">
-                                <i class="fas fa-folder-open text-5xl mb-4"></i>
-                                <p class="text-lg font-medium">Select a project</p>
-                                <p class="text-sm mt-1">Choose a project from the list to view details</p>
+                        <!-- Project Workbench Content (shown when project selected) -->
+                        <div id="projectDetailContent" class="hidden">
+
+                            <!-- Project Header -->
+                            <div class="flex items-start justify-between mb-5">
+                                <div>
+                                    <h2 class="text-xl font-bold text-gray-900" id="projDetailName"></h2>
+                                    <p class="text-sm text-gray-500 mt-1" id="projDetailMeta"></p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-medium px-3 py-1 rounded-full" id="projDetailStatus"></span>
+                                </div>
                             </div>
 
-                            <!-- Project Detail Content (hidden initially) -->
-                            <div id="projectDetailContent" class="hidden">
-                                <!-- Project Header -->
-                                <div class="flex items-start justify-between mb-6">
-                                    <div class="flex items-center gap-3">
-                                        <button onclick="toggleProjectListPanel()" id="projListToggleBtn" class="w-8 h-8 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 flex items-center justify-center transition shadow-sm" title="Toggle project list">
-                                            <i class="fas fa-bars text-gray-400 text-sm"></i>
-                                        </button>
-                                        <div>
-                                            <h2 class="text-xl font-bold text-gray-900" id="projDetailName"></h2>
-                                            <p class="text-sm text-gray-500 mt-1" id="projDetailMeta"></p>
-                                        </div>
+                            <!-- v1.2.0: Agent Toolbar (horizontal) -->
+                            <div class="agent-toolbar" id="agentToolbar">
+                                <div class="agent-toolbar-card" data-agent="ai-designer" onclick="toggleAgentPanel('ai-designer')"
+                                     style="--agent-icon:#7c3aed;--agent-bg:#f3e8ff;--agent-border:#ddd6fe;">
+                                    <i class="fas fa-palette"></i>
+                                    <div class="agent-label">AI Designer</div>
+                                </div>
+                                <div class="agent-toolbar-card" data-agent="pricing-agent" onclick="toggleAgentPanel('pricing-agent')"
+                                     style="--agent-icon:#059669;--agent-bg:#ecfdf5;--agent-border:#a7f3d0;">
+                                    <i class="fas fa-chart-line"></i>
+                                    <div class="agent-label">Pricing</div>
+                                </div>
+                                <div class="agent-toolbar-card" data-agent="compliance-agent" onclick="toggleAgentPanel('compliance-agent')"
+                                     style="--agent-icon:#2563eb;--agent-bg:#eff6ff;--agent-border:#bfdbfe;">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <div class="agent-label">Compliance</div>
+                                </div>
+                                <div class="agent-toolbar-card" data-agent="customer-service-agent" onclick="toggleAgentPanel('customer-service-agent')"
+                                     style="--agent-icon:#ca8a04;--agent-bg:#fefce8;--agent-border:#fde68a;">
+                                    <i class="fas fa-headset"></i>
+                                    <div class="agent-label">CS Exec</div>
+                                </div>
+                                <div class="agent-toolbar-card" data-agent="knowledge-base" onclick="toggleAgentPanel('knowledge-base')"
+                                     style="--agent-icon:#4b5563;--agent-bg:#f3f4f6;--agent-border:#d1d5db;">
+                                    <i class="fas fa-brain"></i>
+                                    <div class="agent-label">Knowledge</div>
+                                </div>
+                                <div class="agent-toolbar-card" data-agent="chatbot" onclick="toggleAgentPanel('chatbot', event)"
+                                     style="--agent-icon:#dc2626;--agent-bg:#fef2f2;--agent-border:#fecaca;">
+                                    <i class="fas fa-robot"></i>
+                                    <div class="agent-label">Chatbot</div>
+                                </div>
+                            </div>
+
+                            <!-- Agent Panel Container (expands below toolbar) -->
+                            <div class="agent-panel-container" id="agentPanelContainer">
+                                <div class="agent-panel-inner">
+                                    <button class="agent-panel-close" onclick="closeAgentPanel()">
+                                        <i class="fas fa-times text-xs"></i>
+                                    </button>
+                                    <div id="agentPanelContent">
+                                        <!-- Agent content loaded dynamically -->
                                     </div>
+                                </div>
+                            </div>
+
+                            <!-- Service Workflow Section -->
+                            <div class="bg-white rounded-xl border border-gray-200 mb-5 overflow-hidden">
+                                <div class="flex items-center gap-2 px-5 py-3 border-b border-gray-100 bg-gray-50/70">
+                                    <i class="fas fa-project-diagram text-blue-600 text-sm"></i>
+                                    <h3 class="text-sm font-semibold text-gray-700">Service Workflow</h3>
+                                    <span class="text-xs text-gray-400 ml-auto" id="projWorkflowHint">Click a step to view details</span>
+                                </div>
+                                <div class="p-5">
+                                    <div class="flex items-center justify-between gap-2" id="projWorkflowSteps">
+                                        <!-- 6-step pipeline rendered by JS -->
+                                    </div>
+                                </div>
+                                <!-- Step Detail Expansion -->
+                                <div id="projStepDetail" class="hidden border-t border-gray-100">
+                                </div>
+                            </div>
+
+                            <!-- Risk List Section -->
+                            <div class="bg-white rounded-xl border border-gray-200 mb-5 overflow-hidden">
+                                <div class="flex items-center justify-between px-5 py-3 border-b border-gray-100 bg-gray-50/70">
                                     <div class="flex items-center gap-2">
-                                        <span class="text-xs font-medium px-3 py-1 rounded-full" id="projDetailStatus"></span>
+                                        <i class="fas fa-exclamation-triangle text-amber-500 text-sm"></i>
+                                        <h3 class="text-sm font-semibold text-gray-700">Risk List</h3>
                                     </div>
+                                    <span class="text-xs text-gray-400" id="projRiskCount"></span>
                                 </div>
-
-                                <!-- Service Workflow Section -->
-                                <div class="bg-white rounded-xl border border-gray-200 mb-5 overflow-hidden">
-                                    <div class="flex items-center gap-2 px-5 py-3 border-b border-gray-100 bg-gray-50/70">
-                                        <i class="fas fa-project-diagram text-blue-600 text-sm"></i>
-                                        <h3 class="text-sm font-semibold text-gray-700">Service Workflow</h3>
-                                        <span class="text-xs text-gray-400 ml-auto" id="projWorkflowHint">Click a step to view details</span>
-                                    </div>
-                                    <div class="p-5">
-                                        <div class="flex items-center justify-between gap-2" id="projWorkflowSteps">
-                                            <!-- 6-step pipeline rendered by JS -->
-                                        </div>
-                                    </div>
-                                    <!-- Step Detail Expansion -->
-                                    <div id="projStepDetail" class="hidden border-t border-gray-100">
-                                    </div>
+                                <div class="divide-y divide-gray-50" id="projRiskList">
+                                    <!-- Populated by JS -->
                                 </div>
+                            </div>
 
-                                <!-- Risk List Section -->
-                                <div class="bg-white rounded-xl border border-gray-200 mb-5 overflow-hidden">
-                                    <div class="flex items-center justify-between px-5 py-3 border-b border-gray-100 bg-gray-50/70">
-                                        <div class="flex items-center gap-2">
-                                            <i class="fas fa-exclamation-triangle text-amber-500 text-sm"></i>
-                                            <h3 class="text-sm font-semibold text-gray-700">Risk List</h3>
-                                        </div>
-                                        <span class="text-xs text-gray-400" id="projRiskCount"></span>
+                            <!-- Issue List Section -->
+                            <div class="bg-white rounded-xl border border-gray-200 mb-5 overflow-hidden">
+                                <div class="flex items-center justify-between px-5 py-3 border-b border-gray-100 bg-gray-50/70">
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas fa-bug text-red-500 text-sm"></i>
+                                        <h3 class="text-sm font-semibold text-gray-700">Issue List</h3>
                                     </div>
-                                    <div class="divide-y divide-gray-50" id="projRiskList">
-                                        <!-- Populated by JS -->
-                                    </div>
+                                    <span class="text-xs text-gray-400" id="projIssueCount"></span>
                                 </div>
-
-                                <!-- Issue List Section -->
-                                <div class="bg-white rounded-xl border border-gray-200 mb-5 overflow-hidden">
-                                    <div class="flex items-center justify-between px-5 py-3 border-b border-gray-100 bg-gray-50/70">
-                                        <div class="flex items-center gap-2">
-                                            <i class="fas fa-bug text-red-500 text-sm"></i>
-                                            <h3 class="text-sm font-semibold text-gray-700">Issue List</h3>
-                                        </div>
-                                        <span class="text-xs text-gray-400" id="projIssueCount"></span>
-                                    </div>
-                                    <div class="divide-y divide-gray-50" id="projIssueList">
-                                        <!-- Populated by JS -->
-                                    </div>
+                                <div class="divide-y divide-gray-50" id="projIssueList">
+                                    <!-- Populated by JS -->
                                 </div>
+                            </div>
 
+                            <!-- Customer & Order Row -->
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
                                 <!-- Customer Section -->
-                                <div class="bg-white rounded-xl border border-gray-200 mb-5 overflow-hidden">
+                                <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
                                     <div class="flex items-center gap-2 px-5 py-3 border-b border-gray-100 bg-gray-50/70">
                                         <i class="fas fa-user text-green-600 text-sm"></i>
                                         <h3 class="text-sm font-semibold text-gray-700">Customer</h3>
@@ -3573,7 +3858,7 @@
                                 </div>
 
                                 <!-- Order Section -->
-                                <div class="bg-white rounded-xl border border-gray-200 mb-5 overflow-hidden">
+                                <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
                                     <div class="flex items-center gap-2 px-5 py-3 border-b border-gray-100 bg-gray-50/70">
                                         <i class="fas fa-file-invoice text-blue-600 text-sm"></i>
                                         <h3 class="text-sm font-semibold text-gray-700">Order</h3>
@@ -3582,16 +3867,16 @@
                                         <!-- Populated by JS -->
                                     </div>
                                 </div>
+                            </div>
 
-                                <!-- Revenue Section -->
-                                <div class="bg-white rounded-xl border border-gray-200 mb-5 overflow-hidden">
-                                    <div class="flex items-center gap-2 px-5 py-3 border-b border-gray-100 bg-gray-50/70">
-                                        <i class="fas fa-dollar-sign text-amber-600 text-sm"></i>
-                                        <h3 class="text-sm font-semibold text-gray-700">Revenue</h3>
-                                    </div>
-                                    <div class="p-5" id="projRevenueInfo">
-                                        <!-- Populated by JS -->
-                                    </div>
+                            <!-- Revenue Section -->
+                            <div class="bg-white rounded-xl border border-gray-200 mb-5 overflow-hidden">
+                                <div class="flex items-center gap-2 px-5 py-3 border-b border-gray-100 bg-gray-50/70">
+                                    <i class="fas fa-dollar-sign text-amber-600 text-sm"></i>
+                                    <h3 class="text-sm font-semibold text-gray-700">Revenue</h3>
+                                </div>
+                                <div class="p-5" id="projRevenueInfo">
+                                    <!-- Populated by JS -->
                                 </div>
                             </div>
                         </div>
@@ -4034,9 +4319,12 @@
             document.getElementById('userRole').textContent = user.role;
         }
 
-        // ===== Page Navigation =====
+        // ===== Page Navigation (v1.2.0 — project-centric) =====
+        let currentSelectedProjectId = null;
+        let currentActiveAgent = null;
+
         function navigateToPage(pageName) {
-            // Update nav active state
+            // Update nav active state (only for main menu / settings items)
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             const navItem = document.querySelector(`.nav-item[data-page="${pageName}"]`);
             if (navItem) {
@@ -4050,23 +4338,184 @@
             if (page) {
                 page.classList.add('active');
             } else {
-                // For pages not yet implemented, show a placeholder
                 const placeholder = document.getElementById('page-dashboard');
                 if (placeholder) placeholder.classList.add('active');
             }
 
-            // B2B Chatbot: hide FAB on chatbot page, close floating panel
+            // B2B Chatbot: manage FAB visibility
             const fab = document.getElementById('b2bChatFab');
             if (fab) {
-                if (pageName === 'chatbot') {
-                    fab.classList.add('hidden-fab');
-                    document.getElementById('b2bFloatingPanel')?.classList.remove('open');
-                    fab.classList.remove('active');
-                    // Sync messages to full-page view
-                    if (typeof b2bChat !== 'undefined') b2bChat.renderMessages('full');
-                } else {
-                    fab.classList.remove('hidden-fab');
-                }
+                fab.classList.remove('hidden-fab');
+            }
+
+            // Clear sidebar project selection when going to non-project pages
+            if (pageName !== 'projects') {
+                document.querySelectorAll('.sidebar-project-item').forEach(el => el.classList.remove('selected'));
+            }
+        }
+
+        // v1.2.0: Navigate to project from sidebar
+        function navigateToProject(projectId) {
+            // Show projects page
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+            const page = document.getElementById('page-projects');
+            if (page) page.classList.add('active');
+            document.getElementById('pageTitle').textContent = 'Projects';
+
+            // Select the project
+            currentSelectedProjectId = projectId;
+            selectProject(projectId);
+            renderSidebarProjects();
+        }
+
+        // v1.2.0: Render sidebar project list
+        function renderSidebarProjects() {
+            const container = document.getElementById('sidebarProjectList');
+            if (!container || typeof allProjectsData === 'undefined') return;
+
+            const searchVal = (document.getElementById('sidebarProjectSearch')?.value || '').toLowerCase();
+            const filtered = allProjectsData.filter(p =>
+                p.name.toLowerCase().includes(searchVal) ||
+                p.customer.toLowerCase().includes(searchVal) ||
+                p.type.toLowerCase().includes(searchVal)
+            );
+
+            const riskColors = { high: '#ef4444', medium: '#f59e0b', low: '#22c55e', normal: '#22c55e' };
+            const stageLabels = { intent:'Step 1', design:'Step 2', measurement:'Step 3', quotation:'Step 4', production:'Step 5', installation:'Step 6' };
+
+            container.innerHTML = filtered.map(p => {
+                const initials = p.customer.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+                const isSelected = p.id === currentSelectedProjectId;
+                return `
+                    <div class="sidebar-project-item ${isSelected ? 'selected' : ''}" onclick="navigateToProject('${p.id}')">
+                        <div class="proj-avatar" style="${isSelected ? 'background:#222;color:#fff;' : ''}">${initials}</div>
+                        <div class="proj-info">
+                            <div class="proj-name">${p.name}</div>
+                            <div class="proj-meta">${p.type} · ${stageLabels[p.stage] || 'Step ' + p.workflowStep}</div>
+                        </div>
+                        <div class="proj-risk-dot" style="background:${riskColors[p.riskLevel] || '#22c55e'}"></div>
+                    </div>
+                `;
+            }).join('');
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div style="padding:20px;text-align:center;color:#9ca3af;font-size:13px;">No projects found</div>';
+            }
+        }
+
+        // v1.2.0: Agent toolbar panel toggle
+        function toggleAgentPanel(agentName) {
+            var container = document.getElementById('agentPanelContainer');
+            var contentEl = document.getElementById('agentPanelContent');
+            var toolbar = document.getElementById('agentToolbar');
+
+            if (currentActiveAgent === agentName) {
+                closeAgentPanel();
+                return;
+            }
+
+            // Get current project info
+            var proj = currentSelectedProjectId ? allProjectsData.find(function(p) { return p.id === currentSelectedProjectId; }) : null;
+            var projType = proj ? proj.type : '';
+
+            // === Pricing Agent: Zip Blinds → navigate to full pricing page ===
+            if (agentName === 'pricing-agent' && projType === 'Zip Blinds') {
+                // Pre-select this project in the pricing engine
+                pricingAgentState.selectedProject = currentSelectedProjectId;
+                var pricingSelect = document.getElementById('pricingProjectSelect');
+                if (pricingSelect) pricingSelect.value = 'proj-004';
+
+                // Navigate to the full Pricing page
+                navigateToPage('pricing-agent');
+
+                // Reset agent toolbar state (we're leaving the project page)
+                closeAgentPanel();
+                return;
+            }
+
+            toolbar.querySelectorAll('.agent-toolbar-card').forEach(function(card) {
+                card.classList.toggle('active', card.dataset.agent === agentName);
+            });
+
+            var agentLabels = {
+                'ai-designer': { title: 'AI Designer', icon: 'fa-palette', color: '#7c3aed',
+                    desc: 'Upload yard photos and generate AI-powered design renderings for this project.' },
+                'pricing-agent': { title: 'Pricing & Cost Controller', icon: 'fa-chart-line', color: '#059669',
+                    desc: 'Configure product specifications, calculate costs, and generate quotes for this project.' },
+                'compliance-agent': { title: 'Compliance Manager', icon: 'fa-shield-alt', color: '#2563eb',
+                    desc: 'Check building codes, permits, and HOA requirements for this project location.' },
+                'customer-service-agent': { title: 'Customer Service', icon: 'fa-headset', color: '#ca8a04',
+                    desc: 'View customer communication history and manage follow-ups for this project.' },
+                'knowledge-base': { title: 'Knowledge Base', icon: 'fa-brain', color: '#4b5563',
+                    desc: 'Access product specs, installation guides, and training materials relevant to this project.' },
+                'chatbot': { title: 'Project Chatbot', icon: 'fa-robot', color: '#dc2626',
+                    desc: 'Ask questions about this project — the AI will route to the right agent automatically.' }
+            };
+
+            var agent = agentLabels[agentName] || { title: agentName, icon: 'fa-cog', color: '#666', desc: '' };
+            var projName = proj ? proj.name : 'No project selected';
+
+            // === Pricing Agent on non-Zip-Blinds project: show "not available" message ===
+            if (agentName === 'pricing-agent') {
+                contentEl.innerHTML =
+                    '<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">' +
+                        '<div style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;background:#05966915;color:#059669;">' +
+                            '<i class="fas fa-chart-line"></i>' +
+                        '</div>' +
+                        '<div>' +
+                            '<h3 style="font-size:15px;font-weight:600;color:#111827;">Pricing & Cost Controller</h3>' +
+                            '<p style="font-size:12px;color:#6b7280;">Project: ' + projName + '</p>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div style="padding:30px;text-align:center;background:#f9fafb;border-radius:12px;border:1px solid #e5e7eb;">' +
+                        '<div style="width:56px;height:56px;border-radius:50%;background:#f3f4f6;display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;">' +
+                            '<i class="fas fa-chart-line" style="font-size:22px;color:#d1d5db;"></i>' +
+                        '</div>' +
+                        '<p style="font-size:14px;color:#374151;font-weight:600;margin-bottom:4px;">Pricing engine for ' + (projType || 'this product') + ' is coming soon</p>' +
+                        '<p style="font-size:12px;color:#9ca3af;line-height:1.5;">The modular pricing solution is currently available for <strong>Zip Blinds</strong> projects.<br>Select a Zip Blinds project to access the full 6-strategy pricing engine.</p>' +
+                    '</div>';
+            } else {
+                // === All other agents: default placeholder ===
+                contentEl.innerHTML =
+                    '<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">' +
+                        '<div style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;background:' + agent.color + '15;color:' + agent.color + ';">' +
+                            '<i class="fas ' + agent.icon + '"></i>' +
+                        '</div>' +
+                        '<div>' +
+                            '<h3 style="font-size:15px;font-weight:600;color:#111827;">' + agent.title + '</h3>' +
+                            '<p style="font-size:12px;color:#6b7280;">Project: ' + projName + '</p>' +
+                        '</div>' +
+                    '</div>' +
+                    '<p style="font-size:13px;color:#6b7280;line-height:1.6;margin-bottom:20px;">' + agent.desc + '</p>' +
+                    '<div style="padding:30px;text-align:center;background:#f9fafb;border-radius:8px;border:1px dashed #e5e7eb;">' +
+                        '<i class="fas ' + agent.icon + '" style="font-size:28px;color:#d1d5db;margin-bottom:10px;display:block;"></i>' +
+                        '<p style="font-size:13px;color:#9ca3af;font-weight:500;">Agent workspace — full integration coming soon</p>' +
+                        '<p style="font-size:11px;color:#d1d5db;margin-top:4px;">Full agent functionality will be embedded here</p>' +
+                    '</div>';
+            }
+
+            container.classList.add('open');
+            currentActiveAgent = agentName;
+        }
+
+        function closeAgentPanel() {
+            const container = document.getElementById('agentPanelContainer');
+            const toolbar = document.getElementById('agentToolbar');
+            container.classList.remove('open');
+            toolbar?.querySelectorAll('.agent-toolbar-card').forEach(card => card.classList.remove('active'));
+            currentActiveAgent = null;
+        }
+
+        // v2.0: Back navigation from Pricing page → return to the project that launched it
+        function goBackFromPricing() {
+            var projectId = currentSelectedProjectId || null;
+            if (projectId) {
+                // Use navigateToProject which switches page + selects project
+                navigateToProject(projectId);
+            } else {
+                // Fallback: go to company overview
+                navigateToPage('overview');
             }
         }
 
@@ -4502,162 +4951,265 @@
             }, 3000);
         }
 
-        // ===== Pricing Agent Page Functions =====
+        // ===== Pricing Agent Page Functions (v2.0 — Zip Blinds 6-Strategy Engine) =====
         const pricingAgentState = {
-            selectedProject: 'proj-001',
-            selectedProduct: 'sr-l-classic',
-            width: 14,
-            depth: 20,
-            height: 12,
-            material: 'aluminum',
-            glassType: 'tempered',
-            options: {
-                ceilingFan: false,
-                lighting: false,
-                electrical: true,
-                permit: true
-            },
+            selectedProject: 'proj-004',
+            productTier: 'better',       // good / better / best
+            fabric: 'np4000',            // np4000 / np6000 / np8000
+            width: 2.4,                  // meters
+            dropHeight: 2.0,             // meters
+            quantity: 4,
+            driveSystem: 'electric-std',
+            pricingMode: 'retail',       // retail / wholesale (Strategy 6: Dual Price List)
             discount: 5,
-            urgencySurcharge: 0,
+            installation: 45,            // per unit
             selectedQuote: 'recommended'
         };
 
-        // Cost data (dummy)
-        const costData = {
-            aluminum: { basePerSqft: 28, laborPerSqft: 15 },
-            vinyl: { basePerSqft: 22, laborPerSqft: 12 }
+        // ===== Zip Blinds Pricing Data (SAMPLE — not real supplier data) =====
+
+        // Strategy 5: Good-Better-Best product tiers × Strategy 2: Volume-tiered area pricing
+        const zbProductTiers = {
+            good: {
+                name: 'ZB-100 Standard', tube: '65mm', fabric: 'Standard',
+                tiers: [
+                    { maxArea: 5, label: '<5 sqm', retail: 45, wholesale: 37 },
+                    { maxArea: Infinity, label: '\u22655 sqm', retail: 38, wholesale: 31 }
+                ]
+            },
+            better: {
+                name: 'ZB-200 Professional', tube: '65-75mm', fabric: 'Premium',
+                tiers: [
+                    { maxArea: 5, label: '<5 sqm', retail: 62, wholesale: 51 },
+                    { maxArea: Infinity, label: '\u22655 sqm', retail: 52, wholesale: 43 }
+                ]
+            },
+            best: {
+                name: 'ZB-300 Elite', tube: '75mm', fabric: 'Elite',
+                tiers: [
+                    { maxArea: 3, label: '<3 sqm', retail: 85, wholesale: 70 },
+                    { maxArea: 6, label: '3\u20136 sqm', retail: 72, wholesale: 59 },
+                    { maxArea: Infinity, label: '>6 sqm', retail: 58, wholesale: 48 }
+                ]
+            }
         };
 
-        const glassUpcharge = {
-            tempered: 0,
-            'low-e': 800,
-            tinted: 500,
-            'double-paned': 1200
+        // Strategy 1: Modular drive system pricing (independent from fabric)
+        const zbDriveSystems = {
+            'bead-chain':    { name: 'Bead Chain',        category: 'Manual',  retail: 18,  wholesale: 14 },
+            'spring-crank':  { name: 'Spring Crank',      category: 'Manual',  retail: 35,  wholesale: 28 },
+            'electric-std':  { name: 'Standard Electric',  category: 'Electric', retail: 68,  wholesale: 55 },
+            'electric-prem': { name: 'Premium Electric',   category: 'Electric', retail: 92,  wholesale: 75 },
+            'dual-mode':     { name: 'Dual Mode',          category: 'Premium', retail: 165, wholesale: 135 },
+            'solar-kit':     { name: 'Solar Power Kit',    category: 'Premium', retail: 215, wholesale: 176 }
         };
 
-        const optionCosts = {
-            ceilingFan: 450,
-            lighting: 680,
-            electrical: 320,
-            permit: 750
+        // Fabric upgrade surcharges (per sqm, on top of base tier price)
+        const zbFabricUpgrades = {
+            'np4000': { name: 'NP-Standard', surcharge: 0 },
+            'np6000': { name: 'NP-Premium', surcharge: 8 },
+            'np8000': { name: 'NP-Elite', surcharge: 18 }
         };
+
+        // Strategy 4: Height surcharges (baseline 1.5m — shorter blinds cost MORE due to cutting waste)
+        const zbHeightSurcharges = [
+            { maxHeight: 1.0,      surcharge: 15, label: '\u22641.0m' },
+            { maxHeight: 1.3,      surcharge: 8,  label: '1.01\u20131.3m' },
+            { maxHeight: 1.5,      surcharge: 4,  label: '1.31\u20131.5m' },
+            { maxHeight: Infinity, surcharge: 0,  label: '\u22651.51m (standard)' }
+        ];
+
+        // Hardware base cost per unit (rails, brackets, end caps)
+        const zbHardwareCostPerUnit = 30;
+
+        // ===== Pricing Engine Helper Functions =====
+
+        // Strategy 2: Get the applicable area tier for a product line
+        function getAreaTier(productTier, unitArea) {
+            var tiers = zbProductTiers[productTier].tiers;
+            for (var i = 0; i < tiers.length; i++) {
+                if (unitArea <= tiers[i].maxArea) return tiers[i];
+            }
+            return tiers[tiers.length - 1];
+        }
+
+        // Strategy 4: Get height surcharge based on drop height
+        function getHeightSurcharge(dropHeight) {
+            for (var i = 0; i < zbHeightSurcharges.length; i++) {
+                if (dropHeight <= zbHeightSurcharges[i].maxHeight) return zbHeightSurcharges[i];
+            }
+            return zbHeightSurcharges[zbHeightSurcharges.length - 1];
+        }
+
+        // Strategy 3: Minimum charge floor — area < 1 sqm billed as 1 sqm
+        function getEffectiveArea(rawArea) {
+            return Math.max(1, rawArea);
+        }
+
+        // Strategy 5: Product tier selector
+        function selectProductTier(tier) {
+            pricingAgentState.productTier = tier;
+            document.querySelectorAll('.product-tier-card > div').forEach(function(card) {
+                card.classList.remove('border-emerald-500', 'bg-emerald-50');
+                card.classList.add('border-gray-200');
+                var badge = card.querySelector('.absolute');
+                if (badge) badge.style.display = 'none';
+            });
+            var selectedCard = document.querySelector('.product-tier-card[data-tier="' + tier + '"] > div');
+            if (selectedCard) {
+                selectedCard.classList.remove('border-gray-200');
+                selectedCard.classList.add('border-emerald-500', 'bg-emerald-50');
+                var badge = selectedCard.querySelector('.absolute');
+                if (badge) badge.style.display = '';
+            }
+            updateZbArea();
+        }
+
+        // Strategy 6: Dual pricing mode toggle
+        function setPricingMode(mode) {
+            pricingAgentState.pricingMode = mode;
+            var retailBtn = document.getElementById('priceModeRetail');
+            var wholesaleBtn = document.getElementById('priceModeWholesale');
+            if (mode === 'retail') {
+                retailBtn.classList.add('bg-white', 'shadow', 'text-gray-900');
+                retailBtn.classList.remove('text-gray-500');
+                wholesaleBtn.classList.remove('bg-white', 'shadow', 'text-gray-900');
+                wholesaleBtn.classList.add('text-gray-500');
+            } else {
+                wholesaleBtn.classList.add('bg-white', 'shadow', 'text-gray-900');
+                wholesaleBtn.classList.remove('text-gray-500');
+                retailBtn.classList.remove('bg-white', 'shadow', 'text-gray-900');
+                retailBtn.classList.add('text-gray-500');
+            }
+            updateZbArea();
+        }
+
+        // Quantity stepper
+        function adjustZbQty(delta) {
+            var input = document.getElementById('zbQuantity');
+            if (!input) return;
+            var newVal = Math.max(1, Math.min(20, parseInt(input.value) + delta));
+            input.value = newVal;
+            pricingAgentState.quantity = newVal;
+            updateZbArea();
+        }
+
+        // Live area & tier update
+        function updateZbArea() {
+            var w = parseFloat(document.getElementById('zbWidth').value) || 0;
+            var h = parseFloat(document.getElementById('zbDropHeight').value) || 0;
+            var qty = parseInt(document.getElementById('zbQuantity').value) || 1;
+            pricingAgentState.width = w;
+            pricingAgentState.dropHeight = h;
+            pricingAgentState.quantity = qty;
+
+            var unitArea = w * h;
+            var effectiveUnit = getEffectiveArea(unitArea);
+            var totalArea = effectiveUnit * qty;
+
+            var unitAreaEl = document.getElementById('zbUnitArea');
+            var totalAreaEl = document.getElementById('zbTotalArea');
+            if (unitAreaEl) unitAreaEl.textContent = effectiveUnit.toFixed(2) + ' sqm';
+            if (totalAreaEl) totalAreaEl.textContent = totalArea.toFixed(2) + ' sqm';
+
+            // Update tier badge (Strategy 2)
+            var tier = getAreaTier(pricingAgentState.productTier, effectiveUnit);
+            var mode = pricingAgentState.pricingMode;
+            var tierBadge = document.getElementById('zbTierBadge');
+            var firstTier = zbProductTiers[pricingAgentState.productTier].tiers[0];
+            var savings = firstTier[mode] > tier[mode] ? Math.round((1 - tier[mode] / firstTier[mode]) * 100) : 0;
+            if (tierBadge) {
+                tierBadge.innerHTML = '<span class="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-full">' +
+                    '<i class="fas fa-tag mr-1"></i>Tier: ' + tier.label + ' rate applied</span>' +
+                    (savings > 0 ? '<span class="text-xs text-emerald-600 font-medium">-' + savings + '% vs smallest-area rate</span>' : '');
+            }
+
+            // Min charge warning (Strategy 3)
+            var minWarning = document.getElementById('zbMinChargeWarning');
+            if (minWarning) {
+                if (unitArea < 1 && unitArea > 0) {
+                    minWarning.classList.remove('hidden');
+                } else {
+                    minWarning.classList.add('hidden');
+                }
+            }
+
+            // Update height surcharge display (Strategy 4)
+            updateHeightSurchargeDisplay();
+        }
+
+        // Height surcharge visual feedback
+        function updateHeightSurchargeDisplay() {
+            var h = pricingAgentState.dropHeight;
+            var surcharge = getHeightSurcharge(h);
+            var box = document.getElementById('zbHeightSurchargeBox');
+            var label = document.getElementById('zbHeightSurchargeLabel');
+            var detail = document.getElementById('zbHeightSurchargeDetail');
+
+            if (!box || !label || !detail) return;
+
+            if (surcharge.surcharge > 0) {
+                box.style.background = '#fef3c7';
+                box.style.borderColor = '#fde68a';
+                label.textContent = '+$' + surcharge.surcharge + '/sqm';
+                label.className = 'text-sm font-bold text-amber-800';
+                detail.textContent = 'Drop height ' + h.toFixed(1) + 'm is below 1.5m baseline \u2014 surcharge of $' + surcharge.surcharge + '/sqm applies to offset cutting waste.';
+                detail.className = 'mt-2 text-xs text-amber-700';
+            } else {
+                box.style.background = '#f0fdf4';
+                box.style.borderColor = '#bbf7d0';
+                label.textContent = 'None \u2014 standard height';
+                label.className = 'text-sm font-bold text-emerald-800';
+                detail.textContent = 'Drop height ' + h.toFixed(1) + 'm meets or exceeds 1.5m baseline \u2014 no surcharge applies.';
+                detail.className = 'mt-2 text-xs text-emerald-700';
+            }
+        }
 
         // Initialize Pricing Agent page
         function initPricingAgentPage() {
             // Project selector
-            const projectSelect = document.getElementById('pricingProjectSelect');
+            var projectSelect = document.getElementById('pricingProjectSelect');
             if (projectSelect) {
                 projectSelect.addEventListener('change', function() {
                     pricingAgentState.selectedProject = this.value;
-                    updatePricingProjectInfo(this.value);
-                    // Auto-update product selector based on project type
-                    const project = dummyProjects[this.value];
-                    if (project) {
-                        populatePricingProductSelect(project.type);
-                    }
                 });
             }
 
-            // Product model selector
-            const productSelect = document.getElementById('pricingProductSelect');
-            if (productSelect) {
-                productSelect.addEventListener('change', function() {
-                    pricingAgentState.selectedProduct = this.value;
+            // Fabric selector
+            var fabricSelect = document.getElementById('zbFabricSelect');
+            if (fabricSelect) {
+                fabricSelect.addEventListener('change', function() {
+                    pricingAgentState.fabric = this.value;
                 });
             }
 
-            // Initialize product selector for default project
-            const defaultProject = dummyProjects[pricingAgentState.selectedProject];
-            if (defaultProject) {
-                populatePricingProductSelect(defaultProject.type);
-            }
-
-            // "View Material Cost" button → jump to Products page
-            const viewMaterialCostBtn = document.getElementById('viewMaterialCostBtn');
-            if (viewMaterialCostBtn) {
-                viewMaterialCostBtn.addEventListener('click', function() {
-                    // Use the selected product from the dropdown
-                    const targetProduct = pricingAgentState.selectedProduct || 'sr-l-classic';
-
-                    // Set selected product and navigate
-                    if (typeof productsState !== 'undefined') {
-                        productsState.selectedProduct = targetProduct;
-                    }
-                    navigateToPage('products');
-                    setTimeout(() => {
-                        if (typeof renderProductList === 'function') renderProductList();
-                        if (typeof updateProductDetail === 'function') updateProductDetail(targetProduct);
-                        const selectedItem = document.querySelector('.product-item[data-product="' + targetProduct + '"]');
-                        if (selectedItem) selectedItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 50);
-                });
-            }
-
-            // Dimension inputs
-            ['configWidth', 'configDepth', 'configHeight'].forEach(id => {
-                const input = document.getElementById(id);
-                if (input) {
-                    input.addEventListener('input', function() {
-                        const key = id.replace('config', '').toLowerCase();
-                        pricingAgentState[key] = parseFloat(this.value) || 0;
-                        updateTotalSqft();
-                    });
-                }
-            });
-
-            // Material selection
-            document.querySelectorAll('.material-card').forEach(card => {
-                card.addEventListener('click', function() {
-                    document.querySelectorAll('.material-card > div').forEach(c => {
-                        c.classList.remove('border-emerald-500', 'bg-emerald-50');
-                        c.classList.add('border-gray-200');
-                    });
-                    this.querySelector('div').classList.remove('border-gray-200');
-                    this.querySelector('div').classList.add('border-emerald-500', 'bg-emerald-50');
-                    pricingAgentState.material = this.dataset.material;
+            // Drive system radio buttons
+            document.querySelectorAll('input[name="driveSystem"]').forEach(function(radio) {
+                radio.addEventListener('change', function() {
+                    pricingAgentState.driveSystem = this.value;
                 });
             });
 
-            // Glass type
-            const glassSelect = document.getElementById('glassType');
-            if (glassSelect) {
-                glassSelect.addEventListener('change', function() {
-                    pricingAgentState.glassType = this.value;
+            // Installation selector
+            var installSelect = document.getElementById('zbInstallation');
+            if (installSelect) {
+                installSelect.addEventListener('change', function() {
+                    pricingAgentState.installation = parseInt(this.value) || 0;
                 });
             }
-
-            // Checkboxes
-            ['optCeilingFan', 'optLighting', 'optElectrical', 'optPermit'].forEach(id => {
-                const checkbox = document.getElementById(id);
-                if (checkbox) {
-                    checkbox.addEventListener('change', function() {
-                        const key = id.replace('opt', '').toLowerCase();
-                        pricingAgentState.options[key] = this.checked;
-                    });
-                }
-            });
 
             // Discount slider
-            const discountSlider = document.getElementById('discountSlider');
+            var discountSlider = document.getElementById('discountSlider');
             if (discountSlider) {
                 discountSlider.addEventListener('input', function() {
                     pricingAgentState.discount = parseInt(this.value);
-                    document.getElementById('discountValue').textContent = this.value + '%';
-                });
-            }
-
-            // Urgency surcharge
-            const urgencySelect = document.getElementById('urgencySurcharge');
-            if (urgencySelect) {
-                urgencySelect.addEventListener('change', function() {
-                    pricingAgentState.urgencySurcharge = parseInt(this.value);
                 });
             }
 
             // Quote options
-            document.querySelectorAll('.quote-option').forEach(option => {
+            document.querySelectorAll('.quote-option').forEach(function(option) {
                 option.addEventListener('click', function() {
-                    document.querySelectorAll('.quote-option').forEach(o => {
+                    document.querySelectorAll('.quote-option').forEach(function(o) {
                         o.classList.remove('border-emerald-500', 'bg-emerald-50');
                         o.classList.add('border-gray-200');
                     });
@@ -4668,211 +5220,240 @@
             });
 
             // Calculate button
-            const calcBtn = document.getElementById('calculatePricingBtn');
+            var calcBtn = document.getElementById('calculatePricingBtn');
             if (calcBtn) {
                 calcBtn.addEventListener('click', handleCalculatePricing);
             }
 
             // Create contract button
-            const contractBtn = document.getElementById('createContractBtn');
+            var contractBtn = document.getElementById('createContractBtn');
             if (contractBtn) {
-                contractBtn.addEventListener('click', () => {
-                    showToast('Contract generation will be implemented. This will create a complete contract with all terms and conditions.', 'info');
+                contractBtn.addEventListener('click', function() {
+                    showToast('Contract generation will create a complete Zip Blinds supply & install agreement.', 'info');
                 });
             }
+
+            // Initial area calculation
+            updateZbArea();
         }
 
-        function updateTotalSqft() {
-            const sqft = pricingAgentState.width * pricingAgentState.depth;
-            const display = document.getElementById('totalSqft');
-            if (display) {
-                display.textContent = sqft + ' sq ft';
-            }
-        }
-
-        // Populate the product model dropdown based on project type
-        function populatePricingProductSelect(projectType) {
-            const select = document.getElementById('pricingProductSelect');
-            if (!select) return;
-
-            // Filter products by matching category (project type → product category)
-            const typeToCategory = {
-                'sunroom': 'sunroom',
-                'pergola': 'pergola',
-                'blinds': 'blinds',
-                'adu': 'adu'
-            };
-            const category = typeToCategory[projectType] || 'sunroom';
-            const matchingProducts = Object.entries(productCatalog).filter(([id, p]) => p.category === category);
-
-            // Build options HTML
-            let html = '';
-            matchingProducts.forEach(([id, p]) => {
-                const priceHint = p.pricing && p.pricing.tiers.length > 0
-                    ? ' ($' + p.pricing.tiers[0].priceRange[0] + '-' + p.pricing.tiers[p.pricing.tiers.length - 1].priceRange[1] + '/' + p.pricing.unit + ')'
-                    : '';
-                html += '<option value="' + id + '">' + p.name + ' — ' + p.series + (p.shape ? ' · ' + p.shape : '') + priceHint + '</option>';
-            });
-
-            select.innerHTML = html;
-
-            // Auto-select first product and update state
-            if (matchingProducts.length > 0) {
-                pricingAgentState.selectedProduct = matchingProducts[0][0];
-                select.value = matchingProducts[0][0];
-            }
-        }
-
-        function updatePricingProjectInfo(projectId) {
-            const project = dummyProjects[projectId];
-            if (!project) return;
-
-            const infoContainer = document.getElementById('pricingProjectInfo');
-            if (infoContainer) {
-                const budgetRange = project.budget;
-                const productType = project.type.charAt(0).toUpperCase() + project.type.slice(1);
-                const location = project.address.split(', ').slice(-2).join(', ');
-
-                infoContainer.innerHTML = `
-                    <div class="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                            <span class="text-gray-500">Client Budget:</span>
-                            <span class="font-medium text-gray-900 ml-2">${budgetRange}</span>
-                        </div>
-                        <div>
-                            <span class="text-gray-500">Product:</span>
-                            <span class="font-medium text-gray-900 ml-2">${productType}</span>
-                        </div>
-                        <div>
-                            <span class="text-gray-500">Yard Size:</span>
-                            <span class="font-medium text-gray-900 ml-2">${project.yardSize}</span>
-                        </div>
-                        <div>
-                            <span class="text-gray-500">Location:</span>
-                            <span class="font-medium text-gray-900 ml-2">${location}</span>
-                        </div>
-                    </div>
-                    <div class="mt-3 pt-3 border-t border-gray-200">
-                        <button id="viewMaterialCostBtn" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-emerald-200 text-emerald-700 text-sm font-medium rounded-lg hover:bg-emerald-50 hover:border-emerald-300 transition">
-                            <i class="fas fa-box-open text-emerald-500"></i>
-                            View Material Cost
-                            <i class="fas fa-arrow-right text-xs text-emerald-400"></i>
-                        </button>
-                    </div>
-                `;
-
-                // Re-attach View Material Cost button event
-                const btn = document.getElementById('viewMaterialCostBtn');
-                if (btn) {
-                    btn.addEventListener('click', function() {
-                        const targetProduct = pricingAgentState.selectedProduct || 'sr-l-classic';
-                        if (typeof productsState !== 'undefined') {
-                            productsState.selectedProduct = targetProduct;
-                        }
-                        navigateToPage('products');
-                        setTimeout(() => {
-                            if (typeof renderProductList === 'function') renderProductList();
-                            if (typeof updateProductDetail === 'function') updateProductDetail(targetProduct);
-                            const selectedItem = document.querySelector('.product-item[data-product="' + targetProduct + '"]');
-                            if (selectedItem) selectedItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        }, 50);
-                    });
-                }
-            }
-        }
-
+        // ===== Main Pricing Calculation Engine =====
         function handleCalculatePricing() {
-            const btn = document.getElementById('calculatePricingBtn');
+            var btn = document.getElementById('calculatePricingBtn');
+            if (!btn) return;
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Calculating...';
 
-            // Simulate calculation
-            setTimeout(() => {
-                // Calculate costs
-                const sqft = pricingAgentState.width * pricingAgentState.depth;
-                const materialCosts = costData[pricingAgentState.material];
-                const materials = sqft * materialCosts.basePerSqft + (glassUpcharge[pricingAgentState.glassType] || 0);
-                const labor = sqft * materialCosts.laborPerSqft;
-                const equipment = Math.round(sqft * 3);
+            setTimeout(function() {
+                var state = pricingAgentState;
+                var mode = state.pricingMode;
+                var qty = state.quantity;
 
-                let optionsTotal = 0;
-                Object.keys(pricingAgentState.options).forEach(key => {
-                    if (pricingAgentState.options[key]) {
-                        optionsTotal += optionCosts[key] || 0;
+                // 1. Calculate unit area (Strategy 3: min charge floor)
+                var rawUnitArea = state.width * state.dropHeight;
+                var unitArea = getEffectiveArea(rawUnitArea);
+                var minChargeAdj = (rawUnitArea < 1 && rawUnitArea > 0) ? (1 - rawUnitArea) : 0;
+
+                // 2. Get fabric rate (Strategy 2: volume tiers + Strategy 5: product line tiers)
+                var tier = getAreaTier(state.productTier, unitArea);
+                var fabricRate = tier[mode];
+                var productInfo = zbProductTiers[state.productTier];
+
+                // 3. Fabric upgrade surcharge
+                var fabricUpgrade = zbFabricUpgrades[state.fabric];
+                var fabricUpgradeCost = fabricUpgrade.surcharge * unitArea * qty;
+
+                // 4. Calculate fabric cost
+                var fabricCost = fabricRate * unitArea * qty;
+
+                // 5. Drive system cost (Strategy 1: modular pricing)
+                var drive = zbDriveSystems[state.driveSystem];
+                var driveCost = drive[mode] * qty;
+
+                // 6. Height surcharge (Strategy 4: dimensional surcharges)
+                var heightSurcharge = getHeightSurcharge(state.dropHeight);
+                var heightCost = heightSurcharge.surcharge * unitArea * qty;
+
+                // 7. Min charge adjustment cost
+                var firstTier = productInfo.tiers[0];
+                var minChargeCost = minChargeAdj > 0 ? Math.round(minChargeAdj * firstTier[mode] * qty) : 0;
+
+                // 8. Installation
+                var installCost = state.installation * qty;
+
+                // 9. Hardware & accessories
+                var hardwareCost = zbHardwareCostPerUnit * qty;
+
+                // 10. Total cost
+                var totalCost = fabricCost + driveCost + fabricUpgradeCost + heightCost + minChargeCost + installCost + hardwareCost;
+
+                // 11. Apply dealer discount
+                var discountAmount = totalCost * (state.discount / 100);
+                var finalCost = Math.round(totalCost - discountAmount);
+
+                // 12. Quote suggestions (3 margin levels)
+                var conservative = Math.round(finalCost * 1.10);
+                var recommended = Math.round(finalCost * 1.18);
+                var premium = Math.round(finalCost * 1.35);
+
+                // === Update UI ===
+
+                // Cost breakdown details
+                var el;
+                el = document.getElementById('costFabricDetail');
+                if (el) el.textContent = '(' + productInfo.name + ' \u00b7 $' + fabricRate + '/sqm \u00d7 ' + unitArea.toFixed(2) + ' sqm \u00d7 ' + qty + ' units)';
+                el = document.getElementById('costFabricValue');
+                if (el) el.textContent = '$' + Math.round(fabricCost).toLocaleString();
+
+                el = document.getElementById('costDriveDetail');
+                if (el) el.textContent = '(' + drive.name + ' \u00b7 $' + drive[mode] + ' \u00d7 ' + qty + ' units)';
+                el = document.getElementById('costDriveValue');
+                if (el) el.textContent = '$' + Math.round(driveCost).toLocaleString();
+
+                el = document.getElementById('costFabricUpgradeValue');
+                if (el) el.textContent = fabricUpgradeCost > 0 ? '+$' + Math.round(fabricUpgradeCost).toLocaleString() : '$0';
+                el = document.getElementById('costFabricUpgradeRow');
+                if (el) el.style.display = fabricUpgradeCost > 0 ? 'flex' : 'none';
+
+                el = document.getElementById('costHeightValue');
+                if (el) el.textContent = heightCost > 0 ? '+$' + Math.round(heightCost).toLocaleString() : '$0';
+                el = document.getElementById('costHeightRow');
+                if (el) el.style.display = heightCost > 0 ? 'flex' : 'none';
+
+                var minChargeRow = document.getElementById('costMinChargeRow');
+                if (minChargeRow) {
+                    if (minChargeCost > 0) {
+                        minChargeRow.classList.remove('hidden');
+                        var mcv = document.getElementById('costMinChargeValue');
+                        if (mcv) mcv.textContent = '+$' + minChargeCost;
+                    } else {
+                        minChargeRow.classList.add('hidden');
                     }
-                });
+                }
 
-                const permits = pricingAgentState.options.permit ? 1070 : 320;
-                const totalCost = materials + labor + equipment + permits + optionsTotal;
+                el = document.getElementById('costInstallValue');
+                if (el) el.textContent = '$' + installCost.toLocaleString();
+                el = document.getElementById('costHardwareValue');
+                if (el) el.textContent = '$' + hardwareCost.toLocaleString();
+                el = document.getElementById('costTotalValue');
+                if (el) el.textContent = '$' + finalCost.toLocaleString();
 
-                // Calculate suggested prices
-                const conservative = Math.round(totalCost * 1.10);
-                const recommended = Math.round(totalCost * 1.183);
-                const premium = Math.round(totalCost * 1.34);
+                // Active strategies panel
+                zbUpdateActiveStrategies(state, unitArea, tier, heightSurcharge, minChargeAdj, fabricCost, driveCost);
 
-                // Update UI with animation
-                updateCostBreakdown(materials, labor, equipment, permits, optionsTotal);
-                updateQuoteSuggestions(conservative, recommended, premium, totalCost);
-                updateProfitAnalysis(recommended, totalCost);
+                // Profit analysis
+                var profit = recommended - finalCost;
+                var margin = ((profit / recommended) * 100).toFixed(1);
+
+                el = document.getElementById('profitPrice');
+                if (el) el.textContent = recommended >= 1000 ? '$' + (recommended / 1000).toFixed(1) + 'K' : '$' + recommended;
+                el = document.getElementById('profitAmount');
+                if (el) el.textContent = '$' + profit.toLocaleString();
+                el = document.getElementById('profitMargin');
+                if (el) el.textContent = margin + '%';
+
+                var indicator = document.getElementById('marginIndicator');
+                if (indicator) {
+                    var position = Math.min(100, Math.max(0, parseFloat(margin) * 3));
+                    indicator.style.left = position + '%';
+                }
+
+                // Quote suggestions
+                el = document.getElementById('quoteConservativePrice');
+                if (el) el.textContent = '$' + conservative.toLocaleString();
+                el = document.getElementById('quoteConservativeProfit');
+                if (el) el.textContent = '$' + (conservative - finalCost).toLocaleString() + ' profit';
+                el = document.getElementById('quoteRecommendedPrice');
+                if (el) el.textContent = '$' + recommended.toLocaleString();
+                el = document.getElementById('quoteRecommendedProfit');
+                if (el) el.textContent = '$' + (recommended - finalCost).toLocaleString() + ' profit';
+                el = document.getElementById('quotePremiumPrice');
+                if (el) el.textContent = '$' + premium.toLocaleString();
+                el = document.getElementById('quotePremiumProfit');
+                if (el) el.textContent = '$' + (premium - finalCost).toLocaleString() + ' profit';
 
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-calculator mr-2"></i>Calculate Pricing';
 
-                showToast('Pricing calculated successfully!', 'success');
-            }, 1500);
+                showToast('Zip Blinds pricing calculated \u2014 6 strategies applied!', 'success');
+            }, 1200);
         }
 
-        function updateCostBreakdown(materials, labor, equipment, permits, options) {
-            // This would update the cost breakdown display
-            // For now, we just show a success message
-        }
+        // Update the Active Strategies panel based on current calculation
+        function zbUpdateActiveStrategies(state, unitArea, tier, heightSurcharge, minChargeAdj, fabricCost, driveCost) {
+            var container = document.getElementById('activeStrategies');
+            if (!container) return;
 
-        function updateQuoteSuggestions(conservative, recommended, premium, cost) {
-            // Update quote cards with calculated values
-            const quoteOptions = document.querySelectorAll('.quote-option');
-            quoteOptions.forEach(option => {
-                const type = option.dataset.quote;
-                let price, profit, margin;
+            var mode = state.pricingMode;
+            var productInfo = zbProductTiers[state.productTier];
+            var drive = zbDriveSystems[state.driveSystem];
+            var firstTier = productInfo.tiers[0];
+            var savings = firstTier[mode] > tier[mode] ? Math.round((1 - tier[mode] / firstTier[mode]) * 100) : 0;
 
-                if (type === 'conservative') {
-                    price = conservative;
-                    profit = conservative - cost;
-                    margin = 10;
-                } else if (type === 'recommended') {
-                    price = recommended;
-                    profit = recommended - cost;
-                    margin = 18;
-                } else {
-                    price = premium;
-                    profit = premium - cost;
-                    margin = 25;
+            var strategies = [
+                {
+                    active: true, bg: '#ecfdf5', icon: '#10b981', text: '#065f46',
+                    label: 'Modular Split',
+                    desc: 'Fabric $' + Math.round(fabricCost) + ' + Drive $' + Math.round(driveCost) + ' quoted separately'
+                },
+                {
+                    active: savings > 0, bg: '#eff6ff', icon: '#3b82f6', text: '#1e3a5f',
+                    label: 'Volume Tier',
+                    desc: savings > 0
+                        ? tier.label + ' rate applied, saving ' + savings + '% vs smallest-area rate'
+                        : 'Smallest area tier \u2014 no volume discount yet'
+                },
+                {
+                    active: true, bg: '#faf5ff', icon: '#8b5cf6', text: '#4c1d95',
+                    label: 'Product Tier',
+                    desc: '"' + state.productTier.charAt(0).toUpperCase() + state.productTier.slice(1) + '" (' + productInfo.name + ') selected'
+                },
+                {
+                    active: heightSurcharge.surcharge > 0, bg: '#fffbeb', icon: '#f59e0b', text: '#78350f',
+                    label: 'Height Surcharge',
+                    desc: heightSurcharge.surcharge > 0
+                        ? 'Drop ' + state.dropHeight.toFixed(1) + 'm triggers +$' + heightSurcharge.surcharge + '/sqm surcharge'
+                        : 'Not triggered (drop \u2265 1.5m)'
+                },
+                {
+                    active: minChargeAdj > 0, bg: '#fef2f2', icon: '#ef4444', text: '#7f1d1d',
+                    label: 'Min. Charge',
+                    desc: minChargeAdj > 0
+                        ? 'Area < 1 sqm \u2014 billed as 1 sqm (cost recovery floor)'
+                        : 'Not triggered (area \u2265 1 sqm)'
+                },
+                {
+                    active: true, bg: '#fff7ed', icon: '#f97316', text: '#7c2d12',
+                    label: 'Dual Price List',
+                    desc: mode === 'retail'
+                        ? 'Retail mode active (Wholesale saves ~' + Math.round((1 - drive.wholesale / drive.retail) * 100) + '% on drive)'
+                        : 'Wholesale mode active (Retail is ~' + Math.round((drive.retail / drive.wholesale - 1) * 100) + '% higher)'
                 }
+            ];
 
-                const priceEl = option.querySelector('.text-lg.font-bold');
-                const profitEl = option.querySelector('.text-emerald-600.font-medium');
-
-                if (priceEl) priceEl.textContent = '$' + price.toLocaleString();
-                if (profitEl) profitEl.textContent = '$' + profit.toLocaleString() + ' profit';
-            });
-        }
-
-        function updateProfitAnalysis(price, cost) {
-            const profit = price - cost;
-            const margin = ((profit / price) * 100).toFixed(1);
-
-            // Update the profit display cards
-            const profitCards = document.querySelectorAll('.bg-blue-50, .bg-emerald-50, .bg-purple-50');
-            if (profitCards[0]) profitCards[0].querySelector('.font-bold').textContent = '$' + (price/1000).toFixed(1) + 'K';
-            if (profitCards[1]) profitCards[1].querySelector('.font-bold').textContent = '$' + profit.toLocaleString();
-            if (profitCards[2]) profitCards[2].querySelector('.font-bold').textContent = margin + '%';
-
-            // Update margin indicator position
-            const indicator = document.getElementById('marginIndicator');
-            if (indicator) {
-                const position = Math.min(100, Math.max(0, margin * 3));
-                indicator.style.left = position + '%';
+            var html = '';
+            for (var i = 0; i < strategies.length; i++) {
+                var s = strategies[i];
+                if (s.active) {
+                    html += '<div class="flex items-center gap-2 p-2 rounded-lg text-xs" style="background:' + s.bg + '">' +
+                        '<i class="fas fa-check-circle" style="color:' + s.icon + '"></i>' +
+                        '<span style="color:' + s.text + '"><strong>' + s.label + '</strong> \u2014 ' + s.desc + '</span></div>';
+                } else {
+                    html += '<div class="flex items-center gap-2 p-2 bg-gray-50 rounded-lg text-xs text-gray-400">' +
+                        '<i class="fas fa-minus-circle"></i>' +
+                        '<span><strong>' + s.label + '</strong> \u2014 ' + s.desc + '</span></div>';
+                }
             }
+            container.innerHTML = html;
         }
+
+        // Backward compatibility stubs (old code paths may reference these)
+        function updateTotalSqft() { updateZbArea(); }
+        function updateCostBreakdown() {}
+        function updateQuoteSuggestions() {}
+        function updateProfitAnalysis() {}
+        function populatePricingProductSelect() {}
+        function updatePricingProjectInfo() {}
 
         // ===== Compliance Manager Page Functions =====
         const complianceState = {
@@ -8139,6 +8720,8 @@
         let currentProjectFilter = 'all';
 
         function renderProjectList() {
+            // v1.2.0: Old project list panel removed; sync sidebar instead
+            renderSidebarProjects();
             const container = document.getElementById('projectListContainer');
             if (!container) return;
             const searchVal = (document.getElementById('projectListSearch')?.value || '').toLowerCase();
@@ -8255,29 +8838,30 @@
             const project = allProjectsData.find(p => p.id === projectId);
             if (!project) return;
 
-            // Highlight selected in list
-            document.querySelectorAll('.project-list-item').forEach(el => {
-                el.classList.toggle('bg-blue-50', el.dataset.projectId === projectId);
-                el.classList.toggle('border-l-4', el.dataset.projectId === projectId);
-                el.classList.toggle('border-l-blue-500', el.dataset.projectId === projectId);
-            });
+            // v1.2.0: Update sidebar selection + track current project
+            currentSelectedProjectId = projectId;
+            renderSidebarProjects();
 
-            // Collapse project list panel to give space for detail view
-            collapseProjectListPanel();
-            // Update collapsed list selection
-            if (projectListCollapsed) renderCollapsedProjectList();
+            // Close any open agent panel when switching projects
+            if (typeof closeAgentPanel === 'function') closeAgentPanel();
 
             // Show detail panel
-            document.getElementById('projectDetailEmpty').classList.add('hidden');
-            document.getElementById('projectDetailContent').classList.remove('hidden');
+            const emptyEl = document.getElementById('projectDetailEmpty');
+            const contentEl = document.getElementById('projectDetailContent');
+            if (emptyEl) emptyEl.classList.add('hidden');
+            if (contentEl) contentEl.classList.remove('hidden');
 
             // Header
-            document.getElementById('projDetailName').textContent = project.name;
-            document.getElementById('projDetailMeta').textContent = `${project.customer} · ${project.type} · Started ${project.startDate} · Budget $${project.budget.toLocaleString()}`;
+            const nameEl = document.getElementById('projDetailName');
+            const metaEl = document.getElementById('projDetailMeta');
+            if (nameEl) nameEl.textContent = project.name;
+            if (metaEl) metaEl.textContent = `${project.customer} · ${project.type} · Started ${project.startDate} · Budget $${project.budget.toLocaleString()}`;
             const statusEl = document.getElementById('projDetailStatus');
             const riskColors = { high: 'bg-red-50 text-red-700', medium: 'bg-amber-50 text-amber-700', low: 'bg-green-50 text-green-700' };
-            statusEl.className = 'text-xs font-medium px-3 py-1 rounded-full ' + (riskColors[project.riskLevel] || 'bg-gray-100 text-gray-700');
-            statusEl.textContent = project.riskLevel.charAt(0).toUpperCase() + project.riskLevel.slice(1) + ' Risk';
+            if (statusEl) {
+                statusEl.className = 'text-xs font-medium px-3 py-1 rounded-full ' + (riskColors[project.riskLevel] || 'bg-gray-100 text-gray-700');
+                statusEl.textContent = project.riskLevel.charAt(0).toUpperCase() + project.riskLevel.slice(1) + ' Risk';
+            }
 
             // Service Workflow
             renderProjectWorkflow(project);
@@ -8453,6 +9037,8 @@
                 initTeamPage();
                 initSettingsPage();
                 initB2BChatbot();
+                // v1.2.0: Initialize sidebar project list
+                renderSidebarProjects();
             }
         });
 
@@ -9332,4 +9918,5 @@
         }
     </script>
 </body>
+</html>
 </html>
