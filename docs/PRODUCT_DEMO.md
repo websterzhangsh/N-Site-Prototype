@@ -1,8 +1,8 @@
 # Nestopia B2B Platform - Product Demo
 ## 平台功能演示脚本
 
-**演示日期**: 2026-03-24  
-**版本**: v3.1.0  
+**演示日期**: 2026-03-29  
+**版本**: v3.2.0  
 **演示时长**: 约 18-22 分钟  
 **Live URL**: https://n-site-prototype.pages.dev
 
@@ -116,20 +116,18 @@
 
 **操作**:
 1. 展示统计卡片：
-   - Active Projects: 12
-   - Open Issues: 5
-   - High Risks: 2
+   - Active Projects: 3
+   - Open Issues: 1
+   - High Risks: 0
    - On-Time Rate: 98%
-   - Total Value: $485K
+   - Total Value: $62.5K
 2. 展示 **Risk Heat Map**：
-   - 🔴 High Risk (2 Projects): Johnson Residence - Permit Delay, Martinez ADU - HOA Approval
-   - 🟡 Medium Risk (3 Projects): Smith Sunroom - Material Delay, Chen Pergola - Weather, Davis Commercial - Budget Review
-   - 🟢 Low Risk (5 Projects): Wilson Residence, Taylor Backyard
-   - ⚪ On Track (2 Projects): Anderson Patio, Thomas Deck
+   - 🟡 Medium Risk (2 Projects): Smith Sunroom - Material Delay, Chen Pergola - Weather
+   - 🟢 Low Risk (1 Project): Davis Zip Blinds
 3. 展示 **Issues Tracker** 表格：
-   - ISS-001: Permit approval delayed by city (High, Open)
+   - Glass panel backorder 2 weeks (Medium, In Progress, Mike Johnson)
    - 展示 Priority 徽章、Status 标签、Assigned To、Due Date
-4. 展示项目列表（支持搜索和阶段筛选）
+4. 展示项目列表（3 个核心项目，支持搜索和阶段筛选）
 
 **旁白**:
 > "Projects 模块重点突出 Issues Tracker 和 Risk Management。Risk Heat Map 以四色分级直观展示所有项目风险。Issues Tracker 追踪阻碍因素、延误和解决状态。"
@@ -286,9 +284,106 @@
 ### 演示账号
 - **Admin**: demo@nestopia.com / Demo123!
 
+### 示例项目（3 个核心产品线）
+
+> 当前阶段展示 3 个代表性项目，各覆盖一条核心产品线。其余 5 个项目数据已隐藏（`hidden: true`），代码保留可随时恢复。
+
+---
+
+#### 项目 1：Smith Premium Sunroom — 阳光房（Step 5 / Production）
+
+| 字段 | 值 |
+|------|-----|
+| **项目编号** | PRJ-003 |
+| **项目名称** | Smith Premium Sunroom |
+| **客户** | Mr. Smith |
+| **邮箱 / 电话** | smith@email.com · (512) 555-0303 |
+| **地址** | 321 Elm St, Austin, TX |
+| **产品类型** | Sunroom |
+| **工作流步骤** | Step 5 — Production（生产中） |
+| **风险等级** | Medium 🟡 |
+| **预算 / 已付** | $42,000 / $37,800 (90%) |
+| **工期** | 8 weeks（2025-12-10 开始） |
+| **风险项** | Material supply chain delay (medium, monitoring) |
+| **Issues** | Glass panel backorder 2 weeks (medium, in_progress, Mike Johnson, 2026-03-10) |
+| **订单** | ORD-2024-0153 · Premium Sunroom · $32,000 · In Production · Feb 28, 2026 |
+
+**演示要点**: 展示生产阶段的项目管理能力 — 供应链风险监控、材料延迟 Issue 追踪、付款进度（已付 90%）。
+
+---
+
+#### 项目 2：Chen Pergola Space — 廊架（Step 4 / Quotation）
+
+| 字段 | 值 |
+|------|-----|
+| **项目编号** | PRJ-004 |
+| **项目名称** | Chen Pergola Space |
+| **客户** | Ms. Chen |
+| **邮箱 / 电话** | chen@email.com · (301) 555-0404 |
+| **地址** | 456 Oak Dr, Frederick, MD |
+| **产品类型** | Pergola |
+| **工作流步骤** | Step 4 — Quotation（报价中） |
+| **风险等级** | Medium 🟡 |
+| **预算 / 已付** | $12,000 / $7,400 (62%) |
+| **工期** | 4 weeks（2026-01-20 开始） |
+| **风险项** | Weather delay possible (low, monitoring) |
+| **Issues** | 无 |
+| **订单** | ORD-2024-0155 · Studio Pergola · $6,900 · Confirmed · Mar 8, 2026 |
+
+**演示要点**: 展示报价阶段的销售流程 — 合同确认、押金收取、轻量级风险管理（天气因素）。
+
+---
+
+#### 项目 3：Davis Pool Zip Blinds — 防风卷帘（Step 6 / Installation）
+
+| 字段 | 值 |
+|------|-----|
+| **项目编号** | PRJ-005 |
+| **项目名称** | Davis Pool Zip Blinds |
+| **客户** | Mrs. Davis |
+| **邮箱 / 电话** | davis@email.com · (480) 555-0505 |
+| **地址** | 789 Pool Ln, Scottsdale, AZ |
+| **产品类型** | Zip Blinds |
+| **工作流步骤** | Step 6 — Installation（安装中） |
+| **风险等级** | Low 🟢 |
+| **预算 / 已付** | $8,500 / $7,650 (90%) |
+| **工期** | 3 weeks（2026-01-05 开始） |
+| **风险项** | 无 |
+| **Issues** | 无 |
+| **订单** | ORD-2024-0154 · Zip Blinds Set · $4,200 · Shipped · Mar 5, 2026 |
+
+**演示要点**: 展示安装阶段的交付管理 — 无风险低复杂度项目、Pricing & Cost Controller Agent 的定价引擎演示（6 大策略：模块化定价、面积阶梯、最低收费、高度附加费、产品分级、双重价格表）。点击 Pricing Agent 可进入完整的 Zip Blinds 定价计算器。
+
+---
+
+#### 项目数据字段说明
+
+```
+{
+  id:             String    // 项目编号 (PRJ-XXX)
+  name:           String    // 项目名称
+  customer:       String    // 客户称呼
+  customerEmail:  String    // 客户邮箱
+  customerPhone:  String    // 客户电话
+  customerAddress:String    // 项目地址
+  type:           String    // 产品类型 (Sunroom | Pergola | Zip Blinds | ADU)
+  workflowStep:   Number    // 工作流步骤 (1-6)
+  stage:          String    // 阶段标识 (intent | design | measurement | quotation | production | installation)
+  riskLevel:      String    // 风险等级 (high | medium | low)
+  budget:         Number    // 项目预算 ($)
+  paid:           Number    // 已付金额 ($)
+  timeline:       String    // 预计工期
+  startDate:      String    // 开始日期 (YYYY-MM-DD)
+  risks:          Array     // 风险项列表 [{title, severity, status}]
+  issues:         Array     // Issue 列表 [{id, title, priority, status, assignedTo, dueDate}]
+  order:          Object    // 关联订单 {id, product, total, status, date}
+  hidden:         Boolean   // (可选) true = 从 UI 隐藏但保留数据
+}
+```
+
 ### 关键业务数据
-- **Projects**: 12 个项目（含 Pergola, Sunroom, ADU 等类型）
-- **Issues**: 5 个跟踪项（High/Medium/Low 优先级）
+- **Projects**: 3 个活跃项目（Sunroom × 1, Pergola × 1, Zip Blinds × 1），另有 5 个隐藏项目
+- **Issues**: 1 个跟踪项（Glass panel backorder — Medium）
 - **Team Members**: 8 人（Admin, Sales, Installer, Designer 等角色）
 - **Knowledge Base**: 47 份文档，6 个分类
 - **Products**: 18 个产品，含 SKU、JSONB 规格、分层定价
@@ -387,6 +482,6 @@
 
 ---
 
-**文档版本**: 3.1.0  
-**最后更新**: 2026-03-24  
+**文档版本**: 3.2.0  
+**最后更新**: 2026-03-29  
 **维护者**: Qoder AI Assistant
