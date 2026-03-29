@@ -1196,8 +1196,11 @@
                                     <!-- Loading Overlay -->
                                     <div id="loadingOverlay" class="absolute inset-0 bg-gray-900/80 flex flex-col items-center justify-center hidden">
                                         <div class="w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-                                        <p class="text-white font-medium">Generating AI design...</p>
-                                        <p class="text-gray-400 text-sm mt-1">Blending product model with yard photo ~ 15-30s</p>
+                                        <p id="loadingStatusText" class="text-white font-medium">Generating AI design...</p>
+                                        <p id="loadingElapsedText" class="text-gray-400 text-sm mt-1">Connecting to AI model...</p>
+                                        <div class="w-48 h-1.5 bg-gray-700 rounded-full mt-3 overflow-hidden">
+                                            <div id="loadingProgressBar" class="h-full bg-indigo-500 rounded-full transition-all duration-500" style="width: 5%"></div>
+                                        </div>
                                     </div>
                                 </div>
                                 
@@ -4876,54 +4879,198 @@
             btn.disabled = !canGenerate;
         }
 
-        // Handle Generate Design click (simulation)
+        // Handle Generate Design click — calls real /api/design-generate backend
         function handleGenerateDesign() {
             if (!designerState.selectedProjectId || !designerState.selectedProductId) return;
 
             var product = productCatalog[designerState.selectedProductId];
             if (!product) return;
 
-            // Show loading
+            // Get yard photo (base64 from upload)
+            var yardPhotoImg = document.getElementById('yardPhotoImg');
+            var yardPhotoSrc = yardPhotoImg ? yardPhotoImg.src : '';
+            if (!yardPhotoSrc || yardPhotoSrc === '' || yardPhotoSrc === window.location.href) {
+                showToast('Please upload a yard photo first', 'error');
+                return;
+            }
+
+            // Show loading overlay
             var overlay = document.getElementById('loadingOverlay');
             var placeholder = document.getElementById('designPlaceholder');
+            var statusText = document.getElementById('loadingStatusText');
+            var elapsedText = document.getElementById('loadingElapsedText');
+            var progressBar = document.getElementById('loadingProgressBar');
             overlay.classList.remove('hidden');
             if (placeholder) placeholder.classList.add('hidden');
+            statusText.textContent = 'Generating AI design...';
+            elapsedText.textContent = 'Connecting to AI model...';
+            progressBar.style.width = '5%';
 
-            // Simulate AI generation (3 second delay)
-            setTimeout(function() {
-                overlay.classList.add('hidden');
+            // Disable generate button during processing
+            var btn = document.getElementById('generateDesignBtn');
+            if (btn) btn.disabled = true;
 
-                // Show "generated" result using product image
-                var afterContainer = document.getElementById('afterImageContainer');
-                var outputImg = document.getElementById('designOutputImg');
-                outputImg.src = product.image || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80';
-                afterContainer.classList.remove('hidden');
-
-                // Update status badge
-                var statusBadge = document.getElementById('designPreviewStatus');
-                statusBadge.innerHTML = '<i class="fas fa-check-circle mr-1"></i>Ready';
-                statusBadge.className = 'px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full';
-
-                // Show variants
-                var variantsSection = document.getElementById('designVariantsSection');
-                variantsSection.classList.remove('hidden');
-                var thumbsHtml = '';
-                thumbsHtml += '<div class="variant-thumb w-20 h-20 rounded-lg overflow-hidden ring-2 ring-indigo-500 cursor-pointer"><img src="' + (product.image || '') + '" alt="Variant 1" class="w-full h-full object-cover"></div>';
-                // Generate 2 more "variant" placeholders using different sunroom images
-                var variantImages = [
-                    '/images/gallery/sunroom-elegant.jpg',
-                    '/images/gallery/sunroom-pool.jpg',
-                    '/images/hero/sunroom-living.jpg'
-                ];
-                for (var v = 0; v < 2; v++) {
-                    var vImg = variantImages[v] || product.image;
-                    thumbsHtml += '<div class="variant-thumb w-20 h-20 rounded-lg overflow-hidden border-2 border-gray-200 cursor-pointer hover:border-gray-300"><img src="' + vImg + '" alt="Variant ' + (v+2) + '" class="w-full h-full object-cover"></div>';
+            // Fetch product image as base64, then call the API
+            var productImageUrl = product.image;
+            fetchImageAsBase64(productImageUrl, function(productBase64) {
+                if (!productBase64) {
+                    showToast('Failed to load product image', 'error');
+                    overlay.classList.add('hidden');
+                    if (btn) btn.disabled = false;
+                    return;
                 }
-                thumbsHtml += '<div class="w-20 h-20 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 cursor-pointer hover:border-gray-400 hover:text-gray-500"><i class="fas fa-plus"></i></div>';
-                document.getElementById('designVariantThumbs').innerHTML = thumbsHtml;
 
-                designerState.generated = true;
-            }, 2500);
+                // Call real backend API via SSE
+                var requestBody = {
+                    background_image: yardPhotoSrc,
+                    foreground_image: productBase64,
+                    is_iteration: false
+                };
+
+                streamDesignGenerate(requestBody, {
+                    onProgress: function(elapsed) {
+                        var pct = Math.min(90, 5 + elapsed * 1.5);
+                        progressBar.style.width = pct + '%';
+                        elapsedText.textContent = 'Processing... ' + elapsed + 's elapsed';
+                        if (elapsed > 20) {
+                            statusText.textContent = 'AI is blending the design...';
+                        }
+                    },
+                    onFallback: function(message) {
+                        statusText.textContent = 'Switching model...';
+                        elapsedText.textContent = message;
+                    },
+                    onResult: function(data) {
+                        overlay.classList.add('hidden');
+                        progressBar.style.width = '100%';
+                        if (btn) btn.disabled = false;
+
+                        // Show AI-generated result
+                        var afterContainer = document.getElementById('afterImageContainer');
+                        var outputImg = document.getElementById('designOutputImg');
+                        outputImg.src = data.result_image;
+                        afterContainer.classList.remove('hidden');
+
+                        // Update status badge
+                        var statusBadge = document.getElementById('designPreviewStatus');
+                        statusBadge.innerHTML = '<i class="fas fa-check-circle mr-1"></i>Ready';
+                        statusBadge.className = 'px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full';
+
+                        // Show variants section with the generated result
+                        var variantsSection = document.getElementById('designVariantsSection');
+                        variantsSection.classList.remove('hidden');
+                        var thumbsHtml = '';
+                        thumbsHtml += '<div class="variant-thumb w-20 h-20 rounded-lg overflow-hidden ring-2 ring-indigo-500 cursor-pointer"><img src="' + data.result_image + '" alt="Generated" class="w-full h-full object-cover"></div>';
+                        thumbsHtml += '<div class="w-20 h-20 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 cursor-pointer hover:border-gray-400 hover:text-gray-500" title="Generate another variant"><i class="fas fa-plus"></i></div>';
+                        document.getElementById('designVariantThumbs').innerHTML = thumbsHtml;
+
+                        // Store result for potential iteration
+                        designerState.lastResultImage = data.result_image;
+                        designerState.generated = true;
+
+                        var modelInfo = data.fallback_used ? ' (fallback: ' + data.model_used + ')' : '';
+                        showToast('Design generated successfully' + modelInfo, 'success');
+                    },
+                    onError: function(message) {
+                        overlay.classList.add('hidden');
+                        if (btn) btn.disabled = false;
+                        showToast('Generation failed: ' + message, 'error');
+                    }
+                });
+            });
+        }
+
+        // Fetch an image URL and convert to base64 data URL
+        function fetchImageAsBase64(imageUrl, callback) {
+            // If already a data URL, return as-is
+            if (imageUrl && imageUrl.startsWith('data:')) {
+                callback(imageUrl);
+                return;
+            }
+
+            var img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = function() {
+                var canvas = document.createElement('canvas');
+                canvas.width = img.naturalWidth;
+                canvas.height = img.naturalHeight;
+                var ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                try {
+                    var dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+                    callback(dataUrl);
+                } catch (e) {
+                    console.error('Canvas toDataURL failed:', e);
+                    callback(null);
+                }
+            };
+            img.onerror = function() {
+                console.error('Failed to load image:', imageUrl);
+                callback(null);
+            };
+            img.src = imageUrl;
+        }
+
+        // SSE streaming request to /api/design-generate
+        function streamDesignGenerate(body, callbacks) {
+            fetch('/api/design-generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            }).then(function(response) {
+                if (!response.ok) {
+                    return response.json().then(function(errData) {
+                        callbacks.onError(errData.error || 'Request failed');
+                    });
+                }
+
+                var reader = response.body.getReader();
+                var decoder = new TextDecoder();
+                var buffer = '';
+
+                function readStream() {
+                    reader.read().then(function(result) {
+                        if (result.done) return;
+
+                        buffer += decoder.decode(result.value, { stream: true });
+                        var events = buffer.split('\n\n');
+                        buffer = events.pop();
+
+                        for (var i = 0; i < events.length; i++) {
+                            var line = events[i].trim();
+                            if (!line.startsWith('data: ')) continue;
+                            try {
+                                var data = JSON.parse(line.substring(6));
+                                switch (data.type) {
+                                    case 'processing':
+                                    case 'heartbeat':
+                                        if (callbacks.onProgress) callbacks.onProgress(data.elapsed || 0);
+                                        break;
+                                    case 'fallback':
+                                        if (callbacks.onFallback) callbacks.onFallback(data.message);
+                                        break;
+                                    case 'result':
+                                        if (callbacks.onResult) callbacks.onResult(data);
+                                        return;
+                                    case 'error':
+                                        if (callbacks.onError) callbacks.onError(data.message);
+                                        return;
+                                }
+                            } catch (e) {
+                                console.warn('SSE parse error:', e);
+                            }
+                        }
+
+                        readStream();
+                    }).catch(function(err) {
+                        callbacks.onError('Stream read error: ' + err.message);
+                    });
+                }
+
+                readStream();
+            }).catch(function(err) {
+                callbacks.onError('Network error: ' + err.message);
+            });
         }
 
         // Initialize designer when navigating to AI Designer page (deferred)
