@@ -7905,7 +7905,7 @@
             // Simulate different completion states based on project progress
             if (stepNum < project.workflowStep) {
                 // Completed step
-                return { actionsCompleted: actionTotal, actionTotal, deliverablesCompleted: deliverableTotal, deliverableTotal, questionnaireCompleted: 8, questionnaireTotal: 8, paymentStatus: 'paid', photosUploaded: 6, stylesSelected: 3, renderingsGenerated: 2 };
+                return { actionsCompleted: actionTotal, actionTotal, deliverablesCompleted: deliverableTotal, deliverableTotal, questionnaireCompleted: 8, questionnaireTotal: 8, paymentStatus: 'paid', photosUploaded: 6, stylesSelected: 1, renderingsGenerated: 2 };
             } else if (stepNum === project.workflowStep) {
                 // Current step - partially done
                 if (stepNum === 1) return { actionsCompleted: 3, actionTotal, deliverablesCompleted: 0, deliverableTotal, questionnaireCompleted: 5, questionnaireTotal: 8, paymentStatus: 'pending' };
@@ -7967,6 +7967,90 @@
             // A.8 Additional Notes
             a8_additional_notes: 'We entertain frequently in summer. Need enough shade coverage for 8-person dining table. Interested in integrated LED lighting.',
             // Module completion tracking
+            _modules: { 'A.1': 'completed', 'A.2': 'completed', 'A.3': 'completed', 'A.4': 'completed', 'A.5': 'completed', 'A.6': 'completed', 'A.7': 'completed', 'A.8': 'completed' }
+        };
+
+        // Pre-populated Demo Data for Smith Premium Sunroom (PRJ-003) — Steps 1-5 (production)
+        intakeFormData['PRJ-003'] = {
+            // A.1 Customer Basics
+            a1_client_name: 'Mr. Smith',
+            a1_address_street: '321 Elm St',
+            a1_address_city: 'Austin',
+            a1_address_state: 'TX',
+            a1_address_zip: '78701',
+            a1_phone: '(512) 555-0303',
+            a1_email: 'smith@email.com',
+            a1_preferred_contact: 'phone',
+            a1_other_decision_makers: '',
+            // A.2 Project Overview
+            a2_usage_scenario: 'residential_house',
+            a2_install_location: 'patio_ground',
+            a2_primary_usage: ['dining', 'leisure', 'reading'],
+            a2_wall_connected: 'true',
+            a2_dimension_length_ft: '24',
+            a2_dimension_width_ft: '16',
+            a2_dimension_height_ft: '10',
+            a2_special_constraints: 'Existing concrete patio slab; gas line runs along east wall',
+            // A.3 Usage & Lifestyle
+            a3_usage_duration: 'four_season',
+            a3_household_size: '3',
+            a3_frequent_visitors: 'true',
+            a3_activities: ['dining', 'reading', 'plants'],
+            a3_functional_needs: ['shade_blinds', 'lighting', 'heating'],
+            // A.4 Budget & Timeline
+            a4_budget_range: '30k_50k',
+            a4_ideal_start: 'within_1_month',
+            a4_important_dates: '',
+            // A.5 Community & HOA Compliance
+            a5_has_hoa: 'no',
+            a5_hoa_name: '',
+            a5_setback_awareness: 'aware',
+            // A.6 Style & Aesthetic Preferences
+            a6_style_preference: 'Premium enclosed sunroom with full glass panels; modern clean lines; retractable roof sections',
+            a6_color_preference: 'Black frame / clear polycarbonate panels',
+            // A.7 Decision Process
+            a7_decision_maker: 'self',
+            a7_decision_timeline: 'within_1_week',
+            // A.8 Additional Notes
+            a8_additional_notes: 'Want a fully enclosed four-season sunroom attached to the back of the house. Must accommodate existing patio furniture. Interested in motorized retractable roof.',
+            // Module completion tracking
+            _modules: { 'A.1': 'completed', 'A.2': 'completed', 'A.3': 'completed', 'A.4': 'completed', 'A.5': 'completed', 'A.6': 'completed', 'A.7': 'completed', 'A.8': 'completed' }
+        };
+
+        // Pre-populated Demo Data for Davis Pool Zip Blinds (PRJ-005)
+        intakeFormData['PRJ-005'] = {
+            a1_client_name: 'Mr. Davis',
+            a1_address_street: '789 Pool Ln',
+            a1_address_city: 'Phoenix',
+            a1_address_state: 'AZ',
+            a1_address_zip: '85001',
+            a1_phone: '(602) 555-0505',
+            a1_email: 'davis@email.com',
+            a1_preferred_contact: 'sms',
+            a1_other_decision_makers: 'Lisa Davis / Spouse',
+            a2_usage_scenario: 'residential_house',
+            a2_install_location: 'patio_ground',
+            a2_primary_usage: ['pool_enclosure', 'entertaining'],
+            a2_wall_connected: 'true',
+            a2_dimension_length_ft: '20',
+            a2_dimension_width_ft: '12',
+            a2_dimension_height_ft: '9',
+            a2_special_constraints: 'Pool area; needs wind and UV protection',
+            a3_usage_duration: 'three_season',
+            a3_household_size: '4',
+            a3_frequent_visitors: 'true',
+            a3_activities: ['swimming', 'entertaining', 'leisure'],
+            a3_functional_needs: ['shade_blinds', 'wind_protection'],
+            a4_budget_range: '5k_10k',
+            a4_ideal_start: '1_3_months',
+            a5_has_hoa: 'yes',
+            a5_hoa_name: 'Desert Ridge HOA',
+            a5_setback_awareness: 'need_help',
+            a6_style_preference: 'Modern zip blinds with motorized operation; mesh fabric for wind protection while maintaining pool views',
+            a6_color_preference: 'Charcoal frame / light gray mesh',
+            a7_decision_maker: 'spouse_together',
+            a7_decision_timeline: '2_4_weeks',
+            a8_additional_notes: 'Pool area needs protection from wind and sun. 4 openings around the patio cover, each about 2.4m wide × 2.0m drop.',
             _modules: { 'A.1': 'completed', 'A.2': 'completed', 'A.3': 'completed', 'A.4': 'completed', 'A.5': 'completed', 'A.6': 'completed', 'A.7': 'completed', 'A.8': 'completed' }
         };
 
@@ -8626,7 +8710,7 @@
                             <div>
                                 <div class="flex items-center justify-between mb-2">
                                     <span class="text-xs font-semibold text-gray-700"><i class="fas fa-th-large text-indigo-400 mr-1.5"></i>Select Product Styles</span>
-                                    <span class="text-[10px] text-gray-400">${stylesCount}/3 selected</span>
+                                    <span class="text-[10px] text-gray-400">${stylesCount}/6 selected</span>
                                 </div>
                                 <div class="grid grid-cols-3 gap-2">
                                     ${styleGrid}
@@ -8768,37 +8852,48 @@
         }
 
         function triggerPhotoUpload(projectId) {
-            // Simulate file upload (in production, would open file picker + upload to storage)
-            showNotification('Photo upload will be connected to cloud storage in production', 'info');
+            // Create a hidden file input and trigger it
+            var input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.multiple = true;
+            input.style.display = 'none';
+            input.onchange = function(e) {
+                var files = e.target.files;
+                if (!files || files.length === 0) { input.remove(); return; }
+                // Store uploaded file count
+                if (!designerUploadedPhotos[projectId]) designerUploadedPhotos[projectId] = [];
+                for (var i = 0; i < files.length; i++) {
+                    designerUploadedPhotos[projectId].push(files[i].name);
+                }
+                var total = designerUploadedPhotos[projectId].length;
+                showNotification(files.length + ' photo(s) added (' + total + ' total)', 'success');
+                // Refresh step detail to update the photo count UI
+                var project = allProjectsData.find(function(p) { return p.id === projectId; });
+                if (project && expandedStep === 2) {
+                    toggleStepDetail(2, project);
+                    setTimeout(function() { toggleStepDetail(2, project); }, 100);
+                }
+                input.remove();
+            };
+            document.body.appendChild(input);
+            input.click();
         }
 
         function launchAIDesigner(projectId) {
             const project = allProjectsData.find(p => p.id === projectId);
             if (!project) return;
-            const styles = designerSelectedStyles[projectId] || [];
-            const photos = designerUploadedPhotos[projectId] || [];
 
-            // Validate prerequisites
-            if (project.workflowStep < 2) {
-                showNotification('Please complete Step 1 (Intent) before launching AI Designer', 'error');
-                return;
-            }
-
-            // Show launching animation
-            showNotification('AI Designer launching... Generating concept renderings (~30 sec)', 'success');
-
-            // Simulate AI rendering generation after delay
-            setTimeout(() => {
-                showNotification('2 concept rendering schemes generated successfully!', 'success');
-                // Refresh the step detail to show generated renderings
-                const status = getProjectStepStatus(project, 2);
-                status.renderingsGenerated = 2;
-                // Re-render to update UI
-                if (expandedStep === 2) {
-                    toggleStepDetail(2, project);
-                    setTimeout(() => toggleStepDetail(2, project), 100);
+            // Navigate to the AI Designer page and auto-select the project
+            currentSelectedProjectId = projectId;
+            navigateToPage('ai-designer');
+            setTimeout(function() {
+                var sel = document.getElementById('designerProjectSelect');
+                if (sel && projectId) {
+                    sel.value = projectId;
+                    onDesignerProjectChange();
                 }
-            }, 2000);
+            }, 100);
         }
 
         // ===== Create New Project Modal & Logic =====
