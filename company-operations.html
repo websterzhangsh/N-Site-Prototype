@@ -7877,7 +7877,7 @@
                     { agent: 'Compliance Agent', ability: 'Auto-filter styles violating HOA restrictions (e.g. roof pitch, color, material)' },
                     { agent: 'Knowledge Base', ability: 'Product specs, style references, material options' }
                 ]
-            }
+            },
             3: {
                 name: 'Measurement',
                 nameEn: 'Measurement',
@@ -9146,6 +9146,7 @@
             })() : '';
 
             // Payment Status
+            const paymentColors = { paid: 'green', pending: 'amber', not_started: 'gray' };
             const paymentLabels = { paid: 'Paid', pending: 'Pending', not_started: 'Not Started' };
             const pc = paymentColors[status.paymentStatus];
             const pl = paymentLabels[status.paymentStatus];
@@ -11376,5 +11377,4 @@
         }
     </script>
 </body>
-</html>
 </html>
