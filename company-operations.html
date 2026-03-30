@@ -7879,12 +7879,12 @@
                     ],
                     photoUpload: { label: 'Yard Site Photos', hint: 'Multi-angle, with reference objects, clear surroundings', accept: 'image/*', multiple: true, maxFiles: 10 },
                     styleOptions: [
-                        { value: 'single_slope', label: 'Single-Slope Roof', icon: 'fa-home' },
-                        { value: 'multi_slope', label: 'Multi-Slope Roof', icon: 'fa-warehouse' },
-                        { value: 'curved_roof', label: 'Curved Roof', icon: 'fa-igloo' },
-                        { value: 'flat_roof', label: 'Flat Roof', icon: 'fa-square' },
-                        { value: 'gable_roof', label: 'Gable Roof', icon: 'fa-campground' },
-                        { value: 'modern_glass', label: 'Modern Glass', icon: 'fa-border-all' }
+                        { value: 'sr-l-classic', label: 'L-Classic', icon: 'fa-home', sub: 'L-Type · Manual' },
+                        { value: 'sr-l-smart', label: 'L-Smart', icon: 'fa-bolt', sub: 'L-Type · Motorized' },
+                        { value: 'sr-l-pro', label: 'L-Pro', icon: 'fa-solar-panel', sub: 'L-Type · Solar' },
+                        { value: 'sr-m-classic', label: 'M-Classic', icon: 'fa-warehouse', sub: 'M-Type · Manual' },
+                        { value: 'sr-m-smart', label: 'M-Smart', icon: 'fa-cogs', sub: 'M-Type · Motorized' },
+                        { value: 'sr-m-pro', label: 'M-Pro', icon: 'fa-sun', sub: 'M-Type · Solar' }
                     ]
                 },
                 agentSupport: [
@@ -8531,11 +8531,12 @@
                 // Build style selection grid
                 const styleGrid = styles.map(s => {
                     const selected = stylesCount > 0 && styles.indexOf(s) < stylesCount;
-                    return `<div class="flex flex-col items-center gap-1.5 p-2.5 rounded-lg border ${selected ? 'border-indigo-400 bg-indigo-50/60 ring-1 ring-indigo-200' : 'border-gray-100 hover:border-gray-300 hover:bg-gray-50'} cursor-pointer transition" onclick="toggleDesignStyle(this, '${s.value}')">
+                    return `<div class="flex flex-col items-center gap-1 p-2.5 rounded-lg border ${selected ? 'border-indigo-400 bg-indigo-50/60 ring-1 ring-indigo-200' : 'border-gray-100 hover:border-gray-300 hover:bg-gray-50'} cursor-pointer transition" onclick="toggleDesignStyle(this, '${s.value}')">
                         <div class="w-9 h-9 rounded-lg flex items-center justify-center ${selected ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-400'}">
                             <i class="fas ${s.icon} text-sm"></i>
                         </div>
-                        <span class="text-[10px] font-medium ${selected ? 'text-indigo-700' : 'text-gray-500'} text-center leading-tight">${s.label}</span>
+                        <span class="text-[10px] font-semibold ${selected ? 'text-indigo-700' : 'text-gray-600'} text-center leading-tight">${s.label}</span>
+                        ${s.sub ? `<span class="text-[8px] ${selected ? 'text-indigo-400' : 'text-gray-400'} text-center leading-tight">${s.sub}</span>` : ''}
                         ${selected ? '<i class="fas fa-check-circle text-indigo-500 text-[10px]"></i>' : ''}
                     </div>`;
                 }).join('');
@@ -8630,7 +8631,7 @@
                                 <div class="grid grid-cols-3 gap-2">
                                     ${styleGrid}
                                 </div>
-                                <p class="text-[10px] text-gray-400 mt-1.5"><i class="fas fa-info-circle mr-1"></i>Select 2–3 preferred styles for AI rendering</p>
+                                <p class="text-[10px] text-gray-400 mt-1.5"><i class="fas fa-info-circle mr-1"></i>Select 2–3 preferred product models for AI rendering</p>
                             </div>
                         </div>
 
