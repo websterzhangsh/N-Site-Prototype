@@ -3838,18 +3838,6 @@
                                 </div>
                             </div>
 
-                            <!-- AI Agent Collaboration Section -->
-                            <div id="projAgentSection" class="bg-white rounded-xl border border-gray-200 mb-5 overflow-hidden hidden">
-                                <div class="flex items-center gap-2 px-5 py-3 border-b border-gray-100 bg-gray-50/70">
-                                    <i class="fas fa-robot text-gray-500 text-sm"></i>
-                                    <h3 class="text-sm font-semibold text-gray-700">AI Agent Collaboration</h3>
-                                    <span class="text-xs text-gray-400 ml-auto" id="projAgentStepHint"></span>
-                                </div>
-                                <div class="p-4" id="projAgentList">
-                                    <!-- Populated by JS -->
-                                </div>
-                            </div>
-
                             <!-- Risk List Section -->
                             <div class="bg-white rounded-xl border border-gray-200 mb-5 overflow-hidden">
                                 <div class="flex items-center justify-between px-5 py-3 border-b border-gray-100 bg-gray-50/70">
@@ -8981,10 +8969,6 @@
                 container.classList.add('hidden');
                 container.innerHTML = '';
                 expandedStep = null;
-                // Restore agents to project's current step
-                if (currentDetailProject) {
-                    renderProjectAgents(currentDetailProject);
-                }
                 return;
             }
 
@@ -9975,10 +9959,16 @@
             const pc = paymentColors[status.paymentStatus];
             const pl = paymentLabels[status.paymentStatus];
 
-            // Update standalone Agent section to match the viewed step
-            if (currentDetailProject) {
-                renderProjectAgents(currentDetailProject, stepNum);
-            }
+            // Agent Support
+            const agentHTML = config.agentSupport ? config.agentSupport.map(a => `
+                <div class="flex items-center gap-2 py-1.5">
+                    <div class="w-6 h-6 bg-gray-900 text-white rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-robot text-[9px]"></i>
+                    </div>
+                    <span class="text-xs font-medium text-gray-700">${a.agent}</span>
+                    <span class="text-xs text-gray-400">— ${a.ability}</span>
+                </div>
+            `).join('') : '';
 
             return `
                 <div class="p-5 bg-gray-50/30">
@@ -10034,6 +10024,15 @@
                     ${measurementPanelHTML ? `<div class="mt-4">${measurementPanelHTML}</div>` : ''}
 
                     ${quotationPanelHTML ? `<div class="mt-4">${quotationPanelHTML}</div>` : ''}
+
+                    ${agentHTML ? `
+                    <div class="mt-4 bg-white rounded-lg border border-gray-100 p-4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fas fa-robot text-gray-500 text-sm"></i>
+                            <span class="text-sm font-semibold text-gray-700">AI Agent Collaboration</span>
+                        </div>
+                        ${agentHTML}
+                    </div>` : ''}
                 </div>`;
         }
 
@@ -11506,9 +11505,6 @@
             // Service Workflow
             renderProjectWorkflow(project);
 
-            // AI Agent Collaboration
-            renderProjectAgents(project);
-
             // Risk List
             renderProjectRisks(project);
 
@@ -11562,37 +11558,6 @@
                     ${step < 6 ? '<div class="flex items-center"><i class="fas fa-chevron-right text-gray-300 text-xs"></i></div>' : ''}
                 `;
             }).join('');
-        }
-
-        function renderProjectAgents(project, stepOverride) {
-            const section = document.getElementById('projAgentSection');
-            const list = document.getElementById('projAgentList');
-            const hint = document.getElementById('projAgentStepHint');
-            if (!section || !list) return;
-
-            const step = stepOverride || project.workflowStep;
-            const config = STEP_DETAIL_CONFIG[step];
-            if (!config || !config.agentSupport || config.agentSupport.length === 0) {
-                section.classList.add('hidden');
-                return;
-            }
-
-            const stepNames = ['', 'Intent', 'AI Design', 'Measurement', 'Quotation', 'Production', 'Installation'];
-            hint.textContent = 'Step ' + step + ': ' + (stepNames[step] || '');
-
-            list.innerHTML = config.agentSupport.map(a => `
-                <div class="flex items-center gap-3 py-2">
-                    <div class="w-7 h-7 bg-gray-900 text-white rounded-full flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-robot text-[10px]"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <span class="text-xs font-semibold text-gray-800">${a.agent}</span>
-                        <span class="text-xs text-gray-400 ml-1.5">— ${a.ability}</span>
-                    </div>
-                </div>
-            `).join('');
-
-            section.classList.remove('hidden');
         }
 
         function renderProjectRisks(project) {
