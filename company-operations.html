@@ -244,6 +244,23 @@
         .stat-change { font-size: 13px; color: #059669; }
         .stat-change.negative { color: #dc2626; }
 
+        /* Overview: Orders & Customers scrollable list */
+        #overview-section-orders .overflow-x-auto,
+        #overview-section-customers .overflow-x-auto {
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+        #overview-section-orders thead,
+        #overview-section-customers thead {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        #overview-section-orders thead tr,
+        #overview-section-customers thead tr {
+            background: #f9fafb;
+        }
+
         /* Content Cards */
         .content-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
         .card { background: white; border-radius: 12px; border: 1px solid #e5e7eb; overflow: hidden; }
@@ -8011,7 +8028,9 @@
             { id: 'ORD-2024-0154', customer: 'Mrs. Davis', email: 'davis@email.com', product: 'Zip Blinds Set', total: '$4,200', status: 'Shipped', statusColor: 'purple', date: 'Mar 5, 2026' },
             { id: 'ORD-2024-0153', customer: 'Mr. Smith', email: 'smith@email.com', product: 'Premium Sunroom', total: '$32,000', status: 'Completed', statusColor: 'green', date: 'Feb 28, 2026' },
             { id: 'ORD-2024-0152', customer: 'Ms. Garcia', email: 'garcia@email.com', product: 'ADU Studio', total: '$85,000', status: 'In Production', statusColor: 'blue', date: 'Feb 25, 2026' },
-            { id: 'ORD-2024-0151', customer: 'Mr. Wilson', email: 'wilson@email.com', product: 'Classic Pergola', total: '$9,500', status: 'Completed', statusColor: 'green', date: 'Feb 20, 2026' }
+            { id: 'ORD-2024-0151', customer: 'Mr. Wilson', email: 'wilson@email.com', product: 'Classic Pergola', total: '$9,500', status: 'Completed', statusColor: 'green', date: 'Feb 20, 2026' },
+            { id: 'ORD-2024-0150', customer: 'Mrs. Taylor', email: 'taylor@email.com', product: 'Zip Blinds Motorized', total: '$5,800', status: 'Pending', statusColor: 'amber', date: 'Feb 15, 2026' },
+            { id: 'ORD-2024-0149', customer: 'Mr. Anderson', email: 'anderson@email.com', product: 'M-Smart Sunroom', total: '$24,500', status: 'In Production', statusColor: 'blue', date: 'Feb 10, 2026' }
         ];
 
         const overviewCustomersData = [
@@ -8020,7 +8039,19 @@
             { name: 'Mrs. Davis', email: 'davis@email.com', location: '789 Pool Ln, Scottsdale, AZ', projects: 2, spent: '$12,800', status: 'Active', avatar: 'D' },
             { name: 'Mr. Smith', email: 'smith@email.com', location: '321 Elm St, Austin, TX', projects: 1, spent: '$32,000', status: 'VIP', avatar: 'S' },
             { name: 'Ms. Garcia', email: 'garcia@email.com', location: '654 Pine Rd, San Diego, CA', projects: 1, spent: '$85,000', status: 'New', avatar: 'G' },
-            { name: 'Mr. Wilson', email: 'wilson@email.com', location: '987 Cedar Ct, Portland, OR', projects: 2, spent: '$18,200', status: 'Active', avatar: 'W' }
+            { name: 'Mr. Wilson', email: 'wilson@email.com', location: '987 Cedar Ct, Portland, OR', projects: 2, spent: '$18,200', status: 'Active', avatar: 'W' },
+            { name: 'Mrs. Taylor', email: 'taylor@email.com', location: '111 Rose Blvd, Denver, CO', projects: 1, spent: '$5,800', status: 'Active', avatar: 'T' },
+            { name: 'Mr. Anderson', email: 'anderson@email.com', location: '222 Maple Ave, Seattle, WA', projects: 2, spent: '$38,500', status: 'VIP', avatar: 'A' },
+            { name: 'Ms. Martinez', email: 'martinez@email.com', location: '333 Birch Ln, Phoenix, AZ', projects: 1, spent: '$9,200', status: 'Active', avatar: 'M' },
+            { name: 'Mr. Thompson', email: 'thompson@email.com', location: '444 Walnut Dr, Dallas, TX', projects: 3, spent: '$52,000', status: 'VIP', avatar: 'T' },
+            { name: 'Mrs. Brown', email: 'brown@email.com', location: '555 Spruce Ct, Miami, FL', projects: 1, spent: '$15,300', status: 'Active', avatar: 'B' },
+            { name: 'Mr. Lee', email: 'lee@email.com', location: '666 Aspen Way, Sacramento, CA', projects: 2, spent: '$22,700', status: 'Active', avatar: 'L' },
+            { name: 'Ms. White', email: 'white@email.com', location: '777 Cherry St, Nashville, TN', projects: 1, spent: '$8,400', status: 'New', avatar: 'W' },
+            { name: 'Mr. Harris', email: 'harris@email.com', location: '888 Poplar Rd, Charlotte, NC', projects: 1, spent: '$11,600', status: 'Active', avatar: 'H' },
+            { name: 'Mrs. Clark', email: 'clark@email.com', location: '999 Cypress Ln, Tampa, FL', projects: 2, spent: '$29,800', status: 'Active', avatar: 'C' },
+            { name: 'Mr. Lewis', email: 'lewis@email.com', location: '100 Willow Dr, Raleigh, NC', projects: 1, spent: '$7,500', status: 'New', avatar: 'L' },
+            { name: 'Ms. Robinson', email: 'robinson@email.com', location: '200 Ivy Ct, Atlanta, GA', projects: 1, spent: '$19,200', status: 'Active', avatar: 'R' },
+            { name: 'Mr. Walker', email: 'walker@email.com', location: '300 Magnolia Blvd, Orlando, FL', projects: 2, spent: '$35,600', status: 'Active', avatar: 'W' }
         ];
 
         const overviewProductsData = [
