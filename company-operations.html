@@ -8972,6 +8972,21 @@
                 return;
             }
 
+            // Warn if user tries to open a step ahead of the current active step
+            if (project && stepNum > project.workflowStep) {
+                const stepNames = ['', 'Intent', 'AI Design', 'Measurement', 'Quotation', 'Production', 'Installation'];
+                const currentStepName = stepNames[project.workflowStep] || 'Step ' + project.workflowStep;
+                const targetStepName = stepNames[stepNum] || 'Step ' + stepNum;
+                if (!confirm(
+                    '⚠️ Current active step is Step ' + project.workflowStep + ' (' + currentStepName + ').\n\n' +
+                    'You are attempting to view Step ' + stepNum + ' (' + targetStepName + '), which is ahead of the current progress.\n\n' +
+                    'Actions in this step may be misleading as the required actions in earlier steps are not fully executed and/or deliverables are not fully obtained.\n\n' +
+                    'Do you still want to proceed?'
+                )) {
+                    return;
+                }
+            }
+
             const config = STEP_DETAIL_CONFIG[stepNum];
             if (!config) {
                 // Steps 2-6 not yet configured
