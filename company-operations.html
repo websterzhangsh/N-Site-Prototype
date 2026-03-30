@@ -10885,6 +10885,14 @@
             var btn = document.getElementById('step4LaunchBtn_' + projectId);
             if (!panel) return;
             if (panel.classList.contains('hidden')) {
+                // Warn if project is at Step 5 or 6 — contract re-generation risk
+                var project = allProjectsData.find(function(p) { return p.id === projectId; });
+                if (project && project.workflowStep >= 5) {
+                    var stepNames = { 5: 'Production', 6: 'Installation' };
+                    if (!confirm('⚠️ This project is currently at Step ' + project.workflowStep + ' (' + (stepNames[project.workflowStep] || '') + ').\n\nRe-opening the Quotation panel at this stage may trigger Contract Re-generation, which could affect production schedules, material orders, and existing agreements.\n\nAre you sure you want to proceed?')) {
+                        return;
+                    }
+                }
                 panel.classList.remove('hidden');
                 if (btn) { btn.innerHTML = '<i class="fas fa-times text-[10px]"></i> Close Panel'; btn.classList.replace('bg-orange-600', 'bg-gray-600'); btn.classList.replace('hover:bg-orange-700', 'hover:bg-gray-700'); }
             } else {
