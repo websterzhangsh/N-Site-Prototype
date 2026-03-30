@@ -1865,7 +1865,7 @@
                                             <span class="text-lg font-bold text-gray-900" id="quotePremiumPrice">$2,120</span>
                                         </div>
                                         <div class="flex items-center justify-between text-xs">
-                                            <span class="text-gray-500">25% margin &middot; High perceived value</span>
+                                            <span class="text-gray-500">35% margin &middot; High perceived value</span>
                                             <span class="text-emerald-600 font-medium" id="quotePremiumProfit">$550 profit</span>
                                         </div>
                                     </div>
@@ -4418,6 +4418,161 @@
             }
         }
 
+        // ===== Per-Project Agent Panel Data (Compliance · CX Exec · Knowledge Builder) =====
+        const projectAgentPanelData = {
+            'PRJ-003': {
+                compliance: {
+                    jurisdiction: 'Austin, TX (Travis County)',
+                    permitStatus: 'approved', permitId: 'BP-2025-04832', permitDate: '2025-12-28',
+                    hoaStatus: 'No HOA — single-family residential',
+                    complianceScore: 100,
+                    inspections: [
+                        { label: 'Foundation Inspection', status: 'pass', date: '2026-01-08', inspector: 'R. Gutierrez' },
+                        { label: 'Framing Inspection', status: 'pass', date: '2026-02-02', inspector: 'R. Gutierrez' },
+                        { label: 'Electrical Rough-In', status: 'pass', date: '2026-02-10', inspector: 'J. Park' },
+                        { label: 'Insulation / Energy', status: 'pass', date: '2026-02-18', inspector: 'R. Gutierrez' },
+                        { label: 'Final Inspection', status: 'scheduled', date: '2026-04-05', inspector: 'TBD' }
+                    ],
+                    checks: [
+                        { label: 'Building Permit', status: 'pass', detail: 'Approved Dec 28, 2025' },
+                        { label: 'Structural Engineering (PE)', status: 'pass', detail: 'PE stamp — Dr. A. Patel' },
+                        { label: 'Setback Compliance', status: 'pass', detail: '12 ft actual (5 ft req)' },
+                        { label: 'Foundation Inspection', status: 'pass', detail: 'Concrete slab 4″ — approved' },
+                        { label: 'Electrical Sub-Panel', status: 'pass', detail: '200A service adequate' },
+                        { label: 'Energy Code (IECC 2021)', status: 'pass', detail: 'R-19 wall / R-30 roof / Low-E glass' },
+                        { label: 'Wind Load Rating', status: 'pass', detail: '110 mph (Zone II)' }
+                    ]
+                },
+                cx: {
+                    satisfaction: 88, responseTime: '1.8h', interactions: 14, sentiment: 'positive',
+                    nextFollowUp: '2026-04-02', nextAction: 'Production progress update',
+                    preferredChannel: 'Email',
+                    recentMessages: [
+                        { from: 'customer', text: 'Hi — any update on the glass panel backorder? Just want to make sure the timeline isn\'t slipping.', time: 'Mar 26, 10:15 AM' },
+                        { from: 'agent', text: 'Good morning Mr. Smith! The glass panels shipped yesterday and are expected to arrive by Mar 30. We\'re still on track for the Apr 5 final inspection. I\'ll send photos once they\'re installed.', time: 'Mar 26, 11:02 AM' },
+                        { from: 'customer', text: 'Great news, thanks for the quick update!', time: 'Mar 26, 11:30 AM' }
+                    ],
+                    openItems: [
+                        { label: 'Glass panel delivery confirmation', priority: 'medium', due: 'Mar 30' },
+                        { label: 'Schedule final walkthrough with customer', priority: 'low', due: 'Apr 04' }
+                    ]
+                },
+                knowledge: {
+                    relevantDocs: [
+                        { title: 'Premium Sunroom Installation Guide v3.2', category: 'installation', pages: 48, icon: 'fa-file-pdf', color: '#ef4444' },
+                        { title: 'Texas Building Code — Outdoor Structures 2026', category: 'compliance', pages: 124, icon: 'fa-file-pdf', color: '#ef4444' },
+                        { title: 'Sunroom Glass Panel Specifications', category: 'design', pages: 16, icon: 'fa-file-alt', color: '#3b82f6' },
+                        { title: 'Energy Efficiency Compliance (IECC 2021)', category: 'compliance', pages: 32, icon: 'fa-file-pdf', color: '#ef4444' },
+                        { title: 'Sunroom Electrical Rough-In Checklist', category: 'installation', pages: 4, icon: 'fa-file-alt', color: '#3b82f6' },
+                        { title: 'Customer Handover & Warranty Package', category: 'aftersales', pages: 8, icon: 'fa-file-alt', color: '#3b82f6' }
+                    ],
+                    suggestedTraining: [
+                        { title: 'Sunroom Final Inspection Prep', type: 'video', duration: '12 min' },
+                        { title: 'Glass Panel Handling & Safety', type: 'video', duration: '8 min' }
+                    ]
+                }
+            },
+            'PRJ-004': {
+                compliance: {
+                    jurisdiction: 'Frederick, MD (Frederick County)',
+                    permitStatus: 'in_review', permitId: 'ZP-2026-01187', permitDate: '2026-02-15',
+                    hoaStatus: 'Oak Grove Community HOA — conditional approval received',
+                    complianceScore: 82,
+                    inspections: [
+                        { label: 'Site Survey', status: 'pass', date: '2026-02-10', inspector: 'S. Lee' },
+                        { label: 'Foundation / Footing', status: 'pending', date: 'TBD', inspector: 'TBD' },
+                        { label: 'Final Inspection', status: 'pending', date: 'TBD', inspector: 'TBD' }
+                    ],
+                    checks: [
+                        { label: 'Building Permit', status: 'review', detail: 'Submitted Feb 15 — under county review' },
+                        { label: 'HOA Approval', status: 'pass', detail: 'Conditional — approved color palette only' },
+                        { label: 'Setback Compliance', status: 'pass', detail: '8 ft actual (5 ft req)' },
+                        { label: 'Foundation Plan', status: 'pass', detail: 'Pier & beam — engineer approved' },
+                        { label: 'Flood Zone Check', status: 'warn', detail: 'Zone X (moderate risk) — elevation cert needed' },
+                        { label: 'Wind Load Rating', status: 'pass', detail: '90 mph (Zone I)' }
+                    ]
+                },
+                cx: {
+                    satisfaction: 91, responseTime: '1.2h', interactions: 9, sentiment: 'positive',
+                    nextFollowUp: '2026-04-01', nextAction: 'Send quotation for review',
+                    preferredChannel: 'SMS',
+                    recentMessages: [
+                        { from: 'customer', text: 'I got the HOA conditional approval letter! They approved the dark bronze color. Can we proceed with the quote?', time: 'Mar 24, 3:45 PM' },
+                        { from: 'agent', text: 'Wonderful news, Ms. Chen! I\'ll update the project file and have the quotation ready for your review by end of this week. The dark bronze finish is a great choice for your garden setting.', time: 'Mar 24, 4:10 PM' },
+                        { from: 'customer', text: 'Sounds good. Also, is the oak tree going to be an issue for installation?', time: 'Mar 25, 9:00 AM' },
+                        { from: 'agent', text: 'Our surveyor noted the oak tree is 6 ft NW of the planned area — well within safe distance. No trimming needed. We\'ll route the footings to avoid root zones.', time: 'Mar 25, 9:30 AM' }
+                    ],
+                    openItems: [
+                        { label: 'Finalize quotation and send to customer', priority: 'high', due: 'Mar 28' },
+                        { label: 'Obtain elevation certificate for flood zone', priority: 'medium', due: 'Apr 05' },
+                        { label: 'Confirm building permit approval', priority: 'high', due: 'Apr 10' }
+                    ]
+                },
+                knowledge: {
+                    relevantDocs: [
+                        { title: 'Studio Pergola Installation Manual v2.1', category: 'installation', pages: 36, icon: 'fa-file-pdf', color: '#ef4444' },
+                        { title: 'Maryland Building Code — Detached Structures', category: 'compliance', pages: 88, icon: 'fa-file-pdf', color: '#ef4444' },
+                        { title: 'Structural Load Calculations — Pergola', category: 'design', pages: 12, icon: 'fa-file-excel', color: '#22c55e' },
+                        { title: 'HOA Approval Checklist Template', category: 'compliance', pages: 4, icon: 'fa-file-word', color: '#3b82f6' },
+                        { title: 'FEMA Flood Zone Reference — Mid-Atlantic', category: 'compliance', pages: 28, icon: 'fa-file-pdf', color: '#ef4444' },
+                        { title: 'Pier & Beam Foundation Guide', category: 'installation', pages: 20, icon: 'fa-file-alt', color: '#3b82f6' }
+                    ],
+                    suggestedTraining: [
+                        { title: 'Pergola Footing & Anchoring Best Practices', type: 'video', duration: '15 min' },
+                        { title: 'Working Near Tree Root Zones', type: 'article', duration: '5 min read' }
+                    ]
+                }
+            },
+            'PRJ-005': {
+                compliance: {
+                    jurisdiction: 'Scottsdale, AZ (Maricopa County)',
+                    permitStatus: 'approved', permitId: 'EZ-2026-00491', permitDate: '2026-01-12',
+                    hoaStatus: 'Desert Ridge HOA — approved (exterior screen color pre-approved)',
+                    complianceScore: 100,
+                    inspections: [
+                        { label: 'Electrical Inspection', status: 'pass', date: '2026-02-20', inspector: 'M. Torres' },
+                        { label: 'Final / Completion', status: 'pass', date: '2026-03-18', inspector: 'M. Torres' }
+                    ],
+                    checks: [
+                        { label: 'Electrical Permit', status: 'pass', detail: 'Motor circuit approved (20A dedicated)' },
+                        { label: 'HOA Approval', status: 'pass', detail: 'Desert Ridge — mesh color "Desert Sand" approved' },
+                        { label: 'Wind Load Rating', status: 'pass', detail: '90 mph — Zip Track rated' },
+                        { label: 'UV Exposure Rating', status: 'pass', detail: 'Mesh 5% openness — UV block 95%' },
+                        { label: 'Mounting / Structural', status: 'pass', detail: 'Face mount — lintel adequate' },
+                        { label: 'Final Inspection', status: 'pass', detail: 'Passed Mar 18, 2026' }
+                    ]
+                },
+                cx: {
+                    satisfaction: 98, responseTime: '0.5h', interactions: 11, sentiment: 'very positive',
+                    nextFollowUp: '2026-04-05', nextAction: '30-day post-install satisfaction survey',
+                    preferredChannel: 'Phone',
+                    recentMessages: [
+                        { from: 'customer', text: 'The zip blinds look amazing! The solar motor works perfectly and the app control is so convenient. Very happy with everything.', time: 'Mar 20, 2:00 PM' },
+                        { from: 'agent', text: 'Thank you so much, Mrs. Davis! We\'re thrilled you love them. A few tips: the solar panel charges best facing south, and you can set auto-schedules in the app. We\'ll send a 30-day check-in survey on Apr 5.', time: 'Mar 20, 2:20 PM' },
+                        { from: 'customer', text: 'Already set up the schedule! Blinds go down at 3pm when the afternoon sun hits the pool. Perfect.', time: 'Mar 21, 10:00 AM' }
+                    ],
+                    openItems: [
+                        { label: 'Send 30-day satisfaction survey', priority: 'low', due: 'Apr 05' },
+                        { label: 'Warranty registration reminder', priority: 'low', due: 'Apr 10' }
+                    ]
+                },
+                knowledge: {
+                    relevantDocs: [
+                        { title: 'Zip Blinds Installation & Commissioning Guide', category: 'installation', pages: 28, icon: 'fa-file-pdf', color: '#ef4444' },
+                        { title: 'Solar Motor Programming Manual (Somfy)', category: 'installation', pages: 16, icon: 'fa-file-pdf', color: '#ef4444' },
+                        { title: 'Zip Track Fabric Care & Maintenance', category: 'aftersales', pages: 6, icon: 'fa-file-alt', color: '#3b82f6' },
+                        { title: 'Arizona Electrical Code — Low Voltage Motorized', category: 'compliance', pages: 44, icon: 'fa-file-pdf', color: '#ef4444' },
+                        { title: 'Zip Blinds Warranty Terms & Conditions', category: 'aftersales', pages: 8, icon: 'fa-file-alt', color: '#3b82f6' },
+                        { title: 'HOA Color Palette Reference — Desert Ridge', category: 'compliance', pages: 2, icon: 'fa-file-image', color: '#8b5cf6' }
+                    ],
+                    suggestedTraining: [
+                        { title: 'Zip Blinds Troubleshooting & Recalibration', type: 'video', duration: '10 min' },
+                        { title: 'Solar Motor Seasonal Maintenance', type: 'article', duration: '4 min read' }
+                    ]
+                }
+            }
+        };
+
         // v1.2.0: Agent toolbar panel toggle
         function toggleAgentPanel(agentName) {
             var container = document.getElementById('agentPanelContainer');
@@ -4488,23 +4643,204 @@
                         '<p style="font-size:12px;color:#9ca3af;line-height:1.5;">The modular pricing solution is currently available for <strong>Zip Blinds</strong> projects.<br>Select a Zip Blinds project to access the full 6-strategy pricing engine.</p>' +
                     '</div>';
             } else {
-                // === All other agents: default placeholder ===
-                contentEl.innerHTML =
-                    '<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">' +
-                        '<div style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;background:' + agent.color + '15;color:' + agent.color + ';">' +
-                            '<i class="fas ' + agent.icon + '"></i>' +
+                // === Rich agent panels with per-project data ===
+                var pData = currentSelectedProjectId ? (projectAgentPanelData[currentSelectedProjectId] || null) : null;
+                var headerHTML = '<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">' +
+                    '<div style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;background:' + agent.color + '15;color:' + agent.color + ';">' +
+                        '<i class="fas ' + agent.icon + '"></i>' +
+                    '</div>' +
+                    '<div>' +
+                        '<h3 style="font-size:15px;font-weight:600;color:#111827;">' + agent.title + '</h3>' +
+                        '<p style="font-size:12px;color:#6b7280;">Project: ' + projName + '</p>' +
+                    '</div>' +
+                '</div>';
+
+                // ── Compliance Agent ──
+                if (agentName === 'compliance-agent' && pData && pData.compliance) {
+                    var c = pData.compliance;
+                    var permitBadge = c.permitStatus === 'approved'
+                        ? '<span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600;background:#dcfce7;color:#16a34a;"><i class="fas fa-check-circle"></i> Approved</span>'
+                        : c.permitStatus === 'in_review'
+                        ? '<span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600;background:#fef3c7;color:#d97706;"><i class="fas fa-clock"></i> Under Review</span>'
+                        : '<span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600;background:#f3f4f6;color:#6b7280;"><i class="fas fa-minus-circle"></i> Pending</span>';
+
+                    var scoreColor = c.complianceScore >= 90 ? '#16a34a' : c.complianceScore >= 70 ? '#d97706' : '#dc2626';
+
+                    var checksHTML = c.checks.map(function(ck) {
+                        var icon = ck.status === 'pass' ? '<i class="fas fa-check-circle" style="color:#16a34a;font-size:12px;"></i>'
+                            : ck.status === 'warn' ? '<i class="fas fa-exclamation-triangle" style="color:#d97706;font-size:12px;"></i>'
+                            : ck.status === 'review' ? '<i class="fas fa-clock" style="color:#2563eb;font-size:12px;"></i>'
+                            : '<i class="fas fa-minus-circle" style="color:#9ca3af;font-size:12px;"></i>';
+                        return '<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #f3f4f6;">' +
+                            '<div style="flex-shrink:0;margin-top:1px;">' + icon + '</div>' +
+                            '<div style="flex:1;min-width:0;">' +
+                                '<div style="font-size:12px;font-weight:500;color:#374151;">' + ck.label + '</div>' +
+                                '<div style="font-size:11px;color:#9ca3af;">' + ck.detail + '</div>' +
+                            '</div></div>';
+                    }).join('');
+
+                    var inspHTML = c.inspections.map(function(ins) {
+                        var badge = ins.status === 'pass'
+                            ? '<span style="padding:1px 6px;border-radius:4px;font-size:9px;font-weight:600;background:#dcfce7;color:#16a34a;">PASSED</span>'
+                            : ins.status === 'scheduled'
+                            ? '<span style="padding:1px 6px;border-radius:4px;font-size:9px;font-weight:600;background:#dbeafe;color:#2563eb;">SCHEDULED</span>'
+                            : '<span style="padding:1px 6px;border-radius:4px;font-size:9px;font-weight:600;background:#f3f4f6;color:#9ca3af;">PENDING</span>';
+                        return '<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f9fafb;">' +
+                            '<div><div style="font-size:11px;font-weight:500;color:#374151;">' + ins.label + '</div>' +
+                            '<div style="font-size:10px;color:#9ca3af;">' + ins.date + (ins.inspector !== 'TBD' ? ' · ' + ins.inspector : '') + '</div></div>' +
+                            badge + '</div>';
+                    }).join('');
+
+                    contentEl.innerHTML = headerHTML +
+                        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">' +
+                            '<div style="padding:12px;background:#f9fafb;border-radius:10px;border:1px solid #e5e7eb;">' +
+                                '<div style="font-size:10px;color:#9ca3af;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px;">Compliance Score</div>' +
+                                '<div style="display:flex;align-items:center;gap:8px;">' +
+                                    '<span style="font-size:28px;font-weight:700;color:' + scoreColor + ';">' + c.complianceScore + '%</span>' +
+                                    '<div style="flex:1;height:6px;background:#e5e7eb;border-radius:3px;overflow:hidden;"><div style="height:100%;width:' + c.complianceScore + '%;background:' + scoreColor + ';border-radius:3px;"></div></div>' +
+                                '</div>' +
+                            '</div>' +
+                            '<div style="padding:12px;background:#f9fafb;border-radius:10px;border:1px solid #e5e7eb;">' +
+                                '<div style="font-size:10px;color:#9ca3af;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px;">Permit Status</div>' +
+                                '<div style="margin-bottom:4px;">' + permitBadge + '</div>' +
+                                '<div style="font-size:10px;color:#6b7280;">' + c.permitId + '</div>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">' +
+                            '<div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:12px;">' +
+                                '<div style="font-size:11px;font-weight:600;color:#374151;margin-bottom:2px;">Jurisdiction</div>' +
+                                '<div style="font-size:11px;color:#6b7280;">' + c.jurisdiction + '</div>' +
+                            '</div>' +
+                            '<div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:12px;">' +
+                                '<div style="font-size:11px;font-weight:600;color:#374151;margin-bottom:2px;">HOA</div>' +
+                                '<div style="font-size:11px;color:#6b7280;">' + c.hoaStatus + '</div>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div style="margin-top:16px;">' +
+                            '<div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:8px;"><i class="fas fa-clipboard-check" style="color:#2563eb;margin-right:6px;"></i>Compliance Checks</div>' +
+                            checksHTML +
+                        '</div>' +
+                        '<div style="margin-top:16px;">' +
+                            '<div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:8px;"><i class="fas fa-hard-hat" style="color:#d97706;margin-right:6px;"></i>Inspections</div>' +
+                            inspHTML +
+                        '</div>';
+
+                // ── Customer Service / CX Exec ──
+                } else if (agentName === 'customer-service-agent' && pData && pData.cx) {
+                    var cx = pData.cx;
+                    var sentimentIcon = cx.sentiment === 'very positive' ? '<i class="fas fa-laugh-beam" style="color:#16a34a;"></i>'
+                        : cx.sentiment === 'positive' ? '<i class="fas fa-smile" style="color:#16a34a;"></i>'
+                        : '<i class="fas fa-meh" style="color:#d97706;"></i>';
+
+                    var msgsHTML = cx.recentMessages.map(function(m) {
+                        var isCustomer = m.from === 'customer';
+                        return '<div style="display:flex;gap:8px;margin-bottom:8px;">' +
+                            '<div style="width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;color:#fff;background:' + (isCustomer ? '#3b82f6' : '#16a34a') + ';">' +
+                                '<i class="fas ' + (isCustomer ? 'fa-user' : 'fa-headset') + '"></i>' +
+                            '</div>' +
+                            '<div style="flex:1;">' +
+                                '<div style="font-size:11px;color:' + (isCustomer ? '#1d4ed8' : '#15803d') + ';font-weight:600;margin-bottom:2px;">' + (isCustomer ? (proj ? proj.customer : 'Customer') : 'CX Agent') + ' · <span style="font-weight:400;color:#9ca3af;">' + m.time + '</span></div>' +
+                                '<div style="font-size:12px;color:#374151;line-height:1.5;padding:8px 10px;border-radius:8px;background:' + (isCustomer ? '#eff6ff' : '#f0fdf4') + ';">' + m.text + '</div>' +
+                            '</div></div>';
+                    }).join('');
+
+                    var openItemsHTML = cx.openItems.map(function(item) {
+                        var prioColor = item.priority === 'high' ? '#dc2626' : item.priority === 'medium' ? '#d97706' : '#16a34a';
+                        return '<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f3f4f6;">' +
+                            '<div style="display:flex;align-items:center;gap:6px;">' +
+                                '<div style="width:6px;height:6px;border-radius:50%;background:' + prioColor + ';"></div>' +
+                                '<span style="font-size:11px;color:#374151;">' + item.label + '</span>' +
+                            '</div>' +
+                            '<span style="font-size:10px;color:#9ca3af;">Due: ' + item.due + '</span>' +
+                        '</div>';
+                    }).join('');
+
+                    contentEl.innerHTML = headerHTML +
+                        '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;">' +
+                            '<div style="padding:10px;background:#f9fafb;border-radius:8px;text-align:center;border:1px solid #e5e7eb;">' +
+                                '<div style="font-size:10px;color:#9ca3af;margin-bottom:2px;">Satisfaction</div>' +
+                                '<div style="font-size:18px;font-weight:700;color:' + (cx.satisfaction >= 90 ? '#16a34a' : cx.satisfaction >= 70 ? '#d97706' : '#dc2626') + ';">' + cx.satisfaction + '%</div>' +
+                            '</div>' +
+                            '<div style="padding:10px;background:#f9fafb;border-radius:8px;text-align:center;border:1px solid #e5e7eb;">' +
+                                '<div style="font-size:10px;color:#9ca3af;margin-bottom:2px;">Avg Response</div>' +
+                                '<div style="font-size:18px;font-weight:700;color:#374151;">' + cx.responseTime + '</div>' +
+                            '</div>' +
+                            '<div style="padding:10px;background:#f9fafb;border-radius:8px;text-align:center;border:1px solid #e5e7eb;">' +
+                                '<div style="font-size:10px;color:#9ca3af;margin-bottom:2px;">Interactions</div>' +
+                                '<div style="font-size:18px;font-weight:700;color:#374151;">' + cx.interactions + '</div>' +
+                            '</div>' +
+                            '<div style="padding:10px;background:#f9fafb;border-radius:8px;text-align:center;border:1px solid #e5e7eb;">' +
+                                '<div style="font-size:10px;color:#9ca3af;margin-bottom:2px;">Sentiment</div>' +
+                                '<div style="font-size:18px;">' + sentimentIcon + '</div>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#eff6ff;border-radius:8px;margin-bottom:16px;border:1px solid #bfdbfe;">' +
+                            '<div><span style="font-size:10px;color:#2563eb;font-weight:600;">NEXT FOLLOW-UP</span>' +
+                                '<div style="font-size:12px;color:#1d4ed8;font-weight:500;margin-top:2px;">' + cx.nextFollowUp + ' — ' + cx.nextAction + '</div></div>' +
+                            '<span style="font-size:10px;color:#6b7280;"><i class="fas fa-' + (cx.preferredChannel === 'Email' ? 'envelope' : cx.preferredChannel === 'Phone' ? 'phone' : 'sms') + '" style="margin-right:4px;"></i>' + cx.preferredChannel + '</span>' +
+                        '</div>' +
+                        '<div style="margin-bottom:16px;">' +
+                            '<div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:8px;"><i class="fas fa-comments" style="color:#ca8a04;margin-right:6px;"></i>Recent Conversation</div>' +
+                            '<div style="max-height:220px;overflow-y:auto;padding:8px;background:#fafafa;border-radius:8px;border:1px solid #e5e7eb;">' + msgsHTML + '</div>' +
                         '</div>' +
                         '<div>' +
-                            '<h3 style="font-size:15px;font-weight:600;color:#111827;">' + agent.title + '</h3>' +
-                            '<p style="font-size:12px;color:#6b7280;">Project: ' + projName + '</p>' +
+                            '<div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:8px;"><i class="fas fa-tasks" style="color:#d97706;margin-right:6px;"></i>Open Action Items</div>' +
+                            openItemsHTML +
+                        '</div>';
+
+                // ── Knowledge Base ──
+                } else if (agentName === 'knowledge-base' && pData && pData.knowledge) {
+                    var kb = pData.knowledge;
+                    var catColors = { installation: '#8b5cf6', compliance: '#2563eb', design: '#ec4899', aftersales: '#f59e0b', sales: '#059669', training: '#6366f1' };
+                    var catLabels = { installation: 'Installation', compliance: 'Compliance', design: 'Design', aftersales: 'After-Sales', sales: 'Sales', training: 'Training' };
+
+                    var docsHTML = kb.relevantDocs.map(function(doc) {
+                        var catCol = catColors[doc.category] || '#6b7280';
+                        return '<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;border:1px solid #f3f4f6;margin-bottom:6px;cursor:pointer;transition:all 0.2s;" onmouseenter="this.style.background=\'#f9fafb\';this.style.borderColor=\'#e5e7eb\'" onmouseleave="this.style.background=\'transparent\';this.style.borderColor=\'#f3f4f6\'">' +
+                            '<div style="width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:' + doc.color + '12;flex-shrink:0;">' +
+                                '<i class="fas ' + doc.icon + '" style="font-size:14px;color:' + doc.color + ';"></i>' +
+                            '</div>' +
+                            '<div style="flex:1;min-width:0;">' +
+                                '<div style="font-size:12px;font-weight:500;color:#374151;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + doc.title + '</div>' +
+                                '<div style="font-size:10px;color:#9ca3af;">' + doc.pages + ' pages</div>' +
+                            '</div>' +
+                            '<span style="padding:2px 6px;border-radius:4px;font-size:9px;font-weight:600;background:' + catCol + '15;color:' + catCol + ';flex-shrink:0;">' + (catLabels[doc.category] || doc.category) + '</span>' +
+                        '</div>';
+                    }).join('');
+
+                    var trainingHTML = kb.suggestedTraining.map(function(t) {
+                        return '<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:#faf5ff;border:1px solid #e9d5ff;margin-bottom:6px;">' +
+                            '<div style="width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;background:#8b5cf615;flex-shrink:0;">' +
+                                '<i class="fas ' + (t.type === 'video' ? 'fa-play-circle' : 'fa-book-open') + '" style="font-size:12px;color:#8b5cf6;"></i>' +
+                            '</div>' +
+                            '<div style="flex:1;">' +
+                                '<div style="font-size:11px;font-weight:500;color:#374151;">' + t.title + '</div>' +
+                                '<div style="font-size:10px;color:#9ca3af;">' + (t.type === 'video' ? '<i class="fas fa-play" style="margin-right:3px;"></i>' : '<i class="fas fa-book" style="margin-right:3px;"></i>') + t.duration + '</div>' +
+                            '</div>' +
+                        '</div>';
+                    }).join('');
+
+                    contentEl.innerHTML = headerHTML +
+                        '<p style="font-size:12px;color:#6b7280;line-height:1.5;margin-bottom:16px;">Documents and training materials relevant to <strong>' + projName + '</strong> (' + projType + '):</p>' +
+                        '<div style="margin-bottom:16px;">' +
+                            '<div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:8px;"><i class="fas fa-folder-open" style="color:#4b5563;margin-right:6px;"></i>Relevant Documents (' + kb.relevantDocs.length + ')</div>' +
+                            docsHTML +
                         '</div>' +
-                    '</div>' +
-                    '<p style="font-size:13px;color:#6b7280;line-height:1.6;margin-bottom:20px;">' + agent.desc + '</p>' +
-                    '<div style="padding:30px;text-align:center;background:#f9fafb;border-radius:8px;border:1px dashed #e5e7eb;">' +
-                        '<i class="fas ' + agent.icon + '" style="font-size:28px;color:#d1d5db;margin-bottom:10px;display:block;"></i>' +
-                        '<p style="font-size:13px;color:#9ca3af;font-weight:500;">Agent workspace — full integration coming soon</p>' +
-                        '<p style="font-size:11px;color:#d1d5db;margin-top:4px;">Full agent functionality will be embedded here</p>' +
-                    '</div>';
+                        '<div>' +
+                            '<div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:8px;"><i class="fas fa-graduation-cap" style="color:#8b5cf6;margin-right:6px;"></i>Suggested Training</div>' +
+                            trainingHTML +
+                        '</div>';
+
+                // ── Fallback for agents without project data ──
+                } else {
+                    contentEl.innerHTML = headerHTML +
+                        '<p style="font-size:13px;color:#6b7280;line-height:1.6;margin-bottom:20px;">' + agent.desc + '</p>' +
+                        '<div style="padding:30px;text-align:center;background:#f9fafb;border-radius:8px;border:1px dashed #e5e7eb;">' +
+                            '<i class="fas ' + agent.icon + '" style="font-size:28px;color:#d1d5db;margin-bottom:10px;display:block;"></i>' +
+                            '<p style="font-size:13px;color:#9ca3af;font-weight:500;">No project-specific data available</p>' +
+                            '<p style="font-size:11px;color:#d1d5db;margin-top:4px;">Select a project with agent data to view details</p>' +
+                        '</div>';
+                }
             }
 
             container.classList.add('open');
@@ -9284,6 +9620,7 @@
                         { id: 'spring-crank', name: 'Spring Crank', price: '$35', cat: 'Manual' },
                         { id: 'electric-std', name: 'Std Electric', price: '$68', cat: 'Electric', pop: true },
                         { id: 'electric-prem', name: 'Premium Elec', price: '$92', cat: 'Electric' },
+                        { id: 'dual-mode', name: 'Dual Mode', price: '$165', cat: 'Premium' },
                         { id: 'solar-kit', name: 'Solar Kit', price: '$215', cat: 'Premium' }
                     ];
                     const driveOpts = drives.map(d => `<option value="${d.id}" ${step4State.driveSystem === d.id ? 'selected' : ''}>${d.name} (${d.price}/unit)${d.pop ? ' ★' : ''}</option>`).join('');
@@ -9338,7 +9675,7 @@
                                             <span class="text-xs font-semibold text-gray-700"><i class="fas fa-layer-group text-orange-400 mr-1.5"></i>Product Tier</span>
                                             <span class="text-[9px] text-gray-400 ml-auto">Strategy 5: Good-Better-Best</span>
                                         </div>
-                                        <div class="grid grid-cols-3 gap-2">${tierCards}</div>
+                                        <div class="grid grid-cols-3 gap-2" id="step4TierCards_${project.id}">${tierCards}</div>
                                     </div>
 
                                     <!-- Fabric Selection -->
@@ -9379,7 +9716,7 @@
                                     </div>
 
                                     <!-- Active Strategies -->
-                                    <div class="flex flex-wrap gap-1.5">
+                                    <div class="flex flex-wrap gap-1.5" id="step4Strategies_${project.id}">
                                         <span class="text-[9px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200"><i class="fas fa-puzzle-piece mr-1"></i>Modular</span>
                                         <span class="text-[9px] px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200"><i class="fas fa-layer-group mr-1"></i>Volume Tier</span>
                                         <span class="text-[9px] px-2 py-0.5 rounded-full ${step4State.unitArea < 1 ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-gray-50 text-gray-400 border border-gray-200'}"><i class="fas fa-arrow-down mr-1"></i>Min Charge</span>
@@ -9402,6 +9739,7 @@
                                             <div class="flex justify-between text-[10px]"><span class="text-gray-600">Drive System (${cs.driveName})</span><span class="font-medium text-gray-800">$${cs.driveCost}</span></div>
                                             ${cs.fabricUpgrade > 0 ? `<div class="flex justify-between text-[10px]"><span class="text-gray-600">Fabric Upgrade</span><span class="font-medium text-amber-600">+$${cs.fabricUpgrade}</span></div>` : ''}
                                             ${cs.heightSurcharge > 0 ? `<div class="flex justify-between text-[10px]"><span class="text-gray-600">Height Surcharge</span><span class="font-medium text-amber-600">+$${cs.heightSurcharge}</span></div>` : ''}
+                                            ${cs.minChargeCost > 0 ? `<div class="flex justify-between text-[10px]"><span class="text-red-600">Min Charge Adj.</span><span class="font-medium text-red-600">+$${cs.minChargeCost}</span></div>` : ''}
                                             <div class="flex justify-between text-[10px]"><span class="text-gray-600">Installation</span><span class="font-medium text-gray-800">$${cs.installCost}</span></div>
                                             <div class="flex justify-between text-[10px]"><span class="text-gray-600">Hardware</span><span class="font-medium text-gray-800">$${cs.hardwareCost}</span></div>
                                             ${cs.discountAmt > 0 ? `<div class="flex justify-between text-[10px]"><span class="text-green-600">Dealer Discount (${step4State.discount}%)</span><span class="font-medium text-green-600">-$${cs.discountAmt}</span></div>` : ''}
@@ -9414,7 +9752,7 @@
                                         <div class="flex items-center gap-2 mb-2">
                                             <span class="text-xs font-semibold text-gray-700"><i class="fas fa-tags text-orange-400 mr-1.5"></i>Smart Quote Options</span>
                                         </div>
-                                        <div class="grid grid-cols-3 gap-2">
+                                        <div class="grid grid-cols-3 gap-2" id="step4QuoteCards_${project.id}">
                                             <div onclick="selectStep4Quote('${project.id}','conservative')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center ${step4State.selectedQuote === 'conservative' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-blue-300'}">
                                                 <div class="text-[9px] text-gray-500 font-medium">Conservative</div>
                                                 <div class="text-sm font-bold ${step4State.selectedQuote === 'conservative' ? 'text-blue-700' : 'text-gray-800'}">$${cs.quoteConservative}</div>
@@ -9429,13 +9767,13 @@
                                             <div onclick="selectStep4Quote('${project.id}','premium')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center ${step4State.selectedQuote === 'premium' ? 'border-emerald-500 bg-emerald-50' : 'border-gray-200 hover:border-emerald-300'}">
                                                 <div class="text-[9px] text-gray-500 font-medium">Premium</div>
                                                 <div class="text-sm font-bold ${step4State.selectedQuote === 'premium' ? 'text-emerald-700' : 'text-gray-800'}">$${cs.quotePremium}</div>
-                                                <div class="text-[9px] text-gray-400">25% margin</div>
+                                                <div class="text-[9px] text-gray-400">35% margin</div>
                                             </div>
                                         </div>
                                     </div>
 
                                     <!-- Profit Analysis Bar -->
-                                    <div class="p-3 rounded-lg border ${cs.marginPct >= 15 ? 'bg-green-50/50 border-green-200' : cs.marginPct >= 10 ? 'bg-amber-50/50 border-amber-200' : 'bg-red-50/50 border-red-200'}">
+                                    <div id="step4ProfitBar_${project.id}" class="p-3 rounded-lg border ${cs.marginPct >= 15 ? 'bg-green-50/50 border-green-200' : cs.marginPct >= 10 ? 'bg-amber-50/50 border-amber-200' : 'bg-red-50/50 border-red-200'}">
                                         <div class="flex items-center justify-between text-[10px] mb-1.5">
                                             <span class="font-semibold ${cs.marginPct >= 15 ? 'text-green-700' : cs.marginPct >= 10 ? 'text-amber-700' : 'text-red-700'}"><i class="fas fa-chart-line mr-1"></i>Profit Analysis</span>
                                             <span class="font-bold">${cs.marginPct}% margin</span>
@@ -9515,7 +9853,7 @@
                             <div class="space-y-4">
                                 <div>
                                     <span class="text-xs font-semibold text-gray-700 mb-2 block"><i class="fas fa-layer-group text-orange-400 mr-1.5"></i>Product Tier</span>
-                                    <div class="grid grid-cols-3 gap-2">${tierCardsSP}</div>
+                                    <div class="grid grid-cols-3 gap-2" id="step4TierCards_${project.id}">${tierCardsSP}</div>
                                 </div>
                                 ${isSR ? `
                                 <div class="space-y-1">
@@ -9552,7 +9890,7 @@
                                 </div>
                                 <div>
                                     <span class="text-xs font-semibold text-gray-700 mb-2 block"><i class="fas fa-tags text-orange-400 mr-1.5"></i>Smart Quote Options</span>
-                                    <div class="grid grid-cols-3 gap-2">
+                                    <div class="grid grid-cols-3 gap-2" id="step4QuoteCards_${project.id}">
                                         <div onclick="selectStep4Quote('${project.id}','conservative')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center ${step4State.selectedQuote === 'conservative' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-blue-300'}">
                                             <div class="text-[9px] text-gray-500">Conservative</div>
                                             <div class="text-sm font-bold">${'$' + cs.quoteConservative}</div>
@@ -9564,14 +9902,13 @@
                                             <div class="text-sm font-bold">${'$' + cs.quoteRecommended}</div>
                                             <div class="text-[9px] text-gray-400">18% margin</div>
                                         </div>
-                                        <div onclick="selectStep4Quote('${project.id}','premium')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center ${step4State.selectedQuote === 'premium' ? 'border-emerald-500 bg-emerald-50' : 'border-gray-200 hover:border-emerald-300'}">
+                                        <div onclick="selectStep4Quote('${project.id}','premium')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center ${step4State.selectedQuote === 'premium' ? 'border-emerald-500 bg-emerald-50' : 'border-gray-200 hover:border-blue-300'}">
                                             <div class="text-[9px] text-gray-500">Premium</div>
                                             <div class="text-sm font-bold">${'$' + cs.quotePremium}</div>
-                                            <div class="text-[9px] text-gray-400">25% margin</div>
-                                        </div>
-                                    </div>
+                                            <div class="text-[9px] text-gray-400">35% margin</div>
+                                        </div>                                    </div>
                                 </div>
-                                <div class="p-3 rounded-lg border ${cs.marginPct >= 15 ? 'bg-green-50/50 border-green-200' : 'bg-amber-50/50 border-amber-200'}">
+                                <div id="step4ProfitBar_${project.id}" class="p-3 rounded-lg border ${cs.marginPct >= 15 ? 'bg-green-50/50 border-green-200' : 'bg-amber-50/50 border-amber-200'}">
                                     <div class="flex items-center justify-between text-[10px] mb-1.5">
                                         <span class="font-semibold ${cs.marginPct >= 15 ? 'text-green-700' : 'text-amber-700'}"><i class="fas fa-chart-line mr-1"></i>Profit Analysis</span>
                                         <span class="font-bold">${cs.marginPct}% margin</span>
@@ -9735,6 +10072,14 @@
             var btn = document.getElementById('step2LaunchBtn_' + projectId);
             if (!panel) return;
             if (panel.classList.contains('hidden')) {
+                // Warn if project is past Step 2 — additional fees may apply
+                var project = allProjectsData.find(p => p.id === projectId);
+                var stepNames = { 3: 'Measurement & Design', 4: 'Quotation', 5: 'Production', 6: 'Installation' };
+                if (project && project.workflowStep > 2) {
+                    if (!confirm('⚠️ This project is currently at Step ' + project.workflowStep + ' (' + (stepNames[project.workflowStep] || '') + ').\n\nRe-launching the AI Designer at this stage may incur additional design fees.\n\nDo you want to proceed?')) {
+                        return;
+                    }
+                }
                 panel.classList.remove('hidden');
                 btn.innerHTML = '<i class="fas fa-chevron-up text-[10px]"></i> Collapse';
                 btn.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
@@ -10478,6 +10823,7 @@
 
             if (isZB) {
                 var area = state.unitArea;
+                var rawArea = area;
                 var effArea = area < 1 && area > 0 ? 1 : area;
                 var tierData = zbProductTiers[state.productTier];
                 cs.tierName = tierData ? tierData.name : state.productTier;
@@ -10491,9 +10837,13 @@
                 cs.fabricUpgrade = Math.round((fabUpg ? fabUpg.surcharge : 0) * effArea * state.quantity);
                 var hSur = getHeightSurcharge(state.heightM);
                 cs.heightSurcharge = Math.round((hSur ? hSur.surcharge : 0) * effArea * state.quantity);
+                // Min charge adjustment (Strategy 3) — separate line item matching Pricing Agent
+                var minChargeAdj = (rawArea < 1 && rawArea > 0) ? (1 - rawArea) : 0;
+                var firstTier = tierData ? tierData.tiers[0] : { retail: 52, wholesale: 43 };
+                cs.minChargeCost = minChargeAdj > 0 ? Math.round(minChargeAdj * (firstTier[mode] || firstTier.retail) * state.quantity) : 0;
                 cs.installCost = Math.round(45 * state.quantity);
-                cs.hardwareCost = Math.round(12 * state.quantity);
-                var subtotal = cs.fabricCost + cs.driveCost + cs.fabricUpgrade + cs.heightSurcharge + cs.installCost + cs.hardwareCost;
+                cs.hardwareCost = Math.round(zbHardwareCostPerUnit * state.quantity);
+                var subtotal = cs.fabricCost + cs.driveCost + cs.fabricUpgrade + cs.heightSurcharge + cs.minChargeCost + cs.installCost + cs.hardwareCost;
                 cs.discountAmt = Math.round(subtotal * (state.discount / 100));
                 cs.totalCost = subtotal - cs.discountAmt;
             } else {
@@ -10516,13 +10866,13 @@
                 cs.fabricCost = 0; cs.driveCost = 0; cs.fabricUpgrade = 0; cs.heightSurcharge = 0; cs.installCost = 0; cs.hardwareCost = 0; cs.discountAmt = 0; cs.driveName = '';
             }
 
-            // Quote options
+            // Quote options (margins synced with Pricing Agent)
             cs.quoteConservative = Math.round(cs.totalCost * 1.10).toLocaleString();
             cs.quoteRecommended = Math.round(cs.totalCost * 1.18).toLocaleString();
-            cs.quotePremium = Math.round(cs.totalCost * 1.25).toLocaleString();
+            cs.quotePremium = Math.round(cs.totalCost * 1.35).toLocaleString();
 
             // Selected quote profit
-            var margins = { conservative: 0.10, recommended: 0.18, premium: 0.25 };
+            var margins = { conservative: 0.10, recommended: 0.18, premium: 0.35 };
             var m = margins[state.selectedQuote] || 0.18;
             cs.profit = Math.round(cs.totalCost * m).toLocaleString();
             cs.marginPct = Math.round(m * 100);
@@ -10602,14 +10952,119 @@
         }
 
         function refreshStep4Panel(projectId) {
-            // Re-render the step detail to reflect updated pricing
-            if (expandedStep === 4 && currentDetailProject) {
-                // Clear cached state to force re-render
-                delete step4QuotationState[projectId];
-                // Preserve user selections
-                // Re-toggle to refresh
-                toggleStepDetail(4, currentDetailProject);
-                toggleStepDetail(4, currentDetailProject);
+            // Targeted DOM updates — no full re-render, no scroll jump
+            var state = step4QuotationState[projectId];
+            if (!state || !state.costSummary) return;
+            var cs = state.costSummary;
+            var project = allProjectsData.find(function(p) { return p.id === projectId; });
+            if (!project) return;
+            var isZB = project.type === 'Zip Blinds';
+            var isSR = project.type === 'Sunroom';
+
+            // 1) Update tier card selection styling
+            var tierEl = document.getElementById('step4TierCards_' + projectId);
+            if (tierEl) {
+                var cards = tierEl.children;
+                for (var i = 0; i < cards.length; i++) {
+                    var card = cards[i];
+                    var cardTier = card.getAttribute('onclick') || '';
+                    var isSelected = cardTier.indexOf("'" + state.productTier + "'") !== -1;
+                    card.className = card.className
+                        .replace(/border-(orange|gray)-\d+/g, isSelected ? 'border-orange-500' : 'border-gray-200')
+                        .replace(/bg-(orange|white)-?\d*\/?\d*/g, isSelected ? 'bg-orange-50' : 'bg-white')
+                        .replace(/shadow-sm/g, '');
+                    if (isSelected) card.className += ' shadow-sm';
+                    // Update price text color
+                    var priceDiv = card.querySelector('.text-xs.font-semibold');
+                    if (priceDiv) priceDiv.className = priceDiv.className.replace(/text-(orange|gray)-\d+/g, isSelected ? 'text-orange-600' : 'text-gray-600');
+                }
+            }
+
+            // 2) Update quantity display (ZB only)
+            var qtyEl = document.getElementById('step4Qty_' + projectId);
+            if (qtyEl) qtyEl.textContent = state.quantity;
+
+            // 3) Update cost breakdown
+            var costEl = document.getElementById('step4CostBreakdown_' + projectId);
+            if (costEl) {
+                if (isZB) {
+                    costEl.innerHTML =
+                        '<div class="flex justify-between text-[10px]"><span class="text-gray-600">Fabric (' + cs.tierName + ')</span><span class="font-medium text-gray-800">$' + cs.fabricCost + '</span></div>' +
+                        '<div class="flex justify-between text-[10px]"><span class="text-gray-600">Drive System (' + cs.driveName + ')</span><span class="font-medium text-gray-800">$' + cs.driveCost + '</span></div>' +
+                        (cs.fabricUpgrade > 0 ? '<div class="flex justify-between text-[10px]"><span class="text-gray-600">Fabric Upgrade</span><span class="font-medium text-amber-600">+$' + cs.fabricUpgrade + '</span></div>' : '') +
+                        (cs.heightSurcharge > 0 ? '<div class="flex justify-between text-[10px]"><span class="text-gray-600">Height Surcharge</span><span class="font-medium text-amber-600">+$' + cs.heightSurcharge + '</span></div>' : '') +
+                        (cs.minChargeCost > 0 ? '<div class="flex justify-between text-[10px]"><span class="text-red-600">Min Charge Adj.</span><span class="font-medium text-red-600">+$' + cs.minChargeCost + '</span></div>' : '') +
+                        '<div class="flex justify-between text-[10px]"><span class="text-gray-600">Installation</span><span class="font-medium text-gray-800">$' + cs.installCost + '</span></div>' +
+                        '<div class="flex justify-between text-[10px]"><span class="text-gray-600">Hardware</span><span class="font-medium text-gray-800">$' + cs.hardwareCost + '</span></div>' +
+                        (cs.discountAmt > 0 ? '<div class="flex justify-between text-[10px]"><span class="text-green-600">Dealer Discount (' + state.discount + '%)</span><span class="font-medium text-green-600">-$' + cs.discountAmt + '</span></div>' : '') +
+                        '<div class="border-t border-gray-300 pt-1.5 mt-1.5 flex justify-between text-xs"><span class="font-bold text-gray-800">Total Cost (COGS)</span><span class="font-bold text-orange-600">$' + cs.totalCost + '</span></div>';
+                } else {
+                    var upgLabel = isSR ? 'Glass Upgrade' : 'Louver Upgrade';
+                    costEl.innerHTML =
+                        '<div class="flex justify-between text-[10px]"><span class="text-gray-600">Materials (' + cs.tierName + ')</span><span class="font-medium text-gray-800">$' + cs.materialCost + '</span></div>' +
+                        (cs.upgradeCost > 0 ? '<div class="flex justify-between text-[10px]"><span class="text-gray-600">' + upgLabel + '</span><span class="font-medium text-amber-600">+$' + cs.upgradeCost + '</span></div>' : '') +
+                        '<div class="flex justify-between text-[10px]"><span class="text-gray-600">Labor</span><span class="font-medium text-gray-800">$' + cs.laborCost + '</span></div>' +
+                        '<div class="flex justify-between text-[10px]"><span class="text-gray-600">Equipment</span><span class="font-medium text-gray-800">$' + cs.equipmentCost + '</span></div>' +
+                        '<div class="flex justify-between text-[10px]"><span class="text-gray-600">Permits</span><span class="font-medium text-gray-800">$' + cs.permitCost + '</span></div>' +
+                        '<div class="border-t border-gray-300 pt-1.5 mt-1.5 flex justify-between text-xs"><span class="font-bold text-gray-800">Total Cost (COGS)</span><span class="font-bold text-orange-600">$' + cs.totalCost + '</span></div>';
+                }
+            }
+
+            // 4) Update quote cards (values + selection styling)
+            var quoteEl = document.getElementById('step4QuoteCards_' + projectId);
+            if (quoteEl) {
+                var qSel = state.selectedQuote;
+                var qStyles = {
+                    conservative: { border: 'border-blue-500', bg: 'bg-blue-50', text: 'text-blue-700', off: 'hover:border-blue-300' },
+                    recommended: { border: 'border-orange-500', bg: 'bg-orange-50', text: 'text-orange-700', off: 'hover:border-orange-300' },
+                    premium: { border: 'border-emerald-500', bg: 'bg-emerald-50', text: 'text-emerald-700', off: 'hover:border-emerald-300' }
+                };
+                var qValues = {
+                    conservative: { label: 'Conservative', amount: '$' + cs.quoteConservative, margin: '10% margin' },
+                    recommended: { label: 'Recommended', amount: '$' + cs.quoteRecommended, margin: '18% margin' },
+                    premium: { label: 'Premium', amount: '$' + cs.quotePremium, margin: '35% margin' }
+                };
+                var qKeys = ['conservative', 'recommended', 'premium'];
+                quoteEl.innerHTML = qKeys.map(function(key) {
+                    var s = qStyles[key]; var v = qValues[key]; var sel = qSel === key;
+                    var extra = key === 'recommended' ? '<div class="absolute -top-2 left-1/2 -translate-x-1/2 text-[8px] font-bold bg-orange-500 text-white px-2 py-0.5 rounded-full">BEST</div>' : '';
+                    return '<div onclick="selectStep4Quote(\'' + projectId + '\',\'' + key + '\')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center ' + (key === 'recommended' ? 'relative ' : '') + (sel ? s.border + ' ' + s.bg + ' shadow-sm' : 'border-gray-200 ' + s.off) + '">' +
+                        extra +
+                        '<div class="text-[9px] text-gray-500 font-medium">' + v.label + '</div>' +
+                        '<div class="text-sm font-bold ' + (sel ? s.text : 'text-gray-800') + '">' + v.amount + '</div>' +
+                        '<div class="text-[9px] text-gray-400">' + v.margin + '</div>' +
+                    '</div>';
+                }).join('');
+            }
+
+            // 5) Update profit analysis bar
+            var profitEl = document.getElementById('step4ProfitBar_' + projectId);
+            if (profitEl) {
+                var pColor = cs.marginPct >= 15 ? 'green' : cs.marginPct >= 10 ? 'amber' : 'red';
+                profitEl.className = 'p-3 rounded-lg border bg-' + pColor + '-50/50 border-' + pColor + '-200';
+                profitEl.innerHTML =
+                    '<div class="flex items-center justify-between text-[10px] mb-1.5">' +
+                        '<span class="font-semibold text-' + pColor + '-700"><i class="fas fa-chart-line mr-1"></i>Profit Analysis</span>' +
+                        '<span class="font-bold">' + cs.marginPct + '% margin</span>' +
+                    '</div>' +
+                    '<div class="flex items-center gap-2">' +
+                        '<div class="flex-1 bg-gray-200 rounded-full h-2"><div class="h-2 rounded-full transition-all bg-' + pColor + '-500" style="width:' + Math.min(cs.marginPct * 2.5, 100) + '%"></div></div>' +
+                        '<span class="text-[10px] font-bold text-' + pColor + '-700">$' + cs.profit + ' net</span>' +
+                    '</div>';
+            }
+
+            // 6) Update strategy badges (ZB only)
+            var stratEl = document.getElementById('step4Strategies_' + projectId);
+            if (stratEl && isZB) {
+                var minActive = state.unitArea < 1;
+                var hActive = cs.heightSurcharge > 0;
+                stratEl.innerHTML =
+                    '<span class="text-[9px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200"><i class="fas fa-puzzle-piece mr-1"></i>Modular</span>' +
+                    '<span class="text-[9px] px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200"><i class="fas fa-layer-group mr-1"></i>Volume Tier</span>' +
+                    '<span class="text-[9px] px-2 py-0.5 rounded-full ' + (minActive ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-gray-50 text-gray-400 border border-gray-200') + '"><i class="fas fa-arrow-down mr-1"></i>Min Charge</span>' +
+                    '<span class="text-[9px] px-2 py-0.5 rounded-full ' + (hActive ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-gray-50 text-gray-400 border border-gray-200') + '"><i class="fas fa-arrows-alt-v mr-1"></i>Height +</span>' +
+                    '<span class="text-[9px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200"><i class="fas fa-star mr-1"></i>Product Tier</span>' +
+                    '<span class="text-[9px] px-2 py-0.5 rounded-full bg-orange-50 text-orange-700 border border-orange-200"><i class="fas fa-tags mr-1"></i>' + (state.pricingMode === 'retail' ? 'Retail' : 'Wholesale') + '</span>';
             }
         }
 
