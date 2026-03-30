@@ -8987,6 +8987,19 @@
                 }
             }
 
+            // Warn if user tries to re-open a completed step
+            if (project && stepNum < project.workflowStep) {
+                const stepNames = ['', 'Intent', 'AI Design', 'Measurement', 'Quotation', 'Production', 'Installation'];
+                const targetStepName = stepNames[stepNum] || 'Step ' + stepNum;
+                if (!confirm(
+                    '⚠️ Step ' + stepNum + ' (' + targetStepName + ') has already been completed.\n\n' +
+                    'Re-initiating actions in this step may override earlier actions and/or deliverables already obtained, and may generate subsequent unavoidable costs.\n\n' +
+                    'Do you still want to proceed?'
+                )) {
+                    return;
+                }
+            }
+
             const config = STEP_DETAIL_CONFIG[stepNum];
             if (!config) {
                 // Steps 2-6 not yet configured
