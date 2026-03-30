@@ -262,6 +262,14 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        /* Fix: Prevent text selection highlight on double-click for nav links */
+        #heroHeader nav a {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
         /* Chatbot Styles */
         .chatbot-container {
             position: fixed;
