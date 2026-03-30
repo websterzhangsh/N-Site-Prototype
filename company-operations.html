@@ -7955,6 +7955,48 @@
                         { value: 'septic', label: 'Septic/Sewer', icon: 'fa-toilet' },
                         { value: 'sprinkler', label: 'Sprinkler System', icon: 'fa-shower' },
                         { value: 'other', label: 'Other', icon: 'fa-exclamation-circle' }
+                    ],
+                    // Zip Blinds — simpler product, window/opening based measurements
+                    zipBlindsFields: [
+                        { key: 'method', label: 'Measurement Method', type: 'select', icon: 'fa-tools', options: [
+                            { value: 'manual_precision', label: 'Manual Precision (Tape + Laser)' },
+                            { value: 'laser_3d', label: 'Laser 3D Scan' }
+                        ]},
+                        { key: 'surveyor', label: 'Installer / Measurer', type: 'text', icon: 'fa-user-tie', placeholder: 'e.g. Tom Baker (#583041)' },
+                        { key: 'date', label: 'Measurement Date', type: 'date', icon: 'fa-calendar' },
+                        { key: 'openings', label: 'Number of Openings', type: 'number', icon: 'fa-th-large', placeholder: 'e.g. 3' },
+                        { key: 'opening_width_in', label: 'Opening Width (inches)', type: 'number', icon: 'fa-arrows-alt-h', placeholder: 'e.g. 72' },
+                        { key: 'opening_height_in', label: 'Opening Height (inches)', type: 'number', icon: 'fa-arrows-alt-v', placeholder: 'e.g. 96' },
+                        { key: 'mounting', label: 'Mounting Type', type: 'select', icon: 'fa-wrench', options: [
+                            { value: 'face_mount', label: 'Face Mount (Surface)' },
+                            { value: 'recessed', label: 'Recessed Mount' },
+                            { value: 'ceiling_mount', label: 'Ceiling Mount' }
+                        ]},
+                        { key: 'guide', label: 'Guide / Track Type', type: 'select', icon: 'fa-grip-lines-vertical', options: [
+                            { value: 'zip_track', label: 'Zip Track (Sealed)' },
+                            { value: 'cable_guide', label: 'Cable Guide' },
+                            { value: 'side_channel', label: 'Side Channel' }
+                        ]},
+                        { key: 'motor', label: 'Motor Type', type: 'select', icon: 'fa-cog', options: [
+                            { value: 'manual_crank', label: 'Manual Crank' },
+                            { value: 'motorized_wired', label: 'Motorized (Hardwired)' },
+                            { value: 'motorized_solar', label: 'Motorized (Solar)' },
+                            { value: 'motorized_battery', label: 'Motorized (Battery)' }
+                        ]},
+                        { key: 'fabric', label: 'Fabric / Screen Type', type: 'select', icon: 'fa-scroll', options: [
+                            { value: 'mesh_5pct', label: 'Solar Mesh 5% Openness' },
+                            { value: 'mesh_10pct', label: 'Solar Mesh 10% Openness' },
+                            { value: 'blackout', label: 'Blackout Fabric' },
+                            { value: 'clear_pvc', label: 'Clear PVC' }
+                        ]}
+                    ],
+                    zipBlindsObstacles: [
+                        { value: 'electrical', label: 'Electrical Outlet/Line', icon: 'fa-bolt' },
+                        { value: 'light_fixture', label: 'Light Fixture', icon: 'fa-lightbulb' },
+                        { value: 'camera', label: 'Security Camera', icon: 'fa-video' },
+                        { value: 'vent', label: 'Vent/Exhaust', icon: 'fa-wind' },
+                        { value: 'gutter', label: 'Gutter/Downspout', icon: 'fa-faucet' },
+                        { value: 'other', label: 'Other', icon: 'fa-exclamation-circle' }
                     ]
                 },
                 agentSupport: [
@@ -8886,6 +8928,9 @@
                 const moduleData = getIntakeData(project.id);
                 const mData = project.measurement || {};
                 const step3State = getStep3State(project.id);
+                const isZipBlinds = project.type === 'Zip Blinds';
+                const activeFields = isZipBlinds && mpConfig.zipBlindsFields ? mpConfig.zipBlindsFields : mpConfig.measurementFields;
+                const activeObstacles = isZipBlinds && mpConfig.zipBlindsObstacles ? mpConfig.zipBlindsObstacles : mpConfig.obstacleTypes;
 
                 // Value label lookups
                 const VALUE_LABELS = {
@@ -8917,9 +8962,9 @@
                     </div>`;
                 }).join('');
 
-                // Build measurement form fields
-                const fieldRows = mpConfig.measurementFields.map(mf => {
-                    const savedVal = step3State.measurementData[mf.key] || mData[mf.key] || '';
+                // Build measurement form fields (product-type-aware)
+                const fieldRows = activeFields.map(mf => {
+                    const savedVal = step3State.measurementData[mf.key] || (mData[mf.key] !== undefined ? String(mData[mf.key]) : '') || '';
                     let inputHTML = '';
                     if (mf.type === 'select') {
                         inputHTML = `<select id="step3_${mf.key}_${project.id}" class="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-purple-200 focus:border-purple-400 bg-white" onchange="updateStep3Field('${project.id}', '${mf.key}', this.value)">
@@ -8943,7 +8988,7 @@
                 const obstacles = step3State.obstacles.length > 0 ? step3State.obstacles : (mData.obstacles || []);
                 const obstacleItems = obstacles.map((obs, i) => {
                     const obsObj = typeof obs === 'string' ? { type: 'other', location: obs, notes: '' } : obs;
-                    const typeInfo = mpConfig.obstacleTypes.find(t => t.value === obsObj.type) || { icon: 'fa-exclamation-circle', label: obsObj.type || 'Unknown' };
+                    const typeInfo = activeObstacles.find(t => t.value === obsObj.type) || { icon: 'fa-exclamation-circle', label: obsObj.type || 'Unknown' };
                     return `<div class="flex items-center gap-2 py-1.5 px-2 bg-amber-50/50 rounded-lg border border-amber-100">
                         <i class="fas ${typeInfo.icon} text-amber-500 text-xs"></i>
                         <span class="text-xs text-gray-700 flex-1">${obsObj.location || typeInfo.label}${obsObj.notes ? ' — ' + obsObj.notes : ''}</span>
@@ -8966,8 +9011,13 @@
                     </div>`;
                 }).join('');
 
-                // Design enablement matrix
-                const designMatrix = [
+                // Design enablement matrix (product-type-aware)
+                const designMatrix = isZipBlinds ? [
+                    { label: 'Product Visualization', desc: 'Blind renderings', icon: 'fa-images', status: step3State.designMatrix.renderings },
+                    { label: 'Installation Plan', desc: 'Mount & wiring', icon: 'fa-map-marked-alt', status: step3State.designMatrix.sitePlan },
+                    { label: 'Fabric Sample Spec', desc: 'Color & material', icon: 'fa-palette', status: step3State.designMatrix.interiorLayout },
+                    { label: 'Motor & Control Spec', desc: 'Automation config', icon: 'fa-cog', status: step3State.designMatrix.elevations }
+                ] : [
                     { label: 'Photorealistic Renderings', desc: '5–8 angles', icon: 'fa-images', status: step3State.designMatrix.renderings },
                     { label: 'Site Plan', desc: 'Dimensioned layout', icon: 'fa-map-marked-alt', status: step3State.designMatrix.sitePlan },
                     { label: 'Interior Layout', desc: 'Furniture & zones', icon: 'fa-th-large', status: step3State.designMatrix.interiorLayout },
@@ -9003,8 +9053,8 @@
                                 <i class="fas fa-ruler-combined text-purple-600 text-sm"></i>
                             </div>
                             <div>
-                                <span class="text-sm font-semibold text-gray-700">Precision Measurement & Design</span>
-                                <span class="text-[10px] text-purple-500 ml-2 font-medium">Detailed Phase</span>
+                                <span class="text-sm font-semibold text-gray-700">${isZipBlinds ? 'Site Measurement & Blind Sizing' : 'Precision Measurement & Design'}</span>
+                                <span class="text-[10px] text-purple-500 ml-2 font-medium">${isZipBlinds ? 'Opening Specs' : 'Detailed Phase'}</span>
                             </div>
                         </div>
                         <button id="step3LaunchBtn_${project.id}" onclick="toggleStep3Panel('${project.id}')" class="px-3 py-1.5 bg-purple-600 text-white text-xs font-semibold rounded-lg hover:bg-purple-700 transition flex items-center gap-1.5 shadow-sm">
@@ -9056,7 +9106,7 @@
                                 <!-- Measurement Data Input -->
                                 <div>
                                     <div class="flex items-center justify-between mb-2">
-                                        <span class="text-xs font-semibold text-gray-700"><i class="fas fa-ruler-combined text-purple-400 mr-1.5"></i>Measurement Data</span>
+                                        <span class="text-xs font-semibold text-gray-700"><i class="fas ${isZipBlinds ? 'fa-window-maximize' : 'fa-ruler-combined'} text-purple-400 mr-1.5"></i>${isZipBlinds ? 'Opening & Product Specs' : 'Measurement Data'}</span>
                                         <button onclick="saveStep3Measurement('${project.id}')" class="text-[10px] text-purple-600 font-medium hover:text-purple-800 transition"><i class="fas fa-save mr-1"></i>Save</button>
                                     </div>
                                     <div class="grid grid-cols-2 gap-2.5">
@@ -9076,7 +9126,7 @@
                                     <div class="flex gap-2">
                                         <select id="step3ObstacleType_${project.id}" class="flex-1 px-2 py-1.5 border border-gray-200 rounded-lg text-xs">
                                             <option value="">Type...</option>
-                                            ${mpConfig.obstacleTypes.map(o => `<option value="${o.value}">${o.label}</option>`).join('')}
+                                            ${activeObstacles.map(o => `<option value="${o.value}">${o.label}</option>`).join('')}
                                         </select>
                                         <input type="text" id="step3ObstacleLocation_${project.id}" class="flex-1 px-2 py-1.5 border border-gray-200 rounded-lg text-xs" placeholder="Location & notes...">
                                         <button onclick="addStep3Obstacle('${project.id}')" class="px-2.5 py-1.5 bg-amber-500 text-white rounded-lg text-xs font-medium hover:bg-amber-600 transition"><i class="fas fa-plus"></i></button>
@@ -9108,7 +9158,33 @@
                                     </div>
                                 </div>
 
-                                <!-- Structural Assessment Summary -->
+                                <!-- Structural Assessment Summary (structural products only) -->
+                                ${isZipBlinds ? `
+                                <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-xs font-semibold text-gray-700"><i class="fas fa-clipboard-list text-gray-500 mr-1.5"></i>Installation Summary</span>
+                                        <span class="text-[10px] font-medium ${step3State.measurementComplete ? 'text-green-600' : 'text-gray-400'}">${step3State.measurementComplete ? '✓ Ready' : '○ Pending'}</span>
+                                    </div>
+                                    <div class="space-y-1.5">
+                                        <div class="flex items-center justify-between text-[10px]">
+                                            <span class="text-gray-500">Openings</span>
+                                            <span class="font-medium text-gray-700">${step3State.measurementData.openings || '—'} units</span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-[10px]">
+                                            <span class="text-gray-500">Mounting</span>
+                                            <span class="font-medium text-gray-700">${step3State.measurementData.mounting ? step3State.measurementData.mounting.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) : '—'}</span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-[10px]">
+                                            <span class="text-gray-500">Motor</span>
+                                            <span class="font-medium text-gray-700">${step3State.measurementData.motor ? step3State.measurementData.motor.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) : '—'}</span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-[10px]">
+                                            <span class="text-gray-500">Fabric</span>
+                                            <span class="font-medium text-gray-700">${step3State.measurementData.fabric ? step3State.measurementData.fabric.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) : '—'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                ` : `
                                 <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">
                                     <div class="flex items-center justify-between mb-2">
                                         <span class="text-xs font-semibold text-gray-700"><i class="fas fa-building text-gray-500 mr-1.5"></i>Structural Assessment</span>
@@ -9133,12 +9209,13 @@
                                         </div>
                                     </div>
                                 </div>
+                                `}
 
-                                <!-- Generate Detailed Design Button -->
+                                <!-- Generate Design / Order Button -->
                                 <button id="step3GenerateDesignBtn_${project.id}" onclick="generateStep3DetailedDesign('${project.id}')" class="w-full py-3 bg-gradient-to-r from-purple-600 to-violet-600 text-white rounded-xl font-semibold text-sm hover:from-purple-700 hover:to-violet-700 transition shadow-lg shadow-purple-500/25 flex items-center justify-center gap-2 ${step3State.measurementComplete ? '' : 'opacity-40 cursor-not-allowed'}" ${step3State.measurementComplete ? '' : 'disabled'}>
-                                    <i class="fas fa-drafting-compass"></i> Generate Detailed Design Package
+                                    <i class="fas ${isZipBlinds ? 'fa-check-double' : 'fa-drafting-compass'}"></i> ${isZipBlinds ? 'Generate Installation Package' : 'Generate Detailed Design Package'}
                                 </button>
-                                <p class="text-[10px] text-gray-400 text-center -mt-2"><i class="fas fa-info-circle mr-1"></i>Complete measurement data to enable design generation</p>
+                                <p class="text-[10px] text-gray-400 text-center -mt-2"><i class="fas fa-info-circle mr-1"></i>${isZipBlinds ? 'Complete opening specs to generate installation package' : 'Complete measurement data to enable design generation'}</p>
                             </div>
                         </div>
                     </div>
@@ -9627,36 +9704,50 @@
             if (!step3MeasurementState[projectId]) {
                 var project = allProjectsData.find(p => p.id === projectId);
                 var mData = project && project.measurement ? project.measurement : {};
+                var isZB = project && project.type === 'Zip Blinds';
 
                 // Pre-populate from existing project measurement data
                 var measurementData = {};
-                if (mData.method) measurementData.method = mData.method === 'Manual precision' ? 'manual_precision' : mData.method;
+                if (mData.method) measurementData.method = mData.method === 'Manual precision' ? 'manual_precision' : (mData.method === 'Hybrid' ? 'hybrid' : mData.method);
                 if (mData.surveyor) measurementData.surveyor = mData.surveyor;
                 if (mData.date) measurementData.date = mData.date;
-                if (mData.dims) {
-                    var dimParts = mData.dims.replace(/'/g, '').split(/\s*x\s*/i);
-                    if (dimParts.length >= 3) {
-                        measurementData.length_ft = dimParts[0].trim();
-                        measurementData.width_ft = dimParts[1].trim();
-                        measurementData.height_ft = dimParts[2].trim();
+
+                if (isZB) {
+                    // Zip Blinds — direct field mapping (no dims parsing needed)
+                    if (mData.openings) measurementData.openings = String(mData.openings);
+                    if (mData.opening_width_in) measurementData.opening_width_in = String(mData.opening_width_in);
+                    if (mData.opening_height_in) measurementData.opening_height_in = String(mData.opening_height_in);
+                    if (mData.mounting) measurementData.mounting = mData.mounting;
+                    if (mData.guide) measurementData.guide = mData.guide;
+                    if (mData.motor) measurementData.motor = mData.motor;
+                    if (mData.fabric) measurementData.fabric = mData.fabric;
+                } else {
+                    // Sunroom / Pergola — structural measurements
+                    if (mData.dims) {
+                        var dimParts = mData.dims.replace(/'/g, '').split(/\s*x\s*/i);
+                        if (dimParts.length >= 3) {
+                            measurementData.length_ft = dimParts[0].trim();
+                            measurementData.width_ft = dimParts[1].trim();
+                            measurementData.height_ft = dimParts[2].trim();
+                        }
                     }
+                    if (mData.foundation) {
+                        var foundLower = mData.foundation.toLowerCase();
+                        if (foundLower.includes('concrete slab')) measurementData.foundation = 'concrete_slab';
+                        else if (foundLower.includes('pier')) measurementData.foundation = 'pier_beam';
+                        else measurementData.foundation_detail = mData.foundation;
+                    }
+                    if (mData.wallBearing) {
+                        var wbLower = mData.wallBearing.toLowerCase();
+                        if (wbLower.includes('adequate') && wbLower.includes('wood')) measurementData.wall_bearing = 'adequate_wood';
+                        else if (wbLower.includes('adequate') && wbLower.includes('masonry')) measurementData.wall_bearing = 'adequate_masonry';
+                        else if (wbLower.includes('adequate') && wbLower.includes('steel')) measurementData.wall_bearing = 'adequate_steel';
+                        else if (wbLower.includes('reinforce')) measurementData.wall_bearing = 'needs_reinforcement';
+                        else if (wbLower.includes('freestanding')) measurementData.wall_bearing = 'na_freestanding';
+                    }
+                    if (mData.setback) measurementData.setback_distance = mData.setback;
+                    if (mData.drainage) measurementData.drainage_slope = mData.drainage;
                 }
-                if (mData.foundation) {
-                    var foundLower = mData.foundation.toLowerCase();
-                    if (foundLower.includes('concrete slab')) measurementData.foundation = 'concrete_slab';
-                    else if (foundLower.includes('pier')) measurementData.foundation = 'pier_beam';
-                    else measurementData.foundation_detail = mData.foundation;
-                }
-                if (mData.wallBearing) {
-                    var wbLower = mData.wallBearing.toLowerCase();
-                    if (wbLower.includes('adequate') && wbLower.includes('wood')) measurementData.wall_bearing = 'adequate_wood';
-                    else if (wbLower.includes('adequate') && wbLower.includes('masonry')) measurementData.wall_bearing = 'adequate_masonry';
-                    else if (wbLower.includes('adequate') && wbLower.includes('steel')) measurementData.wall_bearing = 'adequate_steel';
-                    else if (wbLower.includes('reinforce')) measurementData.wall_bearing = 'needs_reinforcement';
-                    else if (wbLower.includes('freestanding')) measurementData.wall_bearing = 'na_freestanding';
-                }
-                if (mData.setback) measurementData.setback_distance = mData.setback;
-                if (mData.drainage) measurementData.drainage_slope = mData.drainage;
 
                 // Build obstacles from project data
                 var obstacles = [];
@@ -9684,8 +9775,13 @@
                 var hasData = Boolean(mData.method || measurementData.method);
                 var isCurrentOrPast = project && project.workflowStep >= 3;
 
-                // Simulate compliance checks based on project data
-                var complianceChecks = [
+                // Compliance checks — product-type-aware
+                var complianceChecks = isZB ? [
+                    { key: 'opening_clearance', label: 'Opening Clearance', status: hasData ? 'pass' : 'pending', detail: hasData ? 'Adequate' : '' },
+                    { key: 'electrical_access', label: 'Electrical Access (Motor)', status: hasData && measurementData.motor && measurementData.motor.includes('motorized') ? 'pass' : hasData ? 'warn' : 'pending', detail: hasData && measurementData.motor ? (measurementData.motor.includes('solar') ? 'Solar — no wiring' : 'Wiring needed') : '' },
+                    { key: 'wind_rating', label: 'Wind Rating', status: hasData ? 'pass' : 'pending', detail: hasData ? 'Rated 65 mph' : '' },
+                    { key: 'mounting_surface', label: 'Mounting Surface', status: hasData ? 'pass' : 'pending', detail: hasData ? 'Solid — OK' : '' }
+                ] : [
                     { key: 'setback', label: 'Setback Requirements', status: mData.setback && mData.setback.includes('OK') ? 'pass' : hasData ? 'warn' : 'pending', detail: mData.setback || '' },
                     { key: 'drainage', label: 'Drainage Slope', status: mData.drainage && mData.drainage.includes('OK') ? 'pass' : hasData ? 'warn' : 'pending', detail: mData.drainage || '' },
                     { key: 'height', label: 'Height Limit', status: hasData ? 'pass' : 'pending', detail: hasData ? 'Within limit' : '' },
@@ -9694,26 +9790,23 @@
                     { key: 'fire_safety', label: 'Fire Separation', status: hasData ? 'pass' : 'pending', detail: hasData ? 'Meets IRC R302' : '' }
                 ];
 
-                // Simulate design matrix states based on workflow progress
+                // Design matrix states based on workflow progress
                 var matrixState = {};
                 if (project && project.workflowStep > 3) {
-                    // Past Step 3 — all done
                     matrixState = { renderings: 'done', sitePlan: 'done', interiorLayout: 'done', elevations: 'done', animation: 'done', structural: 'done', foundation: 'done', compliance: 'done' };
                 } else if (hasData) {
-                    // At Step 3 with data — partially done
                     matrixState = { renderings: 'in_progress', sitePlan: 'in_progress', interiorLayout: 'pending', elevations: 'pending', animation: 'pending', structural: 'in_progress', foundation: 'in_progress', compliance: 'pending' };
                 } else {
-                    // At Step 3 without data — all pending
                     matrixState = { renderings: 'pending', sitePlan: 'pending', interiorLayout: 'pending', elevations: 'pending', animation: 'pending', structural: 'pending', foundation: 'pending', compliance: 'pending' };
                 }
 
-                // Structural assessment
+                // Structural assessment (structural products only, but stored for all)
                 var structuralAssessment = {
-                    status: hasData ? (measurementData.wall_bearing && !measurementData.wall_bearing.includes('reinforce') ? 'adequate' : 'needs_review') : 'pending',
-                    foundation: measurementData.foundation_detail || (mData.foundation || '—'),
-                    wallBearing: mData.wallBearing || '—',
+                    status: hasData ? (isZB ? 'adequate' : (measurementData.wall_bearing && !measurementData.wall_bearing.includes('reinforce') ? 'adequate' : 'needs_review')) : 'pending',
+                    foundation: isZB ? 'N/A' : (measurementData.foundation_detail || (mData.foundation || '—')),
+                    wallBearing: isZB ? 'N/A' : (mData.wallBearing || '—'),
                     connectionPoints: hasData ? (project && project.type === 'Sunroom' ? 'Rear wall, 2 anchor points' : project && project.type === 'Pergola' ? '4 post footings' : '2 header mounts') : '—',
-                    loadCapacity: hasData ? 'Wind: 110 mph · Snow: 20 psf' : '—'
+                    loadCapacity: hasData ? (isZB ? 'Wind: 65 mph rated' : 'Wind: 110 mph · Snow: 20 psf') : '—'
                 };
 
                 step3MeasurementState[projectId] = {
@@ -9761,9 +9854,14 @@
             } else {
                 state.measurementData[key] = value;
             }
-            // Check if measurement is complete enough to enable design generation
+            // Product-type-aware required fields check
+            var project = allProjectsData.find(p => p.id === projectId);
             var md = state.measurementData;
-            state.measurementComplete = Boolean(md.method && md.surveyor && md.date && md.length_ft && md.width_ft && md.height_ft);
+            if (project && project.type === 'Zip Blinds') {
+                state.measurementComplete = Boolean(md.method && md.surveyor && md.date && md.openings && md.opening_width_in && md.opening_height_in);
+            } else {
+                state.measurementComplete = Boolean(md.method && md.surveyor && md.date && md.length_ft && md.width_ft && md.height_ft);
+            }
             var genBtn = document.getElementById('step3GenerateDesignBtn_' + projectId);
             if (genBtn) {
                 if (state.measurementComplete) {
@@ -9778,17 +9876,24 @@
 
         function saveStep3Measurement(projectId) {
             var state = getStep3State(projectId);
-            // Read all field values from DOM into state
+            var project = allProjectsData.find(p => p.id === projectId);
+            var isZB = project && project.type === 'Zip Blinds';
+            // Read all field values from DOM into state (product-type-aware)
             var config = STEP_DETAIL_CONFIG[3];
             if (config && config.measurementPanel) {
-                config.measurementPanel.measurementFields.forEach(function(mf) {
+                var fields = isZB && config.measurementPanel.zipBlindsFields ? config.measurementPanel.zipBlindsFields : config.measurementPanel.measurementFields;
+                fields.forEach(function(mf) {
                     var el = document.getElementById('step3_' + mf.key + '_' + projectId);
                     if (el) state.measurementData[mf.key] = el.value;
                 });
             }
-            // Update measurement completeness
+            // Update measurement completeness (product-type-aware)
             var md = state.measurementData;
-            state.measurementComplete = Boolean(md.method && md.surveyor && md.date && md.length_ft && md.width_ft && md.height_ft);
+            if (isZB) {
+                state.measurementComplete = Boolean(md.method && md.surveyor && md.date && md.openings && md.opening_width_in && md.opening_height_in);
+            } else {
+                state.measurementComplete = Boolean(md.method && md.surveyor && md.date && md.length_ft && md.width_ft && md.height_ft);
+            }
 
             showNotification('Measurement data saved successfully', 'success');
 
@@ -10168,9 +10273,9 @@
         const allProjectsData = [
             { id: 'PRJ-001', name: 'Johnson Residence Sunroom', customer: 'Mr. Johnson', customerEmail: 'johnson@email.com', customerPhone: '(310) 555-0101', customerAddress: '123 Sunshine Ave, Los Angeles, CA', type: 'Sunroom', workflowStep: 3, stage: 'measurement', riskLevel: 'high', budget: 35000, paid: 18500, timeline: '6 weeks', startDate: '2026-01-15', risks: [{title:'Permit approval delayed by city', severity:'high', status:'open'},{title:'HOA design review pending', severity:'medium', status:'monitoring'}], issues: [{id:'ISS-001', title:'Permit approval delayed by city', priority:'high', status:'open', assignedTo:'John Smith', dueDate:'2026-03-15'},{title:'HOA documentation incomplete', priority:'medium', status:'in_progress', assignedTo:'Emily Davis', dueDate:'2026-03-20'}], order: {id:'ORD-2024-0156', product:'Classic Sunroom', total:'$18,500', status:'In Production', date:'Mar 10, 2026'}, hidden: true },
             { id: 'PRJ-002', name: 'Martinez ADU Project', customer: 'Ms. Martinez', customerEmail: 'martinez@email.com', customerPhone: '(415) 555-0202', customerAddress: '456 Oak Dr, San Francisco, CA', type: 'ADU', workflowStep: 2, stage: 'design', riskLevel: 'high', budget: 95000, paid: 1100, timeline: '12 weeks', startDate: '2026-02-01', risks: [{title:'HOA approval uncertain', severity:'high', status:'open'}], issues: [{title:'Zoning variance needed', priority:'high', status:'open', assignedTo:'John Smith', dueDate:'2026-03-25'}], order: {id:'ORD-2024-0152', product:'ADU Studio', total:'$85,000', status:'Pending', date:'Feb 25, 2026'}, hidden: true },
-            { id: 'PRJ-003', name: 'Smith Premium Sunroom', customer: 'Mr. Smith', customerEmail: 'smith@email.com', customerPhone: '(512) 555-0303', customerAddress: '321 Elm St, Austin, TX', type: 'Sunroom', workflowStep: 5, stage: 'production', riskLevel: 'medium', budget: 42000, paid: 37800, timeline: '8 weeks', startDate: '2025-12-10', risks: [{title:'Material supply chain delay', severity:'medium', status:'monitoring'}], issues: [{title:'Glass panel backorder 2 weeks', priority:'medium', status:'in_progress', assignedTo:'Mike Johnson', dueDate:'2026-03-10'}], order: {id:'ORD-2024-0153', product:'Premium Sunroom', total:'$32,000', status:'In Production', date:'Feb 28, 2026'} },
-            { id: 'PRJ-004', name: 'Chen Pergola Space', customer: 'Ms. Chen', customerEmail: 'chen@email.com', customerPhone: '(301) 555-0404', customerAddress: '456 Oak Dr, Frederick, MD', type: 'Pergola', workflowStep: 4, stage: 'quotation', riskLevel: 'medium', budget: 12000, paid: 7400, timeline: '4 weeks', startDate: '2026-01-20', risks: [{title:'Weather delay possible', severity:'low', status:'monitoring'}], issues: [], order: {id:'ORD-2024-0155', product:'Studio Pergola', total:'$6,900', status:'Confirmed', date:'Mar 8, 2026'} },
-            { id: 'PRJ-005', name: 'Davis Pool Zip Blinds', customer: 'Mrs. Davis', customerEmail: 'davis@email.com', customerPhone: '(480) 555-0505', customerAddress: '789 Pool Ln, Scottsdale, AZ', type: 'Zip Blinds', workflowStep: 6, stage: 'installation', riskLevel: 'low', budget: 8500, paid: 7650, timeline: '3 weeks', startDate: '2026-01-05', risks: [], issues: [], order: {id:'ORD-2024-0154', product:'Zip Blinds Set', total:'$4,200', status:'Shipped', date:'Mar 5, 2026'} },
+            { id: 'PRJ-003', name: 'Smith Premium Sunroom', customer: 'Mr. Smith', customerEmail: 'smith@email.com', customerPhone: '(512) 555-0303', customerAddress: '321 Elm St, Austin, TX', type: 'Sunroom', workflowStep: 5, stage: 'production', riskLevel: 'medium', budget: 42000, paid: 37800, timeline: '8 weeks', startDate: '2025-12-10', risks: [{title:'Material supply chain delay', severity:'medium', status:'monitoring'}], issues: [{title:'Glass panel backorder 2 weeks', priority:'medium', status:'in_progress', assignedTo:'Mike Johnson', dueDate:'2026-03-10'}], order: {id:'ORD-2024-0153', product:'Premium Sunroom', total:'$32,000', status:'In Production', date:'Feb 28, 2026'}, measurement: { method: 'Manual precision', surveyor: 'John Martinez (#948721)', date: '2026-01-25', dims: "24' x 16' x 10'", foundation: 'Concrete slab 4"', wallBearing: 'Adequate - wood frame', setback: '12ft actual (5ft req) — OK', drainage: '2.1% slope — OK', obstacles: ['Downspout NE corner', 'Gas meter E wall'] } },
+            { id: 'PRJ-004', name: 'Chen Pergola Space', customer: 'Ms. Chen', customerEmail: 'chen@email.com', customerPhone: '(301) 555-0404', customerAddress: '456 Oak Dr, Frederick, MD', type: 'Pergola', workflowStep: 4, stage: 'quotation', riskLevel: 'medium', budget: 12000, paid: 7400, timeline: '4 weeks', startDate: '2026-01-20', risks: [{title:'Weather delay possible', severity:'low', status:'monitoring'}], issues: [], order: {id:'ORD-2024-0155', product:'Studio Pergola', total:'$6,900', status:'Confirmed', date:'Mar 8, 2026'}, measurement: { method: 'Hybrid', surveyor: 'Sarah Lee (#762194)', date: '2026-02-10', dims: "18' x 14' x 9'", foundation: 'Pier & beam', wallBearing: 'N/A - freestanding', setback: '8ft actual (5ft req) — OK', drainage: '1.5% slope — OK', obstacles: ['Oak tree 6ft NW', 'Sprinkler head SW corner'] } },
+            { id: 'PRJ-005', name: 'Davis Pool Zip Blinds', customer: 'Mrs. Davis', customerEmail: 'davis@email.com', customerPhone: '(480) 555-0505', customerAddress: '789 Pool Ln, Scottsdale, AZ', type: 'Zip Blinds', workflowStep: 6, stage: 'installation', riskLevel: 'low', budget: 8500, paid: 7650, timeline: '3 weeks', startDate: '2026-01-05', risks: [], issues: [], order: {id:'ORD-2024-0154', product:'Zip Blinds Set', total:'$4,200', status:'Shipped', date:'Mar 5, 2026'}, measurement: { method: 'Manual precision', surveyor: 'Tom Baker (#583041)', date: '2026-01-18', openings: 3, opening_width_in: 72, opening_height_in: 96, mounting: 'face_mount', guide: 'zip_track', motor: 'motorized_solar', fabric: 'mesh_5pct' } },
             { id: 'PRJ-006', name: 'Wilson Residence Pergola', customer: 'Mr. Wilson', customerEmail: 'wilson@email.com', customerPhone: '(503) 555-0606', customerAddress: '987 Cedar Ct, Portland, OR', type: 'Pergola', workflowStep: 6, stage: 'installation', riskLevel: 'low', budget: 15000, paid: 15000, timeline: '5 weeks', startDate: '2025-11-20', risks: [], issues: [], order: {id:'ORD-2024-0151', product:'Classic Pergola', total:'$9,500', status:'Completed', date:'Feb 20, 2026'}, hidden: true },
             { id: 'PRJ-007', name: 'Taylor Backyard Sunroom', customer: 'Mr. Taylor', customerEmail: 'taylor@email.com', customerPhone: '(206) 555-0707', customerAddress: '159 Birch Ave, Seattle, WA', type: 'Sunroom', workflowStep: 5, stage: 'production', riskLevel: 'low', budget: 28000, paid: 25200, timeline: '6 weeks', startDate: '2025-12-15', risks: [], issues: [], order: {id:'ORD-2024-0149', product:'Classic Sunroom', total:'$28,000', status:'In Production', date:'Feb 15, 2026'}, hidden: true },
             { id: 'PRJ-008', name: 'Garcia Outdoor ADU', customer: 'Ms. Garcia', customerEmail: 'garcia@email.com', customerPhone: '(619) 555-0808', customerAddress: '654 Pine Rd, San Diego, CA', type: 'ADU', workflowStep: 1, stage: 'intent', riskLevel: 'low', budget: 110000, paid: 100, timeline: '16 weeks', startDate: '2026-03-01', risks: [], issues: [], order: {id:'ORD-2024-0158', product:'ADU Studio', total:'$85,000', status:'Pending', date:'Mar 12, 2026'}, hidden: true }
