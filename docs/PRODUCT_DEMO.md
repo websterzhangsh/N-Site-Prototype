@@ -290,7 +290,7 @@
 
 ---
 
-#### 项目 1：Smith Premium Sunroom — 阳光房（Step 5 / Production）
+#### 项目 1：Smith Premium Sunroom — 阳光房（Step 2 / Design）
 
 | 字段 | 值 |
 |------|-----|
@@ -300,19 +300,19 @@
 | **邮箱 / 电话** | smith@email.com · (512) 555-0303 |
 | **地址** | 321 Elm St, Austin, TX |
 | **产品类型** | Sunroom |
-| **工作流步骤** | Step 5 — Production（生产中） |
-| **风险等级** | Medium 🟡 |
-| **预算 / 已付** | $42,000 / $37,800 (90%) |
-| **工期** | 8 weeks（2025-12-10 开始） |
-| **风险项** | Material supply chain delay (medium, monitoring) |
-| **Issues** | Glass panel backorder 2 weeks (medium, in_progress, Mike Johnson, 2026-03-10) |
-| **订单** | ORD-2024-0153 · Premium Sunroom · $32,000 · In Production · Feb 28, 2026 |
+| **工作流步骤** | Step 2 — Design（AI Designer 设计中） |
+| **风险等级** | Low 🟢 |
+| **预算 / 已付** | $42,000 / $4,200 (10%) |
+| **工期** | 8 weeks（2026-02-15 开始） |
+| **风险项** | 无 |
+| **Issues** | 无 |
+| **订单** | ORD-2024-0153 · Premium Sunroom · $32,000 · Pending · Mar 15, 2026 |
 
-**演示要点**: 展示生产阶段的项目管理能力 — 供应链风险监控、材料延迟 Issue 追踪、付款进度（已付 90%）。
+**演示要点**: 展示 **Step 2 AI Designer** 核心能力 — 上传客户院子照片，AI 将阳光房产品植入真实场景，30 秒生成设计渲染图。重点展示设计风格选择、产品类型配置、AI 渲染效果。
 
 ---
 
-#### 项目 2：Chen Pergola Space — 廊架（Step 4 / Quotation）
+#### 项目 2：Chen Pergola Space — 廊架（Step 3 / Measurement）
 
 | 字段 | 值 |
 |------|-----|
@@ -322,19 +322,19 @@
 | **邮箱 / 电话** | chen@email.com · (301) 555-0404 |
 | **地址** | 456 Oak Dr, Frederick, MD |
 | **产品类型** | Pergola |
-| **工作流步骤** | Step 4 — Quotation（报价中） |
-| **风险等级** | Medium 🟡 |
-| **预算 / 已付** | $12,000 / $7,400 (62%) |
-| **工期** | 4 weeks（2026-01-20 开始） |
+| **工作流步骤** | Step 3 — Measurement & Design（量房设计中） |
+| **风险等级** | Low 🟢 |
+| **预算 / 已付** | $12,000 / $3,600 (30%) |
+| **工期** | 4 weeks（2026-02-01 开始） |
 | **风险项** | Weather delay possible (low, monitoring) |
 | **Issues** | 无 |
-| **订单** | ORD-2024-0155 · Studio Pergola · $6,900 · Confirmed · Mar 8, 2026 |
+| **订单** | ORD-2024-0155 · Studio Pergola · $6,900 · Pending · Mar 20, 2026 |
 
-**演示要点**: 展示报价阶段的销售流程 — 合同确认、押金收取、轻量级风险管理（天气因素）。
+**演示要点**: 展示 **Step 3 Measurement & Design** 核心能力 — 量房数据录入（尺寸、地基、排水、障碍物）、测量方法选择（Manual / Laser / Hybrid）、设计包生成。
 
 ---
 
-#### 项目 3：Davis Pool Zip Blinds — 防风卷帘（Step 6 / Installation）
+#### 项目 3：Davis Pool Zip Blinds — 防风卷帘（Step 4 / Quotation）
 
 | 字段 | 值 |
 |------|-----|
@@ -344,15 +344,15 @@
 | **邮箱 / 电话** | davis@email.com · (480) 555-0505 |
 | **地址** | 789 Pool Ln, Scottsdale, AZ |
 | **产品类型** | Zip Blinds |
-| **工作流步骤** | Step 6 — Installation（安装中） |
+| **工作流步骤** | Step 4 — Quotation（报价中） |
 | **风险等级** | Low 🟢 |
-| **预算 / 已付** | $8,500 / $7,650 (90%) |
-| **工期** | 3 weeks（2026-01-05 开始） |
+| **预算 / 已付** | $8,500 / $2,550 (30%) |
+| **工期** | 3 weeks（2026-02-10 开始） |
 | **风险项** | 无 |
 | **Issues** | 无 |
-| **订单** | ORD-2024-0154 · Zip Blinds Set · $4,200 · Shipped · Mar 5, 2026 |
+| **订单** | ORD-2024-0154 · Zip Blinds Set · $4,200 · Pending · Mar 25, 2026 |
 
-**演示要点**: 展示安装阶段的交付管理 — 无风险低复杂度项目、Pricing & Cost Controller Agent 的定价引擎演示（6 大策略：模块化定价、面积阶梯、最低收费、高度附加费、产品分级、双重价格表）。点击 Pricing Agent 可进入完整的 Zip Blinds 定价计算器。
+**演示要点**: 展示 **Step 4 Quotation** 核心能力 — Pricing & Cost Controller Agent 的定价引擎演示（6 大策略：模块化定价、面积阶梯、最低收费、高度附加费、产品分级、双重价格表）。点击 Open Quotation 进入完整的 Zip Blinds 定价计算器，展示三档报价（Conservative / Recommended / Premium）。
 
 ---
 
