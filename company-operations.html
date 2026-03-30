@@ -3774,11 +3774,6 @@
 
                             <!-- v1.2.0: Agent Toolbar (horizontal) -->
                             <div class="agent-toolbar" id="agentToolbar">
-                                <div class="agent-toolbar-card" data-agent="pricing-agent" onclick="toggleAgentPanel('pricing-agent')"
-                                     style="--agent-icon:#059669;--agent-bg:#ecfdf5;--agent-border:#a7f3d0;">
-                                    <i class="fas fa-chart-line"></i>
-                                    <div class="agent-label">Pricing</div>
-                                </div>
                                 <div class="agent-toolbar-card" data-agent="compliance-agent" onclick="toggleAgentPanel('compliance-agent')"
                                      style="--agent-icon:#2563eb;--agent-bg:#eff6ff;--agent-border:#bfdbfe;">
                                     <i class="fas fa-shield-alt"></i>
@@ -8004,8 +7999,37 @@
                     { agent: 'Compliance Agent', ability: 'Auto-verify setback distances, drainage codes, height limits against local regulations' },
                     { agent: 'Knowledge Base', ability: 'Regional building codes, structural standards, product specifications & installation guides' }
                 ]
+            },
+            4: {
+                name: 'Quotation',
+                nameEn: 'Quotation',
+                goal: 'Complete pricing, generate contract, collect 50% deposit, deliver compliance package',
+                payment: '50% Deposit',
+                coreActions: [
+                    { id: 'a1', label: 'Design Confirmation', desc: 'Customer signs off on Step 3 design renderings, site plan, and layout', icon: 'fa-check-double' },
+                    { id: 'a2', label: 'Product Configuration', desc: 'Select product tier, fabric, drive system, color, and all optional upgrades', icon: 'fa-sliders-h' },
+                    { id: 'a3', label: 'Auto-Generate Quote', desc: 'System calculates detailed quote: base + options + labor + permits + tax', icon: 'fa-calculator' },
+                    { id: 'a4', label: 'Quote Review', desc: 'Sales advisor walks customer through line-by-line quote breakdown', icon: 'fa-search-dollar' },
+                    { id: 'a5', label: 'Contract Generation', desc: 'System auto-generates formal contract from quote and design package', icon: 'fa-file-contract' },
+                    { id: 'a6', label: 'Contract Signing', desc: 'Customer signs contract (online or in-person)', icon: 'fa-signature' },
+                    { id: 'a7', label: 'Collect 50% Deposit', desc: 'Collect deposit to initiate material procurement and permit application', icon: 'fa-money-bill-wave' },
+                    { id: 'a8', label: 'Deliver Compliance Package', desc: 'Provide complete compliance documentation to customer', icon: 'fa-folder-open' }
+                ],
+                keyDeliverables: [
+                    { id: 'd1', label: 'Detailed Quotation', desc: 'Itemized quote with all costs', icon: 'fa-file-invoice-dollar', required: true },
+                    { id: 'd2', label: 'Signed Contract', desc: 'Formal agreement with terms', icon: 'fa-file-contract', required: true },
+                    { id: 'd3', label: 'Deposit Receipt (50%)', desc: 'Payment confirmation', icon: 'fa-receipt', required: true },
+                    { id: 'd4', label: 'Compliance Package', desc: 'Permit & code docs', icon: 'fa-shield-alt', required: true },
+                    { id: 'd5', label: 'Phase 4 Customer Sign-off', desc: 'Proceed to production', icon: 'fa-signature', required: true }
+                ],
+                quotationPanel: true,
+                agentSupport: [
+                    { agent: 'Pricing Agent', ability: 'Core: Auto-generate detailed quotation with all hidden costs (materials, labor, permits, tax)' },
+                    { agent: 'Compliance Agent', ability: 'Auto-generate compliance documentation package from design matrix' },
+                    { agent: 'AI Designer', ability: 'Export full design matrix drawings for contract attachment' }
+                ]
             }
-            // Steps 4-6: to be added progressively
+            // Steps 5-6: to be added progressively
         };
 
         // Dummy per-project step status data
@@ -8023,6 +8047,7 @@
                 if (stepNum === 1) return { actionsCompleted: 3, actionTotal, deliverablesCompleted: 0, deliverableTotal, questionnaireCompleted: 5, questionnaireTotal: 8, paymentStatus: 'pending' };
                 if (stepNum === 2) return { actionsCompleted: 2, actionTotal, deliverablesCompleted: 0, deliverableTotal, questionnaireCompleted: 0, questionnaireTotal: 8, paymentStatus: 'pending', photosUploaded: 3, stylesSelected: 1, renderingsGenerated: 0 };
                 if (stepNum === 3) return { actionsCompleted: 4, actionTotal, deliverablesCompleted: 2, deliverableTotal, questionnaireCompleted: 0, questionnaireTotal: 8, paymentStatus: 'paid', measurementComplete: project.measurement ? true : false, obstaclesRecorded: project.measurement ? project.measurement.obstacles.length : 0 };
+                if (stepNum === 4) return { actionsCompleted: 3, actionTotal, deliverablesCompleted: 1, deliverableTotal, questionnaireCompleted: 0, questionnaireTotal: 8, paymentStatus: 'pending', quoteGenerated: false, contractSigned: false, depositCollected: false };
                 return { actionsCompleted: 2, actionTotal, deliverablesCompleted: 0, deliverableTotal, questionnaireCompleted: 0, questionnaireTotal: 8, paymentStatus: 'pending' };
             }
             return { actionsCompleted: 0, actionTotal, deliverablesCompleted: 0, deliverableTotal, questionnaireCompleted: 0, questionnaireTotal: 8, paymentStatus: 'not_started', photosUploaded: 0, stylesSelected: 0, renderingsGenerated: 0 };
@@ -9222,6 +9247,350 @@
                 </div>`;
             })() : '';
 
+            // Quotation Panel (Step 4 specific) — pricing calculator + quote generation
+            const quotationPanelHTML = config.quotationPanel ? (() => {
+                const mData = project.measurement || {};
+                const step4State = getStep4State(project.id);
+                const isZB = project.type === 'Zip Blinds';
+                const isSR = project.type === 'Sunroom';
+                const isPG = project.type === 'Pergola';
+
+                // ---- Zip Blinds pricing panel ----
+                if (isZB) {
+                    const tiers = [
+                        { id: 'good', name: 'ZB-100', label: 'Standard', spec: '65mm tube', from: '$38/sqm' },
+                        { id: 'better', name: 'ZB-200', label: 'Professional', spec: '65-75mm tube', from: '$52/sqm', popular: true },
+                        { id: 'best', name: 'ZB-300', label: 'Elite', spec: '75mm tube', from: '$58/sqm' }
+                    ];
+                    const tierCards = tiers.map(t => {
+                        const sel = step4State.productTier === t.id;
+                        return `<div onclick="selectStep4Tier('${project.id}','${t.id}')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center relative ${sel ? 'border-orange-500 bg-orange-50 shadow-sm' : 'border-gray-200 hover:border-orange-300 bg-white'}">
+                            ${t.popular ? '<div class="absolute -top-2 left-1/2 -translate-x-1/2 text-[8px] font-bold bg-orange-500 text-white px-2 py-0.5 rounded-full">POPULAR</div>' : ''}
+                            <div class="text-[10px] font-bold text-gray-800">${t.name}</div>
+                            <div class="text-[9px] text-gray-500">${t.spec}</div>
+                            <div class="text-xs font-semibold ${sel ? 'text-orange-600' : 'text-gray-600'} mt-1">${t.from}</div>
+                        </div>`;
+                    }).join('');
+
+                    const fabrics = [
+                        { id: 'np4000', name: 'Standard', spec: '5% open', extra: 'Included' },
+                        { id: 'np6000', name: 'Premium', spec: '3% UV', extra: '+$8/sqm' },
+                        { id: 'np8000', name: 'Elite', spec: '1% blackout', extra: '+$18/sqm' }
+                    ];
+                    const fabricOpts = fabrics.map(f => `<option value="${f.id}" ${step4State.fabric === f.id ? 'selected' : ''}>${f.name} (${f.spec}) ${f.extra}</option>`).join('');
+
+                    const drives = [
+                        { id: 'bead-chain', name: 'Bead Chain', price: '$18', cat: 'Manual' },
+                        { id: 'spring-crank', name: 'Spring Crank', price: '$35', cat: 'Manual' },
+                        { id: 'electric-std', name: 'Std Electric', price: '$68', cat: 'Electric', pop: true },
+                        { id: 'electric-prem', name: 'Premium Elec', price: '$92', cat: 'Electric' },
+                        { id: 'solar-kit', name: 'Solar Kit', price: '$215', cat: 'Premium' }
+                    ];
+                    const driveOpts = drives.map(d => `<option value="${d.id}" ${step4State.driveSystem === d.id ? 'selected' : ''}>${d.name} (${d.price}/unit)${d.pop ? ' ★' : ''}</option>`).join('');
+
+                    // Pre-calculated values for display
+                    const cs = step4State.costSummary;
+
+                    return `
+                    <div class="bg-white rounded-lg border border-gray-100 p-4">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 bg-orange-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-calculator text-orange-600 text-sm"></i>
+                                </div>
+                                <div>
+                                    <span class="text-sm font-semibold text-gray-700">Pricing & Quotation Engine</span>
+                                    <span class="text-[10px] text-orange-500 ml-2 font-medium">6-Strategy Zip Blinds</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button onclick="toggleStep4Mode('${project.id}')" class="px-2 py-1 text-[10px] font-medium rounded-md border ${step4State.pricingMode === 'wholesale' ? 'bg-emerald-50 border-emerald-300 text-emerald-700' : 'bg-white border-gray-200 text-gray-600'} hover:bg-gray-50 transition">
+                                    ${step4State.pricingMode === 'retail' ? '🏷 Retail' : '🏭 Wholesale'}
+                                </button>
+                                <button id="step4LaunchBtn_${project.id}" onclick="toggleStep4Panel('${project.id}')" class="px-3 py-1.5 bg-orange-600 text-white text-xs font-semibold rounded-lg hover:bg-orange-700 transition flex items-center gap-1.5 shadow-sm">
+                                    <i class="fas fa-calculator text-[10px]"></i> Open Quotation
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Summary from measurement -->
+                        <div class="mb-4 p-3 bg-orange-50/50 rounded-lg border border-orange-100">
+                            <div class="flex items-center gap-2 mb-2">
+                                <i class="fas fa-arrow-right text-orange-500 text-[10px]"></i>
+                                <span class="text-xs font-semibold text-orange-700">Inherited from Steps 1–3</span>
+                            </div>
+                            <div class="grid grid-cols-4 gap-3 text-center">
+                                <div><div class="text-[10px] text-gray-500">Openings</div><div class="text-sm font-bold text-gray-800">${mData.openings || step4State.quantity}</div></div>
+                                <div><div class="text-[10px] text-gray-500">Width</div><div class="text-sm font-bold text-gray-800">${mData.opening_width_in || '72'}"</div></div>
+                                <div><div class="text-[10px] text-gray-500">Height</div><div class="text-sm font-bold text-gray-800">${mData.opening_height_in || '96'}"</div></div>
+                                <div><div class="text-[10px] text-gray-500">Area/unit</div><div class="text-sm font-bold text-orange-600">${step4State.unitArea.toFixed(2)} sqm</div></div>
+                            </div>
+                        </div>
+
+                        <!-- Expandable Quotation Panel -->
+                        <div id="step4QuotationPanel_${project.id}" class="hidden" style="animation: fadeInSlide 0.3s ease">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                                <!-- Left: Product Configuration -->
+                                <div class="space-y-4">
+                                    <!-- Product Tier Selection -->
+                                    <div>
+                                        <div class="flex items-center gap-2 mb-2">
+                                            <span class="text-xs font-semibold text-gray-700"><i class="fas fa-layer-group text-orange-400 mr-1.5"></i>Product Tier</span>
+                                            <span class="text-[9px] text-gray-400 ml-auto">Strategy 5: Good-Better-Best</span>
+                                        </div>
+                                        <div class="grid grid-cols-3 gap-2">${tierCards}</div>
+                                    </div>
+
+                                    <!-- Fabric Selection -->
+                                    <div class="space-y-1">
+                                        <label class="text-[10px] font-medium text-gray-500 flex items-center gap-1.5"><i class="fas fa-scroll text-orange-400"></i>Fabric / Screen</label>
+                                        <select id="step4Fabric_${project.id}" class="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-orange-200 focus:border-orange-400 bg-white" onchange="updateStep4Config('${project.id}')">
+                                            ${fabricOpts}
+                                        </select>
+                                    </div>
+
+                                    <!-- Drive System -->
+                                    <div class="space-y-1">
+                                        <label class="text-[10px] font-medium text-gray-500 flex items-center gap-1.5"><i class="fas fa-cog text-orange-400"></i>Drive System <span class="text-[8px] text-gray-400 ml-auto">Strategy 1: Modular Pricing</span></label>
+                                        <select id="step4Drive_${project.id}" class="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-orange-200 focus:border-orange-400 bg-white" onchange="updateStep4Config('${project.id}')">
+                                            ${driveOpts}
+                                        </select>
+                                    </div>
+
+                                    <!-- Quantity & Adjustments -->
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <div class="space-y-1">
+                                            <label class="text-[10px] font-medium text-gray-500"><i class="fas fa-th-large text-orange-400 mr-1"></i>Quantity</label>
+                                            <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden">
+                                                <button onclick="adjustStep4Qty('${project.id}',-1)" class="px-2.5 py-1.5 bg-gray-50 hover:bg-gray-100 text-gray-600 text-xs font-bold">−</button>
+                                                <span id="step4Qty_${project.id}" class="flex-1 text-center text-xs font-bold text-gray-800">${step4State.quantity}</span>
+                                                <button onclick="adjustStep4Qty('${project.id}',1)" class="px-2.5 py-1.5 bg-gray-50 hover:bg-gray-100 text-gray-600 text-xs font-bold">+</button>
+                                            </div>
+                                        </div>
+                                        <div class="space-y-1">
+                                            <label class="text-[10px] font-medium text-gray-500"><i class="fas fa-percent text-orange-400 mr-1"></i>Dealer Discount</label>
+                                            <select id="step4Discount_${project.id}" class="w-full px-2 py-1.5 border border-gray-200 rounded-lg text-xs" onchange="updateStep4Config('${project.id}')">
+                                                <option value="0" ${step4State.discount === 0 ? 'selected' : ''}>No discount</option>
+                                                <option value="5" ${step4State.discount === 5 ? 'selected' : ''}>5% Dealer</option>
+                                                <option value="10" ${step4State.discount === 10 ? 'selected' : ''}>10% Volume</option>
+                                                <option value="15" ${step4State.discount === 15 ? 'selected' : ''}>15% Partner</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Active Strategies -->
+                                    <div class="flex flex-wrap gap-1.5">
+                                        <span class="text-[9px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200"><i class="fas fa-puzzle-piece mr-1"></i>Modular</span>
+                                        <span class="text-[9px] px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200"><i class="fas fa-layer-group mr-1"></i>Volume Tier</span>
+                                        <span class="text-[9px] px-2 py-0.5 rounded-full ${step4State.unitArea < 1 ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-gray-50 text-gray-400 border border-gray-200'}"><i class="fas fa-arrow-down mr-1"></i>Min Charge</span>
+                                        <span class="text-[9px] px-2 py-0.5 rounded-full ${cs.heightSurcharge > 0 ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-gray-50 text-gray-400 border border-gray-200'}"><i class="fas fa-arrows-alt-v mr-1"></i>Height +</span>
+                                        <span class="text-[9px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200"><i class="fas fa-star mr-1"></i>Product Tier</span>
+                                        <span class="text-[9px] px-2 py-0.5 rounded-full bg-orange-50 text-orange-700 border border-orange-200"><i class="fas fa-tags mr-1"></i>${step4State.pricingMode === 'retail' ? 'Retail' : 'Wholesale'}</span>
+                                    </div>
+                                </div>
+
+                                <!-- Right: Cost Breakdown + Quote Options -->
+                                <div class="space-y-4">
+                                    <!-- Cost Breakdown -->
+                                    <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="text-xs font-semibold text-gray-700"><i class="fas fa-receipt text-orange-500 mr-1.5"></i>Cost Breakdown</span>
+                                            <button onclick="calculateStep4Pricing('${project.id}')" class="text-[10px] text-orange-600 font-medium hover:text-orange-800"><i class="fas fa-sync-alt mr-1"></i>Recalculate</button>
+                                        </div>
+                                        <div class="space-y-1.5" id="step4CostBreakdown_${project.id}">
+                                            <div class="flex justify-between text-[10px]"><span class="text-gray-600">Fabric (${cs.tierName})</span><span class="font-medium text-gray-800">$${cs.fabricCost}</span></div>
+                                            <div class="flex justify-between text-[10px]"><span class="text-gray-600">Drive System (${cs.driveName})</span><span class="font-medium text-gray-800">$${cs.driveCost}</span></div>
+                                            ${cs.fabricUpgrade > 0 ? `<div class="flex justify-between text-[10px]"><span class="text-gray-600">Fabric Upgrade</span><span class="font-medium text-amber-600">+$${cs.fabricUpgrade}</span></div>` : ''}
+                                            ${cs.heightSurcharge > 0 ? `<div class="flex justify-between text-[10px]"><span class="text-gray-600">Height Surcharge</span><span class="font-medium text-amber-600">+$${cs.heightSurcharge}</span></div>` : ''}
+                                            <div class="flex justify-between text-[10px]"><span class="text-gray-600">Installation</span><span class="font-medium text-gray-800">$${cs.installCost}</span></div>
+                                            <div class="flex justify-between text-[10px]"><span class="text-gray-600">Hardware</span><span class="font-medium text-gray-800">$${cs.hardwareCost}</span></div>
+                                            ${cs.discountAmt > 0 ? `<div class="flex justify-between text-[10px]"><span class="text-green-600">Dealer Discount (${step4State.discount}%)</span><span class="font-medium text-green-600">-$${cs.discountAmt}</span></div>` : ''}
+                                            <div class="border-t border-gray-300 pt-1.5 mt-1.5 flex justify-between text-xs"><span class="font-bold text-gray-800">Total Cost (COGS)</span><span class="font-bold text-orange-600">$${cs.totalCost}</span></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 3-Tier Quote Suggestions -->
+                                    <div>
+                                        <div class="flex items-center gap-2 mb-2">
+                                            <span class="text-xs font-semibold text-gray-700"><i class="fas fa-tags text-orange-400 mr-1.5"></i>Smart Quote Options</span>
+                                        </div>
+                                        <div class="grid grid-cols-3 gap-2">
+                                            <div onclick="selectStep4Quote('${project.id}','conservative')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center ${step4State.selectedQuote === 'conservative' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-blue-300'}">
+                                                <div class="text-[9px] text-gray-500 font-medium">Conservative</div>
+                                                <div class="text-sm font-bold ${step4State.selectedQuote === 'conservative' ? 'text-blue-700' : 'text-gray-800'}">$${cs.quoteConservative}</div>
+                                                <div class="text-[9px] text-gray-400">10% margin</div>
+                                            </div>
+                                            <div onclick="selectStep4Quote('${project.id}','recommended')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center relative ${step4State.selectedQuote === 'recommended' ? 'border-orange-500 bg-orange-50 shadow-sm' : 'border-gray-200 hover:border-orange-300'}">
+                                                <div class="absolute -top-2 left-1/2 -translate-x-1/2 text-[8px] font-bold bg-orange-500 text-white px-2 py-0.5 rounded-full">BEST</div>
+                                                <div class="text-[9px] text-gray-500 font-medium">Recommended</div>
+                                                <div class="text-sm font-bold ${step4State.selectedQuote === 'recommended' ? 'text-orange-700' : 'text-gray-800'}">$${cs.quoteRecommended}</div>
+                                                <div class="text-[9px] text-gray-400">18% margin</div>
+                                            </div>
+                                            <div onclick="selectStep4Quote('${project.id}','premium')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center ${step4State.selectedQuote === 'premium' ? 'border-emerald-500 bg-emerald-50' : 'border-gray-200 hover:border-emerald-300'}">
+                                                <div class="text-[9px] text-gray-500 font-medium">Premium</div>
+                                                <div class="text-sm font-bold ${step4State.selectedQuote === 'premium' ? 'text-emerald-700' : 'text-gray-800'}">$${cs.quotePremium}</div>
+                                                <div class="text-[9px] text-gray-400">25% margin</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Profit Analysis Bar -->
+                                    <div class="p-3 rounded-lg border ${cs.marginPct >= 15 ? 'bg-green-50/50 border-green-200' : cs.marginPct >= 10 ? 'bg-amber-50/50 border-amber-200' : 'bg-red-50/50 border-red-200'}">
+                                        <div class="flex items-center justify-between text-[10px] mb-1.5">
+                                            <span class="font-semibold ${cs.marginPct >= 15 ? 'text-green-700' : cs.marginPct >= 10 ? 'text-amber-700' : 'text-red-700'}"><i class="fas fa-chart-line mr-1"></i>Profit Analysis</span>
+                                            <span class="font-bold">${cs.marginPct}% margin</span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                                <div class="h-2 rounded-full transition-all ${cs.marginPct >= 15 ? 'bg-green-500' : cs.marginPct >= 10 ? 'bg-amber-500' : 'bg-red-500'}" style="width:${Math.min(cs.marginPct * 2.5, 100)}%"></div>
+                                            </div>
+                                            <span class="text-[10px] font-bold ${cs.marginPct >= 15 ? 'text-green-700' : 'text-amber-700'}">$${cs.profit} net</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Action Buttons -->
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <button onclick="saveStep4Quote('${project.id}')" class="py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-lg font-semibold text-xs hover:from-orange-600 hover:to-amber-600 transition shadow-md flex items-center justify-center gap-1.5">
+                                            <i class="fas fa-save"></i> Save Quote
+                                        </button>
+                                        <button onclick="generateStep4Contract('${project.id}')" class="py-2.5 bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-lg font-semibold text-xs hover:from-gray-900 hover:to-black transition shadow-md flex items-center justify-center gap-1.5">
+                                            <i class="fas fa-file-contract"></i> Generate Contract
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+                }
+
+                // ---- Sunroom / Pergola pricing panel ----
+                const prodLabel = isSR ? 'Sunroom' : 'Pergola';
+                const baseTiers = isSR
+                    ? [{ id: 'standard', label: 'Standard', from: '$85/sqft' }, { id: 'premium', label: 'Premium', from: '$120/sqft', popular: true }, { id: 'luxury', label: 'Luxury', from: '$165/sqft' }]
+                    : [{ id: 'classic', label: 'Classic', from: '$45/sqft' }, { id: 'modern', label: 'Modern', from: '$62/sqft', popular: true }, { id: 'premium', label: 'Premium', from: '$85/sqft' }];
+                const tierCardsSP = baseTiers.map(t => {
+                    const sel = step4State.productTier === t.id;
+                    return `<div onclick="selectStep4Tier('${project.id}','${t.id}')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center relative ${sel ? 'border-orange-500 bg-orange-50 shadow-sm' : 'border-gray-200 hover:border-orange-300 bg-white'}">
+                        ${t.popular ? '<div class="absolute -top-2 left-1/2 -translate-x-1/2 text-[8px] font-bold bg-orange-500 text-white px-2 py-0.5 rounded-full">POPULAR</div>' : ''}
+                        <div class="text-[10px] font-bold text-gray-800">${t.label}</div>
+                        <div class="text-xs font-semibold ${sel ? 'text-orange-600' : 'text-gray-600'} mt-1">${t.from}</div>
+                    </div>`;
+                }).join('');
+
+                const dimLabel = mData.dims || ((mData.length_ft || '—') + "' × " + (mData.width_ft || '—') + "' × " + (mData.height_ft || '—') + "'");
+                const areaFt = step4State.areaSqft;
+                const cs = step4State.costSummary;
+
+                return `
+                <div class="bg-white rounded-lg border border-gray-100 p-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 bg-orange-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-calculator text-orange-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <span class="text-sm font-semibold text-gray-700">Pricing & Quotation Engine</span>
+                                <span class="text-[10px] text-orange-500 ml-2 font-medium">${prodLabel} Estimator</span>
+                            </div>
+                        </div>
+                        <button id="step4LaunchBtn_${project.id}" onclick="toggleStep4Panel('${project.id}')" class="px-3 py-1.5 bg-orange-600 text-white text-xs font-semibold rounded-lg hover:bg-orange-700 transition flex items-center gap-1.5 shadow-sm">
+                            <i class="fas fa-calculator text-[10px]"></i> Open Quotation
+                        </button>
+                    </div>
+
+                    <div class="mb-4 p-3 bg-orange-50/50 rounded-lg border border-orange-100">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fas fa-arrow-right text-orange-500 text-[10px]"></i>
+                            <span class="text-xs font-semibold text-orange-700">Inherited from Steps 1–3</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-3 text-center">
+                            <div><div class="text-[10px] text-gray-500">Dimensions</div><div class="text-sm font-bold text-gray-800">${dimLabel}</div></div>
+                            <div><div class="text-[10px] text-gray-500">Area</div><div class="text-sm font-bold text-orange-600">${areaFt} sqft</div></div>
+                            <div><div class="text-[10px] text-gray-500">Product</div><div class="text-sm font-bold text-gray-800">${prodLabel}</div></div>
+                        </div>
+                    </div>
+
+                    <div id="step4QuotationPanel_${project.id}" class="hidden" style="animation: fadeInSlide 0.3s ease">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                            <div class="space-y-4">
+                                <div>
+                                    <span class="text-xs font-semibold text-gray-700 mb-2 block"><i class="fas fa-layer-group text-orange-400 mr-1.5"></i>Product Tier</span>
+                                    <div class="grid grid-cols-3 gap-2">${tierCardsSP}</div>
+                                </div>
+                                ${isSR ? `
+                                <div class="space-y-1">
+                                    <label class="text-[10px] font-medium text-gray-500"><i class="fas fa-window-maximize text-orange-400 mr-1"></i>Glass Upgrade</label>
+                                    <select id="step4Glass_${project.id}" class="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs" onchange="updateStep4Config('${project.id}')">
+                                        <option value="standard" ${step4State.glassType === 'standard' ? 'selected' : ''}>Standard Glass (Included)</option>
+                                        <option value="lowE" ${step4State.glassType === 'lowE' ? 'selected' : ''}>Low-E Glass (+$12/sqft)</option>
+                                        <option value="triplePane" ${step4State.glassType === 'triplePane' ? 'selected' : ''}>Triple Pane (+$28/sqft)</option>
+                                    </select>
+                                </div>` : `
+                                <div class="space-y-1">
+                                    <label class="text-[10px] font-medium text-gray-500"><i class="fas fa-sliders-h text-orange-400 mr-1"></i>Louver System</label>
+                                    <select id="step4Louver_${project.id}" class="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs" onchange="updateStep4Config('${project.id}')">
+                                        <option value="fixed" ${step4State.louverType === 'fixed' ? 'selected' : ''}>Fixed Louvers (Included)</option>
+                                        <option value="adjustable" ${step4State.louverType === 'adjustable' ? 'selected' : ''}>Adjustable (+$18/sqft)</option>
+                                        <option value="motorized" ${step4State.louverType === 'motorized' ? 'selected' : ''}>Motorized (+$35/sqft)</option>
+                                    </select>
+                                </div>`}
+                            </div>
+                            <div class="space-y-4">
+                                <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-xs font-semibold text-gray-700"><i class="fas fa-receipt text-orange-500 mr-1.5"></i>Cost Breakdown</span>
+                                        <button onclick="calculateStep4Pricing('${project.id}')" class="text-[10px] text-orange-600 font-medium hover:text-orange-800"><i class="fas fa-sync-alt mr-1"></i>Recalculate</button>
+                                    </div>
+                                    <div class="space-y-1.5" id="step4CostBreakdown_${project.id}">
+                                        <div class="flex justify-between text-[10px]"><span class="text-gray-600">Materials (${cs.tierName})</span><span class="font-medium text-gray-800">$${cs.materialCost}</span></div>
+                                        ${cs.upgradeCost > 0 ? `<div class="flex justify-between text-[10px]"><span class="text-gray-600">${isSR ? 'Glass Upgrade' : 'Louver Upgrade'}</span><span class="font-medium text-amber-600">+$${cs.upgradeCost}</span></div>` : ''}
+                                        <div class="flex justify-between text-[10px]"><span class="text-gray-600">Labor</span><span class="font-medium text-gray-800">$${cs.laborCost}</span></div>
+                                        <div class="flex justify-between text-[10px]"><span class="text-gray-600">Equipment</span><span class="font-medium text-gray-800">$${cs.equipmentCost}</span></div>
+                                        <div class="flex justify-between text-[10px]"><span class="text-gray-600">Permits</span><span class="font-medium text-gray-800">$${cs.permitCost}</span></div>
+                                        <div class="border-t border-gray-300 pt-1.5 mt-1.5 flex justify-between text-xs"><span class="font-bold text-gray-800">Total Cost (COGS)</span><span class="font-bold text-orange-600">$${cs.totalCost}</span></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="text-xs font-semibold text-gray-700 mb-2 block"><i class="fas fa-tags text-orange-400 mr-1.5"></i>Smart Quote Options</span>
+                                    <div class="grid grid-cols-3 gap-2">
+                                        <div onclick="selectStep4Quote('${project.id}','conservative')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center ${step4State.selectedQuote === 'conservative' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-blue-300'}">
+                                            <div class="text-[9px] text-gray-500">Conservative</div>
+                                            <div class="text-sm font-bold">${'$' + cs.quoteConservative}</div>
+                                            <div class="text-[9px] text-gray-400">10% margin</div>
+                                        </div>
+                                        <div onclick="selectStep4Quote('${project.id}','recommended')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center relative ${step4State.selectedQuote === 'recommended' ? 'border-orange-500 bg-orange-50 shadow-sm' : 'border-gray-200 hover:border-orange-300'}">
+                                            <div class="absolute -top-2 left-1/2 -translate-x-1/2 text-[8px] font-bold bg-orange-500 text-white px-2 py-0.5 rounded-full">BEST</div>
+                                            <div class="text-[9px] text-gray-500">Recommended</div>
+                                            <div class="text-sm font-bold">${'$' + cs.quoteRecommended}</div>
+                                            <div class="text-[9px] text-gray-400">18% margin</div>
+                                        </div>
+                                        <div onclick="selectStep4Quote('${project.id}','premium')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center ${step4State.selectedQuote === 'premium' ? 'border-emerald-500 bg-emerald-50' : 'border-gray-200 hover:border-emerald-300'}">
+                                            <div class="text-[9px] text-gray-500">Premium</div>
+                                            <div class="text-sm font-bold">${'$' + cs.quotePremium}</div>
+                                            <div class="text-[9px] text-gray-400">25% margin</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-3 rounded-lg border ${cs.marginPct >= 15 ? 'bg-green-50/50 border-green-200' : 'bg-amber-50/50 border-amber-200'}">
+                                    <div class="flex items-center justify-between text-[10px] mb-1.5">
+                                        <span class="font-semibold ${cs.marginPct >= 15 ? 'text-green-700' : 'text-amber-700'}"><i class="fas fa-chart-line mr-1"></i>Profit Analysis</span>
+                                        <span class="font-bold">${cs.marginPct}% margin</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex-1 bg-gray-200 rounded-full h-2"><div class="h-2 rounded-full ${cs.marginPct >= 15 ? 'bg-green-500' : 'bg-amber-500'}" style="width:${Math.min(cs.marginPct * 2.5, 100)}%"></div></div>
+                                        <span class="text-[10px] font-bold ${cs.marginPct >= 15 ? 'text-green-700' : 'text-amber-700'}">$${cs.profit} net</span>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button onclick="saveStep4Quote('${project.id}')" class="py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-lg font-semibold text-xs hover:from-orange-600 hover:to-amber-600 transition shadow-md flex items-center justify-center gap-1.5"><i class="fas fa-save"></i> Save Quote</button>
+                                    <button onclick="generateStep4Contract('${project.id}')" class="py-2.5 bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-lg font-semibold text-xs hover:from-gray-900 hover:to-black transition shadow-md flex items-center justify-center gap-1.5"><i class="fas fa-file-contract"></i> Generate Contract</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            })() : '';
+
             // Payment Status
             const paymentColors = { paid: 'green', pending: 'amber', not_started: 'gray' };
             const paymentLabels = { paid: 'Paid', pending: 'Pending', not_started: 'Not Started' };
@@ -9291,6 +9660,8 @@
                     ${aiDesignerHTML ? `<div class="mt-4">${aiDesignerHTML}</div>` : ''}
 
                     ${measurementPanelHTML ? `<div class="mt-4">${measurementPanelHTML}</div>` : ''}
+
+                    ${quotationPanelHTML ? `<div class="mt-4">${quotationPanelHTML}</div>` : ''}
 
                     ${agentHTML ? `
                     <div class="mt-4 bg-white rounded-lg border border-gray-100 p-4">
@@ -10049,6 +10420,213 @@
 
             // Start processing with initial delay
             setTimeout(processNext, 500);
+        }
+
+        // ===== Step 4: Quotation & Pricing Panel Functions =====
+        var step4QuotationState = {};
+
+        function getStep4State(projectId) {
+            if (!step4QuotationState[projectId]) {
+                var project = allProjectsData.find(p => p.id === projectId);
+                var mData = project && project.measurement ? project.measurement : {};
+                var isZB = project && project.type === 'Zip Blinds';
+                var isSR = project && project.type === 'Sunroom';
+
+                var state = {
+                    pricingMode: 'retail',
+                    productTier: isZB ? 'better' : (isSR ? 'premium' : 'modern'),
+                    selectedQuote: 'recommended',
+                    discount: 5
+                };
+
+                if (isZB) {
+                    // Auto-populate from Step 3 measurement data
+                    var wIn = Number(mData.opening_width_in) || 72;
+                    var hIn = Number(mData.opening_height_in) || 96;
+                    state.quantity = Number(mData.openings) || 3;
+                    state.widthM = wIn * 0.0254;  // inches to meters
+                    state.heightM = hIn * 0.0254;
+                    state.unitArea = state.widthM * state.heightM;
+                    state.fabric = mData.fabric || 'np4000';
+                    state.driveSystem = mData.motor === 'motorized_solar' ? 'solar-kit' : mData.motor === 'motorized_wired' ? 'electric-std' : mData.motor === 'manual_crank' ? 'bead-chain' : 'electric-std';
+                } else {
+                    // Sunroom / Pergola — from Step 3 dims
+                    var dims = mData.dims || '';
+                    var parts = dims.replace(/'/g, '').split(/\s*x\s*/i);
+                    var lenFt = parts.length >= 1 ? parseFloat(parts[0]) || 20 : 20;
+                    var widFt = parts.length >= 2 ? parseFloat(parts[1]) || 16 : 16;
+                    state.lengthFt = lenFt;
+                    state.widthFt = widFt;
+                    state.areaSqft = Math.round(lenFt * widFt);
+                    state.glassType = 'standard';
+                    state.louverType = 'fixed';
+                    state.quantity = 1;
+                }
+
+                // Calculate initial pricing
+                state.costSummary = calcStep4Cost(project, state);
+                step4QuotationState[projectId] = state;
+            }
+            return step4QuotationState[projectId];
+        }
+
+        function calcStep4Cost(project, state) {
+            var isZB = project && project.type === 'Zip Blinds';
+            var isSR = project && project.type === 'Sunroom';
+            var mode = state.pricingMode;
+            var cs = {};
+
+            if (isZB) {
+                var area = state.unitArea;
+                var effArea = area < 1 && area > 0 ? 1 : area;
+                var tierData = zbProductTiers[state.productTier];
+                cs.tierName = tierData ? tierData.name : state.productTier;
+                var tierRow = tierData ? tierData.tiers.find(function(t) { return effArea <= t.maxArea; }) || tierData.tiers[tierData.tiers.length - 1] : { retail: 52, wholesale: 43 };
+                var rate = tierRow[mode] || tierRow.retail;
+                cs.fabricCost = Math.round(rate * effArea * state.quantity);
+                var driveData = zbDriveSystems[state.driveSystem];
+                cs.driveName = driveData ? driveData.name : state.driveSystem;
+                cs.driveCost = Math.round((driveData ? (driveData[mode] || driveData.retail) : 68) * state.quantity);
+                var fabUpg = zbFabricUpgrades[state.fabric];
+                cs.fabricUpgrade = Math.round((fabUpg ? fabUpg.surcharge : 0) * effArea * state.quantity);
+                var hSur = getHeightSurcharge(state.heightM);
+                cs.heightSurcharge = Math.round((hSur ? hSur.surcharge : 0) * effArea * state.quantity);
+                cs.installCost = Math.round(45 * state.quantity);
+                cs.hardwareCost = Math.round(12 * state.quantity);
+                var subtotal = cs.fabricCost + cs.driveCost + cs.fabricUpgrade + cs.heightSurcharge + cs.installCost + cs.hardwareCost;
+                cs.discountAmt = Math.round(subtotal * (state.discount / 100));
+                cs.totalCost = subtotal - cs.discountAmt;
+            } else {
+                var area = state.areaSqft || 320;
+                var prices = isSR
+                    ? { standard: 85, premium: 120, luxury: 165 }
+                    : { classic: 45, modern: 62, premium: 85 };
+                var baseRate = prices[state.productTier] || (isSR ? 120 : 62);
+                cs.tierName = state.productTier.charAt(0).toUpperCase() + state.productTier.slice(1);
+                cs.materialCost = Math.round(baseRate * area);
+                var upgRates = isSR
+                    ? { standard: 0, lowE: 12, triplePane: 28 }
+                    : { fixed: 0, adjustable: 18, motorized: 35 };
+                var upgKey = isSR ? (state.glassType || 'standard') : (state.louverType || 'fixed');
+                cs.upgradeCost = Math.round((upgRates[upgKey] || 0) * area);
+                cs.laborCost = Math.round((isSR ? 25 : 15) * area);
+                cs.equipmentCost = Math.round((isSR ? 8 : 5) * area);
+                cs.permitCost = isSR ? 850 : 450;
+                cs.totalCost = cs.materialCost + cs.upgradeCost + cs.laborCost + cs.equipmentCost + cs.permitCost;
+                cs.fabricCost = 0; cs.driveCost = 0; cs.fabricUpgrade = 0; cs.heightSurcharge = 0; cs.installCost = 0; cs.hardwareCost = 0; cs.discountAmt = 0; cs.driveName = '';
+            }
+
+            // Quote options
+            cs.quoteConservative = Math.round(cs.totalCost * 1.10).toLocaleString();
+            cs.quoteRecommended = Math.round(cs.totalCost * 1.18).toLocaleString();
+            cs.quotePremium = Math.round(cs.totalCost * 1.25).toLocaleString();
+
+            // Selected quote profit
+            var margins = { conservative: 0.10, recommended: 0.18, premium: 0.25 };
+            var m = margins[state.selectedQuote] || 0.18;
+            cs.profit = Math.round(cs.totalCost * m).toLocaleString();
+            cs.marginPct = Math.round(m * 100);
+
+            return cs;
+        }
+
+        function toggleStep4Panel(projectId) {
+            var panel = document.getElementById('step4QuotationPanel_' + projectId);
+            var btn = document.getElementById('step4LaunchBtn_' + projectId);
+            if (!panel) return;
+            if (panel.classList.contains('hidden')) {
+                panel.classList.remove('hidden');
+                if (btn) { btn.innerHTML = '<i class="fas fa-times text-[10px]"></i> Close Panel'; btn.classList.replace('bg-orange-600', 'bg-gray-600'); btn.classList.replace('hover:bg-orange-700', 'hover:bg-gray-700'); }
+            } else {
+                panel.classList.add('hidden');
+                if (btn) { btn.innerHTML = '<i class="fas fa-calculator text-[10px]"></i> Open Quotation'; btn.classList.replace('bg-gray-600', 'bg-orange-600'); btn.classList.replace('hover:bg-gray-700', 'hover:bg-orange-700'); }
+            }
+        }
+
+        function toggleStep4Mode(projectId) {
+            var state = getStep4State(projectId);
+            state.pricingMode = state.pricingMode === 'retail' ? 'wholesale' : 'retail';
+            state.costSummary = calcStep4Cost(allProjectsData.find(p => p.id === projectId), state);
+            refreshStep4Panel(projectId);
+        }
+
+        function selectStep4Tier(projectId, tier) {
+            var state = getStep4State(projectId);
+            state.productTier = tier;
+            state.costSummary = calcStep4Cost(allProjectsData.find(p => p.id === projectId), state);
+            refreshStep4Panel(projectId);
+        }
+
+        function selectStep4Quote(projectId, level) {
+            var state = getStep4State(projectId);
+            state.selectedQuote = level;
+            state.costSummary = calcStep4Cost(allProjectsData.find(p => p.id === projectId), state);
+            refreshStep4Panel(projectId);
+        }
+
+        function adjustStep4Qty(projectId, delta) {
+            var state = getStep4State(projectId);
+            state.quantity = Math.max(1, state.quantity + delta);
+            state.costSummary = calcStep4Cost(allProjectsData.find(p => p.id === projectId), state);
+            refreshStep4Panel(projectId);
+        }
+
+        function updateStep4Config(projectId) {
+            var state = getStep4State(projectId);
+            var project = allProjectsData.find(p => p.id === projectId);
+            var isZB = project && project.type === 'Zip Blinds';
+            var isSR = project && project.type === 'Sunroom';
+            if (isZB) {
+                var fabEl = document.getElementById('step4Fabric_' + projectId);
+                var driveEl = document.getElementById('step4Drive_' + projectId);
+                var discEl = document.getElementById('step4Discount_' + projectId);
+                if (fabEl) state.fabric = fabEl.value;
+                if (driveEl) state.driveSystem = driveEl.value;
+                if (discEl) state.discount = parseInt(discEl.value) || 0;
+            } else if (isSR) {
+                var glassEl = document.getElementById('step4Glass_' + projectId);
+                if (glassEl) state.glassType = glassEl.value;
+            } else {
+                var louverEl = document.getElementById('step4Louver_' + projectId);
+                if (louverEl) state.louverType = louverEl.value;
+            }
+            state.costSummary = calcStep4Cost(project, state);
+            refreshStep4Panel(projectId);
+        }
+
+        function calculateStep4Pricing(projectId) {
+            var state = getStep4State(projectId);
+            state.costSummary = calcStep4Cost(allProjectsData.find(p => p.id === projectId), state);
+            refreshStep4Panel(projectId);
+            showNotification('Pricing recalculated', 'success');
+        }
+
+        function refreshStep4Panel(projectId) {
+            // Re-render the step detail to reflect updated pricing
+            if (expandedStep === 4 && currentDetailProject) {
+                // Clear cached state to force re-render
+                delete step4QuotationState[projectId];
+                // Preserve user selections
+                // Re-toggle to refresh
+                toggleStepDetail(4, currentDetailProject);
+                toggleStepDetail(4, currentDetailProject);
+            }
+        }
+
+        function saveStep4Quote(projectId) {
+            var state = getStep4State(projectId);
+            var project = allProjectsData.find(p => p.id === projectId);
+            var quoteAmounts = { conservative: state.costSummary.quoteConservative, recommended: state.costSummary.quoteRecommended, premium: state.costSummary.quotePremium };
+            showNotification('Quote saved: $' + quoteAmounts[state.selectedQuote] + ' (' + state.selectedQuote + ') for ' + (project ? project.name : projectId), 'success');
+        }
+
+        function generateStep4Contract(projectId) {
+            var state = getStep4State(projectId);
+            var project = allProjectsData.find(p => p.id === projectId);
+            if (project && project.workflowStep > 4) {
+                if (!confirm('This project is already past Quotation stage. Generate a new contract?')) return;
+            }
+            showNotification('Contract generated for ' + (project ? project.name : projectId) + '. Ready for customer signing.', 'success');
         }
 
         // ===== Create New Project Modal & Logic =====
