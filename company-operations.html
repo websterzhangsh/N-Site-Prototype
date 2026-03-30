@@ -8587,13 +8587,14 @@
                     </div>`;
                 }).join('');
 
-                // Build product cards from productCatalog (Sunroom only)
+                // Build product cards from productCatalog (Sunroom only) — using productIcons
                 const productCards = styles.map(s => {
                     const prod = productCatalog[s.value];
+                    const iconSrc = productIcons[s.value] || '';
                     const priceRange = prod ? ('$' + prod.pricing.tiers[0].priceRange[0] + '-' + prod.pricing.tiers[0].priceRange[1] + '/sqft') : '';
                     return `<div class="step2-product-card flex flex-col items-center gap-1 p-2.5 rounded-lg border border-gray-100 hover:border-indigo-300 hover:bg-indigo-50/30 cursor-pointer transition" data-catalog-id="${s.value}" onclick="selectStep2Product('${project.id}', '${s.value}', this)">
-                        <div class="w-9 h-9 rounded-lg flex items-center justify-center bg-gray-100 text-gray-400">
-                            <i class="fas ${s.icon} text-sm"></i>
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-gray-50">
+                            ${iconSrc ? '<img src="' + iconSrc + '" alt="' + s.label + '" class="w-8 h-8 object-contain">' : '<i class="fas ' + s.icon + ' text-sm text-gray-400"></i>'}
                         </div>
                         <span class="text-[10px] font-semibold text-gray-600 text-center leading-tight">${s.label}</span>
                         ${s.sub ? '<span class="text-[8px] text-gray-400 text-center leading-tight">' + s.sub + '</span>' : ''}
@@ -8632,25 +8633,32 @@
                     <!-- Expandable AI Designer Panel (hidden by default) -->
                     <div id="step2DesignerPanel_${project.id}" class="hidden" style="animation: fadeInSlide 0.3s ease">
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                            <!-- Left Column: Yard Photo + Product Selection -->
+                            <!-- Left Column: Yard Photos + Product Selection + Prompt + Generate -->
                             <div class="space-y-5">
-                                <!-- Yard Photo Upload -->
+                                <!-- Yard Photo Upload (up to 3) -->
                                 <div>
                                     <div class="flex items-center justify-between mb-2">
-                                        <span class="text-xs font-semibold text-gray-700"><i class="fas fa-camera text-indigo-400 mr-1.5"></i>Upload Yard Photo</span>
+                                        <span class="text-xs font-semibold text-gray-700"><i class="fas fa-camera text-indigo-400 mr-1.5"></i>Upload Yard Photos</span>
+                                        <span id="step2PhotoCount_${project.id}" class="text-[10px] text-gray-400">0/3 uploaded</span>
                                     </div>
-                                    <div id="step2PhotoUpload_${project.id}" class="border-2 border-dashed border-gray-200 bg-gray-50/50 rounded-xl p-6 text-center cursor-pointer hover:border-indigo-300 hover:bg-indigo-50/40 transition" onclick="triggerStep2PhotoUpload('${project.id}')">
-                                        <div id="step2PhotoPlaceholder_${project.id}">
-                                            <i class="fas fa-cloud-upload-alt text-3xl text-gray-300 mb-2"></i>
-                                            <p class="text-xs text-gray-500 font-medium">Click or drag to upload yard photo</p>
-                                            <p class="text-[10px] text-gray-400 mt-1">Stand facing the installation area</p>
+                                    <div class="flex gap-2">
+                                        <div id="step2PhotoSlot0_${project.id}" class="flex-1 border-2 border-dashed border-gray-200 bg-gray-50/50 rounded-xl text-center cursor-pointer hover:border-indigo-300 hover:bg-indigo-50/40 transition aspect-[4/3] flex items-center justify-center relative overflow-hidden" onclick="triggerStep2PhotoUpload('${project.id}', 0)">
+                                            <div class="step2-photo-placeholder"><i class="fas fa-cloud-upload-alt text-2xl text-gray-300 mb-1"></i><p class="text-[10px] text-gray-400">Main photo</p></div>
+                                            <img class="step2-photo-img absolute inset-0 w-full h-full object-cover hidden rounded-xl">
+                                            <button class="step2-photo-remove absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full text-[9px] hidden hover:bg-red-600 z-10" onclick="event.stopPropagation(); clearStep2Photo('${project.id}', 0)"><i class="fas fa-times"></i></button>
                                         </div>
-                                        <div id="step2PhotoPreview_${project.id}" class="hidden">
-                                            <img id="step2PhotoImg_${project.id}" src="" alt="Yard photo" class="max-h-48 mx-auto rounded-lg">
-                                            <button onclick="event.stopPropagation(); clearStep2Photo('${project.id}')" class="mt-2 text-red-500 hover:text-red-600 text-xs"><i class="fas fa-times mr-1"></i>Remove</button>
+                                        <div id="step2PhotoSlot1_${project.id}" class="w-20 border-2 border-dashed border-gray-200 bg-gray-50/50 rounded-xl text-center cursor-pointer hover:border-indigo-300 transition aspect-[3/4] flex items-center justify-center relative overflow-hidden" onclick="triggerStep2PhotoUpload('${project.id}', 1)">
+                                            <div class="step2-photo-placeholder"><i class="fas fa-plus text-gray-300"></i></div>
+                                            <img class="step2-photo-img absolute inset-0 w-full h-full object-cover hidden rounded-xl">
+                                            <button class="step2-photo-remove absolute top-1 right-1 w-4 h-4 bg-red-500 text-white rounded-full text-[8px] hidden hover:bg-red-600 z-10" onclick="event.stopPropagation(); clearStep2Photo('${project.id}', 1)"><i class="fas fa-times"></i></button>
+                                        </div>
+                                        <div id="step2PhotoSlot2_${project.id}" class="w-20 border-2 border-dashed border-gray-200 bg-gray-50/50 rounded-xl text-center cursor-pointer hover:border-indigo-300 transition aspect-[3/4] flex items-center justify-center relative overflow-hidden" onclick="triggerStep2PhotoUpload('${project.id}', 2)">
+                                            <div class="step2-photo-placeholder"><i class="fas fa-plus text-gray-300"></i></div>
+                                            <img class="step2-photo-img absolute inset-0 w-full h-full object-cover hidden rounded-xl">
+                                            <button class="step2-photo-remove absolute top-1 right-1 w-4 h-4 bg-red-500 text-white rounded-full text-[8px] hidden hover:bg-red-600 z-10" onclick="event.stopPropagation(); clearStep2Photo('${project.id}', 2)"><i class="fas fa-times"></i></button>
                                         </div>
                                     </div>
-                                    <p class="text-[10px] text-gray-400 mt-1.5"><i class="fas fa-lightbulb text-amber-400 mr-1"></i>Tip: Stand facing the installation area. Include full space in frame with a reference object for scale.</p>
+                                    <p class="text-[10px] text-gray-400 mt-1.5"><i class="fas fa-lightbulb text-amber-400 mr-1"></i>Tip: Upload 1–3 photos. Main photo is used for AI rendering. Others are reference angles.</p>
                                 </div>
 
                                 <!-- Product Selection -->
@@ -8664,13 +8672,22 @@
                                     </div>
                                 </div>
 
+                                <!-- Design Prompt (optional, 800 char limit) -->
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-xs font-semibold text-gray-700"><i class="fas fa-comment-dots text-indigo-400 mr-1.5"></i>Design Instructions <span class="text-gray-400 font-normal">(optional)</span></span>
+                                        <span id="step2CharCount_${project.id}" class="text-[10px] text-gray-400">0/800</span>
+                                    </div>
+                                    <textarea id="step2PromptInput_${project.id}" maxlength="800" rows="3" oninput="updateStep2CharCount('${project.id}')" class="w-full text-xs border border-gray-200 rounded-lg p-2.5 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 transition" placeholder="e.g. Place the sunroom along the back wall, keep the patio furniture visible, match the house roofline..."></textarea>
+                                </div>
+
                                 <!-- Generate Button -->
                                 <button id="step2GenerateBtn_${project.id}" onclick="generateStep2Design('${project.id}')" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl font-semibold text-sm hover:from-indigo-700 hover:to-violet-700 transition shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed" disabled>
                                     <i class="fas fa-wand-magic-sparkles"></i> Generate Design
                                 </button>
                             </div>
 
-                            <!-- Right Column: Concept Rendering + Stats -->
+                            <!-- Right Column: Concept Rendering + Post-gen Actions + Stats -->
                             <div class="space-y-4">
                                 <!-- Rendering Preview -->
                                 <div>
@@ -8691,6 +8708,37 @@
                                             <div class="w-12 h-12 border-3 border-indigo-500 border-t-transparent rounded-full animate-spin mb-3"></div>
                                             <p id="step2LoadingText_${project.id}" class="text-white text-sm font-medium">Generating...</p>
                                             <p id="step2LoadingElapsed_${project.id}" class="text-gray-400 text-[10px] mt-1">Connecting to AI model...</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Post-Generation Actions (hidden until generated) -->
+                                <div id="step2PostGenActions_${project.id}" class="hidden space-y-3">
+                                    <!-- Save + Refine buttons -->
+                                    <div class="flex gap-2">
+                                        <button onclick="downloadStep2Design('${project.id}')" class="flex-1 py-2 bg-green-600 text-white rounded-lg text-xs font-semibold hover:bg-green-700 transition flex items-center justify-center gap-1.5">
+                                            <i class="fas fa-download text-[10px]"></i> Save Design
+                                        </button>
+                                        <button onclick="openStep2IterateDialog('${project.id}')" id="step2IterateBtn_${project.id}" class="flex-1 py-2 bg-violet-600 text-white rounded-lg text-xs font-semibold hover:bg-violet-700 transition flex items-center justify-center gap-1.5">
+                                            <i class="fas fa-redo text-[10px]"></i> Refine (<span id="step2IterRemaining_${project.id}">2</span> left)
+                                        </button>
+                                    </div>
+                                    <!-- Iteration refinement prompt panel -->
+                                    <div id="step2IteratePanel_${project.id}" class="hidden p-3 bg-violet-50 rounded-lg border border-violet-200">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="text-xs font-semibold text-violet-700"><i class="fas fa-edit mr-1"></i>Refinement Instructions</span>
+                                            <span id="step2IterCharCount_${project.id}" class="text-[10px] text-violet-400">0/800</span>
+                                        </div>
+                                        <textarea id="step2IterPromptInput_${project.id}" maxlength="800" rows="2" oninput="updateStep2IterCharCount('${project.id}')" class="w-full text-xs border border-violet-200 rounded-lg p-2 resize-none focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-400 transition" placeholder="e.g. Move the sunroom 2 feet to the left, change roof angle to match house..."></textarea>
+                                        <div class="flex gap-2 mt-2">
+                                            <button onclick="executeStep2Iterate('${project.id}')" class="flex-1 py-2 bg-violet-600 text-white rounded-lg text-xs font-semibold hover:bg-violet-700 transition flex items-center justify-center gap-1.5">
+                                                <i class="fas fa-wand-magic-sparkles text-[10px]"></i> Apply Refinement
+                                            </button>
+                                            <button onclick="document.getElementById('step2IteratePanel_${project.id}').classList.add('hidden')" class="px-3 py-2 text-violet-600 border border-violet-200 rounded-lg text-xs font-medium hover:bg-violet-50 transition">Cancel</button>
+                                        </div>
+                                        <div id="step2IterLoading_${project.id}" class="hidden flex items-center gap-2 mt-2">
+                                            <div class="w-4 h-4 border-2 border-violet-500 border-t-transparent rounded-full animate-spin"></div>
+                                            <span id="step2IterLoadingText_${project.id}" class="text-[10px] text-violet-600">Refining...</span>
                                         </div>
                                     </div>
                                 </div>
@@ -8848,11 +8896,26 @@
         }
 
         function triggerPhotoUpload(projectId) {
-            triggerStep2PhotoUpload(projectId);
+            triggerStep2PhotoUpload(projectId, 0);
         }
 
         // ===== Step 2 Inline AI Designer Functions =====
-        var step2DesignerState = {}; // keyed by projectId: { selectedProduct, photoSrc, generated }
+        // State: { photos: [base64|null x3], selectedProduct, generated, lastResultImage, currentIteration, maxIterations }
+        var step2DesignerState = {};
+
+        function getStep2State(projectId) {
+            if (!step2DesignerState[projectId]) {
+                step2DesignerState[projectId] = {
+                    photos: [null, null, null],
+                    selectedProduct: null,
+                    generated: false,
+                    lastResultImage: null,
+                    currentIteration: 0,
+                    maxIterations: 2
+                };
+            }
+            return step2DesignerState[projectId];
+        }
 
         function toggleStep2Designer(projectId) {
             var panel = document.getElementById('step2DesignerPanel_' + projectId);
@@ -8871,7 +8934,8 @@
             }
         }
 
-        function triggerStep2PhotoUpload(projectId) {
+        // --- Multi-Photo Upload (up to 3 slots) ---
+        function triggerStep2PhotoUpload(projectId, slotIndex) {
             var input = document.createElement('input');
             input.type = 'file';
             input.accept = 'image/*';
@@ -8881,14 +8945,19 @@
                 if (!file) { input.remove(); return; }
                 var reader = new FileReader();
                 reader.onload = function(ev) {
-                    if (!step2DesignerState[projectId]) step2DesignerState[projectId] = {};
-                    step2DesignerState[projectId].photoSrc = ev.target.result;
-                    var placeholder = document.getElementById('step2PhotoPlaceholder_' + projectId);
-                    var preview = document.getElementById('step2PhotoPreview_' + projectId);
-                    var img = document.getElementById('step2PhotoImg_' + projectId);
-                    if (placeholder) placeholder.classList.add('hidden');
-                    if (preview) preview.classList.remove('hidden');
-                    if (img) img.src = ev.target.result;
+                    var state = getStep2State(projectId);
+                    state.photos[slotIndex] = ev.target.result;
+                    // Update slot UI
+                    var slot = document.getElementById('step2PhotoSlot' + slotIndex + '_' + projectId);
+                    if (slot) {
+                        var placeholder = slot.querySelector('.step2-photo-placeholder');
+                        var img = slot.querySelector('.step2-photo-img');
+                        var removeBtn = slot.querySelector('.step2-photo-remove');
+                        if (placeholder) placeholder.classList.add('hidden');
+                        if (img) { img.src = ev.target.result; img.classList.remove('hidden'); }
+                        if (removeBtn) removeBtn.classList.remove('hidden');
+                    }
+                    updateStep2PhotoCount(projectId);
                     updateStep2GenerateBtn(projectId);
                 };
                 reader.readAsDataURL(file);
@@ -8898,18 +8967,46 @@
             input.click();
         }
 
-        function clearStep2Photo(projectId) {
-            if (step2DesignerState[projectId]) step2DesignerState[projectId].photoSrc = null;
-            var placeholder = document.getElementById('step2PhotoPlaceholder_' + projectId);
-            var preview = document.getElementById('step2PhotoPreview_' + projectId);
-            if (placeholder) placeholder.classList.remove('hidden');
-            if (preview) preview.classList.add('hidden');
+        function clearStep2Photo(projectId, slotIndex) {
+            var state = getStep2State(projectId);
+            state.photos[slotIndex] = null;
+            var slot = document.getElementById('step2PhotoSlot' + slotIndex + '_' + projectId);
+            if (slot) {
+                var placeholder = slot.querySelector('.step2-photo-placeholder');
+                var img = slot.querySelector('.step2-photo-img');
+                var removeBtn = slot.querySelector('.step2-photo-remove');
+                if (placeholder) placeholder.classList.remove('hidden');
+                if (img) { img.classList.add('hidden'); img.src = ''; }
+                if (removeBtn) removeBtn.classList.add('hidden');
+            }
+            updateStep2PhotoCount(projectId);
             updateStep2GenerateBtn(projectId);
         }
 
+        function updateStep2PhotoCount(projectId) {
+            var state = getStep2State(projectId);
+            var count = state.photos.filter(function(p) { return !!p; }).length;
+            var el = document.getElementById('step2PhotoCount_' + projectId);
+            if (el) el.textContent = count + '/3 uploaded';
+        }
+
+        // --- Character Count (Design Prompt & Iteration Prompt, 800 char limit) ---
+        function updateStep2CharCount(projectId) {
+            var input = document.getElementById('step2PromptInput_' + projectId);
+            var counter = document.getElementById('step2CharCount_' + projectId);
+            if (input && counter) counter.textContent = input.value.length + '/800';
+        }
+
+        function updateStep2IterCharCount(projectId) {
+            var input = document.getElementById('step2IterPromptInput_' + projectId);
+            var counter = document.getElementById('step2IterCharCount_' + projectId);
+            if (input && counter) counter.textContent = input.value.length + '/800';
+        }
+
+        // --- Product Selection ---
         function selectStep2Product(projectId, catalogId, el) {
-            if (!step2DesignerState[projectId]) step2DesignerState[projectId] = {};
-            step2DesignerState[projectId].selectedProduct = catalogId;
+            var state = getStep2State(projectId);
+            state.selectedProduct = catalogId;
             // Update card visuals
             var container = el.closest('.grid');
             container.querySelectorAll('.step2-product-card').forEach(function(card) {
@@ -8937,18 +9034,144 @@
             updateStep2GenerateBtn(projectId);
         }
 
+        // --- Generate Button Enable/Disable ---
         function updateStep2GenerateBtn(projectId) {
             var btn = document.getElementById('step2GenerateBtn_' + projectId);
             if (!btn) return;
-            var state = step2DesignerState[projectId] || {};
-            btn.disabled = !(state.photoSrc && state.selectedProduct);
+            var state = getStep2State(projectId);
+            // Require at least main photo (slot 0) and a product selected
+            var hasMainPhoto = !!state.photos[0];
+            btn.disabled = !(hasMainPhoto && state.selectedProduct);
         }
 
+        // --- Download / Save Generated Design ---
+        function downloadStep2Design(projectId) {
+            var state = getStep2State(projectId);
+            if (state && state.lastResultImage) {
+                var link = document.createElement('a');
+                link.href = state.lastResultImage;
+                link.download = 'design-' + projectId + '-' + Date.now() + '.png';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                showNotification('Design image saved!', 'success');
+            }
+        }
+
+        // --- Iteration / Refinement (max 2 additional rounds) ---
+        function openStep2IterateDialog(projectId) {
+            var state = getStep2State(projectId);
+            if (state.currentIteration >= state.maxIterations) {
+                showNotification('Maximum refinements reached (' + state.maxIterations + '/' + state.maxIterations + ')', 'warning');
+                return;
+            }
+            var panel = document.getElementById('step2IteratePanel_' + projectId);
+            if (panel) panel.classList.toggle('hidden');
+        }
+
+        function executeStep2Iterate(projectId) {
+            var state = getStep2State(projectId);
+            if (!state || !state.lastResultImage) return;
+            if (state.currentIteration >= state.maxIterations) {
+                showNotification('Maximum refinements reached', 'warning');
+                return;
+            }
+
+            var promptInput = document.getElementById('step2IterPromptInput_' + projectId);
+            var editPrompt = promptInput ? promptInput.value.trim() : '';
+            if (!editPrompt) {
+                showNotification('Please enter refinement instructions', 'error');
+                return;
+            }
+
+            // Show iteration loading
+            var iterLoading = document.getElementById('step2IterLoading_' + projectId);
+            var iterLoadingText = document.getElementById('step2IterLoadingText_' + projectId);
+            if (iterLoading) iterLoading.classList.remove('hidden');
+
+            // Also show main render loading overlay
+            var renderLoading = document.getElementById('step2RenderLoading_' + projectId);
+            var loadingText = document.getElementById('step2LoadingText_' + projectId);
+            var loadingElapsed = document.getElementById('step2LoadingElapsed_' + projectId);
+            if (renderLoading) renderLoading.classList.remove('hidden');
+            if (loadingText) loadingText.textContent = 'Refining design...';
+            if (loadingElapsed) loadingElapsed.textContent = 'Applying your modifications...';
+
+            var body = {
+                background_image: state.lastResultImage,
+                prompt: editPrompt,
+                is_iteration: true
+            };
+
+            streamDesignGenerate(body, {
+                onProgress: function(elapsed) {
+                    if (iterLoadingText) iterLoadingText.textContent = 'Refining... ' + elapsed + 's';
+                    if (loadingElapsed) loadingElapsed.textContent = 'Processing... ' + elapsed + 's elapsed';
+                },
+                onFallback: function(msg) {
+                    if (loadingText) loadingText.textContent = 'Switching model...';
+                    if (loadingElapsed) loadingElapsed.textContent = msg;
+                },
+                onResult: function(data) {
+                    if (iterLoading) iterLoading.classList.add('hidden');
+                    if (renderLoading) renderLoading.classList.add('hidden');
+
+                    state.currentIteration++;
+                    state.lastResultImage = data.result_image;
+
+                    // Update rendered image (cache-bust for forced refresh)
+                    var img = document.getElementById('step2RenderImg_' + projectId);
+                    if (img) {
+                        img.src = '';
+                        var cacheBust = data.result_image + (data.result_image.includes('?') ? '&' : '?') + '_t=' + Date.now();
+                        img.src = cacheBust;
+                    }
+
+                    // Clear iteration prompt
+                    if (promptInput) promptInput.value = '';
+                    updateStep2IterCharCount(projectId);
+
+                    // Update remaining refinement count
+                    var remaining = state.maxIterations - state.currentIteration;
+                    var remainingEl = document.getElementById('step2IterRemaining_' + projectId);
+                    if (remainingEl) remainingEl.textContent = remaining;
+
+                    // Disable refine button if no iterations left
+                    if (remaining <= 0) {
+                        var iterBtn = document.getElementById('step2IterateBtn_' + projectId);
+                        if (iterBtn) {
+                            iterBtn.disabled = true;
+                            iterBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                        }
+                        var iterPanel = document.getElementById('step2IteratePanel_' + projectId);
+                        if (iterPanel) iterPanel.classList.add('hidden');
+                    }
+
+                    showNotification('Refinement round ' + state.currentIteration + '/' + state.maxIterations + ' complete!', 'success');
+                },
+                onError: function(msg) {
+                    if (iterLoading) iterLoading.classList.add('hidden');
+                    if (renderLoading) renderLoading.classList.add('hidden');
+                    showNotification('Refinement failed: ' + msg, 'error');
+                }
+            });
+        }
+
+        // --- Main Generate Function (with prompt support) ---
         function generateStep2Design(projectId) {
-            var state = step2DesignerState[projectId];
-            if (!state || !state.photoSrc || !state.selectedProduct) return;
+            var state = getStep2State(projectId);
+            if (!state || !state.photos[0] || !state.selectedProduct) return;
             var product = productCatalog[state.selectedProduct];
             if (!product) return;
+
+            // Get optional design prompt
+            var promptInput = document.getElementById('step2PromptInput_' + projectId);
+            var promptText = promptInput ? promptInput.value.trim() : '';
+
+            // Reset iteration state for fresh generation
+            state.currentIteration = 0;
+            state.generated = false;
+            state.lastResultImage = null;
 
             // Show loading
             var loading = document.getElementById('step2RenderLoading_' + projectId);
@@ -8963,7 +9186,13 @@
             var btn = document.getElementById('step2GenerateBtn_' + projectId);
             if (btn) btn.disabled = true;
 
-            // Fetch product image as base64, then call API
+            // Hide post-gen actions from any previous generation
+            var postGenActions = document.getElementById('step2PostGenActions_' + projectId);
+            if (postGenActions) postGenActions.classList.add('hidden');
+            var iterPanel = document.getElementById('step2IteratePanel_' + projectId);
+            if (iterPanel) iterPanel.classList.add('hidden');
+
+            // Fetch product image as base64, then call SSE API
             fetchImageAsBase64(product.image, function(productBase64) {
                 if (!productBase64) {
                     showNotification('Failed to load product image', 'error');
@@ -8972,10 +9201,12 @@
                     return;
                 }
                 var body = {
-                    background_image: state.photoSrc,
+                    background_image: state.photos[0],
                     foreground_image: productBase64,
                     is_iteration: false
                 };
+                if (promptText) body.prompt = promptText;
+
                 streamDesignGenerate(body, {
                     onProgress: function(elapsed) {
                         loadingElapsed.textContent = 'Processing... ' + elapsed + 's elapsed';
@@ -8997,6 +9228,18 @@
                         statusEl.className = 'px-2 py-0.5 bg-green-100 text-green-700 text-[10px] font-medium rounded-full';
                         state.generated = true;
                         state.lastResultImage = data.result_image;
+
+                        // Show post-generation actions (Save + Refine)
+                        if (postGenActions) postGenActions.classList.remove('hidden');
+                        // Reset iteration UI for fresh generation
+                        var remainingEl = document.getElementById('step2IterRemaining_' + projectId);
+                        if (remainingEl) remainingEl.textContent = '2';
+                        var iterBtn = document.getElementById('step2IterateBtn_' + projectId);
+                        if (iterBtn) {
+                            iterBtn.disabled = false;
+                            iterBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                        }
+
                         var modelInfo = data.fallback_used ? ' (fallback: ' + data.model_used + ')' : '';
                         showNotification('Design generated successfully' + modelInfo, 'success');
                     },
