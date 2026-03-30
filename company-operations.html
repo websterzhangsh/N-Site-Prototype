@@ -3807,11 +3807,6 @@
                                     <i class="fas fa-brain"></i>
                                     <div class="agent-label">Knowledge</div>
                                 </div>
-                                <div class="agent-toolbar-card" data-agent="chatbot" onclick="toggleAgentPanel('chatbot', event)"
-                                     style="--agent-icon:#dc2626;--agent-bg:#fef2f2;--agent-border:#fecaca;">
-                                    <i class="fas fa-robot"></i>
-                                    <div class="agent-label">Chatbot</div>
-                                </div>
                             </div>
 
                             <!-- Agent Panel Container (expands below toolbar) -->
@@ -4645,9 +4640,7 @@
                 'customer-service-agent': { title: 'Customer Service', icon: 'fa-headset', color: '#ca8a04',
                     desc: 'View customer communication history and manage follow-ups for this project.' },
                 'knowledge-base': { title: 'Knowledge Base', icon: 'fa-brain', color: '#4b5563',
-                    desc: 'Access product specs, installation guides, and training materials relevant to this project.' },
-                'chatbot': { title: 'Project Chatbot', icon: 'fa-robot', color: '#dc2626',
-                    desc: 'Ask questions about this project — the AI will route to the right agent automatically.' }
+                    desc: 'Access product specs, installation guides, and training materials relevant to this project.' }
             };
 
             var agent = agentLabels[agentName] || { title: agentName, icon: 'fa-cog', color: '#666', desc: '' };
@@ -8196,6 +8189,7 @@
                     { module: 'A.8', name: 'Additional Notes', items: 'Open text', required: false }
                 ],
                 agentSupport: [
+                    { agent: 'CS Agent', ability: '24/7 auto-reply to inquiries, schedule on-site/video appointments' },
                     { agent: 'Knowledge Base', ability: 'Provide HOA FAQ references, product FAQ' },
                     { agent: 'Compliance Agent', ability: 'Preliminary HOA restriction lookup by community name' }
                 ]
