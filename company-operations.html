@@ -9999,6 +9999,15 @@
                 return;
             }
 
+            // Warn if project is already past Step 3
+            var project = allProjectsData.find(p => p.id === projectId);
+            if (project && project.workflowStep > 3) {
+                var stepNames = ['', 'Intent', 'Design', 'Measurement', 'Quotation', 'Production', 'Installation'];
+                if (!confirm('This project is already at Step ' + project.workflowStep + ' (' + (stepNames[project.workflowStep] || '') + '). The design package was previously completed.\n\nAre you sure you want to re-generate the detailed design package?')) {
+                    return;
+                }
+            }
+
             var btn = document.getElementById('step3GenerateDesignBtn_' + projectId);
             if (btn) {
                 btn.disabled = true;
