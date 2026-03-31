@@ -41,16 +41,22 @@ Three domains were registered via Namecheap on 2026-01-18 (Order #192357343):
 
 ## 3. Architecture Decisions
 
-### 3.1 DNS Management — Stay with Namecheap
+### 3.1 DNS Management — Transferred to Cloudflare
 
-**Decision**: DNS management remains at Namecheap. Do NOT transfer nameservers to Cloudflare.
+**Decision**: DNS management transferred from Namecheap to Cloudflare (Free plan).
 
-**Rationale**: The production infrastructure may migrate from Cloudflare Pages to a hyperscaler (e.g., AWS in US) in the future. Keeping DNS at Namecheap ensures:
+**Date**: 2026-03-31
 
-- **Platform-agnostic**: DNS is decoupled from any hosting provider
-- **Low-risk migration**: Switching from Cloudflare to AWS requires only a CNAME/A Record change at Namecheap — no nameserver migration, no DNS propagation delays
-- **Zero downtime**: Traffic cutover during platform migration is immediate at the DNS level
-- **Vendor independence**: No lock-in to Cloudflare's DNS ecosystem
+**Original consideration**: Keep DNS at Namecheap for platform-agnostic flexibility. However, Cloudflare Pages requires DNS to be on Cloudflare for root domain (apex) custom domain binding. After evaluation:
+
+- Cloudflare DNS is **100% free** (hosting, SSL, CDN, DDoS protection all included)
+- Future AWS migration still only requires changing a DNS record — now in Cloudflare dashboard instead of Namecheap
+- If ever fully leaving Cloudflare, nameservers can be pointed back to Namecheap (~5 min operation)
+- Domain ownership remains at Namecheap (only DNS resolution is delegated)
+
+**Nameservers configured at Namecheap**:
+- Cloudflare NS 1 (as assigned by Cloudflare)
+- Cloudflare NS 2 (as assigned by Cloudflare)
 
 ### 3.2 Hosting Platform — Cloudflare Pages (Phase 1)
 
@@ -102,20 +108,13 @@ Three domains were registered via Namecheap on 2026-01-18 (Order #192357343):
          [DEV/STAGING]              [PRODUCTION]
                                          ▲
                                          │
-                                  Namecheap DNS
-                                  (CNAME Record)
+                                  Cloudflare DNS
+                                  (Nameservers delegated from Namecheap)
 ```
 
-### DNS Configuration (Namecheap)
+### DNS Configuration (Cloudflare)
 
-```
-Type    Host    Value                           TTL
-CNAME   @       nestopia-production.pages.dev   Automatic
-CNAME   www     nestopia-production.pages.dev   Automatic
-```
-
-> Note: If Namecheap does not support root domain CNAME (@ record),
-> use URL Redirect (301) from @ to www, and CNAME www to Cloudflare.
+DNS records managed in Cloudflare Dashboard (auto-configured when custom domain is added to Pages project).
 
 ### SSL
 
