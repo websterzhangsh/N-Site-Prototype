@@ -11130,19 +11130,11 @@
         }
 
         function saveStep4Quote(projectId) {
-            var state = getStep4State(projectId);
-            var project = allProjectsData.find(p => p.id === projectId);
-            var quoteAmounts = { conservative: state.costSummary.quoteConservative, recommended: state.costSummary.quoteRecommended, premium: state.costSummary.quotePremium };
-            showNotification('Quote saved: $' + quoteAmounts[state.selectedQuote] + ' (' + state.selectedQuote + ') for ' + (project ? project.name : projectId), 'success');
+            alert('⚙️ Save Quote\n\nMore details are being worked out.\nThis feature will be available soon.');
         }
 
         function generateStep4Contract(projectId) {
-            var state = getStep4State(projectId);
-            var project = allProjectsData.find(p => p.id === projectId);
-            if (project && project.workflowStep > 4) {
-                if (!confirm('This project is already past Quotation stage. Generate a new contract?')) return;
-            }
-            showNotification('Contract generated for ' + (project ? project.name : projectId) + '. Ready for customer signing.', 'success');
+            alert('⚙️ Generate Contract\n\nMore details are being worked out.\nThis feature will be available soon.');
         }
 
         // ===== Create New Project Modal & Logic =====
