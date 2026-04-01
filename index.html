@@ -1,13 +1,20 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title class="lang-text" data-zh="庭院定制专家 | 让每一寸庭院都成为生活的延伸" data-en="Outdoor Living Solutions | Transform Your Yard Into Living Space">庭院定制专家 | 让每一寸庭院都成为生活的延伸</title>
+    <title class="lang-text" data-zh="庭院定制专家 | 让每一寸庭院都成为生活的延伸" data-en="Outdoor Living Solutions | Transform Your Yard Into Living Space">Outdoor Living Solutions | Transform Your Yard Into Living Space</title>
     <meta name="description" content="专业庭院生活空间定制，从阳光阅读到户外聚餐，从四季泳池到花园茶室，为您量身打造理想的户外生活体验。">
+    <!-- Prevent language flash: read saved preference synchronously before render -->
+    <script>
+        (function() {
+            var lang = localStorage.getItem('preferredLang') || 'en';
+            document.documentElement.lang = lang;
+        })();
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link href="https://cdn.tailwindcss.com" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -33,6 +40,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
+        /* Prevent language flash: hide bilingual text until JS sets the correct language */
+        html:not(.lang-ready) .lang-text {
+            visibility: hidden;
+        }
+        html.lang-ready .lang-text {
+            visibility: visible;
+        }
         :root {
             --primary: #222222;
             --primary-dark: #111111;
@@ -857,11 +871,11 @@
                         <img src="images/nestopia-logo.jpg" alt="Nestopia - Outdoor Living Expert" class="h-9 rounded">
                     </a>
                     <nav class="hidden md:flex space-x-8">
-                        <a href="#home" class="text-white/80 hover:text-white transition lang-text" data-zh="首页" data-en="Home">首页</a>
-                        <a href="#product-showcase" class="text-white/80 hover:text-white transition lang-text" data-zh="产品" data-en="Products">产品</a>
-                        <a href="#service-flow" class="text-white/80 hover:text-white transition lang-text" data-zh="服务流程" data-en="Process">服务流程</a>
-                        <a href="partners.html#partner-hero" class="text-white/80 hover:text-white transition lang-text" data-zh="合作伙伴" data-en="Partners">合作伙伴</a>
-                        <a href="#contact" class="text-white/80 hover:text-white transition lang-text" data-zh="联系我们" data-en="Contact Us">联系我们</a>
+                        <a href="#home" class="text-white/80 hover:text-white transition lang-text" data-zh="首页" data-en="Home">Home</a>
+                        <a href="#product-showcase" class="text-white/80 hover:text-white transition lang-text" data-zh="产品" data-en="Products">Products</a>
+                        <a href="#service-flow" class="text-white/80 hover:text-white transition lang-text" data-zh="服务流程" data-en="Process">Process</a>
+                        <a href="partners.html#partner-hero" class="text-white/80 hover:text-white transition lang-text" data-zh="合作伙伴" data-en="Partners">Partners</a>
+                        <a href="#contact" class="text-white/80 hover:text-white transition lang-text" data-zh="联系我们" data-en="Contact Us">Contact Us</a>
                     </nav>
                     <div class="flex items-center space-x-4">
                         <!-- Language toggle hidden for now - to be re-enabled with Spanish later -->
@@ -880,17 +894,17 @@
         <!-- Value Proposition Text (Bottom Left) -->
         <div class="absolute bottom-24 left-8 md:left-16 z-20 max-w-lg">
             <h1 class="text-4xl md:text-5xl lg:text-6xl font-light text-white mb-4 leading-tight" id="heroTitle">
-                <span class="lang-text" data-zh="明亮通透的生活空间" data-en="Bright, Open Living Spaces">明亮通透的生活空间</span>
+                <span class="lang-text" data-zh="明亮通透的生活空间" data-en="Bright, Open Living Spaces">Bright, Open Living Spaces</span>
             </h1>
             <p class="text-lg md:text-xl text-white/80 mb-6" id="heroSubtitle">
-                <span class="lang-text" data-zh="让阳光成为家的一部分，四季舒适的室内外融合体验" data-en="Let sunlight become part of your home, year-round indoor-outdoor living">让阳光成为家的一部分，四季舒适的室内外融合体验</span>
+                <span class="lang-text" data-zh="让阳光成为家的一部分，四季舒适的室内外融合体验" data-en="Let sunlight become part of your home, year-round indoor-outdoor living">Let sunlight become part of your home, year-round indoor-outdoor living</span>
             </p>
             <div class="flex flex-col sm:flex-row gap-4">
                 <a href="#contact" class="bg-white text-[--light-text] font-semibold py-3 px-8 rounded-lg hover:bg-gray-100 transition inline-flex items-center">
-                    <i class="fas fa-calendar-check mr-2"></i><span class="lang-text" data-zh="免费设计咨询" data-en="Free Design Consultation">免费设计咨询</span>
+                    <i class="fas fa-calendar-check mr-2"></i><span class="lang-text" data-zh="免费设计咨询" data-en="Free Design Consultation">Free Design Consultation</span>
                 </a>
                 <a href="#why-choose-us" class="border-2 border-white text-white font-semibold py-3 px-8 rounded-lg hover:bg-white/20 transition inline-flex items-center">
-                    <i class="fas fa-play-circle mr-2"></i><span class="lang-text" data-zh="了解更多" data-en="Learn More">了解更多</span>
+                    <i class="fas fa-play-circle mr-2"></i><span class="lang-text" data-zh="了解更多" data-en="Learn More">Learn More</span>
                 </a>
             </div>
         </div>
@@ -899,11 +913,11 @@
         <div class="absolute bottom-24 right-8 md:right-16 z-20 flex flex-col items-end gap-3">
             <button class="hero-indicator active" data-category="sunroom" onclick="switchHeroSlide('sunroom')">
                 <span class="indicator-dot"></span>
-                <span class="indicator-label lang-text" data-zh="阳光房" data-en="Sun Room">阳光房</span>
+                <span class="indicator-label lang-text" data-zh="阳光房" data-en="Sun Room">Sun Room</span>
             </button>
             <button class="hero-indicator" data-category="pergola" onclick="switchHeroSlide('pergola')">
                 <span class="indicator-dot"></span>
-                <span class="indicator-label lang-text" data-zh="户外凉亭" data-en="Pergola">户外凉亭</span>
+                <span class="indicator-label lang-text" data-zh="户外凉亭" data-en="Pergola">Pergola</span>
             </button>
             <button class="hero-indicator" data-category="windproof" onclick="switchHeroSlide('windproof')">
                 <span class="indicator-dot"></span>
@@ -927,10 +941,10 @@
         <div class="container mx-auto px-4">
             <div class="text-center mb-16">
                 <h2 class="text-3xl md:text-4xl font-light text-[--light-text] mb-4 lang-text" data-zh="为什么选择我们" data-en="Why Choose Us">
-                    为什么选择我们
+                    Why Choose Us
                 </h2>
                 <p class="text-[--light-accent] text-lg max-w-2xl mx-auto">
-                    <span class="lang-text" data-zh="从定制设计到交付安装，全方位品质保障，打造您理想的户外生活空间" data-en="From custom design to installation, comprehensive quality assurance for your ideal outdoor living space">从定制设计到交付安装，全方位品质保障，打造您理想的户外生活空间</span>
+                    <span class="lang-text" data-zh="从定制设计到交付安装，全方位品质保障，打造您理想的户外生活空间" data-en="From custom design to installation, comprehensive quality assurance for your ideal outdoor living space">From custom design to installation, comprehensive quality assurance for your ideal outdoor living space</span>
                 </p>
             </div>
 
@@ -940,8 +954,8 @@
                     <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
                         <i class="fas fa-magic text-2xl text-[--light-text]"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-4 text-[--light-text] text-center lang-text" data-zh="量身定制设计" data-en="Custom-Tailored Design">量身定制设计</h3>
-                    <p class="text-[--light-accent] text-justify lang-text" data-zh="AI 驱动设计，24小时内根据您的需求提供最佳定制场景方案。" data-en="AI-powered design delivers the best customized scene solutions within 24 hours, based on your specific needs.">AI 驱动设计，24小时内根据您的需求提供最佳定制场景方案。</p>
+                    <h3 class="text-xl font-bold mb-4 text-[--light-text] text-center lang-text" data-zh="量身定制设计" data-en="Custom-Tailored Design">Custom-Tailored Design</h3>
+                    <p class="text-[--light-accent] text-justify lang-text" data-zh="AI 驱动设计，24小时内根据您的需求提供最佳定制场景方案。" data-en="AI-powered design delivers the best customized scene solutions within 24 hours, based on your specific needs.">AI-powered design delivers the best customized scene solutions within 24 hours, based on your specific needs.</p>
                 </div>
 
                 <!-- Card 2: Expert Sourcing -->
@@ -949,8 +963,8 @@
                     <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
                         <i class="fas fa-industry text-2xl text-[--light-text]"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-4 text-[--light-text] text-center lang-text" data-zh="专业集采" data-en="Expert Sourcing">专业集采</h3>
-                    <p class="text-[--light-accent] text-justify lang-text" data-zh="严选源头工厂，专业集中采购，确保最优性价比。" data-en="Expert-selected source factories with centralized procurement ensure the best value for money.">严选源头工厂，专业集中采购，确保最优性价比。</p>
+                    <h3 class="text-xl font-bold mb-4 text-[--light-text] text-center lang-text" data-zh="专业集采" data-en="Expert Sourcing">Expert Sourcing</h3>
+                    <p class="text-[--light-accent] text-justify lang-text" data-zh="严选源头工厂，专业集中采购，确保最优性价比。" data-en="Expert-selected source factories with centralized procurement ensure the best value for money.">Expert-selected source factories with centralized procurement ensure the best value for money.</p>
                 </div>
 
                 <!-- Card 3: Local Operations -->
@@ -958,8 +972,8 @@
                     <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
                         <i class="fas fa-map-marker-alt text-2xl text-[--light-text]"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-4 text-[--light-text] text-center lang-text" data-zh="本地化运营" data-en="Local Operations">本地化运营</h3>
-                    <p class="text-[--light-accent] text-justify lang-text" data-zh="美国本地工程与技术服务中心，区域经销商网络提供售后支持。" data-en="US-based engineering & technical service center with regional dealer networks providing after-sales support.">美国本地工程与技术服务中心，区域经销商网络提供售后支持。</p>
+                    <h3 class="text-xl font-bold mb-4 text-[--light-text] text-center lang-text" data-zh="本地化运营" data-en="Local Operations">Local Operations</h3>
+                    <p class="text-[--light-accent] text-justify lang-text" data-zh="美国本地工程与技术服务中心，区域经销商网络提供售后支持。" data-en="US-based engineering & technical service center with regional dealer networks providing after-sales support.">US-based engineering & technical service center with regional dealer networks providing after-sales support.</p>
                 </div>
             </div>
 
@@ -970,8 +984,8 @@
                     <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
                         <i class="fas fa-award text-2xl text-[--light-text]"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-4 text-[--light-text] text-center lang-text" data-zh="品质保障" data-en="Quality Assurance">品质保障</h3>
-                    <p class="text-[--light-accent] text-justify lang-text" data-zh="由知名品牌工厂制造，品质经过验证，值得信赖。" data-en="Manufactured by leading brand-name factories with proven quality standards.">由知名品牌工厂制造，品质经过验证，值得信赖。</p>
+                    <h3 class="text-xl font-bold mb-4 text-[--light-text] text-center lang-text" data-zh="品质保障" data-en="Quality Assurance">Quality Assurance</h3>
+                    <p class="text-[--light-accent] text-justify lang-text" data-zh="由知名品牌工厂制造，品质经过验证，值得信赖。" data-en="Manufactured by leading brand-name factories with proven quality standards.">Manufactured by leading brand-name factories with proven quality standards.</p>
                 </div>
 
                 <!-- Card 5: AI Measurement -->
@@ -979,8 +993,8 @@
                     <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
                         <i class="fas fa-robot text-2xl text-[--light-text]"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-4 text-[--light-text] text-center lang-text" data-zh="AI 智能测量" data-en="AI Measurement">AI 智能测量</h3>
-                    <p class="text-[--light-accent] text-justify lang-text" data-zh="AI 赋能现场测量，精准高效，节省人力成本。" data-en="Precise, efficient, and labor-saving site measurement powered by AI.">AI 赋能现场测量，精准高效，节省人力成本。</p>
+                    <h3 class="text-xl font-bold mb-4 text-[--light-text] text-center lang-text" data-zh="AI 智能测量" data-en="AI Measurement">AI Measurement</h3>
+                    <p class="text-[--light-accent] text-justify lang-text" data-zh="AI 赋能现场测量，精准高效，节省人力成本。" data-en="Precise, efficient, and labor-saving site measurement powered by AI.">Precise, efficient, and labor-saving site measurement powered by AI.</p>
                 </div>
             </div>
         </div>
@@ -990,12 +1004,12 @@
     <section id="product-showcase" class="py-20 bg-white">
         <div class="container mx-auto px-4">
             <div class="text-center mb-12">
-                <span class="inline-block px-4 py-1.5 bg-gray-200 text-[--light-text] rounded-full text-sm font-semibold tracking-wider mb-4 lang-text" data-zh="产品系列" data-en="OUR PRODUCTS">产品系列</span>
+                <span class="inline-block px-4 py-1.5 bg-gray-200 text-[--light-text] rounded-full text-sm font-semibold tracking-wider mb-4 lang-text" data-zh="产品系列" data-en="OUR PRODUCTS">OUR PRODUCTS</span>
                 <h2 class="text-3xl md:text-4xl font-light text-[--light-text] mb-4 lang-text" data-zh="探索我们的产品系列" data-en="Explore Our Product Range">
-                    探索我们的产品系列
+                    Explore Our Product Range
                 </h2>
                 <p class="text-[--light-accent] text-lg max-w-2xl mx-auto lang-text" data-zh="真实案例展示，从设计前到设计后的完整蜕变" data-en="Real case studies showcasing the complete transformation from before to after design">
-                    真实案例展示，从设计前到设计后的完整蜕变
+                    Real case studies showcasing the complete transformation from before to after design
                 </p>
             </div>
 
@@ -1047,7 +1061,7 @@
                             </div>
                             <div class="p-5">
                                 <h4 class="font-semibold text-[--light-text] mb-2 lang-text" data-zh="原始空间" data-en="Original Space">Original Space</h4>
-                                <p class="text-sm text-[--light-accent] lang-text" data-zh="未开发的庭院空间，等待蜕变" data-en="Untapped backyard potential waiting to be transformed">未开发的庭院空间，等待蜕变</p>
+                                <p class="text-sm text-[--light-accent] lang-text" data-zh="未开发的庭院空间，等待蜕变" data-en="Untapped backyard potential waiting to be transformed">Untapped backyard potential waiting to be transformed</p>
                             </div>
                         </div>
 
@@ -1062,7 +1076,7 @@
                             </div>
                             <div class="p-5">
                                 <h4 class="font-semibold text-[--light-text] mb-2 lang-text" data-zh="AI 设计渲染" data-en="AI Design Render">AI Design Render</h4>
-                                <p class="text-sm text-[--light-accent] lang-text" data-zh="智能生成的凉亭设计方案，完美融入庭院" data-en="AI-generated pergola design seamlessly integrated into your backyard">智能生成的凉亭设计方案，完美融入庭院</p>
+                                <p class="text-sm text-[--light-accent] lang-text" data-zh="智能生成的凉亭设计方案，完美融入庭院" data-en="AI-generated pergola design seamlessly integrated into your backyard">AI-generated pergola design seamlessly integrated into your backyard</p>
                             </div>
                         </div>
 
@@ -1079,7 +1093,7 @@
                             </div>
                             <div class="p-5">
                                 <h4 class="font-semibold text-[--light-text] mb-2 lang-text" data-zh="3D 产品动画" data-en="3D Product Animation">3D Product Animation</h4>
-                                <p class="text-sm text-[--light-accent] lang-text" data-zh="全方位展示凉亭的结构与细节" data-en="Comprehensive showcase of pergola structure and details">全方位展示凉亭的结构与细节</p>
+                                <p class="text-sm text-[--light-accent] lang-text" data-zh="全方位展示凉亭的结构与细节" data-en="Comprehensive showcase of pergola structure and details">Comprehensive showcase of pergola structure and details</p>
                             </div>
                         </div>
                     </div>
@@ -1717,7 +1731,7 @@
                         </div>
                         <div class="p-5 text-center">
                             <h4 class="font-semibold text-[--light-text] mb-2 lang-text" data-zh="ADU 产品展示" data-en="ADU Product Showcase">ADU Product Showcase</h4>
-                            <p class="text-sm text-[--light-accent] lang-text" data-zh="附属住宅单元，增加您的房产价值" data-en="Accessory Dwelling Units to increase your property value">附属住宅单元，增加您的房产价值</p>
+                            <p class="text-sm text-[--light-accent] lang-text" data-zh="附属住宅单元，增加您的房产价值" data-en="Accessory Dwelling Units to increase your property value">Accessory Dwelling Units to increase your property value</p>
                         </div>
                     </div>
 
@@ -1794,12 +1808,12 @@
     <section id="service-flow" class="py-20 bg-[--darker-bg]">
         <div class="container mx-auto px-4">
             <div class="text-center mb-16">
-                <span class="inline-block px-4 py-1.5 bg-gray-200 text-[--light-text] rounded-full text-sm font-semibold tracking-wider mb-4 lang-text" data-zh="服务流程" data-en="OUR PROCESS">服务流程</span>
+                <span class="inline-block px-4 py-1.5 bg-gray-200 text-[--light-text] rounded-full text-sm font-semibold tracking-wider mb-4 lang-text" data-zh="服务流程" data-en="OUR PROCESS">OUR PROCESS</span>
                 <h2 class="text-3xl md:text-4xl font-light text-[--light-text] mb-4 lang-text" data-zh="三步开启理想庭院" data-en="Start Your Dream Outdoor Space in 3 Steps">
-                    三步开启理想庭院
+                    Start Your Dream Outdoor Space in 3 Steps
                 </h2>
                 <p class="text-[--light-accent] text-lg max-w-2xl mx-auto lang-text" data-zh="简单三步，开始您的户外生活空间定制之旅" data-en="Begin your outdoor living customization journey in just three simple steps">
-                    简单三步，开始您的户外生活空间定制之旅
+                    Begin your outdoor living customization journey in just three simple steps
                 </p>
             </div>
 
@@ -1812,12 +1826,12 @@
                         <div class="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
                             <i class="fas fa-film text-2xl text-[--light-text]"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-[--light-text] mb-3 lang-text" data-zh="探索产品方案" data-en="Explore Product Solutions">探索产品方案</h3>
+                        <h3 class="text-xl font-bold text-[--light-text] mb-3 lang-text" data-zh="探索产品方案" data-en="Explore Product Solutions">Explore Product Solutions</h3>
                         <p class="text-[--light-accent] mb-6 text-sm leading-relaxed lang-text" data-zh="通过3D产品动画和真实案例，直观感受阳光房、凉亭、Zip Blinds 等产品的魅力与功能。" data-en="Experience sunrooms, pergolas, and Zip Blinds through 3D animations and real project showcases.">
-                            通过3D产品动画和真实案例，直观感受阳光房、凉亭、Zip Blinds 等产品的魅力与功能。
+                            Experience sunrooms, pergolas, and Zip Blinds through 3D animations and real project showcases.
                         </p>
                         <a href="#product-showcase" class="inline-flex items-center px-5 py-2.5 bg-[--light-text] text-white rounded-full text-sm font-semibold hover:bg-gray-700 transition lang-text" data-zh="查看产品" data-en="View Products">
-                            <i class="fas fa-play mr-2"></i>查看产品
+                            <i class="fas fa-play mr-2"></i>View Products
                         </a>
                     </div>
                     <div class="hidden md:flex absolute top-1/2 -right-4 transform -translate-y-1/2 z-10 text-gray-300">
@@ -1832,9 +1846,9 @@
                         <div class="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
                             <i class="fas fa-clipboard-list text-2xl text-[--light-text]"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-[--light-text] mb-3 lang-text" data-zh="提交您的需求" data-en="Submit Your Requirements">提交您的需求</h3>
+                        <h3 class="text-xl font-bold text-[--light-text] mb-3 lang-text" data-zh="提交您的需求" data-en="Submit Your Requirements">Submit Your Requirements</h3>
                         <p class="text-[--light-accent] mb-6 text-sm leading-relaxed lang-text" data-zh="告诉我们您的庭院面积、偏好风格和预算范围，我们的专业顾问将为您提供初步建议和产品推荐。" data-en="Share your yard size, preferred style, and budget. Our consultants will provide initial recommendations and product suggestions.">
-                            告诉我们您的庭院面积、偏好风格和预算范围，我们的专业顾问将为您提供初步建议和产品推荐。
+                            Share your yard size, preferred style, and budget. Our consultants will provide initial recommendations and product suggestions.
                         </p>
                         <button onclick="openIntakeForm()" class="inline-flex items-center px-5 py-2.5 bg-[--light-text] text-white rounded-full text-sm font-semibold hover:bg-gray-700 transition lang-text" data-zh="填写需求问卷" data-en="Fill Out Intake Form">
                             <i class="fas fa-clipboard-check mr-2"></i>Fill Out Intake Form
@@ -1852,12 +1866,12 @@
                         <div class="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
                             <i class="fas fa-handshake text-2xl text-[--light-text]"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-[--light-text] mb-3 lang-text" data-zh="确认设计意向" data-en="Confirm Design Intent">确认设计意向</h3>
+                        <h3 class="text-xl font-bold text-[--light-text] mb-3 lang-text" data-zh="确认设计意向" data-en="Confirm Design Intent">Confirm Design Intent</h3>
                         <p class="text-[--light-accent] mb-6 text-sm leading-relaxed lang-text" data-zh="选定心仪的产品类型，确认设计方向，我们将启动专属的AI智能设计与专业定制服务。" data-en="Select your preferred product type, confirm the design direction, and we'll activate your exclusive AI-powered design service.">
-                            选定心仪的产品类型，确认设计方向，我们将启动专属的AI智能设计与专业定制服务。
+                            Select your preferred product type, confirm the design direction, and we'll activate your exclusive AI-powered design service.
                         </p>
                         <a href="#pro-workflow" class="inline-flex items-center px-5 py-2.5 border-2 border-[--light-text] text-[--light-text] rounded-full text-sm font-semibold hover:bg-[--light-text] hover:text-white transition lang-text" data-zh="了解专业流程" data-en="View Pro Process">
-                            <i class="fas fa-arrow-down mr-2"></i>了解专业流程
+                            <i class="fas fa-arrow-down mr-2"></i>View Pro Process
                         </a>
                     </div>
                 </div>
@@ -1871,10 +1885,10 @@
             <div class="max-w-4xl mx-auto">
                 <div class="text-center mb-12">
                     <h2 class="text-3xl md:text-4xl font-light text-[--light-text] mb-4 lang-text" data-zh="立即获取免费设计方案" data-en="Get Free Design Plan Now">
-                        立即获取免费设计方案
+                        Get Free Design Plan Now
                     </h2>
                     <p class="text-[--light-accent] text-lg">
-                        <span class="lang-text" data-zh="填写以下信息，我们的专业设计师将根据您的生活需求量身定制方案" data-en="Fill in the following information, our designers will create a custom plan based on your lifestyle needs">填写以下信息，我们的专业设计师将根据您的生活需求量身定制方案</span>
+                        <span class="lang-text" data-zh="填写以下信息，我们的专业设计师将根据您的生活需求量身定制方案" data-en="Fill in the following information, our designers will create a custom plan based on your lifestyle needs">Fill in the following information, our designers will create a custom plan based on your lifestyle needs</span>
                     </p>
                 </div>
                 
@@ -1912,33 +1926,33 @@
                         <div class="md:w-1/2 p-8 bg-white">
                             <form id="contactForm" class="space-y-6">
                                 <div>
-                                    <label class="block text-[--light-text] font-medium mb-2 lang-text" data-zh="您的姓名" data-en="Your Name">您的姓名</label>
+                                    <label class="block text-[--light-text] font-medium mb-2 lang-text" data-zh="您的姓名" data-en="Your Name">Your Name</label>
                                     <input type="text" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-gray-400 bg-white text-[--light-text]" placeholder="请输入您的姓名">
                                 </div>
                                 
                                 <div>
-                                    <label class="block text-[--light-text] font-medium mb-2 lang-text" data-zh="联系电话" data-en="Phone Number">联系电话</label>
+                                    <label class="block text-[--light-text] font-medium mb-2 lang-text" data-zh="联系电话" data-en="Phone Number">Phone Number</label>
                                     <input type="tel" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-gray-400 bg-white text-[--light-text]" placeholder="请输入您的手机号">
                                 </div>
                                 
                                 <div>
-                                    <label class="block text-[--light-text] font-medium mb-2 lang-text" data-zh="房屋面积" data-en="House Area">房屋面积</label>
+                                    <label class="block text-[--light-text] font-medium mb-2 lang-text" data-zh="房屋面积" data-en="House Area">House Area</label>
                                     <select class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-gray-400 bg-white text-[--light-text]">
-                                        <option class="lang-text" data-zh="请选择房屋面积" data-en="Please select house area">请选择房屋面积</option>
-                                        <option class="lang-text" data-zh="50㎡以下" data-en="Under 50㎡">50㎡以下</option>
+                                        <option class="lang-text" data-zh="请选择房屋面积" data-en="Please select house area">Please select house area</option>
+                                        <option class="lang-text" data-zh="50㎡以下" data-en="Under 50㎡">Under 50㎡</option>
                                         <option class="lang-text" data-zh="50-100㎡" data-en="50-100㎡">50-100㎡</option>
                                         <option class="lang-text" data-zh="100-150㎡" data-en="100-150㎡">100-150㎡</option>
-                                        <option class="lang-text" data-zh="150㎡以上" data-en="Over 150㎡">150㎡以上</option>
+                                        <option class="lang-text" data-zh="150㎡以上" data-en="Over 150㎡">Over 150㎡</option>
                                     </select>
                                 </div>
                                 
                                 <div>
-                                    <label class="block text-[--light-text] font-medium mb-2 lang-text" data-zh="具体需求" data-en="Specific Needs">具体需求</label>
+                                    <label class="block text-[--light-text] font-medium mb-2 lang-text" data-zh="具体需求" data-en="Specific Needs">Specific Needs</label>
                                     <textarea class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-gray-400 bg-white text-[--light-text]" rows="4" placeholder="请描述您的具体需求和期望"></textarea>
                                 </div>
                                 
                                 <button type="submit" class="w-full btn-primary text-white font-bold py-4 rounded-lg transition-all duration-300">
-                                    <i class="fas fa-paper-plane mr-2"></i><span class="lang-text" data-zh="提交咨询" data-en="Submit Inquiry">提交咨询</span>
+                                    <i class="fas fa-paper-plane mr-2"></i><span class="lang-text" data-zh="提交咨询" data-en="Submit Inquiry">Submit Inquiry</span>
                                 </button>
                             </form>
                         </div>
@@ -2262,10 +2276,10 @@
                     <i class="fas fa-robot text-white"></i>
                 </div>
                 <div class="chatbot-info">
-                    <h4 class="lang-text" data-zh="庭院定制助手" data-en="Outdoor Living Assistant">庭院定制助手</h4>
+                    <h4 class="lang-text" data-zh="庭院定制助手" data-en="Outdoor Living Assistant">Outdoor Living Assistant</h4>
                     <div class="chatbot-status">
                         <span class="chatbot-status-dot"></span>
-                        <p class="lang-text" data-zh="在线服务中" data-en="Online Service">在线服务中</p>
+                        <p class="lang-text" data-zh="在线服务中" data-en="Online Service">Online Service</p>
                     </div>
                 </div>
             </div>
@@ -3136,8 +3150,11 @@
         
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
-            // Force English as default language
-            switchLanguage('en');
+            // Use saved language preference, default to 'en'
+            var savedLang = localStorage.getItem('preferredLang') || 'en';
+            switchLanguage(savedLang);
+            // Reveal all bilingual text now that correct language is applied
+            document.documentElement.classList.add('lang-ready');
             // Initialize product image selector
             updateProductImageSelector('sunroom');
         });

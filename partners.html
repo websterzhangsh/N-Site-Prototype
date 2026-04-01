@@ -1,13 +1,20 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title class="lang-text" data-zh="合作伙伴 | 庭院定制专家" data-en="Partners | Outdoor Living Expert">合作伙伴 | 庭院定制专家</title>
+    <title class="lang-text" data-zh="合作伙伴 | 庭院定制专家" data-en="Partners | Outdoor Living Expert">Partners | Outdoor Living Expert</title>
     <meta name="description" content="专业B2B定制服务，从设计到交付的完整解决方案。成为我们的合作伙伴，共同为客户打造理想的户外生活空间。">
+    <!-- Prevent language flash: read saved preference synchronously before render -->
+    <script>
+        (function() {
+            var lang = localStorage.getItem('preferredLang') || 'en';
+            document.documentElement.lang = lang;
+        })();
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -28,6 +35,13 @@
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* Prevent language flash: hide bilingual text until JS sets the correct language */
+        html:not(.lang-ready) .lang-text {
+            visibility: hidden;
+        }
+        html.lang-ready .lang-text {
+            visibility: visible;
+        }
         :root {
             --primary: #222222;
             --primary-dark: #111111;
@@ -413,13 +427,13 @@
             <div class="flex justify-between items-center">
                 <a href="index.html" class="flex items-center space-x-2">
                     <i class="fas fa-sun text-2xl text-[--light-text]"></i>
-                    <span class="text-xl font-bold text-[--light-text] lang-text" data-zh="庭院定制专家" data-en="Outdoor Living Expert">庭院定制专家</span>
+                    <span class="text-xl font-bold text-[--light-text] lang-text" data-zh="庭院定制专家" data-en="Outdoor Living Expert">Outdoor Living Expert</span>
                 </a>
                 <nav class="hidden md:flex space-x-8">
-                    <a href="index.html" class="text-[--light-accent] hover:text-[--light-text] transition lang-text" data-zh="首页" data-en="Home">首页</a>
-                    <a href="index.html#product-showcase" class="text-[--light-accent] hover:text-[--light-text] transition lang-text" data-zh="产品" data-en="Products">产品</a>
-                    <a href="#partner-hero" class="text-[--light-text] font-semibold transition lang-text" data-zh="合作伙伴" data-en="Partners">合作伙伴</a>
-                    <a href="index.html#contact" class="text-[--light-accent] hover:text-[--light-text] transition lang-text" data-zh="联系我们" data-en="Contact Us">联系我们</a>
+                    <a href="index.html" class="text-[--light-accent] hover:text-[--light-text] transition lang-text" data-zh="首页" data-en="Home">Home</a>
+                    <a href="index.html#product-showcase" class="text-[--light-accent] hover:text-[--light-text] transition lang-text" data-zh="产品" data-en="Products">Products</a>
+                    <a href="#partner-hero" class="text-[--light-text] font-semibold transition lang-text" data-zh="合作伙伴" data-en="Partners">Partners</a>
+                    <a href="index.html#contact" class="text-[--light-accent] hover:text-[--light-text] transition lang-text" data-zh="联系我们" data-en="Contact Us">Contact Us</a>
                 </nav>
                 <div class="flex items-center space-x-4">
                     <a href="login.html" class="inline-flex items-center gap-2 px-5 py-2 border border-[--light-text] text-[--light-text] rounded-lg text-sm font-medium hover:bg-[--light-text] hover:text-white transition-all">
@@ -465,10 +479,10 @@
         <div class="container mx-auto px-4">
             <div class="text-center mb-16">
                 <h2 class="text-3xl md:text-4xl font-light text-[--light-text] mb-4 lang-text" data-zh="为什么选择与我们合作" data-en="Why Partner With Us">
-                    为什么选择与我们合作
+                    Why Partner With Us
                 </h2>
                 <p class="text-[--light-accent] text-lg max-w-2xl mx-auto">
-                    <span class="lang-text" data-zh="从需求沟通到落地交付，每一个环节都精心打磨，为您的客户提供最理想的户外生活空间" data-en="From consultation to installation, every detail is meticulously managed for your clients.">从需求沟通到落地交付，每一个环节都精心打磨，为您的客户提供最理想的户外生活空间</span>
+                    <span class="lang-text" data-zh="从需求沟通到落地交付，每一个环节都精心打磨，为您的客户提供最理想的户外生活空间" data-en="From consultation to installation, every detail is meticulously managed for your clients.">From consultation to installation, every detail is meticulously managed for your clients.</span>
                 </p>
             </div>
 
@@ -478,8 +492,8 @@
                     <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
                         <i class="fas fa-lightbulb text-2xl text-[--light-text]"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-4 text-[--light-text] text-center lang-text" data-zh="场景化方案设计" data-en="Scenario-Based Design">场景化方案设计</h3>
-                    <p class="text-[--light-accent] text-justify lang-text" data-zh="根据客户生活方式——聚餐、阅读、种花、泳池——量身打造解决方案。" data-en="Design around lifestyle needs: dining, reading, gardening, entertaining.">根据客户生活方式——聚餐、阅读、种花、泳池——量身打造解决方案。</p>
+                    <h3 class="text-xl font-bold mb-4 text-[--light-text] text-center lang-text" data-zh="场景化方案设计" data-en="Scenario-Based Design">Scenario-Based Design</h3>
+                    <p class="text-[--light-accent] text-justify lang-text" data-zh="根据客户生活方式——聚餐、阅读、种花、泳池——量身打造解决方案。" data-en="Design around lifestyle needs: dining, reading, gardening, entertaining.">Design around lifestyle needs: dining, reading, gardening, entertaining.</p>
                 </div>
 
                 <!-- Feature 2 -->
@@ -487,8 +501,8 @@
                     <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
                         <i class="fas fa-drafting-compass text-2xl text-[--light-text]"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-4 text-[--light-text] text-center lang-text" data-zh="AI 辅助效果预览" data-en="AI-Powered Preview">AI 辅助效果预览</h3>
-                    <p class="text-[--light-accent] text-justify lang-text" data-zh="上传庭院照片，AI智能生成逼真效果图，让客户提前看到改造后的真实效果。" data-en="Upload photos and our AI generates realistic renderings for confident decisions.">上传庭院照片，AI智能生成逼真效果图，让客户提前看到改造后的真实效果。</p>
+                    <h3 class="text-xl font-bold mb-4 text-[--light-text] text-center lang-text" data-zh="AI 辅助效果预览" data-en="AI-Powered Preview">AI-Powered Preview</h3>
+                    <p class="text-[--light-accent] text-justify lang-text" data-zh="上传庭院照片，AI智能生成逼真效果图，让客户提前看到改造后的真实效果。" data-en="Upload photos and our AI generates realistic renderings for confident decisions.">Upload photos and our AI generates realistic renderings for confident decisions.</p>
                 </div>
 
                 <!-- Feature 3 -->
@@ -496,8 +510,8 @@
                     <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
                         <i class="fas fa-temperature-high text-2xl text-[--light-text]"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-4 text-[--light-text] text-center lang-text" data-zh="四季舒适体验" data-en="Year-Round Comfort">四季舒适体验</h3>
-                    <p class="text-[--light-accent] text-justify lang-text" data-zh="先进的隔热通风系统，无论春夏秋冬，户外空间都保持宜人温度。" data-en="Advanced insulation and ventilation for perfect comfort in every season.">先进的隔热通风系统，无论春夏秋冬，户外空间都保持宜人温度。</p>
+                    <h3 class="text-xl font-bold mb-4 text-[--light-text] text-center lang-text" data-zh="四季舒适体验" data-en="Year-Round Comfort">Year-Round Comfort</h3>
+                    <p class="text-[--light-accent] text-justify lang-text" data-zh="先进的隔热通风系统，无论春夏秋冬，户外空间都保持宜人温度。" data-en="Advanced insulation and ventilation for perfect comfort in every season.">Advanced insulation and ventilation for perfect comfort in every season.</p>
                 </div>
 
                 <!-- Feature 4 -->
@@ -505,8 +519,8 @@
                     <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
                         <i class="fas fa-crown text-2xl text-[--light-text]"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-4 text-[--light-text] text-center lang-text" data-zh="高品质选材" data-en="Premium Materials">高品质选材</h3>
-                    <p class="text-[--light-accent] text-justify lang-text" data-zh="断桥铝合金框架+钢化中空玻璃，抗风压、保温隔热，安全耐用。" data-en="Thermal break aluminum with double-glazed tempered glass — durable and safe.">断桥铝合金框架+钢化中空玻璃，抗风压、保温隔热，安全耐用。</p>
+                    <h3 class="text-xl font-bold mb-4 text-[--light-text] text-center lang-text" data-zh="高品质选材" data-en="Premium Materials">Premium Materials</h3>
+                    <p class="text-[--light-accent] text-justify lang-text" data-zh="断桥铝合金框架+钢化中空玻璃，抗风压、保温隔热，安全耐用。" data-en="Thermal break aluminum with double-glazed tempered glass — durable and safe.">Thermal break aluminum with double-glazed tempered glass — durable and safe.</p>
                 </div>
 
                 <!-- Feature 5 -->
@@ -514,8 +528,8 @@
                     <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
                         <i class="fas fa-tools text-2xl text-[--light-text]"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-4 text-[--light-text] text-center lang-text" data-zh="一站式交付" data-en="Turnkey Delivery">一站式交付</h3>
-                    <p class="text-[--light-accent] text-justify lang-text" data-zh="从方案设计、材料生产到现场安装，全程专业团队负责，省心省力。" data-en="From design and manufacturing to installation — we handle everything.">从方案设计、材料生产到现场安装，全程专业团队负责，省心省力。</p>
+                    <h3 class="text-xl font-bold mb-4 text-[--light-text] text-center lang-text" data-zh="一站式交付" data-en="Turnkey Delivery">Turnkey Delivery</h3>
+                    <p class="text-[--light-accent] text-justify lang-text" data-zh="从方案设计、材料生产到现场安装，全程专业团队负责，省心省力。" data-en="From design and manufacturing to installation — we handle everything.">From design and manufacturing to installation — we handle everything.</p>
                 </div>
 
                 <!-- Feature 6 -->
@@ -523,8 +537,8 @@
                     <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
                         <i class="fas fa-shield-alt text-2xl text-[--light-text]"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-4 text-[--light-text] text-center lang-text" data-zh="5年质保无忧" data-en="5-Year Warranty">5年质保无忧</h3>
-                    <p class="text-[--light-accent] text-justify lang-text" data-zh="5年结构质保，24小时售后响应，让客户的投资长期无忧。" data-en="5-year structural warranty with 24-hour support — investments protected.">5年结构质保，24小时售后响应，让客户的投资长期无忧。</p>
+                    <h3 class="text-xl font-bold mb-4 text-[--light-text] text-center lang-text" data-zh="5年质保无忧" data-en="5-Year Warranty">5-Year Warranty</h3>
+                    <p class="text-[--light-accent] text-justify lang-text" data-zh="5年结构质保，24小时售后响应，让客户的投资长期无忧。" data-en="5-year structural warranty with 24-hour support — investments protected.">5-year structural warranty with 24-hour support — investments protected.</p>
                 </div>
             </div>
         </div>
@@ -861,10 +875,10 @@
     <!-- CTA Section -->
     <section class="py-16 bg-white">
         <div class="container mx-auto px-4 text-center">
-            <h2 class="text-3xl font-light text-[--light-text] mb-4 lang-text" data-zh="准备好开始合作了吗？" data-en="Ready to Partner With Us?">准备好开始合作了吗？</h2>
-            <p class="text-[--light-accent] mb-8 max-w-xl mx-auto lang-text" data-zh="立即联系我们，了解更多合作详情和专属支持方案" data-en="Contact us now to learn more about partnership details and exclusive support.">立即联系我们，了解更多合作详情和专属支持方案</p>
+            <h2 class="text-3xl font-light text-[--light-text] mb-4 lang-text" data-zh="准备好开始合作了吗？" data-en="Ready to Partner With Us?">Ready to Partner With Us?</h2>
+            <p class="text-[--light-accent] mb-8 max-w-xl mx-auto lang-text" data-zh="立即联系我们，了解更多合作详情和专属支持方案" data-en="Contact us now to learn more about partnership details and exclusive support.">Contact us now to learn more about partnership details and exclusive support.</p>
             <a href="#register" class="btn-primary text-white font-semibold py-4 px-10 rounded-lg inline-flex items-center text-lg">
-                <span class="lang-text" data-zh="立即申请合作" data-en="Apply Now">立即申请合作</span>
+                <span class="lang-text" data-zh="立即申请合作" data-en="Apply Now">Apply Now</span>
                 <i class="fas fa-arrow-right ml-2"></i>
             </a>
         </div>
@@ -877,38 +891,38 @@
                 <div>
                     <div class="flex items-center space-x-2 mb-4">
                         <i class="fas fa-sun text-2xl text-white"></i>
-                        <span class="text-xl font-bold lang-text" data-zh="庭院定制专家" data-en="Outdoor Living Expert">庭院定制专家</span>
+                        <span class="text-xl font-bold lang-text" data-zh="庭院定制专家" data-en="Outdoor Living Expert">Outdoor Living Expert</span>
                     </div>
-                    <p class="text-gray-400 mb-4 lang-text" data-zh="专注庭院生活空间定制，为您打造理想的户外休闲体验。" data-en="Dedicated to crafting custom outdoor living spaces.">专注庭院生活空间定制，为您打造理想的户外休闲体验。</p>
+                    <p class="text-gray-400 mb-4 lang-text" data-zh="专注庭院生活空间定制，为您打造理想的户外休闲体验。" data-en="Dedicated to crafting custom outdoor living spaces.">Dedicated to crafting custom outdoor living spaces.</p>
                 </div>
                 <div>
-                    <h3 class="text-lg font-bold mb-4 lang-text" data-zh="快速链接" data-en="Quick Links">快速链接</h3>
+                    <h3 class="text-lg font-bold mb-4 lang-text" data-zh="快速链接" data-en="Quick Links">Quick Links</h3>
                     <ul class="space-y-2 text-gray-400">
-                        <li><a href="index.html" class="hover:text-white transition lang-text" data-zh="首页" data-en="Home">首页</a></li>
-                        <li><a href="index.html#product-showcase" class="hover:text-white transition lang-text" data-zh="产品展示" data-en="Products">产品展示</a></li>
-                        <li><a href="#top" class="hover:text-white transition lang-text" data-zh="合作伙伴" data-en="Partners">合作伙伴</a></li>
-                        <li><a href="index.html#contact" class="hover:text-white transition lang-text" data-zh="联系我们" data-en="Contact">联系我们</a></li>
+                        <li><a href="index.html" class="hover:text-white transition lang-text" data-zh="首页" data-en="Home">Home</a></li>
+                        <li><a href="index.html#product-showcase" class="hover:text-white transition lang-text" data-zh="产品展示" data-en="Products">Products</a></li>
+                        <li><a href="#top" class="hover:text-white transition lang-text" data-zh="合作伙伴" data-en="Partners">Partners</a></li>
+                        <li><a href="index.html#contact" class="hover:text-white transition lang-text" data-zh="联系我们" data-en="Contact">Contact</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h3 class="text-lg font-bold mb-4 lang-text" data-zh="解决方案" data-en="Solutions">解决方案</h3>
+                    <h3 class="text-lg font-bold mb-4 lang-text" data-zh="解决方案" data-en="Solutions">Solutions</h3>
                     <ul class="space-y-2 text-gray-400">
-                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="庭院阳光房" data-en="Yard Sunroom">庭院阳光房</a></li>
-                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="户外凉亭空间" data-en="Outdoor Pergola">户外凉亭空间</a></li>
+                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="庭院阳光房" data-en="Yard Sunroom">Yard Sunroom</a></li>
+                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="户外凉亭空间" data-en="Outdoor Pergola">Outdoor Pergola</a></li>
                         <li><a href="#" class="hover:text-white transition lang-text" data-zh="Zip Blinds" data-en="Zip Blinds">Zip Blinds</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h3 class="text-lg font-bold mb-4 lang-text" data-zh="服务支持" data-en="Support">服务支持</h3>
+                    <h3 class="text-lg font-bold mb-4 lang-text" data-zh="服务支持" data-en="Support">Support</h3>
                     <ul class="space-y-2 text-gray-400">
-                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="售后服务" data-en="After-sales">售后服务</a></li>
-                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="安装指南" data-en="Installation Guide">安装指南</a></li>
-                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="常见问题" data-en="FAQ">常见问题</a></li>
+                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="售后服务" data-en="After-sales">After-sales</a></li>
+                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="安装指南" data-en="Installation Guide">Installation Guide</a></li>
+                        <li><a href="#" class="hover:text-white transition lang-text" data-zh="常见问题" data-en="FAQ">FAQ</a></li>
                     </ul>
                 </div>
             </div>
             <div class="border-t border-gray-600 mt-8 pt-8 text-center text-gray-400">
-                <p class="lang-text" data-zh="&copy; 2024 庭院定制专家. 保留所有权利." data-en="&copy; 2024 Outdoor Living Expert. All rights reserved.">&copy; 2024 庭院定制专家. 保留所有权利.</p>
+                <p class="lang-text" data-zh="&copy; 2024 庭院定制专家. 保留所有权利." data-en="&copy; 2024 Outdoor Living Expert. All rights reserved.">&copy; 2024 Outdoor Living Expert. All rights reserved.</p>
             </div>
         </div>
     </footer>
@@ -943,8 +957,11 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            // Force English as default language
-            switchLanguage('en');
+            // Use saved language preference, default to 'en'
+            var savedLang = localStorage.getItem('preferredLang') || 'en';
+            switchLanguage(savedLang);
+            // Reveal all bilingual text now that correct language is applied
+            document.documentElement.classList.add('lang-ready');
 
             // Handle hash-based scroll (e.g., partners.html#features)
             if (window.location.hash) {
