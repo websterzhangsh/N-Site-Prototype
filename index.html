@@ -3800,19 +3800,19 @@
             const titleEl = document.getElementById('zipblindsGalleryTitle');
 
             const images = [
-                { src: '/images/products/zip-blinds/zipblinds-gallery-5.jpg', title: 'Superior Wind-Resistant Shading' },
-                { src: '/images/products/zip-blinds/zipblinds-gallery-1.jpg', title: 'UV & Weatherproof Enclosure' },
-                { src: '/images/products/zip-blinds/zipblinds-gallery-2.jpg', title: 'Clear View · Privacy Screen' },
-                { src: '/images/products/zip-blinds/zipblinds-gallery-3.jpg', title: 'Smart Remote · Terrace Protection' }
+                { src: 'images/Product%20Matrix/Zip-Blinds/Gallery/Balcony.jpg', zh: '遮阳不遮风景', en: 'Shade Without Blocking the View' },
+                { src: 'images/Product%20Matrix/Zip-Blinds/Gallery/Seaside%20Resort.jpg', zh: '超强抗风·安全可靠', en: 'Superior Wind Resistance & Safety' }
             ];
 
-            if (titleEl) titleEl.textContent = 'Zip Blinds Gallery';
+            const isZh = document.documentElement.lang === 'zh' || (typeof currentLang !== 'undefined' && currentLang === 'zh');
+
+            if (titleEl) titleEl.textContent = isZh ? '防风卷帘案例展示' : 'Zip Blinds Gallery';
 
             grid.innerHTML = images.map(img => `
                 <div class="group relative aspect-[4/3] rounded-xl overflow-hidden cursor-pointer">
-                    <img src="${img.src}" alt="${img.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <img src="${img.src}" alt="${isZh ? img.zh : img.en}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div class="absolute bottom-4 left-4 text-white font-medium">${img.title}</div>
+                        <div class="absolute bottom-4 left-4 right-4 text-white font-medium text-sm">${isZh ? img.zh : img.en}</div>
                     </div>
                 </div>
             `).join('');
