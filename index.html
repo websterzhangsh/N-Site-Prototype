@@ -1595,6 +1595,14 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Learn More Button -->
+                        <div class="text-center mt-8">
+                            <button onclick="openSunroomGallery()" class="inline-flex items-center gap-2 px-6 py-3 bg-[--light-text] text-white rounded-full font-medium hover:bg-[--primary-dark] transition-all duration-300">
+                                <span class="lang-text" data-zh="查看更多案例" data-en="Learn More">Learn More</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -1680,6 +1688,14 @@
                                     <div class="text-xs text-[--light-accent] lang-text" data-zh="省工安装" data-en="Saves Installation Labor">Saves Installation Labor</div>
                                 </div>
                             </div>
+                        </div>
+
+                        <!-- Learn More Button -->
+                        <div class="text-center mt-8">
+                            <button onclick="openSunroomGallery()" class="inline-flex items-center gap-2 px-6 py-3 bg-[--light-text] text-white rounded-full font-medium hover:bg-[--primary-dark] transition-all duration-300">
+                                <span class="lang-text" data-zh="查看更多案例" data-en="Learn More">Learn More</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -3847,7 +3863,65 @@
             modal.classList.remove('flex');
             document.body.style.overflow = '';
         }
+
+        // ===== Sunroom Gallery Modal =====
+        function openSunroomGallery() {
+            const modal = document.getElementById('sunroomGalleryModal');
+            const grid = document.getElementById('sunroomGalleryGrid');
+
+            const images = [
+                { src: 'images/Product%20Matrix/SunRoom/Gallery/Atrium.jpg', zh: '高透光·视野佳', en: 'High Light Transmission · Excellent Visibility' },
+                { src: 'images/Product%20Matrix/SunRoom/Gallery/Backyard-Jacuzzi.jpg', zh: '模块化设计·省工安装', en: 'Modular Design · Saves Installation Labor' },
+                { src: 'images/Product%20Matrix/SunRoom/Gallery/Backyard01.jpg', zh: '智能便捷·一键电动遥控', en: 'Smart & Convenient · One-Touch Remote' },
+                { src: 'images/Product%20Matrix/SunRoom/Gallery/Backyard02.jpg', zh: '蜂巢遮阳·隔热保温', en: 'Honeycomb Shade · Thermal Insulation' },
+                { src: 'images/Product%20Matrix/SunRoom/Gallery/Pool%26Jacuzzi.jpg', zh: '抗风雪·耐冲击·抗老化', en: 'Snow & Wind Resistant · Impact-Proof' },
+                { src: 'images/Product%20Matrix/SunRoom/Gallery/Rooftop-Restaurant.jpg', zh: '品质保障·头部品牌制造', en: 'Quality Assurance · Leading Brands' },
+                { src: 'images/Product%20Matrix/SunRoom/Gallery/Rooftop-Terrace.jpg', zh: '抗冲击·耐老化·经久耐用', en: 'Impact-Resistant · Aging-Proof · Durable' },
+                { src: 'images/Product%20Matrix/SunRoom/Gallery/Terrace.jpg', zh: '量身定制·AI场景方案', en: 'Custom-Tailored · AI Scene Design' },
+                { src: 'images/Product%20Matrix/SunRoom/Gallery/Villa-Pool.jpg', zh: '光伏发电储能·绿色节能', en: 'Solar Power & Storage · Energy Efficient' }
+            ];
+
+            const isZh = document.documentElement.lang === 'zh' || (typeof currentLang !== 'undefined' && currentLang === 'zh');
+
+            grid.innerHTML = images.map(img => `
+                <div class="group relative aspect-[4/3] rounded-xl overflow-hidden cursor-pointer">
+                    <img src="${img.src}" alt="${isZh ? img.zh : img.en}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div class="absolute bottom-4 left-4 right-4">
+                            <div class="text-white font-medium text-sm">${isZh ? img.zh : img.en}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSunroomGallery() {
+            const modal = document.getElementById('sunroomGalleryModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = '';
+        }
     </script>
+
+    <!-- Sunroom Gallery Modal -->
+    <div id="sunroomGalleryModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm" onclick="if(event.target === this) closeSunroomGallery()">
+        <div class="bg-white rounded-2xl max-w-5xl w-full mx-4 max-h-[90vh] overflow-hidden">
+            <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                <h3 class="text-xl font-bold text-[--light-text] lang-text" data-zh="阳光房案例展示" data-en="Sunroom Gallery">Sunroom Gallery</h3>
+                <button onclick="closeSunroomGallery()" class="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition">
+                    <i class="fas fa-times text-gray-600"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto max-h-[calc(90vh-100px)]">
+                <div id="sunroomGalleryGrid" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Pergola Gallery Modal -->
     <div id="pergolaGalleryModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm" onclick="if(event.target === this) closePergolaGallery()">
