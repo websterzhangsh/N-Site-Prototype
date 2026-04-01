@@ -858,7 +858,7 @@
             <div class="hero-slide" data-category="pergola" style="background-image: url('public/images/products/pergola/hero-1.jpg?v=20260313');">
                 <div class="hero-overlay"></div>
             </div>
-            <div class="hero-slide" data-category="windproof" style="background-image: url('public/images/products/windproof/hero-1.jpg?v=20260312');">
+            <div class="hero-slide" data-category="zipblinds" style="background-image: url('public/images/products/windproof/hero-1.jpg?v=20260312');">
                 <div class="hero-overlay"></div>
             </div>
         </div>
@@ -919,7 +919,7 @@
                 <span class="indicator-dot"></span>
                 <span class="indicator-label lang-text" data-zh="户外凉亭" data-en="Pergola">Pergola</span>
             </button>
-            <button class="hero-indicator" data-category="windproof" onclick="switchHeroSlide('windproof')">
+            <button class="hero-indicator" data-category="zipblinds" onclick="switchHeroSlide('zipblinds')">
                 <span class="indicator-dot"></span>
                 <span class="indicator-label lang-text" data-zh="Zip Blinds" data-en="Zip Blinds">Zip Blinds</span>
             </button>
@@ -2449,6 +2449,17 @@
                 heroProgressBar.style.width = '0%';
                 if (isInHeroSection) {
                     startHeroCarousel();
+                }
+
+                // Scroll to product showcase and switch to corresponding tab
+                const productSection = document.getElementById('product-showcase');
+                if (productSection) {
+                    productSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    const targetTab = document.querySelector(`.product-tab[data-product="${category}"]`);
+                    if (targetTab) {
+                        // Small delay to let scroll begin, then switch tab
+                        setTimeout(() => targetTab.click(), 300);
+                    }
                 }
             }
         }
