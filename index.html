@@ -3836,18 +3836,20 @@
             const grid = document.getElementById('galleryGrid');
 
             const images = [
-                { src: '/images/products/pergola/matrix/Residential Pergola Sample 1.jpg?v=20260312', title: 'Motorized Shade · Outdoor Living' },
-                { src: '/images/products/pergola/matrix/Residential Pergola Sample 2.jpg?v=20260312', title: 'Rotating Louver · Light Control' },
-                { src: '/images/products/pergola/matrix/Residential Pergola Sample 3.jpg?v=20260312', title: 'Smart LED · Night Ambiance' },
-                { src: '/images/products/pergola/matrix/Residential Pergola Sample 4.jpg?v=20260312', title: 'Wind & Rain Proof Structure' }
+                { src: 'images/Product%20Matrix/Pergola/Gallery/Pool%20Side01.jpg', zh: '半透明卷帘·视觉美观', en: 'Translucent Blinds · Excellent Aesthetics' },
+                { src: 'images/Product%20Matrix/Pergola/Gallery/Pool%20Side02.jpg', zh: '抗风雨·结构稳固', en: 'Wind & Rain Resistant · Structurally Robust' },
+                { src: 'images/Product%20Matrix/Pergola/Gallery/Terrace.jpg', zh: '电动翻转顶棚·灵活调光', en: 'Motorized Rotating Canopy · Flexible Light Control' },
+                { src: 'images/Product%20Matrix/Pergola/Gallery/Yard.jpg', zh: '智能集成·传感器控制', en: 'Smart Integration · Sensor Control' }
             ];
 
-            title.textContent = 'Pergola Gallery';
+            const isZh = document.documentElement.lang === 'zh' || (typeof currentLang !== 'undefined' && currentLang === 'zh');
+
+            title.textContent = isZh ? '凉亭案例展示' : 'Pergola Gallery';
             grid.innerHTML = images.map(img => `
                 <div class="group relative aspect-[4/3] rounded-xl overflow-hidden cursor-pointer">
-                    <img src="${img.src}" alt="${img.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <img src="${img.src}" alt="${isZh ? img.zh : img.en}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div class="absolute bottom-4 left-4 text-white font-medium">${img.title}</div>
+                        <div class="absolute bottom-4 left-4 right-4 text-white font-medium text-sm">${isZh ? img.zh : img.en}</div>
                     </div>
                 </div>
             `).join('');
