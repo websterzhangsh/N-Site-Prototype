@@ -664,13 +664,24 @@
                         <i class="fas fa-bell"></i>
                         <span class="notification-badge"></span>
                     </button>
-                    <div class="user-menu" id="userMenu">
+                    <div class="user-menu" id="userMenu" style="cursor:pointer;position:relative;" onclick="toggleUserDropdown(event)">
                         <div class="user-avatar" id="userAvatar">U</div>
                         <div class="user-info">
                             <div class="user-name" id="userName">User</div>
                             <div class="user-role" id="userRole">Admin</div>
                         </div>
                         <i class="fas fa-chevron-down" style="color: #9ca3af; font-size: 12px;"></i>
+                        <!-- User Dropdown -->
+                        <div id="userDropdown" style="display:none;position:absolute;top:100%;right:0;margin-top:8px;background:white;border-radius:10px;box-shadow:0 4px 24px rgba(0,0,0,0.12);border:1px solid #e5e7eb;min-width:200px;z-index:999;overflow:hidden;">
+                            <div style="padding:14px 16px;border-bottom:1px solid #f3f4f6;">
+                                <div style="font-size:13px;font-weight:500;color:#222;" id="dropdownUserName"></div>
+                                <div style="font-size:12px;color:#888;margin-top:2px;" id="dropdownUserEmail"></div>
+                            </div>
+                            <a href="#" onclick="event.preventDefault();event.stopPropagation();logout();" style="display:flex;align-items:center;gap:10px;padding:12px 16px;font-size:13px;color:#dc2626;text-decoration:none;transition:background 0.15s;">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Sign Out</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </header>
@@ -4314,6 +4325,7 @@
     <script>
         // ===== Authentication =====
         function checkAuth() {
+            // Check both localStorage (persisted) and sessionStorage (session-only)
             const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
             if (!token) {
                 window.location.href = 'login.html';
@@ -4322,16 +4334,52 @@
             return true;
         }
 
+        function getAuthData() {
+            const dataStr = localStorage.getItem('auth_data') || sessionStorage.getItem('auth_data');
+            if (dataStr) {
+                try { return JSON.parse(dataStr); } catch(e) { return null; }
+            }
+            return null;
+        }
+
+        function logout() {
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('auth_data');
+            localStorage.removeItem('auth_remember');
+            localStorage.removeItem('tenant_slug');
+            sessionStorage.removeItem('auth_token');
+            sessionStorage.removeItem('auth_data');
+            sessionStorage.removeItem('tenant_slug');
+            window.location.href = 'login.html';
+        }
+
+        function toggleUserDropdown(e) {
+            e.stopPropagation();
+            const dd = document.getElementById('userDropdown');
+            dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
+        }
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function() {
+            const dd = document.getElementById('userDropdown');
+            if (dd) dd.style.display = 'none';
+        });
+
         // ===== Load tenant and user data =====
         function loadDashboardData() {
             const tenant = {
                 name: 'Greenscape Builders',
                 logo: 'images/partner-logo.png'
             };
+            // Derive user info from auth data
+            const authData = getAuthData();
+            const userEmail = authData ? authData.email : 'admin@ai-nestopia.com';
+            const userPrefix = authData ? authData.prefix : 'admin';
+            const displayName = userPrefix.charAt(0).toUpperCase() + userPrefix.slice(1);
             const user = {
-                name: 'Admin User',
+                name: displayName,
                 role: 'Administrator',
-                initials: 'A'
+                initials: displayName.charAt(0).toUpperCase(),
+                email: userEmail
             };
 
             document.getElementById('tenantLogo').src = tenant.logo;
@@ -4339,6 +4387,11 @@
             document.getElementById('userAvatar').textContent = user.initials;
             document.getElementById('userName').textContent = user.name;
             document.getElementById('userRole').textContent = user.role;
+            // Populate user dropdown
+            var ddName = document.getElementById('dropdownUserName');
+            var ddEmail = document.getElementById('dropdownUserEmail');
+            if (ddName) ddName.textContent = user.name;
+            if (ddEmail) ddEmail.textContent = user.email;
         }
 
         // ===== Page Navigation (v1.2.0 — project-centric) =====

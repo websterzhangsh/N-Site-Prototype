@@ -343,7 +343,7 @@
                             type="email" 
                             id="email" 
                             class="form-input input-with-icon" 
-                            placeholder="Enter your email"
+                            placeholder="yourname@ai-nestopia.com"
                             required
                             autocomplete="email"
                         >
@@ -351,14 +351,14 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="password">Password</label>
+                    <label class="form-label" for="password">Passcode</label>
                     <div class="input-wrapper">
                         <i class="fas fa-lock input-icon"></i>
                         <input 
                             type="password" 
                             id="password" 
                             class="form-input input-with-icon" 
-                            placeholder="Enter your password"
+                            placeholder="Enter your passcode"
                             required
                             autocomplete="current-password"
                         >
@@ -371,7 +371,7 @@
                         <input type="checkbox" id="rememberMe">
                         <span>Remember me</span>
                     </label>
-                    <a href="#" class="forgot-password" id="forgotPassword">Forgot password?</a>
+                    <a href="#" class="forgot-password" id="forgotPassword">Forgot passcode?</a>
                 </div>
 
                 <button type="submit" class="btn-login" id="loginBtn">
@@ -389,7 +389,7 @@
 
             <div class="powered-by">
                 <p class="powered-by-text">Powered by</p>
-                <p class="powered-by-brand">Outdoor Living Expert</p>
+                <p class="powered-by-brand">Nestopia AI Platform</p>
             </div>
         </div>
     </div>
@@ -508,6 +508,33 @@
             this.classList.toggle('fa-eye-slash');
         });
 
+        // ===== Authentication Logic =====
+        // Rule: Only accept @ai-nestopia.com emails
+        // Rule: Passcode for xyz@ai-nestopia.com must be xyz123!
+        function validateCredentials(email, password) {
+            const emailLower = email.toLowerCase().trim();
+            const suffix = '@ai-nestopia.com';
+
+            // Check email suffix
+            if (!emailLower.endsWith(suffix)) {
+                return { valid: false, error: 'Access denied. Only @ai-nestopia.com email addresses are authorized.' };
+            }
+
+            // Extract prefix (the part before @)
+            const prefix = emailLower.slice(0, emailLower.indexOf('@'));
+            if (!prefix || prefix.length === 0) {
+                return { valid: false, error: 'Invalid email format.' };
+            }
+
+            // Expected passcode: {prefix}123!
+            const expectedPasscode = prefix + '123!';
+            if (password !== expectedPasscode) {
+                return { valid: false, error: 'Invalid credentials. Please check your email and passcode.' };
+            }
+
+            return { valid: true, prefix: prefix, email: emailLower };
+        }
+
         // Handle login form submission
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -517,9 +544,9 @@
             const rememberMe = document.getElementById('rememberMe').checked;
             const loginBtn = document.getElementById('loginBtn');
             
-            // Validate
+            // Basic validation
             if (!email || !password) {
-                showError('Please enter email and password');
+                showError('Please enter email and passcode.');
                 return;
             }
             
@@ -527,48 +554,51 @@
             loginBtn.classList.add('loading');
             loginBtn.disabled = true;
             
-            try {
-                // In production, this would be an API call
-                // const response = await fetch('/api/auth/login', {
-                //     method: 'POST',
-                //     headers: { 'Content-Type': 'application/json' },
-                //     body: JSON.stringify({
-                //         email,
-                //         password,
-                //         tenantSlug: currentTenant?.slug
-                //     })
-                // });
-                
-                // Mock login for demo
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                
-                // Simulate successful login
-                const mockToken = 'mock-jwt-token-' + Date.now();
-                
-                // Store token
-                if (rememberMe) {
-                    localStorage.setItem('auth_token', mockToken);
-                    localStorage.setItem('tenant_slug', currentTenant?.slug);
-                } else {
-                    sessionStorage.setItem('auth_token', mockToken);
-                    sessionStorage.setItem('tenant_slug', currentTenant?.slug);
-                }
-                
-                // Redirect to dashboard
-                window.location.href = 'company-operations.html';
-                
-            } catch (error) {
-                console.error('Login failed:', error);
-                showError('Sign in failed. Please check your email and password.');
+            // Simulate brief network delay for UX
+            await new Promise(resolve => setTimeout(resolve, 800));
+
+            // Validate credentials
+            const result = validateCredentials(email, password);
+            
+            if (!result.valid) {
+                showError(result.error);
                 loginBtn.classList.remove('loading');
                 loginBtn.disabled = false;
+                return;
             }
+
+            // Authentication successful — generate token and store
+            const authToken = 'nestopia-auth-' + result.prefix + '-' + Date.now();
+            const authData = {
+                token: authToken,
+                email: result.email,
+                prefix: result.prefix,
+                tenant: currentTenant?.slug || 'default',
+                loginTime: new Date().toISOString()
+            };
+            
+            // Persist credentials based on "Remember me" choice
+            // Remember me = localStorage (survives browser close)
+            // No remember = sessionStorage (clears on browser close)
+            const storage = rememberMe ? localStorage : sessionStorage;
+            storage.setItem('auth_token', authToken);
+            storage.setItem('auth_data', JSON.stringify(authData));
+            storage.setItem('tenant_slug', authData.tenant);
+
+            // If "Remember me" is checked, also store in localStorage explicitly
+            // so the credential persists across sessions
+            if (rememberMe) {
+                localStorage.setItem('auth_remember', 'true');
+            }
+            
+            // Redirect to dashboard
+            window.location.href = 'company-operations.html';
         });
 
-        // Handle forgot password
+        // Handle forgot passcode
         document.getElementById('forgotPassword').addEventListener('click', function(e) {
             e.preventDefault();
-            alert('Password reset feature coming soon');
+            alert('Please contact your Nestopia administrator to reset your passcode.');
         });
 
         // Initialize
