@@ -983,6 +983,106 @@
                     </div>
                 </div>
 
+                <!-- ===== Quotation Editor Modal ===== -->
+                <div id="quotationModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-start justify-center pt-6 overflow-y-auto">
+                    <div class="bg-white rounded-2xl w-full max-w-5xl mx-4 mb-8 shadow-2xl">
+                        <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                            <div>
+                                <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2"><i class="fas fa-file-invoice-dollar text-blue-600"></i> 防风卷帘报价单 / Zip Blinds Quotation</h2>
+                                <p class="text-sm text-gray-500 mt-1" id="quotProjectRef"></p>
+                            </div>
+                            <button onclick="closeQuotationEditor()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition"><i class="fas fa-times text-gray-500"></i></button>
+                        </div>
+                        <div class="p-6 space-y-6">
+                            <!-- Client Info -->
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">客户姓名 / Client</label><input type="text" id="quotClientName" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
+                                <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">客户电话 / Contact</label><input type="text" id="quotClientPhone" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
+                                <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">客服 / Customer Service</label><input type="text" id="quotCSRep" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
+                            </div>
+                            <!-- Specs -->
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">型材颜色 / Profile Color</label><input type="text" id="quotProfileColor" value="咖啡色 / Coffee" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
+                                <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">面料 / Fabric</label><input type="text" id="quotFabric" value="聚酯纤维+PVC, 5%开孔率" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
+                                <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">面料颜色/色号</label><input type="text" id="quotFabricColor" placeholder="e.g. NP33054060SP 黑咖色" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
+                            </div>
+                            <!-- Product Items Table -->
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <label class="text-xs font-semibold text-gray-500 uppercase">产品明细 / Product Items</label>
+                                    <button onclick="addQuotLineItem()" class="px-3 py-1.5 text-xs font-medium bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition flex items-center gap-1"><i class="fas fa-plus"></i> 添加行</button>
+                                </div>
+                                <div class="border border-gray-200 rounded-xl overflow-x-auto">
+                                    <table class="w-full text-sm"><thead><tr class="bg-gray-50 text-gray-600 text-xs uppercase">
+                                        <th class="py-2.5 px-3 text-left w-8">#</th>
+                                        <th class="py-2.5 px-3 text-left min-w-[180px]">品类 / Product</th>
+                                        <th class="py-2.5 px-3 text-center w-20">宽(mm)</th>
+                                        <th class="py-2.5 px-3 text-center w-20">高(mm)</th>
+                                        <th class="py-2.5 px-3 text-center w-20">面积(m²)</th>
+                                        <th class="py-2.5 px-3 text-center w-24">单价(元/m²)</th>
+                                        <th class="py-2.5 px-3 text-center w-16">数量</th>
+                                        <th class="py-2.5 px-3 text-right w-24">金额(元)</th>
+                                        <th class="py-2.5 px-3 w-10"></th>
+                                    </tr></thead><tbody id="quotLineItems"></tbody></table>
+                                </div>
+                            </div>
+                            <!-- Accessories Table -->
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <label class="text-xs font-semibold text-gray-500 uppercase">附件 / Accessories</label>
+                                    <button onclick="addQuotAccessory()" class="px-3 py-1.5 text-xs font-medium bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition flex items-center gap-1"><i class="fas fa-plus"></i> 添加附件</button>
+                                </div>
+                                <div class="border border-gray-200 rounded-xl overflow-x-auto">
+                                    <table class="w-full text-sm"><thead><tr class="bg-gray-50 text-gray-600 text-xs uppercase">
+                                        <th class="py-2.5 px-3 text-left w-8">#</th>
+                                        <th class="py-2.5 px-3 text-left">品名 / Item</th>
+                                        <th class="py-2.5 px-3 text-center w-20">规格</th>
+                                        <th class="py-2.5 px-3 text-center w-24">单价(元)</th>
+                                        <th class="py-2.5 px-3 text-center w-16">数量</th>
+                                        <th class="py-2.5 px-3 text-right w-24">金额(元)</th>
+                                        <th class="py-2.5 px-3 w-10"></th>
+                                    </tr></thead><tbody id="quotAccessories"></tbody></table>
+                                </div>
+                            </div>
+                            <!-- Currency & Totals -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="space-y-3">
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">币种 / Currency</label>
+                                            <select id="quotCurrency" onchange="updateQuotTotals()" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400">
+                                                <option value="RMB">人民币 RMB (¥)</option><option value="SGD">新加坡元 SGD (S$)</option><option value="USD">美元 USD ($)</option>
+                                            </select></div>
+                                        <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">汇率 / Exchange Rate</label>
+                                            <input type="number" id="quotExchangeRate" value="5.3937" step="0.0001" onchange="updateQuotTotals()" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
+                                    </div>
+                                    <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">备注 / Remarks</label>
+                                        <textarea id="quotRemarks" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400">1、包含海关费及物流运输等费用 / Include customs duties, logistics, and shipping fees
+2、正常质保期：铝合金材质部分质保十年，电机质保三年，防风卷帘质保两年
+3、付款条件：下单生产前需付50%定金，发货前付清余款 / Payment: 50% deposit before production, balance before shipment</textarea></div>
+                                </div>
+                                <div class="bg-gray-50 rounded-xl p-5 space-y-3">
+                                    <h4 class="text-sm font-semibold text-gray-700">报价汇总 / Quotation Summary</h4>
+                                    <div class="space-y-2 text-sm">
+                                        <div class="flex justify-between"><span class="text-gray-500">产品小计:</span><span class="font-medium" id="quotSubProducts">¥0.00</span></div>
+                                        <div class="flex justify-between"><span class="text-gray-500">附件小计:</span><span class="font-medium" id="quotSubAccessories">¥0.00</span></div>
+                                        <div class="border-t border-gray-200 pt-2 flex justify-between text-base"><span class="font-semibold text-gray-700">优惠总价 (RMB):</span><span class="font-bold text-gray-900 text-lg" id="quotTotalRMB">¥0.00</span></div>
+                                        <div class="flex justify-between text-base" id="quotForeignRow"><span class="font-semibold text-gray-700">优惠总价 (<span id="quotForeignLabel">SGD</span>):</span><span class="font-bold text-blue-600 text-lg" id="quotTotalForeign">S$0.00</span></div>
+                                    </div>
+                                    <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">折扣调整 / Discount (%)</label>
+                                        <input type="number" id="quotDiscount" value="0" min="0" max="100" step="1" onchange="updateQuotTotals()" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
+                            <div class="text-sm text-gray-500">报价单将以可打印 HTML 页面打开</div>
+                            <div class="flex items-center gap-3">
+                                <button onclick="closeQuotationEditor()" class="px-4 py-2.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-100 transition">取消</button>
+                                <button onclick="previewQuotation()" class="px-6 py-2.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium flex items-center gap-2"><i class="fas fa-print"></i> 预览并打印 / Preview & Print</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
                 </div>
 
@@ -4106,7 +4206,7 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Company Name</label>
-                            <input type="text" value="Greenscape Builders" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-300">
+                            <input type="text" id="settingsCompanyName" value="Greenscape Builders" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-300">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Business Address</label>
@@ -4120,12 +4220,12 @@
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                                <input type="email" value="contact@greenscape.com" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-300">
+                                <input type="email" id="settingsCompanyEmail" value="contact@greenscape.com" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-300">
                             </div>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Website</label>
-                            <input type="url" value="https://greenscape.com" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-300">
+                            <input type="url" id="settingsCompanyUrl" value="https://greenscape.com" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-300">
                         </div>
                         <div class="pt-4">
                             <button class="px-6 py-2.5 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition">Save Changes</button>
@@ -4365,10 +4465,25 @@
         });
 
         // ===== Load tenant and user data =====
+        function getCurrentTenantSlug() {
+            return localStorage.getItem('tenant_slug') || sessionStorage.getItem('tenant_slug') || 'default';
+        }
+
+        // ===== Multi-Tenant Configuration =====
+        const tenantConfigs = {
+            'default': { name: 'Greenscape Builders', logo: 'images/partner-logo.png' },
+            'partner1': { name: 'Greenscape Builders', logo: 'images/partner-logo.png' },
+            'partner2': { name: 'Green Garden Design', logo: 'images/partner-logo.png' },
+            'omeya-sin': { name: 'Omeya-SIN', logo: 'images/partner-logo.png' },
+            'nestopia-chn': { name: 'Nestopia-CHN', logo: 'images/partner-logo.png' }
+        };
+
         function loadDashboardData() {
+            const slug = getCurrentTenantSlug();
+            const tenantCfg = tenantConfigs[slug] || tenantConfigs['default'];
             const tenant = {
-                name: 'Greenscape Builders',
-                logo: 'images/partner-logo.png'
+                name: tenantCfg.name,
+                logo: tenantCfg.logo
             };
             // Derive user info from auth data
             const authData = getAuthData();
@@ -4392,6 +4507,16 @@
             var ddEmail = document.getElementById('dropdownUserEmail');
             if (ddName) ddName.textContent = user.name;
             if (ddEmail) ddEmail.textContent = user.email;
+
+            // Populate settings page with tenant-specific info
+            var settingsName = document.getElementById('settingsCompanyName');
+            var settingsEmail = document.getElementById('settingsCompanyEmail');
+            if (settingsName) settingsName.value = tenant.name;
+            if (slug === 'omeya-sin' && settingsEmail) settingsEmail.value = 'contact@omeya-sin.com';
+            if (slug === 'nestopia-chn' && settingsEmail) settingsEmail.value = 'contact@nestopia-chn.com';
+            var settingsUrl = document.getElementById('settingsCompanyUrl');
+            if (slug === 'omeya-sin' && settingsUrl) settingsUrl.value = 'https://omeya-sin.com';
+            if (slug === 'nestopia-chn' && settingsUrl) settingsUrl.value = 'https://nestopia-chn.com';
         }
 
         // ===== Page Navigation (v1.2.0 — project-centric) =====
@@ -6730,7 +6855,7 @@
 
         // ===== Products Page Functions =====
         const productsState = {
-            selectedProduct: 'sr-l-classic',
+            selectedProduct: getCurrentTenantSlug() === 'omeya-sin' ? 'zb-manual' : 'sr-l-classic',
             filter: 'all',
             uploadVisible: false
         };
@@ -7047,11 +7172,17 @@
         };
 
         // Category display config
-        const productCategories = [
+        const allProductCategories = [
             { key: 'sunroom', label: 'Sunroom', icon: 'fa-sun', color: 'amber' },
             { key: 'pergola', label: 'Pergola', icon: 'fa-warehouse', color: 'green' },
             { key: 'blinds', label: 'Zip Blinds', icon: 'fa-align-justify', color: 'purple' }
         ];
+        function getProductCategories() {
+            const slug = getCurrentTenantSlug();
+            if (slug === 'omeya-sin') return allProductCategories.filter(c => c.key === 'blinds');
+            return allProductCategories;
+        }
+        const productCategories = getProductCategories();
 
         // Product 3D icon mapping (per product ID → icon path)
         const productIcons = {
@@ -7070,6 +7201,12 @@
         };
 
         function initProductsPage() {
+            // Hide filter buttons not relevant to current tenant
+            var tenantCatKeys = productCategories.map(function(c) { return c.key; });
+            document.querySelectorAll('.product-filter-btn').forEach(function(btn) {
+                var f = btn.dataset.filter;
+                if (f !== 'all' && tenantCatKeys.indexOf(f) === -1) btn.style.display = 'none';
+            });
             // Render product list from catalog data
             renderProductList();
             // Render initial product detail
@@ -7127,17 +7264,24 @@
             if (editBtn) editBtn.addEventListener('click', () => showToast('Edit Product form will open here — modify product details.', 'info'));
         }
 
+        // Get tenant-filtered product catalog entries
+        function getFilteredCatalogEntries() {
+            const catKeys = productCategories.map(c => c.key);
+            return Object.entries(productCatalog).filter(([k, p]) => catKeys.includes(p.category));
+        }
+
         // Render grouped product list from productCatalog
         function renderProductList() {
             const list = document.getElementById('productList');
             if (!list) return;
-            const totalProducts = Object.keys(productCatalog).length;
+            const filteredEntries = getFilteredCatalogEntries();
+            const totalProducts = filteredEntries.length;
             const countEl = document.getElementById('productCount');
             if (countEl) countEl.textContent = totalProducts + ' items';
 
             let html = '';
             productCategories.forEach(cat => {
-                const products = Object.entries(productCatalog).filter(([k, p]) => p.category === cat.key);
+                const products = filteredEntries.filter(([k, p]) => p.category === cat.key);
                 if (products.length === 0) return;
                 html += `<div class="product-category" data-cat="${cat.key}">
                     <div class="px-4 py-2 bg-gray-50/80 flex items-center justify-between border-b border-gray-100">
@@ -8067,19 +8211,39 @@
             if (section === 'products') renderOverviewProducts();
         }
 
-        // ===== Company Overview: Dummy Data =====
-        const overviewOrdersData = [
-            { id: 'ORD-2024-0156', customer: 'Mr. Johnson', email: 'johnson@email.com', product: 'Classic Sunroom', total: '$18,500', status: 'In Production', statusColor: 'blue', date: 'Mar 10, 2026' },
-            { id: 'ORD-2024-0155', customer: 'Ms. Chen', email: 'chen@email.com', product: 'Studio Pergola', total: '$6,900', status: 'Pending', statusColor: 'amber', date: 'Mar 8, 2026' },
-            { id: 'ORD-2024-0154', customer: 'Mrs. Davis', email: 'davis@email.com', product: 'Zip Blinds Set', total: '$4,200', status: 'Shipped', statusColor: 'purple', date: 'Mar 5, 2026' },
-            { id: 'ORD-2024-0153', customer: 'Mr. Smith', email: 'smith@email.com', product: 'Premium Sunroom', total: '$32,000', status: 'Completed', statusColor: 'green', date: 'Feb 28, 2026' },
-            { id: 'ORD-2024-0152', customer: 'Ms. Garcia', email: 'garcia@email.com', product: 'ADU Studio', total: '$85,000', status: 'In Production', statusColor: 'blue', date: 'Feb 25, 2026' },
-            { id: 'ORD-2024-0151', customer: 'Mr. Wilson', email: 'wilson@email.com', product: 'Classic Pergola', total: '$9,500', status: 'Completed', statusColor: 'green', date: 'Feb 20, 2026' },
-            { id: 'ORD-2024-0150', customer: 'Mrs. Taylor', email: 'taylor@email.com', product: 'Zip Blinds Motorized', total: '$5,800', status: 'Pending', statusColor: 'amber', date: 'Feb 15, 2026' },
-            { id: 'ORD-2024-0149', customer: 'Mr. Anderson', email: 'anderson@email.com', product: 'M-Smart Sunroom', total: '$24,500', status: 'In Production', statusColor: 'blue', date: 'Feb 10, 2026' }
-        ];
+        // ===== Company Overview: Tenant-Aware Data =====
+        function getOverviewOrdersData() {
+            const slug = getCurrentTenantSlug();
+            if (slug === 'omeya-sin') return [
+                { id: 'OMY-ORD-001', customer: 'Miss Xu', email: 'miss.xu@email.com', product: 'Zip Blinds Motorized', total: '$6,500', status: 'Pending', statusColor: 'amber', date: 'Apr 1, 2026' }
+            ];
+            if (slug === 'nestopia-chn') return [
+                { id: 'CHN-ORD-001', customer: 'Larrr Zhang', email: 'larrr.zhang@email.com', product: 'L-Classic Sunroom', total: '$50,000', status: 'Pending', statusColor: 'amber', date: 'Apr 1, 2026' },
+                { id: 'CHN-ORD-002', customer: 'Larrr Zhang', email: 'larrr.zhang@email.com', product: 'Pergola Basic', total: '$15,000', status: 'Pending', statusColor: 'amber', date: 'Apr 1, 2026' },
+                { id: 'CHN-ORD-003', customer: 'Larrr Zhang', email: 'larrr.zhang@email.com', product: 'Zip Blinds Standard', total: '$8,000', status: 'Pending', statusColor: 'amber', date: 'Apr 1, 2026' }
+            ];
+            return [
+                { id: 'ORD-2024-0156', customer: 'Mr. Johnson', email: 'johnson@email.com', product: 'Classic Sunroom', total: '$18,500', status: 'In Production', statusColor: 'blue', date: 'Mar 10, 2026' },
+                { id: 'ORD-2024-0155', customer: 'Ms. Chen', email: 'chen@email.com', product: 'Studio Pergola', total: '$6,900', status: 'Pending', statusColor: 'amber', date: 'Mar 8, 2026' },
+                { id: 'ORD-2024-0154', customer: 'Mrs. Davis', email: 'davis@email.com', product: 'Zip Blinds Set', total: '$4,200', status: 'Shipped', statusColor: 'purple', date: 'Mar 5, 2026' },
+                { id: 'ORD-2024-0153', customer: 'Mr. Smith', email: 'smith@email.com', product: 'Premium Sunroom', total: '$32,000', status: 'Completed', statusColor: 'green', date: 'Feb 28, 2026' },
+                { id: 'ORD-2024-0152', customer: 'Ms. Garcia', email: 'garcia@email.com', product: 'ADU Studio', total: '$85,000', status: 'In Production', statusColor: 'blue', date: 'Feb 25, 2026' },
+                { id: 'ORD-2024-0151', customer: 'Mr. Wilson', email: 'wilson@email.com', product: 'Classic Pergola', total: '$9,500', status: 'Completed', statusColor: 'green', date: 'Feb 20, 2026' },
+                { id: 'ORD-2024-0150', customer: 'Mrs. Taylor', email: 'taylor@email.com', product: 'Zip Blinds Motorized', total: '$5,800', status: 'Pending', statusColor: 'amber', date: 'Feb 15, 2026' },
+                { id: 'ORD-2024-0149', customer: 'Mr. Anderson', email: 'anderson@email.com', product: 'M-Smart Sunroom', total: '$24,500', status: 'In Production', statusColor: 'blue', date: 'Feb 10, 2026' }
+            ];
+        }
+        const overviewOrdersData = getOverviewOrdersData();
 
-        const overviewCustomersData = [
+        function getOverviewCustomersData() {
+            const slug = getCurrentTenantSlug();
+            if (slug === 'omeya-sin') return [
+                { name: 'Miss Xu', email: 'miss.xu@email.com', location: '88 Orchard Road, Singapore', projects: 1, spent: '$0', status: 'New', avatar: 'X' }
+            ];
+            if (slug === 'nestopia-chn') return [
+                { name: 'Larrr Zhang', email: 'larrr.zhang@email.com', location: '1288 Nanjing West Rd, Shanghai', projects: 3, spent: '$0', status: 'New', avatar: 'Z' }
+            ];
+            return [
             { name: 'Mr. Johnson', email: 'johnson@email.com', location: '123 Sunshine Ave, Los Angeles, CA', projects: 3, spent: '$42,500', status: 'VIP', avatar: 'J' },
             { name: 'Ms. Chen', email: 'chen@email.com', location: '456 Oak Dr, Frederick, MD', projects: 1, spent: '$6,900', status: 'Active', avatar: 'C' },
             { name: 'Mrs. Davis', email: 'davis@email.com', location: '789 Pool Ln, Scottsdale, AZ', projects: 2, spent: '$12,800', status: 'Active', avatar: 'D' },
@@ -8098,9 +8262,18 @@
             { name: 'Mr. Lewis', email: 'lewis@email.com', location: '100 Willow Dr, Raleigh, NC', projects: 1, spent: '$7,500', status: 'New', avatar: 'L' },
             { name: 'Ms. Robinson', email: 'robinson@email.com', location: '200 Ivy Ct, Atlanta, GA', projects: 1, spent: '$19,200', status: 'Active', avatar: 'R' },
             { name: 'Mr. Walker', email: 'walker@email.com', location: '300 Magnolia Blvd, Orlando, FL', projects: 2, spent: '$35,600', status: 'Active', avatar: 'W' }
-        ];
+            ];
+        }
+        const overviewCustomersData = getOverviewCustomersData();
 
-        const overviewProductsData = [
+        function getOverviewProductsData() {
+            const slug = getCurrentTenantSlug();
+            if (slug === 'omeya-sin') return [
+                { name: 'Zip Blinds Standard', category: 'Zip Blinds', price: 'Manual', status: 'Active', color: 'purple', filterKey: 'blinds', catalogId: 'zb-manual' },
+                { name: 'Zip Blinds Motorized', category: 'Zip Blinds', price: 'Electric', status: 'Active', color: 'purple', filterKey: 'blinds', catalogId: 'zb-motorized' }
+            ];
+            // nestopia-chn and default/partner1/partner2 share all products
+            return [
             { name: 'L-Classic Sunroom', category: 'Sunroom · Classic', price: 'Manual', status: 'Active', color: 'amber', filterKey: 'sunroom', catalogId: 'sr-l-classic' },
             { name: 'L-Smart Sunroom', category: 'Sunroom · Smart', price: 'Motorized', status: 'Active', color: 'amber', filterKey: 'sunroom', catalogId: 'sr-l-smart' },
             { name: 'L-Pro Sunroom', category: 'Sunroom · Pro', price: 'Solar+Motor', status: 'Active', color: 'amber', filterKey: 'sunroom', catalogId: 'sr-l-pro' },
@@ -8111,7 +8284,9 @@
             { name: 'Pergola Classic', category: 'Pergola · Classic', price: 'Motorized', status: 'Active', color: 'green', filterKey: 'pergola', catalogId: 'pg-classic' },
             { name: 'Zip Blinds Standard', category: 'Zip Blinds', price: 'Manual', status: 'Active', color: 'purple', filterKey: 'blinds', catalogId: 'zb-manual' },
             { name: 'Zip Blinds Motorized', category: 'Zip Blinds', price: 'Electric', status: 'Active', color: 'purple', filterKey: 'blinds', catalogId: 'zb-motorized' }
-        ];
+            ];
+        }
+        const overviewProductsData = getOverviewProductsData();
 
         function renderOverviewOrders() {
             const tbody = document.getElementById('overviewOrdersBody');
@@ -8182,8 +8357,11 @@
                 });
             });
 
-            // --- Overview filter buttons ---
+            // --- Overview filter buttons (hide non-tenant categories) ---
+            var ovTenantCatKeys = productCategories.map(function(c) { return c.key; });
             document.querySelectorAll('.ov-product-filter-btn').forEach(btn => {
+                var f = btn.dataset.filter;
+                if (f !== 'all' && ovTenantCatKeys.indexOf(f) === -1) { btn.style.display = 'none'; }
                 btn.addEventListener('click', function() {
                     document.querySelectorAll('.ov-product-filter-btn').forEach(b => {
                         b.classList.remove('bg-gray-900', 'text-white');
@@ -8676,6 +8854,31 @@
             a7_decision_timeline: '2_4_weeks',
             a8_additional_notes: 'Planning to use as home office + guest suite. Need proper insulation and HVAC.',
             _modules: { 'A.1': 'completed', 'A.2': 'completed', 'A.3': 'completed', 'A.4': 'completed', 'A.5': 'completed', 'A.6': 'completed', 'A.7': 'completed', 'A.8': 'partial' }
+        };
+
+        // ===== Omeya-SIN: MX Zip Blinds =====
+        intakeFormData['OMY-WF-001'] = {
+            a1_client_name: 'Miss Xu', a1_address_street: '88 Orchard Road, #12-01', a1_address_city: 'Singapore', a1_address_state: 'SG', a1_address_zip: '238839',
+            a1_phone: '+65 9123-4567', a1_email: 'miss.xu@email.com', a1_preferred_contact: 'phone', a1_other_decision_makers: '',
+            _modules: { 'A.1': 'completed', 'A.2': 'not_started', 'A.3': 'not_started', 'A.4': 'not_started', 'A.5': 'not_started', 'A.6': 'not_started', 'A.7': 'not_started', 'A.8': 'not_started' }
+        };
+        // ===== Nestopia-CHN: LZ Sunroom =====
+        intakeFormData['CHN-WF-001'] = {
+            a1_client_name: 'Larrr Zhang', a1_address_street: '1288 Nanjing West Rd', a1_address_city: 'Shanghai', a1_address_state: 'China', a1_address_zip: '200040',
+            a1_phone: '+86 138-0000-0001', a1_email: 'larrr.zhang@email.com', a1_preferred_contact: 'phone', a1_other_decision_makers: '',
+            _modules: { 'A.1': 'completed', 'A.2': 'not_started', 'A.3': 'not_started', 'A.4': 'not_started', 'A.5': 'not_started', 'A.6': 'not_started', 'A.7': 'not_started', 'A.8': 'not_started' }
+        };
+        // ===== Nestopia-CHN: LZ Pergola =====
+        intakeFormData['CHN-WF-002'] = {
+            a1_client_name: 'Larrr Zhang', a1_address_street: '1288 Nanjing West Rd', a1_address_city: 'Shanghai', a1_address_state: 'China', a1_address_zip: '200040',
+            a1_phone: '+86 138-0000-0001', a1_email: 'larrr.zhang@email.com', a1_preferred_contact: 'phone', a1_other_decision_makers: '',
+            _modules: { 'A.1': 'completed', 'A.2': 'not_started', 'A.3': 'not_started', 'A.4': 'not_started', 'A.5': 'not_started', 'A.6': 'not_started', 'A.7': 'not_started', 'A.8': 'not_started' }
+        };
+        // ===== Nestopia-CHN: LZ Zip Blinds =====
+        intakeFormData['CHN-WF-003'] = {
+            a1_client_name: 'Larrr Zhang', a1_address_street: '1288 Nanjing West Rd', a1_address_city: 'Shanghai', a1_address_state: 'China', a1_address_zip: '200040',
+            a1_phone: '+86 138-0000-0001', a1_email: 'larrr.zhang@email.com', a1_preferred_contact: 'phone', a1_other_decision_makers: '',
+            _modules: { 'A.1': 'completed', 'A.2': 'not_started', 'A.3': 'not_started', 'A.4': 'not_started', 'A.5': 'not_started', 'A.6': 'not_started', 'A.7': 'not_started', 'A.8': 'not_started' }
         };
 
         const INTAKE_MODULE_FIELDS = {
@@ -11418,7 +11621,8 @@
         }
 
         // ===== Projects Page: Master-Detail =====
-        const allProjectsData = [
+        // --- Greenscape Builders (default/partner1) Projects ---
+        const greenscapeProjects = [
             { id: 'PRJ-001', name: 'Johnson Residence Sunroom', customer: 'Mr. Johnson', customerEmail: 'johnson@email.com', customerPhone: '(310) 555-0101', customerAddress: '123 Sunshine Ave, Los Angeles, CA', type: 'Sunroom', workflowStep: 3, stage: 'measurement', riskLevel: 'high', budget: 35000, paid: 18500, timeline: '6 weeks', startDate: '2026-01-15', risks: [{title:'Permit approval delayed by city', severity:'high', status:'open'},{title:'HOA design review pending', severity:'medium', status:'monitoring'}], issues: [{id:'ISS-001', title:'Permit approval delayed by city', priority:'high', status:'open', assignedTo:'John Smith', dueDate:'2026-03-15'},{title:'HOA documentation incomplete', priority:'medium', status:'in_progress', assignedTo:'Emily Davis', dueDate:'2026-03-20'}], order: {id:'ORD-2024-0156', product:'Classic Sunroom', total:'$18,500', status:'In Production', date:'Mar 10, 2026'}, hidden: true },
             { id: 'PRJ-002', name: 'Martinez ADU Project', customer: 'Ms. Martinez', customerEmail: 'martinez@email.com', customerPhone: '(415) 555-0202', customerAddress: '456 Oak Dr, San Francisco, CA', type: 'ADU', workflowStep: 2, stage: 'design', riskLevel: 'high', budget: 95000, paid: 1100, timeline: '12 weeks', startDate: '2026-02-01', risks: [{title:'HOA approval uncertain', severity:'high', status:'open'}], issues: [{title:'Zoning variance needed', priority:'high', status:'open', assignedTo:'John Smith', dueDate:'2026-03-25'}], order: {id:'ORD-2024-0152', product:'ADU Studio', total:'$85,000', status:'Pending', date:'Feb 25, 2026'}, hidden: true },
             { id: 'PRJ-003', name: 'Smith Premium Sunroom', customer: 'Mr. Smith', customerEmail: 'smith@email.com', customerPhone: '(512) 555-0303', customerAddress: '321 Elm St, Austin, TX', type: 'Sunroom', workflowStep: 2, stage: 'design', riskLevel: 'low', budget: 42000, paid: 4200, timeline: '8 weeks', startDate: '2026-02-15', risks: [], issues: [], order: {id:'ORD-2024-0153', product:'Premium Sunroom', total:'$32,000', status:'Pending', date:'Mar 15, 2026'}, measurement: { method: 'Manual precision', surveyor: 'John Martinez (#948721)', date: '2026-01-25', dims: "24' x 16' x 10'", foundation: 'Concrete slab 4"', wallBearing: 'Adequate - wood frame', setback: '12ft actual (5ft req) — OK', drainage: '2.1% slope — OK', obstacles: ['Downspout NE corner', 'Gas meter E wall'] } },
@@ -11428,6 +11632,28 @@
             { id: 'PRJ-007', name: 'Taylor Backyard Sunroom', customer: 'Mr. Taylor', customerEmail: 'taylor@email.com', customerPhone: '(206) 555-0707', customerAddress: '159 Birch Ave, Seattle, WA', type: 'Sunroom', workflowStep: 5, stage: 'production', riskLevel: 'low', budget: 28000, paid: 25200, timeline: '6 weeks', startDate: '2025-12-15', risks: [], issues: [], order: {id:'ORD-2024-0149', product:'Classic Sunroom', total:'$28,000', status:'In Production', date:'Feb 15, 2026'}, hidden: true },
             { id: 'PRJ-008', name: 'Garcia Outdoor ADU', customer: 'Ms. Garcia', customerEmail: 'garcia@email.com', customerPhone: '(619) 555-0808', customerAddress: '654 Pine Rd, San Diego, CA', type: 'ADU', workflowStep: 1, stage: 'intent', riskLevel: 'low', budget: 110000, paid: 100, timeline: '16 weeks', startDate: '2026-03-01', risks: [], issues: [], order: {id:'ORD-2024-0158', product:'ADU Studio', total:'$85,000', status:'Pending', date:'Mar 12, 2026'}, hidden: true }
         ];
+
+        // --- Omeya-SIN Projects (Zip Blinds only, 1 project: MX for Miss Xu) ---
+        const omeyaSinProjects = [
+            { id: 'OMY-001', name: 'MX Zip Blinds', customer: 'Miss Xu', customerEmail: 'miss.xu@email.com', customerPhone: '+65 9123-4567', customerAddress: '88 Orchard Road, #12-01, Singapore 238839', type: 'Zip Blinds', workflowStep: 1, stage: 'intent', riskLevel: 'low', budget: 6500, paid: 0, timeline: '3 weeks', startDate: '2026-04-01', risks: [], issues: [], order: null }
+        ];
+
+        // --- Nestopia-CHN Projects (All products, 1 customer: Larrr Zhang, 3 projects at Step 1) ---
+        const nestopiaChnProjects = [
+            { id: 'CHN-001', name: 'LZ Sunroom', customer: 'Larrr Zhang', customerEmail: 'larrr.zhang@email.com', customerPhone: '+86 138-0000-0001', customerAddress: '1288 Nanjing West Rd, Shanghai, China', type: 'Sunroom', workflowStep: 1, stage: 'intent', riskLevel: 'low', budget: 50000, paid: 0, timeline: '8 weeks', startDate: '2026-04-01', risks: [], issues: [], order: null },
+            { id: 'CHN-002', name: 'LZ Pergola', customer: 'Larrr Zhang', customerEmail: 'larrr.zhang@email.com', customerPhone: '+86 138-0000-0001', customerAddress: '1288 Nanjing West Rd, Shanghai, China', type: 'Pergola', workflowStep: 1, stage: 'intent', riskLevel: 'low', budget: 15000, paid: 0, timeline: '4 weeks', startDate: '2026-04-01', risks: [], issues: [], order: null },
+            { id: 'CHN-003', name: 'LZ Zip Blinds', customer: 'Larrr Zhang', customerEmail: 'larrr.zhang@email.com', customerPhone: '+86 138-0000-0001', customerAddress: '1288 Nanjing West Rd, Shanghai, China', type: 'Zip Blinds', workflowStep: 1, stage: 'intent', riskLevel: 'low', budget: 8000, paid: 0, timeline: '3 weeks', startDate: '2026-04-01', risks: [], issues: [], order: null }
+        ];
+
+        // --- Select projects based on current tenant ---
+        const tenantProjectsMap = {
+            'default': greenscapeProjects,
+            'partner1': greenscapeProjects,
+            'partner2': greenscapeProjects,
+            'omeya-sin': omeyaSinProjects,
+            'nestopia-chn': nestopiaChnProjects
+        };
+        let allProjectsData = tenantProjectsMap[getCurrentTenantSlug()] || greenscapeProjects;
 
         let currentProjectFilter = 'all';
 
@@ -11732,6 +11958,7 @@
         }
 
         // ===== Initialize =====
+        function initAIDesignerPage() { /* placeholder – AI Designer module pending */ }
         document.addEventListener('DOMContentLoaded', function() {
             if (checkAuth()) {
                 loadDashboardData();
@@ -11808,7 +12035,7 @@
             ]
         };
 
-        const workflowProjects = [
+        const greenscapeWorkflowProjects = [
             {
                 id: 'PRJ-20260316-W001', name: 'Williams Residence - Retractable Sunroom',
                 customer: 'David Williams', phone: '(310) 555-0567', email: 'david.williams@gmail.com',
@@ -11863,6 +12090,56 @@
                 notes: 'East Sacramento craftsman. Combined sunroom + separate pergola for BBQ. Family of 6. Contract $62,800.'
             }
         ];
+
+        function getWorkflowProjects() {
+            var slug = getCurrentTenantSlug();
+            if (slug === 'omeya-sin') return [
+                {
+                    id: 'OMY-WF-001', name: 'MX Zip Blinds',
+                    customer: 'Miss Xu', phone: '+65 9123-4567', email: 'miss.xu@email.com',
+                    address: '88 Orchard Road, #12-01, Singapore 238839', type: 'Zip Blinds', workflowStep: 1,
+                    budget: '$6,500', contractTotal: null, sqft: 120, createdAt: '2026-04-01',
+                    payments: { intent: null, design: null, deposit: null, production: null, final: null },
+                    checklist: { 1: { total: 5, done: 0 } }, documents: { 1: 0 },
+                    hoa: 'N/A', questionnaire: 'draft',
+                    notes: 'New client inquiry for motorized zip blinds installation at Orchard Road condo.'
+                }
+            ];
+            if (slug === 'nestopia-chn') return [
+                {
+                    id: 'CHN-WF-001', name: 'LZ Sunroom',
+                    customer: 'Larrr Zhang', phone: '+86 138-0000-0001', email: 'larrr.zhang@email.com',
+                    address: '1288 Nanjing West Rd, Jing\'an District, Shanghai, China', type: 'Sunroom', workflowStep: 1,
+                    budget: '$50,000', contractTotal: null, sqft: 400, createdAt: '2026-04-01',
+                    payments: { intent: null, design: null, deposit: null, production: null, final: null },
+                    checklist: { 1: { total: 5, done: 0 } }, documents: { 1: 0 },
+                    hoa: 'N/A', questionnaire: 'draft',
+                    notes: 'Premium sunroom project for Larrr Zhang residence in Shanghai. L-Classic model preferred.'
+                },
+                {
+                    id: 'CHN-WF-002', name: 'LZ Pergola',
+                    customer: 'Larrr Zhang', phone: '+86 138-0000-0001', email: 'larrr.zhang@email.com',
+                    address: '1288 Nanjing West Rd, Jing\'an District, Shanghai, China', type: 'Pergola', workflowStep: 1,
+                    budget: '$15,000', contractTotal: null, sqft: 200, createdAt: '2026-04-01',
+                    payments: { intent: null, design: null, deposit: null, production: null, final: null },
+                    checklist: { 1: { total: 5, done: 0 } }, documents: { 1: 0 },
+                    hoa: 'N/A', questionnaire: 'draft',
+                    notes: 'Pergola for outdoor dining area at Zhang residence. Pergola Basic model.'
+                },
+                {
+                    id: 'CHN-WF-003', name: 'LZ Zip Blinds',
+                    customer: 'Larrr Zhang', phone: '+86 138-0000-0001', email: 'larrr.zhang@email.com',
+                    address: '1288 Nanjing West Rd, Jing\'an District, Shanghai, China', type: 'Zip Blinds', workflowStep: 1,
+                    budget: '$8,000', contractTotal: null, sqft: 80, createdAt: '2026-04-01',
+                    payments: { intent: null, design: null, deposit: null, production: null, final: null },
+                    checklist: { 1: { total: 5, done: 0 } }, documents: { 1: 0 },
+                    hoa: 'N/A', questionnaire: 'draft',
+                    notes: 'Zip blinds for pergola area wind protection. Standard manual model.'
+                }
+            ];
+            return greenscapeWorkflowProjects;
+        }
+        const workflowProjects = getWorkflowProjects();
 
         function getStepMeta(step) { return WORKFLOW_STEPS.find(s => s.step === step) || WORKFLOW_STEPS[0]; }
 
@@ -11966,7 +12243,7 @@
             var project = workflowProjects.find(function(p) { return p.id === projectId; });
             if (!project) return;
             var modal = document.getElementById('projectDetailModal');
-            var content = document.getElementById('projectDetailContent');
+            var content = document.getElementById('wfProjectDetailContent');
             var meta = getStepMeta(project.workflowStep);
             var cl = getChecklistProgress(project);
             var uploads = STEP_UPLOADS[project.workflowStep] || [];
@@ -12064,6 +12341,7 @@
                 '</div></div>' +
                 '<div class="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50 rounded-b-2xl"><div class="text-sm text-gray-500">' + meta.desc + '</div>' +
                 '<div class="flex items-center gap-3"><button onclick="closeProjectDetail()" class="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-100 transition">Close</button>' +
+                '<button class="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition" onclick="openQuotationEditor(\'' + project.id + '\')"><i class="fas fa-file-invoice-dollar mr-1"></i>Generate Quotation</button>' +
                 (project.workflowStep < 6 ? '<button class="px-4 py-2 text-sm bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition" onclick="advanceStep(\'' + project.id + '\')"><i class="fas fa-arrow-right mr-1"></i>Advance to Step ' + (project.workflowStep + 1) + '</button>' : '') +
                 '</div></div>';
 
@@ -12092,29 +12370,317 @@
             alert('New Project\n\n1. Select/create customer\n2. Fill project info\n3. Start Intake Questionnaire (Appendix A)\n4. Project starts at Step 1: Intent\n\n(Backend integration pending)');
         }
 
-        // ===== Projects Management (Risk & Issues) =====
-        const projectsDummyData = [
-            { id: 'PRJ-001', name: 'Johnson Residence', customer: 'Robert Johnson', type: 'Pergola', stage: 'permit', budget: 35000, timeline: '6 weeks', riskLevel: 'high', issues: 2 },
-            { id: 'PRJ-002', name: 'Martinez ADU', customer: 'Carlos Martinez', type: 'ADU', stage: 'design', budget: 125000, timeline: '14 weeks', riskLevel: 'high', issues: 1 },
-            { id: 'PRJ-003', name: 'Smith Sunroom', customer: 'Jennifer Smith', type: 'Sunroom', stage: 'manufacturing', budget: 58000, timeline: '8 weeks', riskLevel: 'medium', issues: 1 },
-            { id: 'PRJ-004', name: 'Chen Pergola', customer: 'David Chen', type: 'Pergola', stage: 'installation', budget: 42000, timeline: '4 weeks', riskLevel: 'medium', issues: 0 },
-            { id: 'PRJ-005', name: 'Davis Commercial', customer: 'ABC Restaurant', type: 'Commercial Pergola', stage: 'design', budget: 95000, timeline: '10 weeks', riskLevel: 'medium', issues: 1 },
-            { id: 'PRJ-006', name: 'Wilson Residence', customer: 'Sarah Wilson', type: 'Sunroom', stage: 'installation', budget: 52000, timeline: '6 weeks', riskLevel: 'low', issues: 0 },
-            { id: 'PRJ-007', name: 'Taylor Backyard', customer: 'Michael Taylor', type: 'Pergola', stage: 'completed', budget: 38000, timeline: '5 weeks', riskLevel: 'low', issues: 0 },
-            { id: 'PRJ-008', name: 'Anderson Patio', customer: 'Lisa Anderson', type: 'Zip Blinds', stage: 'completed', budget: 12000, timeline: '2 weeks', riskLevel: 'low', issues: 0 },
-            { id: 'PRJ-009', name: 'Thomas Deck', customer: 'James Thomas', type: 'Pergola', stage: 'permit', budget: 45000, timeline: '7 weeks', riskLevel: 'low', issues: 0 },
-            { id: 'PRJ-010', name: 'Brown Garden', customer: 'Patricia Brown', type: 'Sunroom', stage: 'design', budget: 67000, timeline: '9 weeks', riskLevel: 'low', issues: 0 },
-            { id: 'PRJ-011', name: 'Garcia Outdoor', customer: 'Maria Garcia', type: 'ADU', stage: 'manufacturing', budget: 135000, timeline: '15 weeks', riskLevel: 'low', issues: 0 },
-            { id: 'PRJ-012', name: 'Lee Pavilion', customer: 'Steven Lee', type: 'Pergola', stage: 'installation', budget: 48000, timeline: '6 weeks', riskLevel: 'low', issues: 0 }
+        // ===== Quotation Editor =====
+        var quotLineItemsData = [];
+        var quotAccessoriesData = [];
+        var quotCurrentProjectId = null;
+
+        // Zip Blinds unit price lookup (RMB per m²) - based on product catalog pricing tiers
+        var zbPriceLookup = {
+            'WR110A-78 电动防风卷帘 / Motorized Zip Blinds (≤5.5m)': { defaultPrice: 680, model: 'WR110A-78' },
+            'WR110B-63 电动防风卷帘 / Motorized Zip Blinds (≤3.8m)': { defaultPrice: 580, model: 'WR110B-63' },
+            'WR85 手动防风卷帘 / Manual Zip Blinds (≤3.8m)':       { defaultPrice: 380, model: 'WR85' },
+            'WR85 手动防风卷帘 / Manual Zip Blinds (≤5.5m)':       { defaultPrice: 450, model: 'WR85' }
+        };
+        var zbProductNames = Object.keys(zbPriceLookup);
+
+        var zbAccessoryPresets = [
+            { name: '奥科45-20N电机 配双频遥控器 / A-OK Motor 45-20N w/ remote', spec: '', defaultPrice: 350 },
+            { name: 'WR120 转角立柱 / Corner Post', spec: '', defaultPrice: 180 },
+            { name: '方管立柱 / Square Tube Post', spec: '', defaultPrice: 120 },
+            { name: '安装费 / Installation Fee', spec: '', defaultPrice: 0 }
         ];
 
-        const issuesDummyData = [
-            { id: 'ISS-001', projectId: 'PRJ-001', title: 'Permit approval delayed by city', priority: 'high', status: 'open', assignedTo: 'John Smith', dueDate: '2026-03-15' },
-            { id: 'ISS-002', projectId: 'PRJ-001', title: 'HOA requires additional documentation', priority: 'medium', status: 'in_progress', assignedTo: 'Emily Davis', dueDate: '2026-03-18' },
-            { id: 'ISS-003', projectId: 'PRJ-002', title: 'HOA architectural review pending', priority: 'high', status: 'open', assignedTo: 'John Smith', dueDate: '2026-03-14' },
-            { id: 'ISS-004', projectId: 'PRJ-003', title: 'Material delivery delayed 1 week', priority: 'medium', status: 'in_progress', assignedTo: 'Mike Johnson', dueDate: '2026-03-20' },
-            { id: 'ISS-005', projectId: 'PRJ-005', title: 'Budget review with client needed', priority: 'medium', status: 'open', assignedTo: 'Emily Davis', dueDate: '2026-03-16' }
-        ];
+        function openQuotationEditor(projectId) {
+            quotCurrentProjectId = projectId;
+            var project = workflowProjects.find(function(p) { return p.id === projectId; });
+            if (!project) return;
+
+            // Auto-fill client info
+            document.getElementById('quotProjectRef').textContent = project.name + ' (' + project.id + ')';
+            document.getElementById('quotClientName').value = project.customer || '';
+            document.getElementById('quotClientPhone').value = project.phone || '';
+            document.getElementById('quotCSRep').value = '';
+
+            // Reset line items with one default row
+            quotLineItemsData = [{ product: zbProductNames[0], width: 3000, height: 2500, unitPrice: zbPriceLookup[zbProductNames[0]].defaultPrice, qty: 1 }];
+            quotAccessoriesData = [];
+            renderQuotLineItems();
+            renderQuotAccessories();
+            updateQuotTotals();
+
+            // Close project detail and open quotation
+            document.getElementById('projectDetailModal').classList.add('hidden');
+            document.getElementById('quotationModal').classList.remove('hidden');
+        }
+
+        function closeQuotationEditor() {
+            document.getElementById('quotationModal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function addQuotLineItem() {
+            quotLineItemsData.push({ product: zbProductNames[0], width: 3000, height: 2500, unitPrice: zbPriceLookup[zbProductNames[0]].defaultPrice, qty: 1 });
+            renderQuotLineItems();
+            updateQuotTotals();
+        }
+
+        function removeQuotLineItem(idx) {
+            quotLineItemsData.splice(idx, 1);
+            renderQuotLineItems();
+            updateQuotTotals();
+        }
+
+        function addQuotAccessory() {
+            var preset = zbAccessoryPresets[0];
+            quotAccessoriesData.push({ name: preset.name, spec: preset.spec, unitPrice: preset.defaultPrice, qty: 1 });
+            renderQuotAccessories();
+            updateQuotTotals();
+        }
+
+        function removeQuotAccessory(idx) {
+            quotAccessoriesData.splice(idx, 1);
+            renderQuotAccessories();
+            updateQuotTotals();
+        }
+
+        function calcArea(w, h) { return (w * h) / 1000000; }
+
+        function renderQuotLineItems() {
+            var tbody = document.getElementById('quotLineItems');
+            if (!tbody) return;
+            var optionsHtml = zbProductNames.map(function(n) { return '<option value="' + n + '">' + n + '</option>'; }).join('');
+            tbody.innerHTML = quotLineItemsData.map(function(item, i) {
+                var area = calcArea(item.width, item.height);
+                var amount = area * item.unitPrice * item.qty;
+                return '<tr class="border-t border-gray-100 hover:bg-blue-50/30">' +
+                    '<td class="py-2 px-3 text-gray-400 text-xs">' + (i + 1) + '</td>' +
+                    '<td class="py-2 px-3"><select onchange="quotLineItemsData[' + i + '].product=this.value;var lk=zbPriceLookup[this.value];if(lk){quotLineItemsData[' + i + '].unitPrice=lk.defaultPrice;renderQuotLineItems();updateQuotTotals();}" class="w-full px-2 py-1.5 border border-gray-200 rounded text-xs focus:ring-1 focus:ring-blue-400">' + optionsHtml.replace('value="' + item.product + '"', 'value="' + item.product + '" selected') + '</select></td>' +
+                    '<td class="py-2 px-3"><input type="number" value="' + item.width + '" onchange="quotLineItemsData[' + i + '].width=Number(this.value);renderQuotLineItems();updateQuotTotals();" class="w-full px-2 py-1.5 border border-gray-200 rounded text-xs text-center focus:ring-1 focus:ring-blue-400"></td>' +
+                    '<td class="py-2 px-3"><input type="number" value="' + item.height + '" onchange="quotLineItemsData[' + i + '].height=Number(this.value);renderQuotLineItems();updateQuotTotals();" class="w-full px-2 py-1.5 border border-gray-200 rounded text-xs text-center focus:ring-1 focus:ring-blue-400"></td>' +
+                    '<td class="py-2 px-3 text-center text-xs font-medium text-gray-700">' + area.toFixed(2) + '</td>' +
+                    '<td class="py-2 px-3"><input type="number" value="' + item.unitPrice + '" step="1" onchange="quotLineItemsData[' + i + '].unitPrice=Number(this.value);renderQuotLineItems();updateQuotTotals();" class="w-full px-2 py-1.5 border border-gray-200 rounded text-xs text-center focus:ring-1 focus:ring-blue-400"></td>' +
+                    '<td class="py-2 px-3"><input type="number" value="' + item.qty + '" min="1" onchange="quotLineItemsData[' + i + '].qty=Number(this.value);renderQuotLineItems();updateQuotTotals();" class="w-full px-2 py-1.5 border border-gray-200 rounded text-xs text-center focus:ring-1 focus:ring-blue-400"></td>' +
+                    '<td class="py-2 px-3 text-right text-xs font-semibold text-gray-900">' + amount.toFixed(2) + '</td>' +
+                    '<td class="py-2 px-3"><button onclick="removeQuotLineItem(' + i + ')" class="text-red-400 hover:text-red-600 transition"><i class="fas fa-trash-alt text-xs"></i></button></td></tr>';
+            }).join('');
+        }
+
+        function renderQuotAccessories() {
+            var tbody = document.getElementById('quotAccessories');
+            if (!tbody) return;
+            var presetOpts = zbAccessoryPresets.map(function(p) { return '<option value="' + p.name + '">' + p.name + '</option>'; }).join('') + '<option value="__custom">自定义 / Custom</option>';
+            tbody.innerHTML = quotAccessoriesData.map(function(item, i) {
+                var amount = item.unitPrice * item.qty;
+                return '<tr class="border-t border-gray-100 hover:bg-purple-50/30">' +
+                    '<td class="py-2 px-3 text-gray-400 text-xs">' + (i + 1) + '</td>' +
+                    '<td class="py-2 px-3"><select onchange="var v=this.value;if(v===\'__custom\'){quotAccessoriesData[' + i + '].name=\'\';quotAccessoriesData[' + i + '].unitPrice=0;}else{quotAccessoriesData[' + i + '].name=v;var pr=zbAccessoryPresets.find(function(p){return p.name===v;});if(pr)quotAccessoriesData[' + i + '].unitPrice=pr.defaultPrice;}renderQuotAccessories();updateQuotTotals();" class="w-full px-2 py-1.5 border border-gray-200 rounded text-xs focus:ring-1 focus:ring-blue-400">' + presetOpts.replace('value="' + item.name + '"', 'value="' + item.name + '" selected') + '</select></td>' +
+                    '<td class="py-2 px-3"><input type="text" value="' + (item.spec || '') + '" onchange="quotAccessoriesData[' + i + '].spec=this.value;" class="w-full px-2 py-1.5 border border-gray-200 rounded text-xs text-center focus:ring-1 focus:ring-blue-400" placeholder="规格"></td>' +
+                    '<td class="py-2 px-3"><input type="number" value="' + item.unitPrice + '" step="1" onchange="quotAccessoriesData[' + i + '].unitPrice=Number(this.value);renderQuotAccessories();updateQuotTotals();" class="w-full px-2 py-1.5 border border-gray-200 rounded text-xs text-center focus:ring-1 focus:ring-blue-400"></td>' +
+                    '<td class="py-2 px-3"><input type="number" value="' + item.qty + '" min="1" onchange="quotAccessoriesData[' + i + '].qty=Number(this.value);renderQuotAccessories();updateQuotTotals();" class="w-full px-2 py-1.5 border border-gray-200 rounded text-xs text-center focus:ring-1 focus:ring-blue-400"></td>' +
+                    '<td class="py-2 px-3 text-right text-xs font-semibold text-gray-900">' + amount.toFixed(2) + '</td>' +
+                    '<td class="py-2 px-3"><button onclick="removeQuotAccessory(' + i + ')" class="text-red-400 hover:text-red-600 transition"><i class="fas fa-trash-alt text-xs"></i></button></td></tr>';
+            }).join('');
+        }
+
+        function updateQuotTotals() {
+            var prodTotal = 0;
+            quotLineItemsData.forEach(function(item) {
+                prodTotal += calcArea(item.width, item.height) * item.unitPrice * item.qty;
+            });
+            var accTotal = 0;
+            quotAccessoriesData.forEach(function(item) { accTotal += item.unitPrice * item.qty; });
+
+            var discount = Number(document.getElementById('quotDiscount').value) || 0;
+            var grandRMB = (prodTotal + accTotal) * (1 - discount / 100);
+
+            document.getElementById('quotSubProducts').textContent = '¥' + prodTotal.toFixed(2);
+            document.getElementById('quotSubAccessories').textContent = '¥' + accTotal.toFixed(2);
+            document.getElementById('quotTotalRMB').textContent = '¥' + grandRMB.toFixed(2);
+
+            var currency = document.getElementById('quotCurrency').value;
+            var rate = Number(document.getElementById('quotExchangeRate').value) || 1;
+            var foreignRow = document.getElementById('quotForeignRow');
+            if (currency === 'RMB') {
+                foreignRow.style.display = 'none';
+            } else {
+                foreignRow.style.display = '';
+                var foreignAmount = grandRMB / rate;
+                var symbol = currency === 'SGD' ? 'S$' : '$';
+                document.getElementById('quotForeignLabel').textContent = currency;
+                document.getElementById('quotTotalForeign').textContent = symbol + foreignAmount.toFixed(2);
+            }
+        }
+
+        function previewQuotation() {
+            var client = document.getElementById('quotClientName').value || '';
+            var phone = document.getElementById('quotClientPhone').value || '';
+            var csRep = document.getElementById('quotCSRep').value || '';
+            var profileColor = document.getElementById('quotProfileColor').value || '';
+            var fabric = document.getElementById('quotFabric').value || '';
+            var fabricColor = document.getElementById('quotFabricColor').value || '';
+            var currency = document.getElementById('quotCurrency').value;
+            var rate = Number(document.getElementById('quotExchangeRate').value) || 1;
+            var discount = Number(document.getElementById('quotDiscount').value) || 0;
+            var remarks = document.getElementById('quotRemarks').value || '';
+            var today = new Date();
+            var dateStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+
+            var tenantCfg = tenantConfigs[getCurrentTenantSlug()] || tenantConfigs['default'];
+
+            // Build product rows
+            var prodTotal = 0;
+            var prodRowsHtml = quotLineItemsData.map(function(item, i) {
+                var area = calcArea(item.width, item.height);
+                var amount = area * item.unitPrice * item.qty;
+                prodTotal += amount;
+                return '<tr>' +
+                    '<td style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;color:#6b7280;">' + (i + 1) + '</td>' +
+                    '<td style="border:1px solid #d1d5db;padding:8px 10px;font-weight:500;">' + item.product + '</td>' +
+                    '<td style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;">' + item.width + '</td>' +
+                    '<td style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;">' + item.height + '</td>' +
+                    '<td style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-weight:500;">' + area.toFixed(2) + '</td>' +
+                    '<td style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;">' + item.unitPrice.toFixed(2) + '</td>' +
+                    '<td style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;">' + item.qty + '</td>' +
+                    '<td style="border:1px solid #d1d5db;padding:8px 10px;text-align:right;font-weight:600;">' + amount.toFixed(2) + '</td></tr>';
+            }).join('');
+
+            // Build accessory rows
+            var accTotal = 0;
+            var accRowsHtml = quotAccessoriesData.map(function(item, i) {
+                var amount = item.unitPrice * item.qty;
+                accTotal += amount;
+                return '<tr>' +
+                    '<td style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;color:#6b7280;">' + (quotLineItemsData.length + i + 1) + '</td>' +
+                    '<td style="border:1px solid #d1d5db;padding:8px 10px;font-weight:500;" colspan="4">' + item.name + (item.spec ? ' (' + item.spec + ')' : '') + '</td>' +
+                    '<td style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;">' + item.unitPrice.toFixed(2) + '</td>' +
+                    '<td style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;">' + item.qty + '</td>' +
+                    '<td style="border:1px solid #d1d5db;padding:8px 10px;text-align:right;font-weight:600;">' + amount.toFixed(2) + '</td></tr>';
+            }).join('');
+
+            var grandRMB = (prodTotal + accTotal) * (1 - discount / 100);
+            var foreignSymbol = currency === 'SGD' ? 'S$' : '$';
+            var foreignAmount = currency !== 'RMB' ? grandRMB / rate : 0;
+
+            // Total rows
+            var totalRowsHtml = '<tr style="background:#f0f9ff;">' +
+                '<td style="border:1px solid #d1d5db;padding:10px;text-align:center;font-weight:700;" colspan="7">优惠总价 / Preferential Total Price (RMB)</td>' +
+                '<td style="border:1px solid #d1d5db;padding:10px;text-align:right;font-weight:700;font-size:16px;color:#1e40af;">¥' + grandRMB.toFixed(2) + '</td></tr>';
+            if (currency !== 'RMB') {
+                totalRowsHtml += '<tr style="background:#f0f9ff;">' +
+                    '<td style="border:1px solid #d1d5db;padding:10px;text-align:center;font-weight:700;" colspan="7">优惠总价 / Preferential Total Price (' + currency + ')</td>' +
+                    '<td style="border:1px solid #d1d5db;padding:10px;text-align:right;font-weight:700;font-size:16px;color:#1e40af;">' + foreignSymbol + foreignAmount.toFixed(2) + '</td></tr>';
+            }
+
+            // Remarks HTML
+            var remarksHtml = remarks.split('\n').filter(function(l) { return l.trim(); }).map(function(line) {
+                return '<div style="margin-bottom:4px;font-size:12px;color:#374151;line-height:1.6;">' + line + '</div>';
+            }).join('');
+
+            // Exchange rate note
+            var rateNote = '';
+            if (currency !== 'RMB') {
+                rateNote = '<div style="margin-bottom:4px;font-size:12px;color:#374151;line-height:1.6;">' + (remarks.split('\n').length + 1) + '、' + (currency === 'SGD' ? '新币' : '美元') + '兑人民币汇率按照 ' + dateStr + ' 汇率 ' + rate + ' 来计算</div>';
+            }
+
+            // Material spec note
+            var specNote = '<div style="margin-bottom:4px;font-size:12px;color:#374151;line-height:1.6;">' + (remarks.split('\n').length + (currency !== 'RMB' ? 2 : 1)) + '、型材颜色: ' + profileColor + '；面料: ' + (fabricColor ? fabricColor + ' ' : '') + fabric + '</div>';
+
+            // Build final HTML
+            var html = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>防风卷帘报价单 - ' + client + '</title>' +
+                '<style>@page{size:A4;margin:15mm 12mm;}body{font-family:"Microsoft YaHei","Helvetica Neue",Arial,sans-serif;margin:0;padding:20px 30px;color:#111827;font-size:13px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}' +
+                'table{border-collapse:collapse;width:100%;}@media print{.no-print{display:none!important;}body{padding:0;}}</style></head><body>' +
+                '<div style="text-align:center;margin-bottom:24px;">' +
+                '<div style="font-size:22px;font-weight:700;color:#111827;letter-spacing:1px;">' + tenantCfg.name + '</div>' +
+                '<div style="font-size:18px;font-weight:600;color:#1e40af;margin-top:4px;">防风卷帘报价单 / Zip Blinds Quotation</div>' +
+                '<div style="font-size:12px;color:#6b7280;margin-top:4px;">日期 / Date: ' + dateStr + '</div></div>' +
+                '<table style="margin-bottom:20px;"><tr>' +
+                '<td style="padding:4px 0;font-size:13px;width:50%;"><strong>客户姓名 / Client:</strong> ' + client + '</td>' +
+                '<td style="padding:4px 0;font-size:13px;"><strong>客服 / Service:</strong> ' + csRep + '</td></tr><tr>' +
+                '<td style="padding:4px 0;font-size:13px;"><strong>客户电话 / Contact:</strong> ' + phone + '</td>' +
+                '<td style="padding:4px 0;font-size:13px;"><strong>客服电话:</strong> </td></tr></table>' +
+                '<div style="font-size:12px;font-weight:600;color:#6b7280;text-transform:uppercase;margin-bottom:6px;">产品尺寸或规格 / Product Dimensions</div>' +
+                '<table><thead><tr style="background:#f3f4f6;">' +
+                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:11px;color:#6b7280;width:36px;">序号<br>No.</th>' +
+                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:left;font-size:11px;color:#6b7280;">品类 / Product</th>' +
+                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:11px;color:#6b7280;width:60px;">宽<br>mm</th>' +
+                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:11px;color:#6b7280;width:60px;">高<br>mm</th>' +
+                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:11px;color:#6b7280;width:70px;">面积<br>Area(M²)</th>' +
+                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:11px;color:#6b7280;width:80px;">单价<br>(元/M²)</th>' +
+                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:11px;color:#6b7280;width:50px;">数量<br>Qty</th>' +
+                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:right;font-size:11px;color:#6b7280;width:90px;">金额(元)<br>Amount</th></tr></thead><tbody>' +
+                prodRowsHtml + accRowsHtml + totalRowsHtml +
+                '</tbody></table>' +
+                '<div style="margin-top:20px;padding:12px 16px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;">' +
+                '<div style="font-size:12px;font-weight:600;color:#92400e;margin-bottom:8px;">特殊说明 / Special Remarks</div>' +
+                specNote + rateNote + remarksHtml + '</div>' +
+                '<div class="no-print" style="text-align:center;margin-top:30px;"><button onclick="window.print()" style="padding:10px 32px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;">打印 / Print</button></div>' +
+                '</body></html>';
+
+            var w = window.open('', '_blank');
+            if (!w) {
+                // Popup blocked – fall back to an iframe overlay
+                var overlay = document.createElement('div');
+                overlay.id = 'quotPrintOverlay';
+                overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;';
+                var frame = document.createElement('iframe');
+                frame.style.cssText = 'width:90vw;height:92vh;border:none;border-radius:12px;background:#fff;box-shadow:0 25px 50px rgba(0,0,0,.25);';
+                overlay.appendChild(frame);
+                var closeBtn = document.createElement('button');
+                closeBtn.textContent = '✕ Close';
+                closeBtn.style.cssText = 'position:fixed;top:12px;right:24px;z-index:10000;padding:8px 20px;background:#1e293b;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;';
+                closeBtn.onclick = function() { document.body.removeChild(overlay); document.body.removeChild(closeBtn); };
+                document.body.appendChild(overlay);
+                document.body.appendChild(closeBtn);
+                frame.contentDocument.open();
+                frame.contentDocument.write(html);
+                frame.contentDocument.close();
+            } else {
+                w.document.write(html);
+                w.document.close();
+            }
+        }
+
+        // ===== Projects Management (Risk & Issues) =====
+        function getProjectsDummyData() {
+            var slug = getCurrentTenantSlug();
+            if (slug === 'omeya-sin') return [
+                { id: 'OMY-001', name: 'MX Zip Blinds', customer: 'Miss Xu', type: 'Zip Blinds', stage: 'design', budget: 6500, timeline: '3 weeks', riskLevel: 'low', issues: 0 }
+            ];
+            if (slug === 'nestopia-chn') return [
+                { id: 'CHN-001', name: 'LZ Sunroom', customer: 'Larrr Zhang', type: 'Sunroom', stage: 'design', budget: 50000, timeline: '8 weeks', riskLevel: 'low', issues: 0 },
+                { id: 'CHN-002', name: 'LZ Pergola', customer: 'Larrr Zhang', type: 'Pergola', stage: 'design', budget: 15000, timeline: '4 weeks', riskLevel: 'low', issues: 0 },
+                { id: 'CHN-003', name: 'LZ Zip Blinds', customer: 'Larrr Zhang', type: 'Zip Blinds', stage: 'design', budget: 8000, timeline: '3 weeks', riskLevel: 'low', issues: 0 }
+            ];
+            return [
+                { id: 'PRJ-001', name: 'Johnson Residence', customer: 'Robert Johnson', type: 'Pergola', stage: 'permit', budget: 35000, timeline: '6 weeks', riskLevel: 'high', issues: 2 },
+                { id: 'PRJ-002', name: 'Martinez ADU', customer: 'Carlos Martinez', type: 'ADU', stage: 'design', budget: 125000, timeline: '14 weeks', riskLevel: 'high', issues: 1 },
+                { id: 'PRJ-003', name: 'Smith Sunroom', customer: 'Jennifer Smith', type: 'Sunroom', stage: 'manufacturing', budget: 58000, timeline: '8 weeks', riskLevel: 'medium', issues: 1 },
+                { id: 'PRJ-004', name: 'Chen Pergola', customer: 'David Chen', type: 'Pergola', stage: 'installation', budget: 42000, timeline: '4 weeks', riskLevel: 'medium', issues: 0 },
+                { id: 'PRJ-005', name: 'Davis Commercial', customer: 'ABC Restaurant', type: 'Commercial Pergola', stage: 'design', budget: 95000, timeline: '10 weeks', riskLevel: 'medium', issues: 1 },
+                { id: 'PRJ-006', name: 'Wilson Residence', customer: 'Sarah Wilson', type: 'Sunroom', stage: 'installation', budget: 52000, timeline: '6 weeks', riskLevel: 'low', issues: 0 },
+                { id: 'PRJ-007', name: 'Taylor Backyard', customer: 'Michael Taylor', type: 'Pergola', stage: 'completed', budget: 38000, timeline: '5 weeks', riskLevel: 'low', issues: 0 },
+                { id: 'PRJ-008', name: 'Anderson Patio', customer: 'Lisa Anderson', type: 'Zip Blinds', stage: 'completed', budget: 12000, timeline: '2 weeks', riskLevel: 'low', issues: 0 },
+                { id: 'PRJ-009', name: 'Thomas Deck', customer: 'James Thomas', type: 'Pergola', stage: 'permit', budget: 45000, timeline: '7 weeks', riskLevel: 'low', issues: 0 },
+                { id: 'PRJ-010', name: 'Brown Garden', customer: 'Patricia Brown', type: 'Sunroom', stage: 'design', budget: 67000, timeline: '9 weeks', riskLevel: 'low', issues: 0 },
+                { id: 'PRJ-011', name: 'Garcia Outdoor', customer: 'Maria Garcia', type: 'ADU', stage: 'manufacturing', budget: 135000, timeline: '15 weeks', riskLevel: 'low', issues: 0 },
+                { id: 'PRJ-012', name: 'Lee Pavilion', customer: 'Steven Lee', type: 'Pergola', stage: 'installation', budget: 48000, timeline: '6 weeks', riskLevel: 'low', issues: 0 }
+            ];
+        }
+        const projectsDummyData = getProjectsDummyData();
+
+        function getIssuesDummyData() {
+            var slug = getCurrentTenantSlug();
+            if (slug === 'omeya-sin' || slug === 'nestopia-chn') return [];
+            return [
+                { id: 'ISS-001', projectId: 'PRJ-001', title: 'Permit approval delayed by city', priority: 'high', status: 'open', assignedTo: 'John Smith', dueDate: '2026-03-15' },
+                { id: 'ISS-002', projectId: 'PRJ-001', title: 'HOA requires additional documentation', priority: 'medium', status: 'in_progress', assignedTo: 'Emily Davis', dueDate: '2026-03-18' },
+                { id: 'ISS-003', projectId: 'PRJ-002', title: 'HOA architectural review pending', priority: 'high', status: 'open', assignedTo: 'John Smith', dueDate: '2026-03-14' },
+                { id: 'ISS-004', projectId: 'PRJ-003', title: 'Material delivery delayed 1 week', priority: 'medium', status: 'in_progress', assignedTo: 'Mike Johnson', dueDate: '2026-03-20' },
+                { id: 'ISS-005', projectId: 'PRJ-005', title: 'Budget review with client needed', priority: 'medium', status: 'open', assignedTo: 'Emily Davis', dueDate: '2026-03-16' }
+            ];
+        }
+        const issuesDummyData = getIssuesDummyData();
 
         function getPriorityBadge(priority) {
             const badges = {
@@ -12212,19 +12778,61 @@
             renderWorkflowProjects();
             renderProjectsTable();
             renderIssuesTable();
+            // Update workflow stats dynamically based on tenant data
+            var wfTotal = document.getElementById('wfStatTotal');
+            var wfRevenue = document.getElementById('wfStatRevenue');
+            var wfDocs = document.getElementById('wfStatDocs');
+            var wfChecklist = document.getElementById('wfStatChecklist');
+            if (wfTotal) wfTotal.textContent = workflowProjects.length;
+            if (wfRevenue) {
+                var totalBudget = 0;
+                workflowProjects.forEach(function(p) {
+                    if (p.contractTotal) totalBudget += p.contractTotal;
+                    else {
+                        var b = String(p.budget).replace(/[^0-9]/g, '');
+                        if (b) totalBudget += parseInt(b);
+                    }
+                });
+                wfRevenue.textContent = totalBudget >= 1000 ? '$' + Math.round(totalBudget / 1000) + 'K' : '$' + totalBudget;
+            }
+            if (wfDocs) {
+                var totalDocs = 0;
+                workflowProjects.forEach(function(p) { Object.values(p.documents || {}).forEach(function(d) { totalDocs += d; }); });
+                wfDocs.textContent = totalDocs;
+            }
+            if (wfChecklist) {
+                var totalItems = 0, doneItems = 0;
+                workflowProjects.forEach(function(p) { Object.values(p.checklist || {}).forEach(function(c) { totalItems += c.total || 0; doneItems += c.done || 0; }); });
+                wfChecklist.textContent = totalItems > 0 ? Math.round((doneItems / totalItems) * 100) + '%' : '0%';
+            }
         }
 
         // ===== Team Management =====
-        const teamDummyData = [
-            { id: 'TM-001', name: 'John Smith', role: 'Admin', email: 'john@greenscape.com', phone: '415-555-0101', projects: 8, performance: 4.9, status: 'active', avatar: 'JS' },
-            { id: 'TM-002', name: 'Emily Davis', role: 'Sales', email: 'emily@greenscape.com', phone: '415-555-0102', projects: 12, performance: 4.8, status: 'active', avatar: 'ED' },
-            { id: 'TM-003', name: 'Mike Johnson', role: 'Designer', email: 'mike@greenscape.com', phone: '415-555-0103', projects: 6, performance: 4.7, status: 'active', avatar: 'MJ' },
-            { id: 'TM-004', name: 'Sarah Wilson', role: 'Installer', email: 'sarah@greenscape.com', phone: '415-555-0104', projects: 5, performance: 4.9, status: 'active', avatar: 'SW' },
-            { id: 'TM-005', name: 'David Chen', role: 'Sales', email: 'david@greenscape.com', phone: '415-555-0105', projects: 9, performance: 4.6, status: 'active', avatar: 'DC' },
-            { id: 'TM-006', name: 'Lisa Anderson', role: 'Designer', email: 'lisa@greenscape.com', phone: '415-555-0106', projects: 4, performance: 4.8, status: 'away', avatar: 'LA' },
-            { id: 'TM-007', name: 'Robert Taylor', role: 'Installer', email: 'robert@greenscape.com', phone: '415-555-0107', projects: 7, performance: 4.5, status: 'active', avatar: 'RT' },
-            { id: 'TM-008', name: 'Jennifer Martinez', role: 'Admin', email: 'jennifer@greenscape.com', phone: '415-555-0108', projects: 3, performance: 4.9, status: 'active', avatar: 'JM' }
-        ];
+        function getTeamData() {
+            const slug = getCurrentTenantSlug();
+            if (slug === 'omeya-sin') return [
+                { id: 'TM-101', name: 'Amy Tan', role: 'Admin', email: 'amy@omeya-sin.com', phone: '+65 9111-0001', projects: 1, performance: 4.9, status: 'active', avatar: 'AT' },
+                { id: 'TM-102', name: 'Kevin Lim', role: 'Sales', email: 'kevin@omeya-sin.com', phone: '+65 9111-0002', projects: 1, performance: 4.7, status: 'active', avatar: 'KL' },
+                { id: 'TM-103', name: 'Rachel Ng', role: 'Installer', email: 'rachel@omeya-sin.com', phone: '+65 9111-0003', projects: 0, performance: 4.8, status: 'active', avatar: 'RN' }
+            ];
+            if (slug === 'nestopia-chn') return [
+                { id: 'TM-201', name: 'Wei Zhang', role: 'Admin', email: 'wei@nestopia-chn.com', phone: '+86 138-0001-0001', projects: 3, performance: 4.9, status: 'active', avatar: 'WZ' },
+                { id: 'TM-202', name: 'Lin Chen', role: 'Sales', email: 'lin@nestopia-chn.com', phone: '+86 138-0001-0002', projects: 3, performance: 4.8, status: 'active', avatar: 'LC' },
+                { id: 'TM-203', name: 'Hong Li', role: 'Designer', email: 'hong@nestopia-chn.com', phone: '+86 138-0001-0003', projects: 2, performance: 4.7, status: 'active', avatar: 'HL' },
+                { id: 'TM-204', name: 'Jian Wang', role: 'Installer', email: 'jian@nestopia-chn.com', phone: '+86 138-0001-0004', projects: 1, performance: 4.6, status: 'active', avatar: 'JW' }
+            ];
+            return [
+                { id: 'TM-001', name: 'John Smith', role: 'Admin', email: 'john@greenscape.com', phone: '415-555-0101', projects: 8, performance: 4.9, status: 'active', avatar: 'JS' },
+                { id: 'TM-002', name: 'Emily Davis', role: 'Sales', email: 'emily@greenscape.com', phone: '415-555-0102', projects: 12, performance: 4.8, status: 'active', avatar: 'ED' },
+                { id: 'TM-003', name: 'Mike Johnson', role: 'Designer', email: 'mike@greenscape.com', phone: '415-555-0103', projects: 6, performance: 4.7, status: 'active', avatar: 'MJ' },
+                { id: 'TM-004', name: 'Sarah Wilson', role: 'Installer', email: 'sarah@greenscape.com', phone: '415-555-0104', projects: 5, performance: 4.9, status: 'active', avatar: 'SW' },
+                { id: 'TM-005', name: 'David Chen', role: 'Sales', email: 'david@greenscape.com', phone: '415-555-0105', projects: 9, performance: 4.6, status: 'active', avatar: 'DC' },
+                { id: 'TM-006', name: 'Lisa Anderson', role: 'Designer', email: 'lisa@greenscape.com', phone: '415-555-0106', projects: 4, performance: 4.8, status: 'away', avatar: 'LA' },
+                { id: 'TM-007', name: 'Robert Taylor', role: 'Installer', email: 'robert@greenscape.com', phone: '415-555-0107', projects: 7, performance: 4.5, status: 'active', avatar: 'RT' },
+                { id: 'TM-008', name: 'Jennifer Martinez', role: 'Admin', email: 'jennifer@greenscape.com', phone: '415-555-0108', projects: 3, performance: 4.9, status: 'active', avatar: 'JM' }
+            ];
+        }
+        const teamDummyData = getTeamData();
 
         function renderTeamTable() {
             const tbody = document.getElementById('teamMembersTableBody');
@@ -12256,6 +12864,9 @@
 
         function initTeamPage() {
             renderTeamTable();
+            // Update team stats dynamically
+            var totalEl = document.getElementById('teamTotalMembers');
+            if (totalEl) totalEl.textContent = teamDummyData.length;
         }
 
         function initSettingsPage() {

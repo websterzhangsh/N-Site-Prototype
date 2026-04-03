@@ -404,7 +404,10 @@
             const path = window.location.pathname;
             
             // Subdomain: partner1.nestopia.com
-            if (hostname.includes('.') && !hostname.startsWith('www.')) {
+            // Skip platform hosts like *.pages.dev, *.vercel.app, *.netlify.app, localhost
+            const platformHosts = ['pages.dev', 'vercel.app', 'netlify.app', 'workers.dev', 'localhost', '127.0.0.1'];
+            const isPlatformHost = platformHosts.some(function(h) { return hostname.endsWith(h); });
+            if (!isPlatformHost && hostname.includes('.') && !hostname.startsWith('www.')) {
                 const parts = hostname.split('.');
                 if (parts.length >= 3) {
                     return parts[0];
@@ -446,6 +449,20 @@
                         logo: 'images/partner-logo.png',
                         primaryColor: '#2d5a27',
                         subtitle: 'Eco Garden Solutions'
+                    },
+                    'omeya-sin': {
+                        name: 'Omeya-SIN',
+                        slug: 'omeya-sin',
+                        logo: 'images/partner-logo.png',
+                        primaryColor: '#1a365d',
+                        subtitle: 'Zip Blinds Solutions · Singapore'
+                    },
+                    'nestopia-chn': {
+                        name: 'Nestopia-CHN',
+                        slug: 'nestopia-chn',
+                        logo: 'images/partner-logo.png',
+                        primaryColor: '#7c3aed',
+                        subtitle: 'Full Outdoor Living Solutions · China'
                     },
                     'default': {
                         name: 'Greenscape Builders',
