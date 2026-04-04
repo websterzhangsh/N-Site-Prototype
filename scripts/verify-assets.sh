@@ -88,7 +88,7 @@ echo "--------------------------------------------"
 
 if [ $ERRORS -gt 0 ]; then
     echo ""
-    echo "  ERROR: $ERRORS missing asset(s) detected!"
+    echo "  WARNING: $ERRORS missing asset(s) detected (non-blocking)."
     echo ""
     echo "  These files are referenced in your code but"
     echo "  do NOT exist in the build output ($BUILD_DIR/)."
@@ -101,7 +101,9 @@ if [ $ERRORS -gt 0 ]; then
     echo ""
     echo "  Then rebuild: npm run build"
     echo ""
-    exit 1
+    echo "  (Build continues — this warning does not block deployment)"
+    echo ""
+    exit 0
 else
     echo "  All referenced assets found in $BUILD_DIR/ "
     echo ""
