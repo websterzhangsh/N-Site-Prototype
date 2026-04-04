@@ -983,106 +983,6 @@
                     </div>
                 </div>
 
-                <!-- ===== Quotation Editor Modal ===== -->
-                <div id="quotationModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-start justify-center pt-6 overflow-y-auto">
-                    <div class="bg-white rounded-2xl w-full max-w-5xl mx-4 mb-8 shadow-2xl">
-                        <div class="flex items-center justify-between p-6 border-b border-gray-200">
-                            <div>
-                                <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2"><i class="fas fa-file-invoice-dollar text-blue-600"></i> 防风卷帘报价单 / Zip Blinds Quotation</h2>
-                                <p class="text-sm text-gray-500 mt-1" id="quotProjectRef"></p>
-                            </div>
-                            <button onclick="closeQuotationEditor()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition"><i class="fas fa-times text-gray-500"></i></button>
-                        </div>
-                        <div class="p-6 space-y-6">
-                            <!-- Client Info -->
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">客户姓名 / Client</label><input type="text" id="quotClientName" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
-                                <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">客户电话 / Contact</label><input type="text" id="quotClientPhone" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
-                                <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">客服 / Customer Service</label><input type="text" id="quotCSRep" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
-                            </div>
-                            <!-- Specs -->
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">型材颜色 / Profile Color</label><input type="text" id="quotProfileColor" value="咖啡色 / Coffee" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
-                                <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">面料 / Fabric</label><input type="text" id="quotFabric" value="聚酯纤维+PVC, 5%开孔率" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
-                                <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">面料颜色/色号</label><input type="text" id="quotFabricColor" placeholder="e.g. NP33054060SP 黑咖色" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
-                            </div>
-                            <!-- Product Items Table -->
-                            <div>
-                                <div class="flex items-center justify-between mb-2">
-                                    <label class="text-xs font-semibold text-gray-500 uppercase">产品明细 / Product Items</label>
-                                    <button onclick="addQuotLineItem()" class="px-3 py-1.5 text-xs font-medium bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition flex items-center gap-1"><i class="fas fa-plus"></i> 添加行</button>
-                                </div>
-                                <div class="border border-gray-200 rounded-xl overflow-x-auto">
-                                    <table class="w-full text-sm"><thead><tr class="bg-gray-50 text-gray-600 text-xs uppercase">
-                                        <th class="py-2.5 px-3 text-left w-8">#</th>
-                                        <th class="py-2.5 px-3 text-left min-w-[180px]">品类 / Product</th>
-                                        <th class="py-2.5 px-3 text-center w-20">宽(mm)</th>
-                                        <th class="py-2.5 px-3 text-center w-20">高(mm)</th>
-                                        <th class="py-2.5 px-3 text-center w-20">面积(m²)</th>
-                                        <th class="py-2.5 px-3 text-center w-24">单价(元/m²)</th>
-                                        <th class="py-2.5 px-3 text-center w-16">数量</th>
-                                        <th class="py-2.5 px-3 text-right w-24">金额(元)</th>
-                                        <th class="py-2.5 px-3 w-10"></th>
-                                    </tr></thead><tbody id="quotLineItems"></tbody></table>
-                                </div>
-                            </div>
-                            <!-- Accessories Table -->
-                            <div>
-                                <div class="flex items-center justify-between mb-2">
-                                    <label class="text-xs font-semibold text-gray-500 uppercase">附件 / Accessories</label>
-                                    <button onclick="addQuotAccessory()" class="px-3 py-1.5 text-xs font-medium bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition flex items-center gap-1"><i class="fas fa-plus"></i> 添加附件</button>
-                                </div>
-                                <div class="border border-gray-200 rounded-xl overflow-x-auto">
-                                    <table class="w-full text-sm"><thead><tr class="bg-gray-50 text-gray-600 text-xs uppercase">
-                                        <th class="py-2.5 px-3 text-left w-8">#</th>
-                                        <th class="py-2.5 px-3 text-left">品名 / Item</th>
-                                        <th class="py-2.5 px-3 text-center w-20">规格</th>
-                                        <th class="py-2.5 px-3 text-center w-24">单价(元)</th>
-                                        <th class="py-2.5 px-3 text-center w-16">数量</th>
-                                        <th class="py-2.5 px-3 text-right w-24">金额(元)</th>
-                                        <th class="py-2.5 px-3 w-10"></th>
-                                    </tr></thead><tbody id="quotAccessories"></tbody></table>
-                                </div>
-                            </div>
-                            <!-- Currency & Totals -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div class="space-y-3">
-                                    <div class="grid grid-cols-2 gap-3">
-                                        <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">币种 / Currency</label>
-                                            <select id="quotCurrency" onchange="updateQuotTotals()" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400">
-                                                <option value="RMB">人民币 RMB (¥)</option><option value="SGD">新加坡元 SGD (S$)</option><option value="USD">美元 USD ($)</option>
-                                            </select></div>
-                                        <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">汇率 / Exchange Rate</label>
-                                            <input type="number" id="quotExchangeRate" value="5.3937" step="0.0001" onchange="updateQuotTotals()" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
-                                    </div>
-                                    <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">备注 / Remarks</label>
-                                        <textarea id="quotRemarks" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400">1、包含海关费及物流运输等费用 / Include customs duties, logistics, and shipping fees
-2、正常质保期：铝合金材质部分质保十年，电机质保三年，防风卷帘质保两年
-3、付款条件：下单生产前需付50%定金，发货前付清余款 / Payment: 50% deposit before production, balance before shipment</textarea></div>
-                                </div>
-                                <div class="bg-gray-50 rounded-xl p-5 space-y-3">
-                                    <h4 class="text-sm font-semibold text-gray-700">报价汇总 / Quotation Summary</h4>
-                                    <div class="space-y-2 text-sm">
-                                        <div class="flex justify-between"><span class="text-gray-500">产品小计:</span><span class="font-medium" id="quotSubProducts">¥0.00</span></div>
-                                        <div class="flex justify-between"><span class="text-gray-500">附件小计:</span><span class="font-medium" id="quotSubAccessories">¥0.00</span></div>
-                                        <div class="border-t border-gray-200 pt-2 flex justify-between text-base"><span class="font-semibold text-gray-700">优惠总价 (RMB):</span><span class="font-bold text-gray-900 text-lg" id="quotTotalRMB">¥0.00</span></div>
-                                        <div class="flex justify-between text-base" id="quotForeignRow"><span class="font-semibold text-gray-700">优惠总价 (<span id="quotForeignLabel">SGD</span>):</span><span class="font-bold text-blue-600 text-lg" id="quotTotalForeign">S$0.00</span></div>
-                                    </div>
-                                    <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">折扣调整 / Discount (%)</label>
-                                        <input type="number" id="quotDiscount" value="0" min="0" max="100" step="1" onchange="updateQuotTotals()" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
-                            <div class="text-sm text-gray-500">报价单将以可打印 HTML 页面打开</div>
-                            <div class="flex items-center gap-3">
-                                <button onclick="closeQuotationEditor()" class="px-4 py-2.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-100 transition">取消</button>
-                                <button onclick="previewQuotation()" class="px-6 py-2.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium flex items-center gap-2"><i class="fas fa-print"></i> 预览并打印 / Preview & Print</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
                 </div>
 
@@ -13248,5 +13148,101 @@
             b2bChat.init();
         }
     </script>
+
+    <!-- ===== Quotation Editor Modal (top-level, accessible from any page) ===== -->
+    <div id="quotationModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-start justify-center pt-6 overflow-y-auto">
+        <div class="bg-white rounded-2xl w-full max-w-5xl mx-4 mb-8 shadow-2xl">
+            <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                <div>
+                    <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2"><i class="fas fa-file-invoice-dollar text-blue-600"></i> 防风卷帘报价单 / Zip Blinds Quotation</h2>
+                    <p class="text-sm text-gray-500 mt-1" id="quotProjectRef"></p>
+                </div>
+                <button onclick="closeQuotationEditor()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition"><i class="fas fa-times text-gray-500"></i></button>
+            </div>
+            <div class="p-6 space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">客户姓名 / Client</label><input type="text" id="quotClientName" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
+                    <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">客户电话 / Contact</label><input type="text" id="quotClientPhone" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
+                    <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">客服 / Customer Service</label><input type="text" id="quotCSRep" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">型材颜色 / Profile Color</label><input type="text" id="quotProfileColor" value="咖啡色 / Coffee" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
+                    <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">面料 / Fabric</label><input type="text" id="quotFabric" value="聚酯纤维+PVC, 5%开孔率" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
+                    <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">面料颜色/色号</label><input type="text" id="quotFabricColor" placeholder="e.g. NP33054060SP 黑咖色" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-xs font-semibold text-gray-500 uppercase">产品明细 / Product Items</label>
+                        <button onclick="addQuotLineItem()" class="px-3 py-1.5 text-xs font-medium bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition flex items-center gap-1"><i class="fas fa-plus"></i> 添加行</button>
+                    </div>
+                    <div class="border border-gray-200 rounded-xl overflow-x-auto">
+                        <table class="w-full text-sm"><thead><tr class="bg-gray-50 text-gray-600 text-xs uppercase">
+                            <th class="py-2.5 px-3 text-left w-8">#</th>
+                            <th class="py-2.5 px-3 text-left min-w-[180px]">品类 / Product</th>
+                            <th class="py-2.5 px-3 text-center w-20">宽(mm)</th>
+                            <th class="py-2.5 px-3 text-center w-20">高(mm)</th>
+                            <th class="py-2.5 px-3 text-center w-20">面积(m²)</th>
+                            <th class="py-2.5 px-3 text-center w-24">单价(元/m²)</th>
+                            <th class="py-2.5 px-3 text-center w-16">数量</th>
+                            <th class="py-2.5 px-3 text-right w-24">金额(元)</th>
+                            <th class="py-2.5 px-3 w-10"></th>
+                        </tr></thead><tbody id="quotLineItems"></tbody></table>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-xs font-semibold text-gray-500 uppercase">附件 / Accessories</label>
+                        <button onclick="addQuotAccessory()" class="px-3 py-1.5 text-xs font-medium bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition flex items-center gap-1"><i class="fas fa-plus"></i> 添加附件</button>
+                    </div>
+                    <div class="border border-gray-200 rounded-xl overflow-x-auto">
+                        <table class="w-full text-sm"><thead><tr class="bg-gray-50 text-gray-600 text-xs uppercase">
+                            <th class="py-2.5 px-3 text-left w-8">#</th>
+                            <th class="py-2.5 px-3 text-left">品名 / Item</th>
+                            <th class="py-2.5 px-3 text-center w-20">规格</th>
+                            <th class="py-2.5 px-3 text-center w-24">单价(元)</th>
+                            <th class="py-2.5 px-3 text-center w-16">数量</th>
+                            <th class="py-2.5 px-3 text-right w-24">金额(元)</th>
+                            <th class="py-2.5 px-3 w-10"></th>
+                        </tr></thead><tbody id="quotAccessories"></tbody></table>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-3">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">币种 / Currency</label>
+                                <select id="quotCurrency" onchange="updateQuotTotals()" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400">
+                                    <option value="RMB">人民币 RMB (¥)</option><option value="SGD">新加坡元 SGD (S$)</option><option value="USD">美元 USD ($)</option>
+                                </select></div>
+                            <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">汇率 / Exchange Rate</label>
+                                <input type="number" id="quotExchangeRate" value="5.3937" step="0.0001" onchange="updateQuotTotals()" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
+                        </div>
+                        <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">备注 / Remarks</label>
+                            <textarea id="quotRemarks" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400">1、包含海关费及物流运输等费用 / Include customs duties, logistics, and shipping fees
+2、正常质保期：铝合金材质部分质保十年，电机质保三年，防风卷帘质保两年
+3、付款条件：下单生产前需付50%定金，发货前付清余款 / Payment: 50% deposit before production, balance before shipment</textarea></div>
+                    </div>
+                    <div class="bg-gray-50 rounded-xl p-5 space-y-3">
+                        <h4 class="text-sm font-semibold text-gray-700">报价汇总 / Quotation Summary</h4>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between"><span class="text-gray-500">产品小计:</span><span class="font-medium" id="quotSubProducts">¥0.00</span></div>
+                            <div class="flex justify-between"><span class="text-gray-500">附件小计:</span><span class="font-medium" id="quotSubAccessories">¥0.00</span></div>
+                            <div class="border-t border-gray-200 pt-2 flex justify-between text-base"><span class="font-semibold text-gray-700">优惠总价 (RMB):</span><span class="font-bold text-gray-900 text-lg" id="quotTotalRMB">¥0.00</span></div>
+                            <div class="flex justify-between text-base" id="quotForeignRow"><span class="font-semibold text-gray-700">优惠总价 (<span id="quotForeignLabel">SGD</span>):</span><span class="font-bold text-blue-600 text-lg" id="quotTotalForeign">S$0.00</span></div>
+                        </div>
+                        <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">折扣调整 / Discount (%)</label>
+                            <input type="number" id="quotDiscount" value="0" min="0" max="100" step="1" onchange="updateQuotTotals()" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
+                <div class="text-sm text-gray-500">报价单将以可打印 HTML 页面打开</div>
+                <div class="flex items-center gap-3">
+                    <button onclick="closeQuotationEditor()" class="px-4 py-2.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-100 transition">取消</button>
+                    <button onclick="previewQuotation()" class="px-6 py-2.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium flex items-center gap-2"><i class="fas fa-print"></i> 预览并打印 / Preview & Print</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
