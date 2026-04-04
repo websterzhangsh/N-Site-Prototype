@@ -12434,6 +12434,7 @@
             var dateStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
 
             var tenantCfg = tenantConfigs[getCurrentTenantSlug()] || tenantConfigs['default'];
+            var logoPath = window.location.origin + '/' + tenantCfg.logo;
 
             // Build product rows
             var prodTotal = 0;
@@ -12469,64 +12470,119 @@
             var foreignSymbol = currency === 'SGD' ? 'S$' : '$';
             var foreignAmount = currency !== 'RMB' ? grandRMB / rate : 0;
 
+            // Subtotal row
+            var subtotalHtml = '';
+            if (accRowsHtml) {
+                subtotalHtml = '<tr style="background:#f9fafb;">' +
+                    '<td style="border:1px solid #d1d5db;padding:8px 10px;" colspan="7"><strong>Product Subtotal / \u4ea7\u54c1\u5c0f\u8ba1</strong></td>' +
+                    '<td style="border:1px solid #d1d5db;padding:8px 10px;text-align:right;font-weight:600;">\u00a5' + prodTotal.toFixed(2) + '</td></tr>';
+            }
+
             // Total rows
-            var totalRowsHtml = '<tr style="background:#f0f9ff;">' +
-                '<td style="border:1px solid #d1d5db;padding:10px;text-align:center;font-weight:700;" colspan="7">优惠总价 / Preferential Total Price (RMB)</td>' +
-                '<td style="border:1px solid #d1d5db;padding:10px;text-align:right;font-weight:700;font-size:16px;color:#1e40af;">¥' + grandRMB.toFixed(2) + '</td></tr>';
+            var discountNote = discount > 0 ? ' (Discount / \u6298\u6263: ' + discount + '%)' : '';
+            var totalRowsHtml = '<tr style="background:#eff6ff;">' +
+                '<td style="border:1px solid #d1d5db;padding:10px;font-weight:700;" colspan="7">Preferential Total Price (RMB) / \u4f18\u60e0\u603b\u4ef7\uff08\u4eba\u6c11\u5e01\uff09' + discountNote + '</td>' +
+                '<td style="border:1px solid #d1d5db;padding:10px;text-align:right;font-weight:700;font-size:16px;color:#1e40af;">\u00a5' + grandRMB.toFixed(2) + '</td></tr>';
             if (currency !== 'RMB') {
-                totalRowsHtml += '<tr style="background:#f0f9ff;">' +
-                    '<td style="border:1px solid #d1d5db;padding:10px;text-align:center;font-weight:700;" colspan="7">优惠总价 / Preferential Total Price (' + currency + ')</td>' +
+                totalRowsHtml += '<tr style="background:#eff6ff;">' +
+                    '<td style="border:1px solid #d1d5db;padding:10px;font-weight:700;" colspan="7">Preferential Total Price (' + currency + ') / \u4f18\u60e0\u603b\u4ef7\uff08' + (currency === 'SGD' ? '\u65b0\u5e01' : '\u7f8e\u5143') + '\uff09</td>' +
                     '<td style="border:1px solid #d1d5db;padding:10px;text-align:right;font-weight:700;font-size:16px;color:#1e40af;">' + foreignSymbol + foreignAmount.toFixed(2) + '</td></tr>';
             }
 
-            // Remarks HTML
-            var remarksHtml = remarks.split('\n').filter(function(l) { return l.trim(); }).map(function(line) {
+            // Remarks HTML - bilingual
+            var remarkLines = remarks.split('\n').filter(function(l) { return l.trim(); });
+            var remarksHtml = remarkLines.map(function(line) {
                 return '<div style="margin-bottom:4px;font-size:12px;color:#374151;line-height:1.6;">' + line + '</div>';
             }).join('');
 
             // Exchange rate note
+            var noteIdx = remarkLines.length + 1;
             var rateNote = '';
             if (currency !== 'RMB') {
-                rateNote = '<div style="margin-bottom:4px;font-size:12px;color:#374151;line-height:1.6;">' + (remarks.split('\n').length + 1) + '、' + (currency === 'SGD' ? '新币' : '美元') + '兑人民币汇率按照 ' + dateStr + ' 汇率 ' + rate + ' 来计算</div>';
+                rateNote = '<div style="margin-bottom:4px;font-size:12px;color:#374151;line-height:1.6;">' + noteIdx + '\u3001' + currency + ' to RMB exchange rate / ' + (currency === 'SGD' ? '\u65b0\u5e01' : '\u7f8e\u5143') + '\u5151\u4eba\u6c11\u5e01\u6c47\u7387: ' + rate + ' (' + dateStr + ')</div>';
+                noteIdx++;
             }
 
             // Material spec note
-            var specNote = '<div style="margin-bottom:4px;font-size:12px;color:#374151;line-height:1.6;">' + (remarks.split('\n').length + (currency !== 'RMB' ? 2 : 1)) + '、型材颜色: ' + profileColor + '；面料: ' + (fabricColor ? fabricColor + ' ' : '') + fabric + '</div>';
+            var specNote = '<div style="margin-bottom:4px;font-size:12px;color:#374151;line-height:1.6;">' + noteIdx + '\u3001Profile Color / \u578b\u6750\u989c\u8272: ' + profileColor + '\uff1bFabric / \u9762\u6599: ' + (fabricColor ? fabricColor + ' ' : '') + fabric + '</div>';
 
-            // Build final HTML
-            var html = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>防风卷帘报价单 - ' + client + '</title>' +
-                '<style>@page{size:A4;margin:15mm 12mm;}body{font-family:"Microsoft YaHei","Helvetica Neue",Arial,sans-serif;margin:0;padding:20px 30px;color:#111827;font-size:13px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}' +
-                'table{border-collapse:collapse;width:100%;}@media print{.no-print{display:none!important;}body{padding:0;}}</style></head><body>' +
-                '<div style="text-align:center;margin-bottom:24px;">' +
-                '<div style="font-size:22px;font-weight:700;color:#111827;letter-spacing:1px;">' + tenantCfg.name + '</div>' +
-                '<div style="font-size:18px;font-weight:600;color:#1e40af;margin-top:4px;">防风卷帘报价单 / Zip Blinds Quotation</div>' +
-                '<div style="font-size:12px;color:#6b7280;margin-top:4px;">日期 / Date: ' + dateStr + '</div></div>' +
-                '<table style="margin-bottom:20px;"><tr>' +
-                '<td style="padding:4px 0;font-size:13px;width:50%;"><strong>客户姓名 / Client:</strong> ' + client + '</td>' +
-                '<td style="padding:4px 0;font-size:13px;"><strong>客服 / Service:</strong> ' + csRep + '</td></tr><tr>' +
-                '<td style="padding:4px 0;font-size:13px;"><strong>客户电话 / Contact:</strong> ' + phone + '</td>' +
-                '<td style="padding:4px 0;font-size:13px;"><strong>客服电话:</strong> </td></tr></table>' +
-                '<div style="font-size:12px;font-weight:600;color:#6b7280;text-transform:uppercase;margin-bottom:6px;">产品尺寸或规格 / Product Dimensions</div>' +
+            // Build final HTML - proper printable page
+            var html = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Zip Blinds Quotation / \u9632\u98ce\u5377\u5e18\u62a5\u4ef7\u5355 - ' + client + '</title>' +
+                '<style>' +
+                '@page { size: A4; margin: 15mm 12mm; }' +
+                'body { font-family: "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif; margin: 0; padding: 24px 32px; color: #111827; font-size: 13px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }' +
+                'table { border-collapse: collapse; width: 100%; }' +
+                '.header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 2px solid #1e40af; }' +
+                '.header-logo { width: 60px; height: 60px; object-fit: contain; border-radius: 8px; }' +
+                '.header-text { flex: 1; }' +
+                '.header-title { font-size: 20px; font-weight: 700; color: #111827; }' +
+                '.header-subtitle { font-size: 16px; font-weight: 600; color: #1e40af; margin-top: 2px; }' +
+                '.header-date { text-align: right; font-size: 12px; color: #6b7280; }' +
+                '.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 24px; margin-bottom: 18px; font-size: 13px; }' +
+                '.info-grid .label { font-weight: 600; color: #374151; }' +
+                '.info-grid .value { color: #111827; }' +
+                '.section-title { font-size: 12px; font-weight: 600; color: #6b7280; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px; }' +
+                '.remarks-box { margin-top: 18px; padding: 12px 16px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; }' +
+                '.remarks-title { font-size: 12px; font-weight: 600; color: #92400e; margin-bottom: 8px; }' +
+                '.footer { margin-top: 28px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 12px; color: #374151; }' +
+                '.sig-line { margin-top: 40px; border-top: 1px solid #d1d5db; padding-top: 4px; font-size: 11px; color: #9ca3af; }' +
+                '@media print { .no-print { display: none !important; } body { padding: 0; } }' +
+                '@media screen { body { max-width: 800px; margin: 0 auto; background: #f9fafb; } }' +
+                '</style></head><body>' +
+
+                // Header with logo
+                '<div class="header">' +
+                '<img src="' + logoPath + '" class="header-logo" onerror="this.style.display=\'none\'">' +
+                '<div class="header-text">' +
+                '<div class="header-title">' + tenantCfg.name + '</div>' +
+                '<div class="header-subtitle">Zip Blinds Quotation / \u9632\u98ce\u5377\u5e18\u62a5\u4ef7\u5355</div>' +
+                '</div>' +
+                '<div class="header-date">Date / \u65e5\u671f: ' + dateStr + '</div>' +
+                '</div>' +
+
+                // Client info grid
+                '<div class="info-grid">' +
+                '<div><span class="label">Client / \u5ba2\u6237\u59d3\u540d: </span><span class="value">' + client + '</span></div>' +
+                '<div><span class="label">CS Rep / \u5ba2\u670d: </span><span class="value">' + csRep + '</span></div>' +
+                '<div><span class="label">Contact / \u5ba2\u6237\u7535\u8bdd: </span><span class="value">' + phone + '</span></div>' +
+                '<div><span class="label">CS Contact / \u5ba2\u670d\u7535\u8bdd: </span><span class="value"></span></div>' +
+                '</div>' +
+
+                // Product table
+                '<div class="section-title">Product Dimensions / \u4ea7\u54c1\u5c3a\u5bf8\u6216\u89c4\u683c</div>' +
                 '<table><thead><tr style="background:#f3f4f6;">' +
-                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:11px;color:#6b7280;width:36px;">序号<br>No.</th>' +
-                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:left;font-size:11px;color:#6b7280;">品类 / Product</th>' +
-                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:11px;color:#6b7280;width:60px;">宽<br>mm</th>' +
-                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:11px;color:#6b7280;width:60px;">高<br>mm</th>' +
-                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:11px;color:#6b7280;width:70px;">面积<br>Area(M²)</th>' +
-                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:11px;color:#6b7280;width:80px;">单价<br>(元/M²)</th>' +
-                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:11px;color:#6b7280;width:50px;">数量<br>Qty</th>' +
-                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:right;font-size:11px;color:#6b7280;width:90px;">金额(元)<br>Amount</th></tr></thead><tbody>' +
-                prodRowsHtml + accRowsHtml + totalRowsHtml +
+                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:11px;color:#6b7280;width:36px;">No.<br>\u5e8f\u53f7</th>' +
+                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:left;font-size:11px;color:#6b7280;">Product / \u54c1\u7c7b</th>' +
+                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:11px;color:#6b7280;width:60px;">Width<br>\u5bbd(mm)</th>' +
+                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:11px;color:#6b7280;width:60px;">Height<br>\u9ad8(mm)</th>' +
+                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:11px;color:#6b7280;width:70px;">Area<br>\u9762\u79ef(M\u00b2)</th>' +
+                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:11px;color:#6b7280;width:80px;">Unit Price<br>\u5355\u4ef7(\u5143/M\u00b2)</th>' +
+                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:11px;color:#6b7280;width:50px;">Qty<br>\u6570\u91cf</th>' +
+                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:right;font-size:11px;color:#6b7280;width:90px;">Amount<br>\u91d1\u989d(\u5143)</th></tr></thead><tbody>' +
+                prodRowsHtml + subtotalHtml + accRowsHtml + totalRowsHtml +
                 '</tbody></table>' +
-                '<div style="margin-top:20px;padding:12px 16px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;">' +
-                '<div style="font-size:12px;font-weight:600;color:#92400e;margin-bottom:8px;">特殊说明 / Special Remarks</div>' +
+
+                // Remarks
+                '<div class="remarks-box">' +
+                '<div class="remarks-title">Special Remarks / \u7279\u6b8a\u8bf4\u660e</div>' +
                 specNote + rateNote + remarksHtml + '</div>' +
-                '<div class="no-print" style="text-align:center;margin-top:30px;"><button onclick="window.print()" style="padding:10px 32px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;">打印 / Print</button></div>' +
+
+                // Signature area
+                '<div class="footer">' +
+                '<div><strong>Seller / \u5356\u65b9:</strong> ' + tenantCfg.name + '<div class="sig-line">Signature / \u7b7e\u540d & Date / \u65e5\u671f</div></div>' +
+                '<div><strong>Buyer / \u4e70\u65b9:</strong> ' + client + '<div class="sig-line">Signature / \u7b7e\u540d & Date / \u65e5\u671f</div></div>' +
+                '</div>' +
+
+                // Print button
+                '<div class="no-print" style="text-align:center;margin-top:30px;">' +
+                '<button onclick="window.print()" style="padding:10px 32px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-right:10px;">Print / \u6253\u5370</button>' +
+                '</div>' +
+
                 '</body></html>';
 
-            var w = window.open('', '_blank');
+            var w = window.open('', '_blank', 'width=900,height=700,scrollbars=yes,resizable=yes');
             if (!w) {
-                // Popup blocked – fall back to an iframe overlay
+                // Popup blocked - fall back to an iframe overlay
                 var overlay = document.createElement('div');
                 overlay.id = 'quotPrintOverlay';
                 overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;';
@@ -12534,7 +12590,7 @@
                 frame.style.cssText = 'width:90vw;height:92vh;border:none;border-radius:12px;background:#fff;box-shadow:0 25px 50px rgba(0,0,0,.25);';
                 overlay.appendChild(frame);
                 var closeBtn = document.createElement('button');
-                closeBtn.textContent = '✕ Close';
+                closeBtn.textContent = '\u2715 Close';
                 closeBtn.style.cssText = 'position:fixed;top:12px;right:24px;z-index:10000;padding:8px 20px;background:#1e293b;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;';
                 closeBtn.onclick = function() { document.body.removeChild(overlay); document.body.removeChild(closeBtn); };
                 document.body.appendChild(overlay);
