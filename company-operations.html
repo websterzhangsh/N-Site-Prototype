@@ -12288,11 +12288,131 @@
             var detailModal = document.getElementById('projectDetailModal');
             if (detailModal) detailModal.classList.add('hidden');
             document.getElementById('quotationModal').classList.remove('hidden');
+            // Populate load dropdown with saved quotations for this project
+            refreshQuotLoadDropdown(projectId);
         }
 
         function closeQuotationEditor() {
             document.getElementById('quotationModal').classList.add('hidden');
             document.body.style.overflow = '';
+            // Close load dropdown if open
+            var dd = document.getElementById('quotLoadDropdown');
+            if (dd) dd.classList.add('hidden');
+        }
+
+        // ===== Quotation Save / Load (localStorage) =====
+        function getQuotStorageKey(projectId) {
+            var tenant = typeof getCurrentTenantSlug === 'function' ? getCurrentTenantSlug() : 'default';
+            return 'nestopia_quotations_' + tenant + '_' + projectId;
+        }
+
+        function getAllSavedQuotations(projectId) {
+            try {
+                var key = getQuotStorageKey(projectId);
+                var data = localStorage.getItem(key);
+                return data ? JSON.parse(data) : [];
+            } catch(e) { return []; }
+        }
+
+        function saveQuotation() {
+            if (!quotCurrentProjectId) { showToast('No project selected', 'error'); return; }
+            var quotation = {
+                id: 'Q-' + Date.now(),
+                savedAt: new Date().toISOString(),
+                projectId: quotCurrentProjectId,
+                clientName: document.getElementById('quotClientName').value,
+                clientPhone: document.getElementById('quotClientPhone').value,
+                csRep: document.getElementById('quotCSRep').value,
+                profileColor: document.getElementById('quotProfileColor').value,
+                fabric: document.getElementById('quotFabric').value,
+                fabricColor: document.getElementById('quotFabricColor').value,
+                currency: document.getElementById('quotCurrency').value,
+                exchangeRate: parseFloat(document.getElementById('quotExchangeRate').value),
+                discount: parseFloat(document.getElementById('quotDiscount').value) || 0,
+                remarks: document.getElementById('quotRemarks').value,
+                lineItems: JSON.parse(JSON.stringify(quotLineItemsData)),
+                accessories: JSON.parse(JSON.stringify(quotAccessoriesData))
+            };
+            var list = getAllSavedQuotations(quotCurrentProjectId);
+            list.unshift(quotation);
+            if (list.length > 20) list = list.slice(0, 20);
+            try {
+                localStorage.setItem(getQuotStorageKey(quotCurrentProjectId), JSON.stringify(list));
+                showToast('Quotation saved ✓', 'success');
+                refreshQuotLoadDropdown(quotCurrentProjectId);
+            } catch(e) {
+                showToast('Failed to save: storage full', 'error');
+            }
+        }
+
+        function loadQuotation(quotId) {
+            if (!quotCurrentProjectId) return;
+            var list = getAllSavedQuotations(quotCurrentProjectId);
+            var q = list.find(function(item) { return item.id === quotId; });
+            if (!q) { showToast('Quotation not found', 'error'); return; }
+            document.getElementById('quotClientName').value = q.clientName || '';
+            document.getElementById('quotClientPhone').value = q.clientPhone || '';
+            document.getElementById('quotCSRep').value = q.csRep || '';
+            document.getElementById('quotProfileColor').value = q.profileColor || '';
+            document.getElementById('quotFabric').value = q.fabric || '';
+            document.getElementById('quotFabricColor').value = q.fabricColor || '';
+            document.getElementById('quotCurrency').value = q.currency || 'RMB';
+            document.getElementById('quotExchangeRate').value = q.exchangeRate || 5.3937;
+            document.getElementById('quotDiscount').value = q.discount || 0;
+            document.getElementById('quotRemarks').value = q.remarks || '';
+            quotLineItemsData = q.lineItems ? JSON.parse(JSON.stringify(q.lineItems)) : [];
+            quotAccessoriesData = q.accessories ? JSON.parse(JSON.stringify(q.accessories)) : [];
+            renderQuotLineItems();
+            renderQuotAccessories();
+            updateQuotTotals();
+            showToast('Loaded: ' + q.id, 'success');
+        }
+
+        function deleteQuotation(quotId) {
+            if (!quotCurrentProjectId) return;
+            var list = getAllSavedQuotations(quotCurrentProjectId);
+            list = list.filter(function(item) { return item.id !== quotId; });
+            localStorage.setItem(getQuotStorageKey(quotCurrentProjectId), JSON.stringify(list));
+            refreshQuotLoadDropdown(quotCurrentProjectId);
+            showToast('Quotation deleted', 'info');
+        }
+
+        function refreshQuotLoadDropdown(projectId) {
+            var container = document.getElementById('quotLoadDropdownList');
+            if (!container) return;
+            var list = getAllSavedQuotations(projectId);
+            var badge = document.getElementById('quotSavedCount');
+            if (badge) {
+                badge.textContent = list.length;
+                badge.style.display = list.length > 0 ? 'inline-flex' : 'none';
+            }
+            if (list.length === 0) {
+                container.innerHTML = '<div class="px-4 py-3 text-sm text-gray-400 text-center">No saved quotations</div>';
+                return;
+            }
+            var html = '';
+            list.forEach(function(q) {
+                var d = new Date(q.savedAt);
+                var dateStr = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0') + ' ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+                var itemCount = (q.lineItems ? q.lineItems.length : 0) + ' items';
+                var total = 0;
+                if (q.lineItems) q.lineItems.forEach(function(li) { total += (li.width * li.height / 1000000) * li.unitPrice * li.qty; });
+                if (q.accessories) q.accessories.forEach(function(a) { total += a.unitPrice * a.qty; });
+                total = total * (1 - (q.discount || 0) / 100);
+                html += '<div class="flex items-center justify-between px-4 py-2.5 hover:bg-blue-50 transition group">' +
+                    '<button onclick="loadQuotation(\'' + q.id + '\'); toggleQuotLoadDropdown();" class="flex-1 text-left">' +
+                        '<div class="text-sm font-medium text-gray-800">' + dateStr + '</div>' +
+                        '<div class="text-xs text-gray-500">' + itemCount + (q.clientName ? ' &middot; ' + q.clientName : '') + ' &middot; &yen;' + total.toFixed(0) + (q.discount > 0 ? ' (' + q.discount + '% off)' : '') + '</div>' +
+                    '</button>' +
+                    '<button onclick="event.stopPropagation(); deleteQuotation(\'' + q.id + '\');" class="opacity-0 group-hover:opacity-100 ml-2 w-6 h-6 flex items-center justify-center text-red-400 hover:text-red-600 hover:bg-red-50 rounded transition" title="Delete"><i class="fas fa-trash-alt text-xs"></i></button>' +
+                '</div>';
+            });
+            container.innerHTML = html;
+        }
+
+        function toggleQuotLoadDropdown() {
+            var dd = document.getElementById('quotLoadDropdown');
+            if (dd) dd.classList.toggle('hidden');
         }
 
         function addQuotLineItem() {
@@ -13177,9 +13297,21 @@
     <div id="quotationModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-[200] flex items-start justify-center pt-6 overflow-y-auto">
         <div class="bg-white rounded-2xl w-full max-w-5xl mx-4 mb-8 shadow-2xl">
             <div class="flex items-center justify-between p-6 border-b border-gray-200">
-                <div>
-                    <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2"><i class="fas fa-file-invoice-dollar text-blue-600"></i> 防风卷帘报价单 / Zip Blinds Quotation</h2>
-                    <p class="text-sm text-gray-500 mt-1" id="quotProjectRef"></p>
+                <div class="flex items-center gap-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2"><i class="fas fa-file-invoice-dollar text-blue-600"></i> 防风卷帘报价单 / Zip Blinds Quotation</h2>
+                        <p class="text-sm text-gray-500 mt-1" id="quotProjectRef"></p>
+                    </div>
+                    <div class="relative">
+                        <button onclick="toggleQuotLoadDropdown()" class="px-3 py-1.5 text-xs font-medium border border-gray-300 rounded-lg hover:bg-gray-50 transition flex items-center gap-1.5 text-gray-600">
+                            <i class="fas fa-history"></i> Load Saved
+                            <span id="quotSavedCount" class="inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold bg-blue-100 text-blue-700 rounded-full" style="display:none">0</span>
+                        </button>
+                        <div id="quotLoadDropdown" class="hidden absolute left-0 top-full mt-1 w-72 bg-white rounded-xl shadow-xl border border-gray-200 z-50 max-h-64 overflow-y-auto">
+                            <div class="px-4 py-2 border-b border-gray-100 text-xs font-semibold text-gray-400 uppercase">Saved Quotations</div>
+                            <div id="quotLoadDropdownList"><div class="px-4 py-3 text-sm text-gray-400 text-center">No saved quotations</div></div>
+                        </div>
+                    </div>
                 </div>
                 <button onclick="closeQuotationEditor()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition"><i class="fas fa-times text-gray-500"></i></button>
             </div>
@@ -13261,8 +13393,9 @@
             <div class="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
                 <div class="text-sm text-gray-500">报价单将以可打印 HTML 页面打开</div>
                 <div class="flex items-center gap-3">
-                    <button onclick="closeQuotationEditor()" class="px-4 py-2.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-100 transition">取消</button>
-                    <button onclick="previewQuotation()" class="px-6 py-2.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium flex items-center gap-2"><i class="fas fa-print"></i> 预览并打印 / Preview & Print</button>
+                    <button onclick="closeQuotationEditor()" class="px-4 py-2.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-100 transition">Cancel</button>
+                    <button onclick="saveQuotation()" class="px-5 py-2.5 text-sm bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition font-medium flex items-center gap-2"><i class="fas fa-save"></i> Save</button>
+                    <button onclick="previewQuotation()" class="px-6 py-2.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium flex items-center gap-2"><i class="fas fa-print"></i> Preview & Print</button>
                 </div>
             </div>
         </div>
