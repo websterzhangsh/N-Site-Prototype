@@ -25,10 +25,10 @@
     // 部署到不同环境时，通过 Cloudflare Pages 环境变量或构建脚本替换
     var CONFIG = {
         // Supabase 项目 URL（格式: https://<project-ref>.supabase.co）
-        url: 'https://YOUR_PROJECT_ID.supabase.co',
+        url: 'https://dtrsfsjlakshtpqsnvrfh.supabase.co',
 
         // Supabase 匿名公钥（anon key，可安全暴露在前端）
-        anonKey: 'YOUR_ANON_KEY',
+        anonKey: 'sb_publishable_0Y4N6oQzbdU-lcbVZW4pJQ_CxPrqZRJ',
 
         // 默认租户 ID（Demo/POC 阶段使用固定值）
         defaultTenantId: '550e8400-e29b-41d4-a716-446655440000',
