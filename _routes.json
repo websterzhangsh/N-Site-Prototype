@@ -8,6 +8,7 @@
     "/company-operations.html",
     "/public/*",
     "/images/*",
+    "/js/*",
     "/*.html",
     "/*.jpg",
     "/*.png",
