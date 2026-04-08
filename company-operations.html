@@ -696,6 +696,7 @@
             return tenantId + '/' + category + '/' + ts + '-' + safeName;
         }
         function generateLocalId() { return 'pf-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6); }
+        function isValidUUID(s) { return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s); }
 
         var LocalStorage = {
             getFiles: function(projectId) {
@@ -823,7 +824,9 @@
                     .then(function(uploadRes) {
                         if (uploadRes.error) throw uploadRes.error;
                         var publicUrl = SupabaseStorage.getFileUrl(bucket, storagePath, false);
-                        return KBDocuments.insert({ tenant_id: tenantId, scope: 'project', project_id: projectId, category: category, name: file.name, description: options.description || null, file_url: publicUrl, file_type: getFileExtension(file.name), file_size_bytes: file.size, mime_type: file.type, storage_path: storagePath, status: 'uploaded', tags: options.tags || [], uploaded_by: null });
+                        var dbProjectId = isValidUUID(projectId) ? projectId : null;
+                        var dbScope = dbProjectId ? 'project' : 'tenant';
+                        return KBDocuments.insert({ tenant_id: tenantId, scope: dbScope, project_id: dbProjectId, category: category, name: file.name, description: options.description || ('Project: ' + projectId), file_url: publicUrl, file_type: getFileExtension(file.name), file_size_bytes: file.size, mime_type: file.type, storage_path: storagePath, status: 'uploaded', tags: options.tags || [], uploaded_by: null });
                     })
                     .then(function(dbRecord) {
                         if (!dbRecord) throw new Error('Metadata save failed');

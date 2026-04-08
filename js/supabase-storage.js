@@ -435,14 +435,19 @@
                     // 获取公开 URL
                     var publicUrl = SupabaseStorage.getFileUrl(bucket, storagePath, false);
 
+                    // 验证 projectId 是否为合法 UUID（UI 可能传入如 'OMY-001' 等非 UUID）
+                    var uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+                    var dbProjectId = uuidRegex.test(projectId) ? projectId : null;
+                    var dbScope = dbProjectId ? 'project' : 'tenant';
+
                     // 写入元数据到 kb_documents
                     return KBDocuments.insert({
                         tenant_id: tenantId,
-                        scope: 'project',
-                        project_id: projectId,
+                        scope: dbScope,
+                        project_id: dbProjectId,
                         category: category,
                         name: file.name,
-                        description: options.description || null,
+                        description: options.description || (dbProjectId ? null : ('Project: ' + projectId)),
                         file_url: publicUrl,
                         file_type: getFileExtension(file.name),
                         file_size_bytes: file.size,
