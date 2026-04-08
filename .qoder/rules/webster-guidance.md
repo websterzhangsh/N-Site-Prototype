@@ -9,8 +9,9 @@ trigger: always_on
 - 与用户对话时使用**中文**
 
 ## 代码变更流程
-- 本地代码变更后，**自动执行** git add → commit → push，触发 CloudFlare 部署
-- 不需要用户确认即可推送（除非涉及破坏性操作）
+- 本地代码变更后，**自动执行** git add → commit → push 到 `main` 分支，触发 Staging 部署
+- 推送到 `main` 分支不需要用户确认（除非涉及破坏性操作）
+- **⚠️ 推送到 Production 分支（触发 ai-nestopia.com 商业站点部署）必须获得用户显式确认，未经确认严禁操作**
 
 ## 部署状态检查
 - 每次 git push 之后，**必须**运行 `scripts/check-deploy.sh` 检查 Cloudflare Pages 构建状态
