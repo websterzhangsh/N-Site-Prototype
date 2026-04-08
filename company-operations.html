@@ -4486,12 +4486,14 @@
             container.innerHTML = filtered.map(p => {
                 const initials = p.customer.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
                 const isSelected = p.id === currentSelectedProjectId;
+                const isZB = p.type === 'Zip Blinds';
+                const stageDisplay = isZB ? 'Measure & Quote' : (stageLabels[p.stage] || 'Step ' + p.workflowStep);
                 return `
                     <div class="sidebar-project-item ${isSelected ? 'selected' : ''}" onclick="navigateToProject('${p.id}')">
                         <div class="proj-avatar" style="${isSelected ? 'background:#222;color:#fff;' : ''}">${initials}</div>
                         <div class="proj-info">
                             <div class="proj-name">${p.name}</div>
-                            <div class="proj-meta">${p.type} · ${stageLabels[p.stage] || 'Step ' + p.workflowStep}</div>
+                            <div class="proj-meta">${p.type} · ${stageDisplay}</div>
                         </div>
                         <div class="proj-risk-dot" style="background:${riskColors[p.riskLevel] || '#22c55e'}"></div>
                     </div>
@@ -8512,11 +8514,58 @@
             // Steps 5-6: to be added progressively
         };
 
+        // ===== Zip Blinds: Combined "Measure & Quote" Config (OMEYA SOP-aligned) =====
+        // Lightweight product workflow — merge Steps 1-4 into a single step
+        const ZB_COMBINED_CONFIG = {
+            name: 'Measure & Quote',
+            nameEn: 'Measure & Quote',
+            goal: 'Client consultation, site measurement & quotation — aligned with OMEYA Blind SOP',
+            payment: '—',
+            coreActions: [
+                { id: 'a1', label: 'Client Consultation', desc: 'Determine requirements: light control, privacy, aesthetics, child safety (OMEYA SOP §1A)', icon: 'fa-comments' },
+                { id: 'a2', label: 'Product Recommendation', desc: 'Recommend fabric, opacity, color, operation style; advise track options & stacking direction', icon: 'fa-lightbulb' },
+                { id: 'a3', label: 'Site Measurement', desc: 'On-site measurement: inside/face/ceiling mount, 3-point method, obstacle & utility check (OMEYA SOP §1B)', icon: 'fa-ruler-combined' },
+                { id: 'a4', label: 'Product Configuration', desc: 'Select product tier (ZB-100/200/300), fabric screen, drive system, and all optional upgrades', icon: 'fa-sliders-h' },
+                { id: 'a5', label: 'Quotation Generation', desc: 'Auto-calculate pricing with 6-strategy engine, generate formal bilingual quotation document', icon: 'fa-file-invoice-dollar' },
+                { id: 'a6', label: 'Client Review & Sign-off', desc: 'Walk through line-by-line quotation, confirm specs, obtain client approval (OMEYA SOP §1C)', icon: 'fa-signature' }
+            ],
+            keyDeliverables: [
+                { id: 'd1', label: 'Measurement Report', desc: 'Opening dimensions, mounting type, obstacles, site photos', icon: 'fa-ruler', required: true },
+                { id: 'd2', label: 'Product Configuration', desc: 'Tier, fabric, drive system selections', icon: 'fa-sliders-h', required: true },
+                { id: 'd3', label: 'Formal Quotation', desc: 'Bilingual quotation document (防风卷帘报价单)', icon: 'fa-file-invoice-dollar', required: true },
+                { id: 'd4', label: 'Client Approval', desc: 'Customer sign-off on quotation & specs', icon: 'fa-signature', required: true }
+            ],
+            // Reuse Step 3 measurement panel config (already has zipBlindsFields)
+            measurementPanel: STEP_DETAIL_CONFIG[3].measurementPanel,
+            // Enable quotation panel (Step 4 logic)
+            quotationPanel: true,
+            agentSupport: [
+                { agent: 'Pricing Agent', ability: 'Auto-generate detailed quotation with 6-strategy pricing engine' },
+                { agent: 'Knowledge Base', ability: 'OMEYA measurement SOP, product specs, pricing references' }
+            ]
+        };
+
+        // Zip Blinds simplified 2-step workflow definition
+        const ZB_WORKFLOW_STEPS = [
+            { step: 1, name: 'Measure & Quote', icon: 'fa-ruler-combined', color: 'blue', desc: 'Site measurement, pricing & quotation' },
+            { step: 2, name: 'Order & Install', icon: 'fa-truck', color: 'gray', desc: 'Coming soon — order, production, shipment, installation' }
+        ];
+
         // Dummy per-project step status data
-        function getProjectStepStatus(project, stepNum) {
-            const config = STEP_DETAIL_CONFIG[stepNum];
+        function getProjectStepStatus(project, stepNum, useConfig) {
+            // useConfig allows overriding the config (e.g., ZB_COMBINED_CONFIG)
+            const config = useConfig || STEP_DETAIL_CONFIG[stepNum];
             const actionTotal = config ? config.coreActions.length : 6;
             const deliverableTotal = config ? config.keyDeliverables.length : 3;
+
+            // Zip Blinds combined step — derive progress from original workflowStep
+            if (project.type === 'Zip Blinds' && useConfig === ZB_COMBINED_CONFIG) {
+                const ws = project.workflowStep; // original step (1-4)
+                if (ws >= 4) return { actionsCompleted: 4, actionTotal, deliverablesCompleted: 2, deliverableTotal, questionnaireCompleted: 0, questionnaireTotal: 0, paymentStatus: 'pending' };
+                if (ws >= 3) return { actionsCompleted: 3, actionTotal, deliverablesCompleted: 1, deliverableTotal, questionnaireCompleted: 0, questionnaireTotal: 0, paymentStatus: 'pending' };
+                if (ws >= 2) return { actionsCompleted: 2, actionTotal, deliverablesCompleted: 0, deliverableTotal, questionnaireCompleted: 0, questionnaireTotal: 0, paymentStatus: 'pending' };
+                return { actionsCompleted: 1, actionTotal, deliverablesCompleted: 0, deliverableTotal, questionnaireCompleted: 0, questionnaireTotal: 0, paymentStatus: 'pending' };
+            }
 
             // Simulate different completion states based on project progress
             if (stepNum < project.workflowStep) {
@@ -9116,6 +9165,38 @@
                 return;
             }
 
+            // Zip Blinds: combined workflow — skip step warnings, use ZB_COMBINED_CONFIG
+            const isZipBlinds = project && project.type === 'Zip Blinds';
+
+            if (isZipBlinds) {
+                if (stepNum === 2) {
+                    // "Order & Install" — placeholder
+                    container.classList.remove('hidden');
+                    container.innerHTML = `
+                        <div class="p-8 text-center">
+                            <div class="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-truck text-gray-400 text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-600 mb-2">Order & Install</h3>
+                            <p class="text-sm text-gray-400 max-w-md mx-auto">Order placement, production tracking, shipment, and on-site installation will be available in a future release.</p>
+                            <span class="inline-block mt-3 text-xs font-medium text-gray-400 bg-gray-100 px-3 py-1 rounded-full">Coming Soon</span>
+                        </div>`;
+                    expandedStep = stepNum;
+                    container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    return;
+                }
+                // Step 1: Measure & Quote — use combined config
+                const zbConfig = ZB_COMBINED_CONFIG;
+                const zbStatus = getProjectStepStatus(project, stepNum, zbConfig);
+                const zbColor = 'blue';
+                container.classList.remove('hidden');
+                container.innerHTML = renderStepDetailHTML(zbConfig, zbStatus, 1, zbColor, project);
+                expandedStep = stepNum;
+                container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                return;
+            }
+
+            // Non-Zip Blinds: original 6-step workflow with warnings
             // Warn if user tries to open a step ahead of the current active step
             if (project && stepNum > project.workflowStep) {
                 const stepNames = ['', 'Intent', 'AI Design', 'Measurement', 'Quotation', 'Production', 'Installation'];
@@ -11545,7 +11626,11 @@
             const riskColors = { high: 'red', medium: 'amber', low: 'green' };
             const stepNames = ['', 'Intent', 'Design', 'Measurement', 'Quotation', 'Production', 'Installation'];
 
-            container.innerHTML = filtered.map(p => `
+            container.innerHTML = filtered.map(p => {
+                const isZB = p.type === 'Zip Blinds';
+                const progressPct = isZB ? 50 : Math.round((p.workflowStep / 6) * 100);
+                const stepLabel = isZB ? 'Measure & Quote' : 'Step ' + p.workflowStep + '/6';
+                return `
                 <div class="project-list-item p-4 border-b border-gray-100 hover:bg-blue-50/40 cursor-pointer transition" data-project-id="${p.id}" onclick="selectProject('${p.id}')">
                     <div class="flex items-start justify-between mb-1.5">
                         <div class="font-medium text-sm text-gray-900 leading-tight">${p.name}</div>
@@ -11554,12 +11639,12 @@
                     <div class="text-xs text-gray-500 mb-2">${p.customer} &middot; ${p.type}</div>
                     <div class="flex items-center gap-2">
                         <div class="flex-1 bg-gray-100 rounded-full h-1.5">
-                            <div class="bg-blue-500 rounded-full h-1.5 transition-all" style="width:${Math.round((p.workflowStep / 6) * 100)}%"></div>
+                            <div class="bg-blue-500 rounded-full h-1.5 transition-all" style="width:${progressPct}%"></div>
                         </div>
-                        <span class="text-xs text-gray-400 flex-shrink-0">Step ${p.workflowStep}/6</span>
+                        <span class="text-xs text-gray-400 flex-shrink-0">${stepLabel}</span>
                     </div>
-                </div>
-            `).join('');
+                </div>`;
+            }).join('');
 
             if (filtered.length === 0) {
                 container.innerHTML = '<div class="p-6 text-center text-gray-400 text-sm">No projects found</div>';
@@ -11693,10 +11778,7 @@
 
         function renderProjectWorkflow(project) {
             const container = document.getElementById('projWorkflowSteps');
-            const stepNames = ['Intent', 'Design', 'Measurement', 'Quotation', 'Production', 'Installation'];
-            const stepNamesEn = ['Intent', 'Design', 'Measurement', 'Quotation', 'Production', 'Installation'];
-            const stepIcons = ['fa-handshake', 'fa-palette', 'fa-ruler-combined', 'fa-file-contract', 'fa-industry', 'fa-tools'];
-            const stepColors = ['blue', 'indigo', 'purple', 'orange', 'yellow', 'green'];
+            const isZipBlinds = project.type === 'Zip Blinds';
 
             // Reset expanded step
             expandedStep = null;
@@ -11704,13 +11786,42 @@
             const detailContainer = document.getElementById('projStepDetail');
             if (detailContainer) { detailContainer.classList.add('hidden'); detailContainer.innerHTML = ''; }
 
+            // ---- Zip Blinds: simplified 2-step workflow ----
+            if (isZipBlinds) {
+                container.innerHTML = ZB_WORKFLOW_STEPS.map((s, i) => {
+                    const isCurrent = s.step === 1; // Measure & Quote is always the active step
+                    const isFuture = s.step > 1;
+                    let classes = 'flex-1 flex flex-col items-center p-3 rounded-xl transition ';
+                    if (isCurrent) {
+                        classes += 'bg-blue-50 border-2 border-blue-300 cursor-pointer hover:shadow-md';
+                    } else {
+                        classes += 'opacity-40 cursor-default';
+                    }
+                    const icon = isCurrent ? s.icon + ' text-blue-500' : s.icon + ' text-gray-400';
+
+                    return `
+                        <div class="${classes}" ${isCurrent ? 'onclick="toggleStepDetail(' + s.step + ', currentDetailProject)"' : ''} title="${isCurrent ? 'Click to view Measure & Quote' : 'Coming Soon'}">
+                            <i class="fas ${icon} text-lg mb-1.5"></i>
+                            <span class="text-xs font-semibold text-gray-700">${s.name}</span>
+                            <span class="text-[10px] ${isCurrent ? 'text-blue-500 font-medium' : 'text-gray-400'} mt-0.5">${isFuture ? 'Coming Soon' : 'Active'}</span>
+                        </div>
+                        ${i < ZB_WORKFLOW_STEPS.length - 1 ? '<div class="flex items-center"><i class="fas fa-chevron-right text-gray-300 text-xs"></i></div>' : ''}
+                    `;
+                }).join('');
+                return;
+            }
+
+            // ---- Non-Zip Blinds: original 6-step workflow ----
+            const stepNames = ['Intent', 'Design', 'Measurement', 'Quotation', 'Production', 'Installation'];
+            const stepIcons = ['fa-handshake', 'fa-palette', 'fa-ruler-combined', 'fa-file-contract', 'fa-industry', 'fa-tools'];
+            const stepColors = ['blue', 'indigo', 'purple', 'orange', 'yellow', 'green'];
+
             container.innerHTML = stepNames.map((name, i) => {
                 const step = i + 1;
                 const isCompleted = step < project.workflowStep;
                 const isCurrent = step === project.workflowStep;
                 const isFuture = step > project.workflowStep;
                 const baseColor = stepColors[i];
-                const hasDetail = !!STEP_DETAIL_CONFIG[step];
 
                 let classes = 'flex-1 flex flex-col items-center p-3 rounded-xl transition cursor-pointer hover:shadow-md ';
                 if (isCurrent) classes += `bg-${baseColor}-50 border-2 border-${baseColor}-300`;
