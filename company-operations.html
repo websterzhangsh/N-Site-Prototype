@@ -657,10 +657,12 @@
             },
             testConnection: function() {
                 var client = this.getClient();
-                if (!client) return Promise.resolve(false);
-                return client.from('tenants').select('id', { count: 'exact', head: true })
-                    .then(function(res) { return !res.error; })
-                    .catch(function() { return false; });
+                if (!client) return Promise.resolve({ ok: false, reason: 'no client' });
+                return client.auth.getSession()
+                    .then(function(res) {
+                        return { ok: !res.error, reason: res.error ? res.error.message : 'connected', session: !!res.data.session };
+                    })
+                    .catch(function(err) { return { ok: false, reason: err.message }; });
             }
         };
         if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initClient); }

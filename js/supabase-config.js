@@ -162,16 +162,18 @@
         // 测试连接（异步）
         testConnection: function() {
             var client = this.getClient();
-            if (!client) return Promise.resolve(false);
+            if (!client) return Promise.resolve({ ok: false, reason: 'no client' });
 
-            return client
-                .from('tenants')
-                .select('id', { count: 'exact', head: true })
+            return client.auth.getSession()
                 .then(function(res) {
-                    return !res.error;
+                    return {
+                        ok: !res.error,
+                        reason: res.error ? res.error.message : 'connected',
+                        session: !!res.data.session
+                    };
                 })
-                .catch(function() {
-                    return false;
+                .catch(function(err) {
+                    return { ok: false, reason: err.message };
                 });
         }
     };
