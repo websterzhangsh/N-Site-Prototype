@@ -592,6 +592,10 @@
             .chat-sessions-sidebar { display: none; }
         }
     </style>
+    <!-- Supabase JS SDK (Phase 2 — 云存储) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/supabase-storage.js"></script>
 </head>
 <body>
     <div class="dashboard">
@@ -8586,22 +8590,41 @@
             return zbProductKB.filter(function(doc) { return doc.workflowContext.indexOf(context) !== -1; });
         }
 
-        // Project-level file management (localStorage - Phase 1)
-        // 项目级文件管理：照片/视频存储在 localStorage
+        // Project-level file management (Phase 2: Supabase + localStorage 缓存)
+        // 项目级文件管理：Supabase Storage 持久化 + localStorage 快速缓存
+        // 渲染函数同步读取 localStorage（即时），上传/删除异步走 Supabase
+
+        // 同步读取（用于渲染，从 localStorage 缓存读取）
         function getProjectFiles(projectId) {
             try { return JSON.parse(localStorage.getItem('nestopia_pf_' + projectId)) || []; }
             catch(e) { return []; }
         }
-        function saveProjectFile(projectId, fileObj) {
+
+        // 从 Supabase 同步文件列表到 localStorage 缓存（页面加载时调用）
+        function syncProjectFilesFromCloud(projectId) {
+            if (typeof NestopiaStorage === 'undefined' || !NestopiaDB.isConnected()) return;
+            NestopiaStorage.getProjectFiles(projectId)
+                .then(function(files) {
+                    if (files && files.length) {
+                        localStorage.setItem('nestopia_pf_' + projectId, JSON.stringify(files));
+                        refreshProjectFilesPanel(projectId);
+                    }
+                })
+                .catch(function() { /* 静默失败，使用本地缓存 */ });
+        }
+
+        // 保存文件记录到 localStorage 缓存（内部用）
+        function saveProjectFileLocal(projectId, fileObj) {
             var files = getProjectFiles(projectId);
             files.push(Object.assign({}, fileObj, {
-                id: 'pf-' + Date.now() + '-' + Math.random().toString(36).substr(2, 4),
-                uploadedAt: new Date().toISOString()
+                id: fileObj.id || ('pf-' + Date.now() + '-' + Math.random().toString(36).substr(2, 4)),
+                uploadedAt: fileObj.uploadedAt || new Date().toISOString()
             }));
             localStorage.setItem('nestopia_pf_' + projectId, JSON.stringify(files));
             return files;
         }
-        function removeProjectFile(projectId, fileId) {
+
+        function removeProjectFileLocal(projectId, fileId) {
             var files = getProjectFiles(projectId).filter(function(f) { return f.id !== fileId; });
             localStorage.setItem('nestopia_pf_' + projectId, JSON.stringify(files));
             return files;
@@ -8638,29 +8661,42 @@
                 + '</div>';
         }
 
-        // Render project file gallery HTML
-        // 渲染项目文件上传/展示区
+        // Render project file gallery HTML (Phase 2: 含存储状态指示)
+        // 渲染项目文件上传/展示区 — 支持 Cloud/Local 双模式显示
         function renderProjectFilesHTML(projectId) {
             var files = getProjectFiles(projectId);
             var photos = files.filter(function(f) { return f.category === 'site-photos'; });
             var videos = files.filter(function(f) { return f.category === 'site-videos'; });
+            var docs = files.filter(function(f) { return f.category !== 'site-photos' && f.category !== 'site-videos'; });
+
+            // 存储模式指示器
+            var storageStatus = (typeof NestopiaDB !== 'undefined' && NestopiaDB.isConnected())
+                ? { icon: 'fa-cloud', color: 'text-green-500', tip: 'Cloud Storage' }
+                : { icon: 'fa-hdd', color: 'text-gray-400', tip: 'Local Storage' };
+
             var html = '<div class="p-3 bg-blue-50/30 rounded-lg border border-blue-100">'
                 + '<div class="flex items-center justify-between mb-2">'
-                + '<span class="text-xs font-semibold text-blue-700"><i class="fas fa-camera mr-1.5"></i>Project Site Files</span>'
+                + '<span class="text-xs font-semibold text-blue-700"><i class="fas fa-camera mr-1.5"></i>Project Site Files'
+                + ' <i class="fas ' + storageStatus.icon + ' ' + storageStatus.color + ' text-[9px] ml-1" title="' + storageStatus.tip + '"></i>'
+                + '</span>'
                 + '<label class="text-[10px] text-blue-600 font-medium hover:text-blue-800 cursor-pointer transition">'
                 + '<i class="fas fa-plus mr-0.5"></i>Upload'
-                + '<input type="file" accept="image/*,video/*" multiple class="hidden" onchange="handleProjectFileUpload(\'' + projectId + '\', this.files)">'
+                + '<input type="file" accept="image/*,video/*,application/pdf,.doc,.docx" multiple class="hidden" onchange="handleProjectFileUpload(\'' + projectId + '\', this.files)">'
                 + '</label></div>';
             if (photos.length) {
                 html += '<div class="text-[9px] text-gray-500 mb-1"><i class="fas fa-image mr-1"></i>Photos (' + photos.length + ')</div>'
                     + '<div class="grid grid-cols-4 gap-1.5 mb-2">';
                 photos.forEach(function(p) {
+                    var sizeLabel = (typeof NestopiaDB !== 'undefined') ? NestopiaDB.formatFileSize(p.size) : '';
                     html += '<div class="relative group">'
                         + '<div class="w-full h-16 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">'
-                        + (p.thumbnailUrl ? '<img src="' + p.thumbnailUrl + '" class="w-full h-full object-cover">' : '<i class="fas fa-image text-gray-300 text-lg"></i>')
+                        + (p.thumbnailUrl ? '<img src="' + p.thumbnailUrl + '" class="w-full h-full object-cover">'
+                            : (p.url ? '<img src="' + p.url + '" class="w-full h-full object-cover">'
+                            : '<i class="fas fa-image text-gray-300 text-lg"></i>'))
                         + '</div>'
                         + '<div class="text-[8px] text-gray-500 truncate mt-0.5">' + p.name + '</div>'
-                        + '<button onclick="handleRemoveProjectFile(\'' + projectId + '\',\'' + p.id + '\')" class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white rounded-full text-[8px] hidden group-hover:flex items-center justify-center"><i class="fas fa-times"></i></button>'
+                        + (sizeLabel ? '<div class="text-[7px] text-gray-300">' + sizeLabel + '</div>' : '')
+                        + '<button onclick="handleRemoveProjectFile(\'' + projectId + '\',\'' + p.id + '\',\'' + (p.storagePath || '') + '\')" class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white rounded-full text-[8px] hidden group-hover:flex items-center justify-center"><i class="fas fa-times"></i></button>'
                         + '</div>';
                 });
                 html += '</div>';
@@ -8668,48 +8704,97 @@
             if (videos.length) {
                 html += '<div class="text-[9px] text-gray-500 mb-1"><i class="fas fa-video mr-1"></i>Videos (' + videos.length + ')</div>';
                 videos.forEach(function(v) {
+                    var sizeLabel = (typeof NestopiaDB !== 'undefined') ? NestopiaDB.formatFileSize(v.size) : '';
+                    var modeIcon = v.storageMode === 'supabase' ? '<i class="fas fa-cloud text-green-400 text-[8px]" title="Cloud"></i>' : '';
                     html += '<div class="flex items-center gap-2 py-1 px-2 bg-indigo-50/50 rounded-lg mb-1">'
                         + '<i class="fas fa-video text-indigo-400 text-xs"></i>'
                         + '<span class="text-[10px] text-gray-700 flex-1 truncate">' + v.name + '</span>'
-                        + '<button onclick="handleRemoveProjectFile(\'' + projectId + '\',\'' + v.id + '\')" class="text-red-400 hover:text-red-600 text-[10px]"><i class="fas fa-times"></i></button>'
+                        + (sizeLabel ? '<span class="text-[8px] text-gray-300">' + sizeLabel + '</span>' : '')
+                        + modeIcon
+                        + '<button onclick="handleRemoveProjectFile(\'' + projectId + '\',\'' + v.id + '\',\'' + (v.storagePath || '') + '\')" class="text-red-400 hover:text-red-600 text-[10px]"><i class="fas fa-times"></i></button>'
+                        + '</div>';
+                });
+            }
+            if (docs.length) {
+                html += '<div class="text-[9px] text-gray-500 mb-1"><i class="fas fa-file-alt mr-1"></i>Documents (' + docs.length + ')</div>';
+                docs.forEach(function(d) {
+                    var sizeLabel = (typeof NestopiaDB !== 'undefined') ? NestopiaDB.formatFileSize(d.size) : '';
+                    html += '<div class="flex items-center gap-2 py-1 px-2 bg-gray-50/50 rounded-lg mb-1">'
+                        + '<i class="fas fa-file-pdf text-red-400 text-xs"></i>'
+                        + '<span class="text-[10px] text-gray-700 flex-1 truncate">' + d.name + '</span>'
+                        + (sizeLabel ? '<span class="text-[8px] text-gray-300">' + sizeLabel + '</span>' : '')
+                        + '<button onclick="handleRemoveProjectFile(\'' + projectId + '\',\'' + d.id + '\',\'' + (d.storagePath || '') + '\')" class="text-red-400 hover:text-red-600 text-[10px]"><i class="fas fa-times"></i></button>'
                         + '</div>';
                 });
             }
             if (!files.length) {
                 html += '<div class="text-center py-4">'
                     + '<i class="fas fa-cloud-upload-alt text-blue-200 text-2xl mb-1"></i>'
-                    + '<div class="text-[10px] text-gray-400">Upload site photos & videos</div>'
-                    + '<div class="text-[9px] text-gray-300">Supports JPG, PNG, MP4</div>'
-                    + '</div>';
+                    + '<div class="text-[10px] text-gray-400">Upload site photos, videos & documents</div>'
+                    + '<div class="text-[9px] text-gray-300">Supports JPG, PNG, MP4, PDF'
+                    + (storageStatus.tip === 'Cloud Storage' ? ' &middot; Up to 50MB' : ' &middot; Up to 5MB (local)')
+                    + '</div></div>';
             }
             html += '</div>';
             return html;
         }
 
-        // Handle file upload from <input type="file">
-        // 处理文件上传（Phase 1: localStorage, >5MB 仅存元数据）
+        // Handle file upload from <input type="file"> (Phase 2: Supabase 优先)
+        // 处理文件上传：Supabase 可用时走云端，否则回退 localStorage
         function handleProjectFileUpload(projectId, fileList) {
+            var useCloud = (typeof NestopiaStorage !== 'undefined' && NestopiaDB.isConnected());
             Array.from(fileList).forEach(function(file) {
-                var isImg = file.type.startsWith('image/');
-                var isVid = file.type.startsWith('video/');
-                var cat = isImg ? 'site-photos' : isVid ? 'site-videos' : 'documents';
-                if (file.size > 5 * 1024 * 1024) {
-                    saveProjectFile(projectId, { name: file.name, type: file.type, size: file.size, category: cat, thumbnailUrl: null, url: null, note: 'Phase 2: cloud storage' });
-                    refreshProjectFilesPanel(projectId);
-                    return;
+                if (useCloud) {
+                    // ── Supabase 云端上传路径 ──
+                    NestopiaStorage.uploadProjectFile(projectId, file)
+                        .then(function(record) {
+                            // 上传成功，record 已自动写入 localStorage 缓存
+                            refreshProjectFilesPanel(projectId);
+                        })
+                        .catch(function(err) {
+                            console.error('[Upload] Cloud upload failed:', err.message);
+                            // 回退已在 NestopiaStorage 内部处理
+                            refreshProjectFilesPanel(projectId);
+                        });
+                } else {
+                    // ── localStorage 回退路径（Phase 1 兼容）──
+                    var isImg = file.type.startsWith('image/');
+                    var isVid = file.type.startsWith('video/');
+                    var cat = isImg ? 'site-photos' : isVid ? 'site-videos' : 'documents';
+                    if (file.size > 5 * 1024 * 1024) {
+                        saveProjectFileLocal(projectId, {
+                            name: file.name, type: file.type, size: file.size,
+                            category: cat, thumbnailUrl: null, url: null,
+                            note: 'Large file — connect Supabase for cloud storage'
+                        });
+                        refreshProjectFilesPanel(projectId);
+                        return;
+                    }
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        saveProjectFileLocal(projectId, {
+                            name: file.name, type: file.type, size: file.size,
+                            category: cat, thumbnailUrl: isImg ? e.target.result : null,
+                            url: e.target.result
+                        });
+                        refreshProjectFilesPanel(projectId);
+                    };
+                    reader.readAsDataURL(file);
                 }
-                var reader = new FileReader();
-                reader.onload = function(e) {
-                    saveProjectFile(projectId, { name: file.name, type: file.type, size: file.size, category: cat, thumbnailUrl: isImg ? e.target.result : null, url: e.target.result });
-                    refreshProjectFilesPanel(projectId);
-                };
-                reader.readAsDataURL(file);
             });
         }
-        function handleRemoveProjectFile(projectId, fileId) {
-            removeProjectFile(projectId, fileId);
-            refreshProjectFilesPanel(projectId);
+
+        // Handle file removal (Phase 2: Supabase + localStorage)
+        function handleRemoveProjectFile(projectId, fileId, storagePath) {
+            if (typeof NestopiaStorage !== 'undefined' && NestopiaDB.isConnected()) {
+                NestopiaStorage.removeProjectFile(projectId, fileId, storagePath || null)
+                    .then(function() { refreshProjectFilesPanel(projectId); });
+            } else {
+                removeProjectFileLocal(projectId, fileId);
+                refreshProjectFilesPanel(projectId);
+            }
         }
+
         function refreshProjectFilesPanel(projectId) {
             document.querySelectorAll('[data-project-files="' + projectId + '"]').forEach(function(el) {
                 el.innerHTML = renderProjectFilesHTML(projectId);

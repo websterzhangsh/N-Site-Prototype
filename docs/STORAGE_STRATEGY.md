@@ -211,18 +211,18 @@ kb_documents:
 
 **存储方式**：Supabase Storage + PostgreSQL
 
-| 步骤 | 工作内容 | 前置条件 |
-|------|---------|---------|
-| 2.1 | 注册 Supabase 账号，创建 US East 项目 | 无 |
-| 2.2 | 运行 `supabase/schema.sql` 创建表结构 | 2.1 |
-| 2.3 | 运行 `supabase/seed_data.sql` 导入测试数据 | 2.2 |
-| 2.4 | 创建 Storage Buckets（kb-tenant-files, kb-project-files） | 2.1 |
-| 2.5 | 配置 Bucket RLS 策略 | 2.4 |
-| 2.6 | 前端集成 Supabase JS SDK（@supabase/supabase-js） | 2.1 |
-| 2.7 | 改造 `handleProjectFileUpload()` 从 localStorage → Supabase Storage | 2.4, 2.6 |
-| 2.8 | 改造 `getProjectFiles()` / `saveProjectFile()` → Supabase DB | 2.2, 2.6 |
-| 2.9 | 上传租户级 KB 样本文件（PDF/视频） | 2.4 |
-| 2.10 | 端到端测试：上传 → 存储 → 预览 → 下载 | 全部 |
+| 步骤 | 工作内容 | 前置条件 | 状态 |
+|------|---------|---------|------|
+| 2.1 | 注册 Supabase 账号，创建 US East 项目 | 无 | ⏳ 待执行 |
+| 2.2 | 运行 `supabase/schema.sql` 创建表结构 | 2.1 | ⏳ 待执行 |
+| 2.3 | 运行 `supabase/seed_data.sql` 导入测试数据 | 2.2 | ⏳ 待执行 |
+| 2.4 | 创建 Storage Buckets — `003_storage_buckets.sql` | 2.1 | ✅ SQL 已编写 |
+| 2.5 | 配置 Bucket RLS 策略 | 2.4 | ✅ 含在 003 中 |
+| 2.6 | 前端集成 Supabase JS SDK — `js/supabase-config.js` | 2.1 | ✅ 已集成 |
+| 2.7 | 改造 `handleProjectFileUpload()` — `js/supabase-storage.js` | 2.4, 2.6 | ✅ 已重构 |
+| 2.8 | 改造 `getProjectFiles()` / `saveProjectFile()` → Supabase DB | 2.2, 2.6 | ✅ 已重构 |
+| 2.9 | 上传租户级 KB 样本文件（PDF/视频） | 2.4 | ⏳ 待执行 |
+| 2.10 | 端到端测试：上传 → 存储 → 预览 → 下载 | 全部 | ⏳ 待执行 |
 
 **前端集成方式**：
 

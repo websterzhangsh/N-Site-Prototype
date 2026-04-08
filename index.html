@@ -39,6 +39,7 @@
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
     <style>
         /* Prevent language flash: hide bilingual text until JS sets the correct language */
         html:not(.lang-ready) .lang-text {
@@ -3598,15 +3599,9 @@
             });
         });
 
-        // ==================== Supabase Client ====================
-        const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
-        const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';
-        let supabaseClient = null;
-        try {
-            if (window.supabase && SUPABASE_URL !== 'https://YOUR_PROJECT_ID.supabase.co') {
-                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            }
-        } catch(e) { console.warn('Supabase init skipped:', e.message); }
+        // ==================== Supabase Client (Phase 2: 使用共享配置) ====================
+        // 配置集中管理在 js/supabase-config.js（window.NestopiaDB）
+        let supabaseClient = (typeof NestopiaDB !== 'undefined') ? NestopiaDB.getClient() : null;
 
         // ==================== Customer Intake Form ====================
         let intakeCurrentStep = 1;
