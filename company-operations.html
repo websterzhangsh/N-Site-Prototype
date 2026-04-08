@@ -8620,7 +8620,7 @@
             var cntCls = isMeas ? 'text-purple-400' : 'text-orange-400';
             var items = docs.map(function(d) {
                 var isVid = d.type === 'video';
-                return '<div class="flex items-center gap-2 py-1.5 px-2 rounded-lg hover:bg-gray-50 cursor-pointer transition">'
+                return '<div class="flex items-center gap-2 py-1.5 px-2 rounded-lg hover:bg-gray-50 cursor-pointer transition" onclick="previewKBDocument(\'' + d.id + '\')">'
                     + '<i class="fas ' + d.icon + ' ' + d.color + ' text-xs"></i>'
                     + '<div class="flex-1 min-w-0">'
                     + '<div class="text-[11px] font-medium text-gray-700 truncate">' + d.title + '</div>'
@@ -8715,6 +8715,48 @@
                 el.innerHTML = renderProjectFilesHTML(projectId);
             });
         }
+
+        // KB Document Preview Modal
+        function previewKBDocument(docId) {
+            var doc = zbProductKB.find(function(d) { return d.id === docId; });
+            if (!doc) return;
+            var isVid = doc.type === 'video';
+            var cats = { specs: 'Product Specification', measurement: 'Measurement Guide', pricing: 'Pricing & Sales', installation: 'Installation & Training', compliance: 'Compliance' };
+            var catLabel = cats[doc.category] || doc.category;
+            var iconBg = doc.color.replace('text-', 'bg-').replace('-500', '-100');
+            var existing = document.getElementById('kb-preview-overlay');
+            if (existing) existing.remove();
+            var ov = document.createElement('div');
+            ov.id = 'kb-preview-overlay';
+            ov.className = 'fixed inset-0 bg-black/50 z-[300] flex items-center justify-center p-4';
+            ov.onclick = function(e) { if (e.target === ov) ov.remove(); };
+            var h = '<div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden" onclick="event.stopPropagation()">'
+                + '<div class="p-6">'
+                + '<div class="flex items-start gap-4 mb-4">'
+                + '<div class="w-12 h-12 ' + iconBg + ' rounded-xl flex items-center justify-center flex-shrink-0"><i class="fas ' + doc.icon + ' ' + doc.color + ' text-xl"></i></div>'
+                + '<div class="flex-1 min-w-0"><h3 class="text-sm font-bold text-gray-900 leading-tight">' + doc.title + '</h3>'
+                + '<div class="flex items-center gap-2 mt-1"><span class="text-[10px] px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 font-medium">' + catLabel + '</span>'
+                + '<span class="text-[10px] text-gray-400">' + doc.type.toUpperCase() + ' &middot; ' + doc.size + '</span></div></div>'
+                + '<button onclick="document.getElementById(\'kb-preview-overlay\').remove()" class="text-gray-400 hover:text-gray-600 transition"><i class="fas fa-times text-lg"></i></button></div>';
+            if (isVid) {
+                h += '<div class="bg-gray-900 rounded-xl p-8 flex flex-col items-center justify-center mb-4">'
+                    + '<i class="fas fa-play-circle text-white/40 text-5xl mb-3"></i>'
+                    + '<div class="text-white/70 text-sm font-medium">' + (doc.duration || '') + '</div>'
+                    + '<div class="text-white/40 text-[10px] mt-1">Video preview - Phase 2</div></div>';
+            } else {
+                h += '<div class="bg-gray-50 rounded-xl p-6 flex flex-col items-center justify-center mb-4 border border-gray-200 border-dashed">'
+                    + '<i class="fas fa-file-alt text-gray-300 text-4xl mb-2"></i>'
+                    + '<div class="text-gray-500 text-xs font-medium">Document Preview</div>'
+                    + '<div class="text-gray-400 text-[10px] mt-0.5">Full preview in Phase 2 (Supabase Storage)</div></div>';
+            }
+            h += '<div class="flex gap-2">'
+                + '<button class="flex-1 py-2.5 bg-gray-100 text-gray-500 rounded-xl text-xs font-semibold cursor-not-allowed" disabled><i class="fas fa-download mr-1.5"></i>Download (Phase 2)</button>'
+                + '<button onclick="document.getElementById(\'kb-preview-overlay\').remove()" class="flex-1 py-2.5 bg-gray-800 text-white rounded-xl text-xs font-semibold hover:bg-gray-900 transition"><i class="fas fa-check mr-1.5"></i>Got It</button>'
+                + '</div></div></div>';
+            ov.innerHTML = h;
+            document.body.appendChild(ov);
+        }
+
 
         // Dummy per-project step status data
         function getProjectStepStatus(project, stepNum, useConfig) {
