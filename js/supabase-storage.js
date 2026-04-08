@@ -216,6 +216,12 @@
             var client = NestopiaDB.getClient();
             if (!client) return Promise.resolve(LocalStorage.getFiles(projectId));
 
+            // 非 UUID projectId（如 OMY-001）无法查询 UUID 列，回退 localStorage
+            if (!isValidUUID(projectId)) {
+                console.log('[KBDocuments] projectId 非 UUID，回退 localStorage:', projectId);
+                return Promise.resolve(LocalStorage.getFiles(projectId));
+            }
+
             var query = client
                 .from('kb_documents')
                 .select('*')
