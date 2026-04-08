@@ -500,9 +500,7 @@
 
         // Apply tenant UI customization
         function applyTenantUI(tenant) {
-            document.documentElement.style.setProperty('--primary', tenant.primaryColor);
-            document.documentElement.style.setProperty('--primary-hover', adjustColor(tenant.primaryColor, -20));
-            
+            // Colors stay consistent across tenants — logo differentiates them
             document.getElementById('tenantLogo').src = tenant.logo;
             document.getElementById('tenantName').textContent = tenant.name;
             document.getElementById('tenantSubtitle').textContent = tenant.subtitle;
