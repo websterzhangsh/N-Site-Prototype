@@ -627,7 +627,7 @@
                     auth: { autoRefreshToken: true, persistSession: true, detectSessionInUrl: true },
                     global: { headers: { 'x-nestopia-source': 'web-frontend' } }
                 });
-                if (CONFIG.debug) console.info('[NestopiaDB] Supabase 客户端初始化成功:', CONFIG.url);
+                console.info('[NestopiaDB] Supabase 客户端初始化成功:', CONFIG.url, '| storage:', typeof (_client && _client.storage), '| auth:', typeof (_client && _client.auth));
                 return _client;
             } catch (e) {
                 console.error('[NestopiaDB] Supabase 初始化失败:', e.message);
@@ -719,28 +719,46 @@
 
         var SupabaseStorage = {
             uploadFile: function(bucket, path, file) {
-                var client = NestopiaDB.getClient();
-                if (!client) return Promise.reject(new Error('Supabase not connected'));
-                return client.storage.from(bucket).upload(path, file, { cacheControl: '3600', upsert: false, contentType: file.type });
+                try {
+                    var client = NestopiaDB.getClient();
+                    if (!client) return Promise.reject(new Error('Supabase not connected'));
+                    if (!client.storage) return Promise.reject(new Error('Supabase storage module not available'));
+                    console.log('[SupabaseStorage] upload →', bucket, path, file.name, file.size);
+                    return client.storage.from(bucket).upload(path, file, { cacheControl: '3600', upsert: false, contentType: file.type });
+                } catch(e) {
+                    console.error('[SupabaseStorage] uploadFile sync error:', e);
+                    return Promise.reject(e);
+                }
             },
             getFileUrl: function(bucket, path, signed) {
-                var client = NestopiaDB.getClient();
-                if (!client) return null;
-                if (signed) {
-                    return client.storage.from(bucket).createSignedUrl(path, 3600).then(function(res) { return res.data ? res.data.signedUrl : null; });
+                try {
+                    var client = NestopiaDB.getClient();
+                    if (!client || !client.storage) return null;
+                    if (signed) {
+                        return client.storage.from(bucket).createSignedUrl(path, 3600).then(function(res) { return res.data ? res.data.signedUrl : null; });
+                    }
+                    var result = client.storage.from(bucket).getPublicUrl(path);
+                    return result.data ? result.data.publicUrl : null;
+                } catch(e) {
+                    console.error('[SupabaseStorage] getFileUrl error:', e);
+                    return null;
                 }
-                var result = client.storage.from(bucket).getPublicUrl(path);
-                return result.data ? result.data.publicUrl : null;
             },
             deleteFiles: function(bucket, paths) {
-                var client = NestopiaDB.getClient();
-                if (!client) return Promise.reject(new Error('Supabase not connected'));
-                return client.storage.from(bucket).remove(paths);
+                try {
+                    var client = NestopiaDB.getClient();
+                    if (!client) return Promise.reject(new Error('Supabase not connected'));
+                    if (!client.storage) return Promise.reject(new Error('Supabase storage module not available'));
+                    return client.storage.from(bucket).remove(paths);
+                } catch(e) { return Promise.reject(e); }
             },
             listFiles: function(bucket, folder) {
-                var client = NestopiaDB.getClient();
-                if (!client) return Promise.reject(new Error('Supabase not connected'));
-                return client.storage.from(bucket).list(folder, { limit: 100, offset: 0, sortBy: { column: 'created_at', order: 'desc' } });
+                try {
+                    var client = NestopiaDB.getClient();
+                    if (!client) return Promise.reject(new Error('Supabase not connected'));
+                    if (!client.storage) return Promise.reject(new Error('Supabase storage module not available'));
+                    return client.storage.from(bucket).list(folder, { limit: 100, offset: 0, sortBy: { column: 'created_at', order: 'desc' } });
+                } catch(e) { return Promise.reject(e); }
             }
         };
 
@@ -748,6 +766,11 @@
             getProjectFiles: function(projectId, filters) {
                 var client = NestopiaDB.getClient();
                 if (!client) return Promise.resolve(LocalStorage.getFiles(projectId));
+                // 非 UUID projectId（如 OMY-001）无法查询 UUID 列，回退 localStorage
+                if (!isValidUUID(projectId)) {
+                    console.log('[KBDocuments] projectId 非 UUID，回退 localStorage:', projectId);
+                    return Promise.resolve(LocalStorage.getFiles(projectId));
+                }
                 var query = client.from('kb_documents').select('*').eq('scope', 'project').eq('project_id', projectId).eq('is_deleted', false).eq('is_latest', true).order('created_at', { ascending: false });
                 if (filters) {
                     if (filters.category) query = query.eq('category', filters.category);
