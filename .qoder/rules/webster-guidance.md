@@ -1,3 +1,6 @@
+---
+trigger: always_on
+---
 # Webster's Guidance（项目全局规则）
 
 ## 语言规则
@@ -8,6 +11,12 @@
 ## 代码变更流程
 - 本地代码变更后，**自动执行** git add → commit → push，触发 CloudFlare 部署
 - 不需要用户确认即可推送（除非涉及破坏性操作）
+
+## 部署状态检查
+- 每次 git push 之后，**必须**运行 `scripts/check-deploy.sh` 检查 Cloudflare Pages 构建状态
+- 如果构建**失败**，立即在对话中提醒用户，并主动排查失败原因
+- 如果构建**成功**，简要报告状态即可（一行）
+- 凭证存储在 `.env`（已被 .gitignore 排除，不会提交到 git）
 
 ## 上下文管理
 - 在 70% 上下文使用率时自动压缩
