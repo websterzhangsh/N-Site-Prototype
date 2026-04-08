@@ -8551,6 +8551,171 @@
             { step: 2, name: 'Order & Install', icon: 'fa-truck', color: 'gray', desc: 'Coming soon — order, production, shipment, installation' }
         ];
 
+        // ===== Zip Blinds Tenant-Level Product Knowledge Base (Phase 1a) =====
+        // 租户级 KB 样本数据：产品规格、量尺指南、定价资料、安装培训、合规文档
+        const zbProductKB = [
+            // --- Product Specifications ---
+            { id: 'kb-spec-100', title: 'ZB-100 Standard Series Spec Sheet', category: 'specs', type: 'pdf', size: '2.1 MB', icon: 'fa-file-pdf', color: 'text-red-500', tags: ['zb-100'], workflowContext: ['consultation', 'configuration'] },
+            { id: 'kb-spec-200', title: 'ZB-200 Professional Series Spec Sheet', category: 'specs', type: 'pdf', size: '2.4 MB', icon: 'fa-file-pdf', color: 'text-red-500', tags: ['zb-200'], workflowContext: ['consultation', 'configuration'] },
+            { id: 'kb-spec-300', title: 'ZB-300 Elite Series Spec Sheet', category: 'specs', type: 'pdf', size: '2.8 MB', icon: 'fa-file-pdf', color: 'text-red-500', tags: ['zb-300'], workflowContext: ['consultation', 'configuration'] },
+            { id: 'kb-fabric', title: 'Fabric Options Catalog (NP-4000/6000/8000)', category: 'specs', type: 'pdf', size: '3.5 MB', icon: 'fa-file-pdf', color: 'text-red-500', tags: ['fabric'], workflowContext: ['consultation', 'configuration'] },
+            { id: 'kb-drive', title: 'Drive System Comparison Chart', category: 'specs', type: 'pdf', size: '1.2 MB', icon: 'fa-file-pdf', color: 'text-red-500', tags: ['drive'], workflowContext: ['configuration'] },
+            // --- Measurement Guides ---
+            { id: 'kb-sop-1b', title: 'OMEYA SOP S1B: Site Measurement Method', category: 'measurement', type: 'pdf', size: '1.8 MB', icon: 'fa-file-pdf', color: 'text-purple-500', tags: ['measurement', 'sop'], workflowContext: ['measurement'] },
+            { id: 'kb-mount-guide', title: 'Inside Mount vs Face Mount Decision Guide', category: 'measurement', type: 'pdf', size: '0.9 MB', icon: 'fa-file-pdf', color: 'text-purple-500', tags: ['mounting'], workflowContext: ['measurement'] },
+            { id: 'kb-3point', title: '3-Point Measurement Reference Card', category: 'measurement', type: 'pdf', size: '0.4 MB', icon: 'fa-file-pdf', color: 'text-purple-500', tags: ['3-point'], workflowContext: ['measurement'] },
+            { id: 'kb-measure-video', title: 'How to Measure for Zip Blinds', category: 'measurement', type: 'video', duration: '6:20', size: '28 MB', icon: 'fa-video', color: 'text-indigo-500', tags: ['measurement'], workflowContext: ['measurement'] },
+            // --- Pricing & Sales ---
+            { id: 'kb-pricing-model', title: 'Zip Blinds 6-Strategy Pricing Model', category: 'pricing', type: 'pdf', size: '1.5 MB', icon: 'fa-file-pdf', color: 'text-orange-500', tags: ['pricing'], workflowContext: ['quotation'] },
+            { id: 'kb-competitive', title: 'Competitive Comparison Matrix', category: 'pricing', type: 'pdf', size: '0.8 MB', icon: 'fa-file-pdf', color: 'text-orange-500', tags: ['competitive'], workflowContext: ['quotation', 'consultation'] },
+            { id: 'kb-dealer-price', title: 'Dealer Price List (Confidential)', category: 'pricing', type: 'xlsx', size: '0.6 MB', icon: 'fa-file-excel', color: 'text-green-500', tags: ['dealer'], workflowContext: ['quotation'] },
+            { id: 'kb-sales-deck', title: 'Sales Pitch Deck - Residential', category: 'pricing', type: 'pptx', size: '8.2 MB', icon: 'fa-file-powerpoint', color: 'text-orange-500', tags: ['sales'], workflowContext: ['consultation'] },
+            // --- Installation & Training ---
+            { id: 'kb-install-sop', title: 'OMEYA Blind Installation SOP', category: 'installation', type: 'pdf', size: '4.2 MB', icon: 'fa-file-pdf', color: 'text-blue-500', tags: ['installation'], workflowContext: [] },
+            { id: 'kb-face-mount-vid', title: 'Face Mount Installation Tutorial', category: 'installation', type: 'video', duration: '12:30', size: '45 MB', icon: 'fa-video', color: 'text-indigo-500', tags: ['face-mount'], workflowContext: [] },
+            { id: 'kb-ceiling-mount-vid', title: 'Ceiling Mount Installation Tutorial', category: 'installation', type: 'video', duration: '8:45', size: '32 MB', icon: 'fa-video', color: 'text-indigo-500', tags: ['ceiling-mount'], workflowContext: [] },
+            { id: 'kb-motor-vid', title: 'Motor Wiring & Commissioning', category: 'installation', type: 'video', duration: '15:00', size: '68 MB', icon: 'fa-video', color: 'text-indigo-500', tags: ['motor'], workflowContext: [] },
+            // --- Compliance ---
+            { id: 'kb-wind-load', title: 'US Wind Load Requirements by Zone', category: 'compliance', type: 'pdf', size: '1.4 MB', icon: 'fa-file-pdf', color: 'text-teal-500', tags: ['wind-load'], workflowContext: [] },
+            { id: 'kb-child-safety', title: 'Child Safety Cord/Chain Standards', category: 'compliance', type: 'pdf', size: '0.7 MB', icon: 'fa-file-pdf', color: 'text-teal-500', tags: ['child-safety'], workflowContext: [] }
+        ];
+
+        // Context-aware KB recommendation engine
+        // 上下文感知推送：根据工作流阶段返回相关 KB 文档
+        function getKBRecommendations(context) {
+            return zbProductKB.filter(function(doc) { return doc.workflowContext.indexOf(context) !== -1; });
+        }
+
+        // Project-level file management (localStorage - Phase 1)
+        // 项目级文件管理：照片/视频存储在 localStorage
+        function getProjectFiles(projectId) {
+            try { return JSON.parse(localStorage.getItem('nestopia_pf_' + projectId)) || []; }
+            catch(e) { return []; }
+        }
+        function saveProjectFile(projectId, fileObj) {
+            var files = getProjectFiles(projectId);
+            files.push(Object.assign({}, fileObj, {
+                id: 'pf-' + Date.now() + '-' + Math.random().toString(36).substr(2, 4),
+                uploadedAt: new Date().toISOString()
+            }));
+            localStorage.setItem('nestopia_pf_' + projectId, JSON.stringify(files));
+            return files;
+        }
+        function removeProjectFile(projectId, fileId) {
+            var files = getProjectFiles(projectId).filter(function(f) { return f.id !== fileId; });
+            localStorage.setItem('nestopia_pf_' + projectId, JSON.stringify(files));
+            return files;
+        }
+
+        // Render KB Quick Reference panel HTML
+        // 渲染 KB 快速参考面板 — measurement / quotation 两种上下文
+        function renderKBQuickRefHTML(context, projectId) {
+            var docs = getKBRecommendations(context);
+            if (!docs.length) return '';
+            var isMeas = context === 'measurement';
+            var title = isMeas ? 'Measurement Guides' : 'Pricing & Sales Docs';
+            var icon = isMeas ? 'fa-ruler-combined' : 'fa-tags';
+            var bgCls = isMeas ? 'bg-purple-50/30 border border-purple-100' : 'bg-orange-50/30 border border-orange-100';
+            var titleCls = isMeas ? 'text-purple-700' : 'text-orange-700';
+            var cntCls = isMeas ? 'text-purple-400' : 'text-orange-400';
+            var items = docs.map(function(d) {
+                var isVid = d.type === 'video';
+                return '<div class="flex items-center gap-2 py-1.5 px-2 rounded-lg hover:bg-gray-50 cursor-pointer transition">'
+                    + '<i class="fas ' + d.icon + ' ' + d.color + ' text-xs"></i>'
+                    + '<div class="flex-1 min-w-0">'
+                    + '<div class="text-[11px] font-medium text-gray-700 truncate">' + d.title + '</div>'
+                    + '<div class="text-[9px] text-gray-400">' + (isVid ? d.duration + ' &middot; ' : '') + d.size + '</div>'
+                    + '</div>'
+                    + (isVid ? '<i class="fas fa-play-circle text-indigo-400 text-sm"></i>' : '<i class="fas fa-external-link-alt text-gray-300 text-[9px]"></i>')
+                    + '</div>';
+            }).join('');
+            return '<div class="p-3 ' + bgCls + ' rounded-lg">'
+                + '<div class="flex items-center justify-between mb-2">'
+                + '<span class="text-xs font-semibold ' + titleCls + '"><i class="fas ' + icon + ' mr-1.5"></i>KB Quick Reference</span>'
+                + '<span class="text-[9px] ' + cntCls + '">' + docs.length + ' docs</span>'
+                + '</div>'
+                + '<div class="space-y-0.5">' + items + '</div>'
+                + '</div>';
+        }
+
+        // Render project file gallery HTML
+        // 渲染项目文件上传/展示区
+        function renderProjectFilesHTML(projectId) {
+            var files = getProjectFiles(projectId);
+            var photos = files.filter(function(f) { return f.category === 'site-photos'; });
+            var videos = files.filter(function(f) { return f.category === 'site-videos'; });
+            var html = '<div class="p-3 bg-blue-50/30 rounded-lg border border-blue-100">'
+                + '<div class="flex items-center justify-between mb-2">'
+                + '<span class="text-xs font-semibold text-blue-700"><i class="fas fa-camera mr-1.5"></i>Project Site Files</span>'
+                + '<label class="text-[10px] text-blue-600 font-medium hover:text-blue-800 cursor-pointer transition">'
+                + '<i class="fas fa-plus mr-0.5"></i>Upload'
+                + '<input type="file" accept="image/*,video/*" multiple class="hidden" onchange="handleProjectFileUpload(\'' + projectId + '\', this.files)">'
+                + '</label></div>';
+            if (photos.length) {
+                html += '<div class="text-[9px] text-gray-500 mb-1"><i class="fas fa-image mr-1"></i>Photos (' + photos.length + ')</div>'
+                    + '<div class="grid grid-cols-4 gap-1.5 mb-2">';
+                photos.forEach(function(p) {
+                    html += '<div class="relative group">'
+                        + '<div class="w-full h-16 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">'
+                        + (p.thumbnailUrl ? '<img src="' + p.thumbnailUrl + '" class="w-full h-full object-cover">' : '<i class="fas fa-image text-gray-300 text-lg"></i>')
+                        + '</div>'
+                        + '<div class="text-[8px] text-gray-500 truncate mt-0.5">' + p.name + '</div>'
+                        + '<button onclick="handleRemoveProjectFile(\'' + projectId + '\',\'' + p.id + '\')" class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white rounded-full text-[8px] hidden group-hover:flex items-center justify-center"><i class="fas fa-times"></i></button>'
+                        + '</div>';
+                });
+                html += '</div>';
+            }
+            if (videos.length) {
+                html += '<div class="text-[9px] text-gray-500 mb-1"><i class="fas fa-video mr-1"></i>Videos (' + videos.length + ')</div>';
+                videos.forEach(function(v) {
+                    html += '<div class="flex items-center gap-2 py-1 px-2 bg-indigo-50/50 rounded-lg mb-1">'
+                        + '<i class="fas fa-video text-indigo-400 text-xs"></i>'
+                        + '<span class="text-[10px] text-gray-700 flex-1 truncate">' + v.name + '</span>'
+                        + '<button onclick="handleRemoveProjectFile(\'' + projectId + '\',\'' + v.id + '\')" class="text-red-400 hover:text-red-600 text-[10px]"><i class="fas fa-times"></i></button>'
+                        + '</div>';
+                });
+            }
+            if (!files.length) {
+                html += '<div class="text-center py-4">'
+                    + '<i class="fas fa-cloud-upload-alt text-blue-200 text-2xl mb-1"></i>'
+                    + '<div class="text-[10px] text-gray-400">Upload site photos & videos</div>'
+                    + '<div class="text-[9px] text-gray-300">Supports JPG, PNG, MP4</div>'
+                    + '</div>';
+            }
+            html += '</div>';
+            return html;
+        }
+
+        // Handle file upload from <input type="file">
+        // 处理文件上传（Phase 1: localStorage, >5MB 仅存元数据）
+        function handleProjectFileUpload(projectId, fileList) {
+            Array.from(fileList).forEach(function(file) {
+                var isImg = file.type.startsWith('image/');
+                var isVid = file.type.startsWith('video/');
+                var cat = isImg ? 'site-photos' : isVid ? 'site-videos' : 'documents';
+                if (file.size > 5 * 1024 * 1024) {
+                    saveProjectFile(projectId, { name: file.name, type: file.type, size: file.size, category: cat, thumbnailUrl: null, url: null, note: 'Phase 2: cloud storage' });
+                    refreshProjectFilesPanel(projectId);
+                    return;
+                }
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    saveProjectFile(projectId, { name: file.name, type: file.type, size: file.size, category: cat, thumbnailUrl: isImg ? e.target.result : null, url: e.target.result });
+                    refreshProjectFilesPanel(projectId);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+        function handleRemoveProjectFile(projectId, fileId) {
+            removeProjectFile(projectId, fileId);
+            refreshProjectFilesPanel(projectId);
+        }
+        function refreshProjectFilesPanel(projectId) {
+            document.querySelectorAll('[data-project-files="' + projectId + '"]').forEach(function(el) {
+                el.innerHTML = renderProjectFilesHTML(projectId);
+            });
+        }
+
         // Dummy per-project step status data
         function getProjectStepStatus(project, stepNum, useConfig) {
             // useConfig allows overriding the config (e.g., ZB_COMBINED_CONFIG)
@@ -9850,6 +10015,9 @@
                                 </div>
                                 `}
 
+                                ${isZipBlinds ? renderKBQuickRefHTML('measurement', project.id) : ''}
+                                ${isZipBlinds ? '<div data-project-files="' + project.id + '" class="mt-3">' + renderProjectFilesHTML(project.id) + '</div>' : ''}
+
                                 <!-- Generate Design / Order Button -->
                                 <button id="step3GenerateDesignBtn_${project.id}" onclick="generateStep3DetailedDesign('${project.id}')" class="w-full py-3 bg-gradient-to-r from-purple-600 to-violet-600 text-white rounded-xl font-semibold text-sm hover:from-purple-700 hover:to-violet-700 transition shadow-lg shadow-purple-500/25 flex items-center justify-center gap-2 ${step3State.measurementComplete ? '' : 'opacity-40 cursor-not-allowed'}" ${step3State.measurementComplete ? '' : 'disabled'}>
                                     <i class="fas ${isZipBlinds ? 'fa-check-double' : 'fa-drafting-compass'}"></i> ${isZipBlinds ? 'Generate Installation Package' : 'Generate Detailed Design Package'}
@@ -10063,6 +10231,9 @@
                                             <span class="text-[10px] font-bold ${cs.marginPct >= 15 ? 'text-green-700' : 'text-amber-700'}">$${cs.profit} net</span>
                                         </div>
                                     </div>
+
+                                    <!-- KB Quick Reference (Quotation) -->
+                                    ${renderKBQuickRefHTML('quotation', project.id)}
 
                                     <!-- Action Button -->
                                     <button onclick="openQuotationEditor('${project.id}')" class="w-full py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold text-xs hover:from-blue-700 hover:to-blue-800 transition shadow-md flex items-center justify-center gap-1.5">
