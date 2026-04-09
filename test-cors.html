@@ -149,8 +149,8 @@
 🎉 好消息！DashScope API 支持浏览器直接调用！
 
 这意味着：
-• 无需 Netlify Functions 或其他后端代理
-• 可以直接部署到 GitHub Pages
+• 无需后端代理（如 Cloudflare Workers）
+• 可以直接部署到 Cloudflare Pages
 • 前端直接调用 API，用户输入自己的 API Key
 
 API 响应:
@@ -182,8 +182,7 @@ DashScope API 不支持浏览器直接调用（CORS 被阻止）
 
 解决方案：
 1. 使用 Cloudflare Workers 作为免费 API 代理（推荐）
-2. 继续使用 Netlify Functions
-3. 使用其他支持 CORS 的 API 代理服务
+2. 使用其他支持 CORS 的 API 代理服务
 
 错误详情:
 ${error.name}: ${error.message}`;

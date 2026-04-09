@@ -1,67 +1,54 @@
 # N-Site-Prototype
 
-For Nestopia homepage design purpose
+Nestopia 多租户运营管理平台原型
 
 ## 项目概述
-这是一个专业的阳光房销售主页原型项目，旨在为Nestopia提供现代化的在线展示平台。
+Nestopia 阳光房 / 遮阳产品行业的 SaaS 运营平台，支持多租户、项目管理、KB 知识库、AI 辅助等功能。
 
 ## 主要特性
-- 🏠 现代化响应式设计
-- 🎨 优雅的渐变色彩搭配
+- 🏠 多租户公司运营管理（Company Operations）
+- 📋 项目全流程跟踪（Workflow Steps）
+- 📚 KB 知识库 + 文件云端存储
+- 🤖 AI Knowledge Agent（规划中）
 - 📱 完全适配移动端设备
-- ⚡ 快速加载优化
-- 🔧 易于定制和扩展
 
 ## 技术栈
-- HTML5 + CSS3 + JavaScript
+- HTML5 + CSS3 + JavaScript（Vanilla）
 - Tailwind CSS
-- React + TypeScript (可选)
-- Vite (构建工具)
+- Supabase（PostgreSQL + Auth + Storage）
+- Cloudflare Pages（静态托管 + Edge Functions）
 
 ## 项目结构
 ```
-├── index.html          # React版本主页
-├── sunroom-landing.html # 纯静态版本主页
-├── src/               # React源代码
-│   ├── components/    # 组件文件夹
-│   ├── App.tsx       # 主应用组件
-│   └── index.css     # 样式文件
-├── public/           # 静态资源
-│   └── images/       # 图片资源
-└── README.md         # 项目说明
+├── index.html              # 首页
+├── company-operations.html # 公司运营主页面
+├── login.html              # 登录页
+├── js/                     # JavaScript 模块
+│   ├── supabase-config.js  # Supabase 连接配置
+│   └── supabase-storage.js # 存储操作封装
+├── supabase/               # Supabase 迁移脚本
+│   └── migrations/         # SQL 迁移文件
+├── scripts/                # 工具脚本
+│   └── check-deploy.sh     # Cloudflare 部署状态检查
+├── docs/                   # 项目文档
+├── _routes.json            # Cloudflare Pages 路由配置
+└── README.md
 ```
 
-## 快速开始
-1. 直接打开 `sunroom-landing.html` 查看静态版本
-2. 或者运行开发服务器查看React版本
+## 部署
 
-## 部署说明
+### Staging（自动）
+推送到 `main` 分支即自动部署至 Cloudflare Pages：
+```bash
+git push origin main
+```
+Staging 站点：`n-site-prototype.pages.dev`
 
-### GitHub Pages 部署步骤
+### Production
+需手动触发，部署至 `ai-nestopia.com`。
 
-1. **推送代码到GitHub**：
-   ```bash
-   git push -u origin main
-   ```
-
-2. **启用GitHub Pages**：
-   - 访问仓库设置：https://github.com/websterzhangsh/N-Site-Prototype/settings/pages
-   - 在 "Pages" 部分选择：
-     - Source: Deploy from a branch
-     - Branch: main
-     - Folder: / (root)
-   - 点击 "Save"
-
-3. **访问你的网站**：
-   几分钟后可通过以下链接访问：
-   `https://websterzhangsh.github.io/N-Site-Prototype/`
-
-### 替代部署方式
-
-- **Netlify**: 拖拽 `sunroom-landing.html` 到 [netlify.com/drop](https://netlify.com/drop)
-- **Vercel**: 连接GitHub仓库自动部署
-
-## 开发说明
-
-## 联系信息
-如有问题请联系项目维护者。
+## 关键文档
+- `docs/STORAGE_STRATEGY.md` — 存储策略
+- `docs/DATA_AI_STRATEGY.md` — 数据与 AI 策略
+- `docs/KB_STORAGE_DESIGN.md` — KB 存储架构
+- `docs/BASELINES.md` — 版本基线记录

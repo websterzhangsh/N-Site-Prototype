@@ -593,10 +593,10 @@ async function tenantMiddleware(req, res, next) {
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                      Vercel / Netlify                        │
+│                      Cloudflare Pages                        │
 │  • 前端静态托管                                               │
-│  • 自动部署                                                   │
-│  • Edge Middleware (租户识别)                                │
+│  • 自动部署（GitHub → Cloudflare）                            │
+│  • Edge Functions (租户路由)                                 │
 └─────────────────────────────────────────────────────────────┘
                               │
                               ▼
@@ -665,7 +665,7 @@ portal.partner1.com       → partner1.nestopia.com
 | **数据库** | PostgreSQL (Supabase) |
 | **认证** | JWT + bcrypt |
 | **存储** | Supabase Storage |
-| **部署** | Vercel / Netlify + Supabase |
+| **部署** | Cloudflare Pages + Supabase |
 | **监控** | Supabase Analytics / Sentry |
 
 ---
