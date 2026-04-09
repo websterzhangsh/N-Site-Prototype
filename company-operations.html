@@ -4933,7 +4933,7 @@
         const projectAgentPanelData = {
             'PRJ-003': {
                 compliance: {
-                    jurisdiction: 'Austin, TX (Travis County)',
+                    jurisdiction: 'Silver Spring, MD (Montgomery County)',
                     permitStatus: 'approved', permitId: 'BP-2025-04832', permitDate: '2025-12-28',
                     hoaStatus: 'No HOA — single-family residential',
                     complianceScore: 100,
@@ -8561,7 +8561,7 @@
             { name: 'Mr. Johnson', email: 'johnson@email.com', location: '123 Sunshine Ave, Los Angeles, CA', projects: 3, spent: '$42,500', status: 'VIP', avatar: 'J' },
             { name: 'Ms. Chen', email: 'chen@email.com', location: '456 Oak Dr, Frederick, MD', projects: 1, spent: '$6,900', status: 'Active', avatar: 'C' },
             { name: 'Mrs. Davis', email: 'davis@email.com', location: '789 Pool Ln, Scottsdale, AZ', projects: 2, spent: '$12,800', status: 'Active', avatar: 'D' },
-            { name: 'Mr. Smith', email: 'smith@email.com', location: '321 Elm St, Austin, TX', projects: 1, spent: '$32,000', status: 'VIP', avatar: 'S' },
+            { name: 'Mr. Smith', email: 'smith@email.com', location: '8520 Fenton St, Silver Spring, MD', projects: 1, spent: '$32,000', status: 'VIP', avatar: 'S' },
             { name: 'Ms. Garcia', email: 'garcia@email.com', location: '654 Pine Rd, San Diego, CA', projects: 1, spent: '$85,000', status: 'New', avatar: 'G' },
             { name: 'Mr. Wilson', email: 'wilson@email.com', location: '987 Cedar Ct, Portland, OR', projects: 2, spent: '$18,200', status: 'Active', avatar: 'W' },
             { name: 'Mrs. Taylor', email: 'taylor@email.com', location: '111 Rose Blvd, Denver, CO', projects: 1, spent: '$5,800', status: 'Active', avatar: 'T' },
@@ -9353,11 +9353,11 @@
         intakeFormData['PRJ-003'] = {
             // A.1 Customer Basics
             a1_client_name: 'Mr. Smith',
-            a1_address_street: '321 Elm St',
-            a1_address_city: 'Austin',
-            a1_address_state: 'TX',
-            a1_address_zip: '78701',
-            a1_phone: '(512) 555-0303',
+            a1_address_street: '8520 Fenton St',
+            a1_address_city: 'Silver Spring',
+            a1_address_state: 'MD',
+            a1_address_zip: '20910',
+            a1_phone: '(301) 555-0303',
             a1_email: 'smith@email.com',
             a1_preferred_contact: 'phone',
             a1_other_decision_makers: '',
@@ -12295,7 +12295,7 @@
         const greenscapeProjects = [
             { id: 'PRJ-001', name: 'Johnson Residence Sunroom', customer: 'Mr. Johnson', customerEmail: 'johnson@email.com', customerPhone: '(310) 555-0101', customerAddress: '123 Sunshine Ave, Los Angeles, CA', type: 'Sunroom', workflowStep: 3, stage: 'measurement', riskLevel: 'high', budget: 35000, paid: 18500, timeline: '6 weeks', startDate: '2026-01-15', risks: [{title:'Permit approval delayed by city', severity:'high', status:'open'},{title:'HOA design review pending', severity:'medium', status:'monitoring'}], issues: [{id:'ISS-001', title:'Permit approval delayed by city', priority:'high', status:'open', assignedTo:'John Smith', dueDate:'2026-03-15'},{title:'HOA documentation incomplete', priority:'medium', status:'in_progress', assignedTo:'Emily Davis', dueDate:'2026-03-20'}], order: {id:'ORD-2024-0156', product:'Classic Sunroom', total:'$18,500', status:'In Production', date:'Mar 10, 2026'}, hidden: true },
             { id: 'PRJ-002', name: 'Martinez ADU Project', customer: 'Ms. Martinez', customerEmail: 'martinez@email.com', customerPhone: '(415) 555-0202', customerAddress: '456 Oak Dr, San Francisco, CA', type: 'ADU', workflowStep: 2, stage: 'design', riskLevel: 'high', budget: 95000, paid: 1100, timeline: '12 weeks', startDate: '2026-02-01', risks: [{title:'HOA approval uncertain', severity:'high', status:'open'}], issues: [{title:'Zoning variance needed', priority:'high', status:'open', assignedTo:'John Smith', dueDate:'2026-03-25'}], order: {id:'ORD-2024-0152', product:'ADU Studio', total:'$85,000', status:'Pending', date:'Feb 25, 2026'}, hidden: true },
-            { id: 'PRJ-003', name: 'Smith Premium Sunroom', customer: 'Mr. Smith', customerEmail: 'smith@email.com', customerPhone: '(512) 555-0303', customerAddress: '321 Elm St, Austin, TX', type: 'Sunroom', workflowStep: 2, stage: 'design', riskLevel: 'low', budget: 42000, paid: 4200, timeline: '8 weeks', startDate: '2026-02-15', risks: [], issues: [], order: {id:'ORD-2024-0153', product:'Premium Sunroom', total:'$32,000', status:'Pending', date:'Mar 15, 2026'}, measurement: { method: 'Manual precision', surveyor: 'John Martinez (#948721)', date: '2026-01-25', dims: "24' x 16' x 10'", foundation: 'Concrete slab 4"', wallBearing: 'Adequate - wood frame', setback: '12ft actual (5ft req) — OK', drainage: '2.1% slope — OK', obstacles: ['Downspout NE corner', 'Gas meter E wall'] } },
+            { id: 'PRJ-003', name: 'Smith Premium Sunroom', customer: 'Mr. Smith', customerEmail: 'smith@email.com', customerPhone: '(301) 555-0303', customerAddress: '8520 Fenton St, Silver Spring, MD', type: 'Sunroom', workflowStep: 2, stage: 'design', riskLevel: 'low', budget: 42000, paid: 4200, timeline: '8 weeks', startDate: '2026-02-15', risks: [], issues: [], order: {id:'ORD-2024-0153', product:'Premium Sunroom', total:'$32,000', status:'Pending', date:'Mar 15, 2026'}, measurement: { method: 'Manual precision', surveyor: 'John Martinez (#948721)', date: '2026-01-25', dims: "24' x 16' x 10'", foundation: 'Concrete slab 4"', wallBearing: 'Adequate - wood frame', setback: '12ft actual (5ft req) — OK', drainage: '2.1% slope — OK', obstacles: ['Downspout NE corner', 'Gas meter E wall'] } },
             { id: 'PRJ-004', name: 'Chen Pergola Space', customer: 'Ms. Chen', customerEmail: 'chen@email.com', customerPhone: '(301) 555-0404', customerAddress: '456 Oak Dr, Frederick, MD', type: 'Pergola', workflowStep: 3, stage: 'measurement', riskLevel: 'low', budget: 12000, paid: 3600, timeline: '4 weeks', startDate: '2026-02-01', risks: [{title:'Weather delay possible', severity:'low', status:'monitoring'}], issues: [], order: {id:'ORD-2024-0155', product:'Studio Pergola', total:'$6,900', status:'Pending', date:'Mar 20, 2026'}, measurement: { method: 'Hybrid', surveyor: 'Sarah Lee (#762194)', date: '2026-02-10', dims: "18' x 14' x 9'", foundation: 'Pier & beam', wallBearing: 'N/A - freestanding', setback: '8ft actual (5ft req) — OK', drainage: '1.5% slope — OK', obstacles: ['Oak tree 6ft NW', 'Sprinkler head SW corner'] } },
             { id: 'PRJ-005', name: 'Davis Pool Zip Blinds', customer: 'Mrs. Davis', customerEmail: 'davis@email.com', customerPhone: '(480) 555-0505', customerAddress: '789 Pool Ln, Scottsdale, AZ', type: 'Zip Blinds', workflowStep: 4, stage: 'quotation', riskLevel: 'low', budget: 8500, paid: 2550, timeline: '3 weeks', startDate: '2026-02-10', risks: [], issues: [], order: {id:'ORD-2024-0154', product:'Zip Blinds Set', total:'$4,200', status:'Pending', date:'Mar 25, 2026'}, measurement: { method: 'Manual precision', surveyor: 'Tom Baker (#583041)', date: '2026-01-18', openings: 3, opening_width_in: 72, opening_height_in: 96, mounting: 'face_mount', guide: 'zip_track', motor: 'motorized_solar', fabric: 'mesh_5pct' } },
             { id: 'PRJ-006', name: 'Wilson Residence Pergola', customer: 'Mr. Wilson', customerEmail: 'wilson@email.com', customerPhone: '(503) 555-0606', customerAddress: '987 Cedar Ct, Portland, OR', type: 'Pergola', workflowStep: 6, stage: 'installation', riskLevel: 'low', budget: 15000, paid: 15000, timeline: '5 weeks', startDate: '2025-11-20', risks: [], issues: [], order: {id:'ORD-2024-0151', product:'Classic Pergola', total:'$9,500', status:'Completed', date:'Feb 20, 2026'}, hidden: true },
@@ -13085,7 +13085,7 @@
         var zbProductNames = Object.keys(zbPriceLookup);
 
         var zbAccessoryPresets = [
-            { name: '奥科45-20N电机 配双频遥控器 / A-OK Motor 45-20N w/ remote', spec: '', defaultPrice: 350 },
+       : '奥科45-20N电机 配双频遥控器 / A-OK Motor 45-20N w/ remote', spec: '', defaultPrice: 350 },
             { name: 'WR120 转角立柱 / Corner Post', spec: '', defaultPrice: 180 },
             { name: '方管立柱 / Square Tube Post', spec: '', defaultPrice: 120 },
             { name: '安装费 / Installation Fee', spec: '', defaultPrice: 0 }
