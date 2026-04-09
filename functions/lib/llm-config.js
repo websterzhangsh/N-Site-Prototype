@@ -16,7 +16,8 @@ export const LLM_CONFIG = {
         'qwen3.5-flash',
         'qwen3.5-flash-2026-02-23',
         'qwen3.5-plus',
-        'qwen-turbo'
+        'qwen-turbo',
+        'qwen3.6-plus-2026-04-02'
       ],
       defaultModel: 'qwen3.5-flash'
     }

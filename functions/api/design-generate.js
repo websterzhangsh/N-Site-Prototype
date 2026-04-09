@@ -7,6 +7,7 @@
 // 模型配置 - 按优先级顺序（降级时依次尝试）
 const MODEL_PRIORITY = [
   'qwen-image-edit-max',
+  'Qwen-Image-2.0-Pro',
   'qwen-image-edit-max-2026-01-16',
   'qwen-image-edit-plus',
   'qwen-image-edit-plus-2025-12-15',
