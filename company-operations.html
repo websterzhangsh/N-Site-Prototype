@@ -4686,11 +4686,115 @@
 
         // ===== Multi-Tenant Configuration =====
         const tenantConfigs = {
-            'default': { name: 'Greenscape Builders', logo: 'images/partner-logo.png' },
-            'partner1': { name: 'Greenscape Builders', logo: 'images/partner-logo.png' },
-            'omeya-sin': { name: 'Omeya-SIN', logo: 'images/omeya-logo.png' },
-            'nestopia-chn': { name: 'Nestopia-CHN', logo: 'images/nestopia-logo.png' }
+            'default':      { name: 'Greenscape Builders', logo: 'images/partner-logo.png', language: 'en' },
+            'partner1':     { name: 'Greenscape Builders', logo: 'images/partner-logo.png', language: 'en' },
+            'omeya-sin':    { name: 'Omeya-SIN', logo: 'images/omeya-logo.png',             language: 'en' },
+            'nestopia-chn': { name: 'Nestopia-CHN', logo: 'images/nestopia-logo.png',        language: 'bilingual' }
         };
+
+        // ===== Tenant Language Helpers =====
+        function getTenantLanguage() {
+            const slug = getCurrentTenantSlug();
+            const cfg = tenantConfigs[slug] || tenantConfigs['default'];
+            return cfg.language || 'en';
+        }
+
+        /** Extract the English portion of a bilingual name like "中文 / English" */
+        function getLocalizedName(bilingualName, lang) {
+            if (!bilingualName) return '';
+            if (lang === 'en') {
+                var parts = bilingualName.split(' / ');
+                return parts.length > 1 ? parts[parts.length - 1] : bilingualName;
+            }
+            return bilingualName;
+        }
+
+        // ===== Quotation i18n Dictionary =====
+        const quotI18n = {
+            en: {
+                modalTitle: 'Zip Blinds Quotation',
+                labelClient: 'Client', labelContact: 'Contact', labelCS: 'Customer Service',
+                labelProfileColor: 'Profile Color', labelFabric: 'Fabric', labelFabricColor: 'Fabric Color / Code',
+                labelProductItems: 'Product Items', btnAddRow: 'Add Row',
+                thProduct: 'Product', thWidth: 'Width(mm)', thHeight: 'Height(mm)', thArea: 'Area(m\u00b2)',
+                thUnitPrice: 'Unit Price(\u00a5/m\u00b2)', thQty: 'Qty', thAmount: 'Amount(\u00a5)',
+                labelAccessories: 'Accessories', btnAddAccessory: 'Add Accessory',
+                thAccItem: 'Item', thAccSpec: 'Spec', thAccUnitPrice: 'Unit Price(\u00a5)',
+                thAccQty: 'Qty', thAccAmount: 'Amount(\u00a5)',
+                labelCurrency: 'Currency', optRMB: 'RMB (\u00a5)', optSGD: 'SGD (S$)', optUSD: 'USD ($)',
+                labelExchangeRate: 'Exchange Rate', labelRemarks: 'Remarks',
+                defaultRemarks: '1. Include customs duties, logistics, and shipping fees\n2. Warranty: Aluminum alloy 10 years, motor 3 years, zip blinds 2 years\n3. Payment: 50% deposit before production, balance before shipment',
+                labelSummary: 'Quotation Summary', labelSubProducts: 'Product Subtotal:',
+                labelSubAccessories: 'Accessory Subtotal:', labelTotalRMB: 'Total Price (RMB):',
+                labelTotalForeign: 'Total Price', labelDiscount: 'Discount (%)',
+                footerNote: 'Quotation will open as a printable HTML page',
+                btnGenerate: 'Generate Quotation', customOption: 'Custom', specPlaceholder: 'Spec',
+                printTitle: 'Zip Blinds Quotation', printDate: 'Date', printClient: 'Client',
+                printCSRep: 'CS Rep', printContact: 'Contact', printCSContact: 'CS Contact',
+                printSectionDims: 'Product Dimensions',
+                printThNo: 'No.', printThProduct: 'Product', printThWidth: 'Width(mm)',
+                printThHeight: 'Height(mm)', printThArea: 'Area(M\u00b2)', printThUnitPrice: 'Unit Price(\u00a5/M\u00b2)',
+                printThQty: 'Qty', printThAmount: 'Amount(\u00a5)',
+                printSubtotal: 'Product Subtotal', printDiscount: 'Discount',
+                printTotalRMB: 'Preferential Total Price (RMB)',
+                printTotalSGD: 'Preferential Total Price (SGD)', printTotalUSD: 'Preferential Total Price (USD)',
+                printRemarks: 'Special Remarks', printProfileColor: 'Profile Color', printFabric: 'Fabric',
+                printExchangeRate: 'to RMB exchange rate',
+                printSeller: 'Seller', printBuyer: 'Buyer', printSignDate: 'Signature & Date', printBtn: 'Print'
+            },
+            bilingual: {
+                modalTitle: '\u9632\u98ce\u5377\u5e18\u62a5\u4ef7\u5355 / Zip Blinds Quotation',
+                labelClient: '\u5ba2\u6237\u59d3\u540d / Client', labelContact: '\u5ba2\u6237\u7535\u8bdd / Contact',
+                labelCS: '\u5ba2\u670d / Customer Service',
+                labelProfileColor: '\u578b\u6750\u989c\u8272 / Profile Color', labelFabric: '\u9762\u6599 / Fabric',
+                labelFabricColor: '\u9762\u6599\u989c\u8272/\u8272\u53f7',
+                labelProductItems: '\u4ea7\u54c1\u660e\u7ec6 / Product Items', btnAddRow: '\u6dfb\u52a0\u884c',
+                thProduct: '\u54c1\u7c7b / Product', thWidth: '\u5bbd(mm)', thHeight: '\u9ad8(mm)',
+                thArea: '\u9762\u79ef(m\u00b2)', thUnitPrice: '\u5355\u4ef7(\u5143/m\u00b2)',
+                thQty: '\u6570\u91cf', thAmount: '\u91d1\u989d(\u5143)',
+                labelAccessories: '\u9644\u4ef6 / Accessories', btnAddAccessory: '\u6dfb\u52a0\u9644\u4ef6',
+                thAccItem: '\u54c1\u540d / Item', thAccSpec: '\u89c4\u683c',
+                thAccUnitPrice: '\u5355\u4ef7(\u5143)', thAccQty: '\u6570\u91cf', thAccAmount: '\u91d1\u989d(\u5143)',
+                labelCurrency: '\u5e01\u79cd / Currency',
+                optRMB: '\u4eba\u6c11\u5e01 RMB (\u00a5)', optSGD: '\u65b0\u52a0\u5761\u5143 SGD (S$)',
+                optUSD: '\u7f8e\u5143 USD ($)', labelExchangeRate: '\u6c47\u7387 / Exchange Rate',
+                labelRemarks: '\u5907\u6ce8 / Remarks',
+                defaultRemarks: '1\u3001\u5305\u542b\u6d77\u5173\u8d39\u53ca\u7269\u6d41\u8fd0\u8f93\u7b49\u8d39\u7528 / Include customs duties, logistics, and shipping fees\n2\u3001\u6b63\u5e38\u8d28\u4fdd\u671f\uff1a\u94dd\u5408\u91d1\u6750\u8d28\u90e8\u5206\u8d28\u4fdd\u5341\u5e74\uff0c\u7535\u673a\u8d28\u4fdd\u4e09\u5e74\uff0c\u9632\u98ce\u5377\u5e18\u8d28\u4fdd\u4e24\u5e74\n3\u3001\u4ed8\u6b3e\u6761\u4ef6\uff1a\u4e0b\u5355\u751f\u4ea7\u524d\u9700\u4ed850%\u5b9a\u91d1\uff0c\u53d1\u8d27\u524d\u4ed8\u6e05\u4f59\u6b3e / Payment: 50% deposit before production, balance before shipment',
+                labelSummary: '\u62a5\u4ef7\u6c47\u603b / Quotation Summary',
+                labelSubProducts: '\u4ea7\u54c1\u5c0f\u8ba1:', labelSubAccessories: '\u9644\u4ef6\u5c0f\u8ba1:',
+                labelTotalRMB: '\u4f18\u60e0\u603b\u4ef7 (RMB):', labelTotalForeign: '\u4f18\u60e0\u603b\u4ef7',
+                labelDiscount: '\u6298\u6263\u8c03\u6574 / Discount (%)',
+                footerNote: '\u62a5\u4ef7\u5355\u5c06\u4ee5\u53ef\u6253\u5370 HTML \u9875\u9762\u6253\u5f00',
+                btnGenerate: 'Generate Quotation (\u62a5\u4ef7\u5355)',
+                customOption: '\u81ea\u5b9a\u4e49 / Custom', specPlaceholder: '\u89c4\u683c',
+                printTitle: 'Zip Blinds Quotation / \u9632\u98ce\u5377\u5e18\u62a5\u4ef7\u5355',
+                printDate: 'Date / \u65e5\u671f', printClient: 'Client / \u5ba2\u6237\u59d3\u540d',
+                printCSRep: 'CS Rep / \u5ba2\u670d', printContact: 'Contact / \u5ba2\u6237\u7535\u8bdd',
+                printCSContact: 'CS Contact / \u5ba2\u670d\u7535\u8bdd',
+                printSectionDims: 'Product Dimensions / \u4ea7\u54c1\u5c3a\u5bf8\u6216\u89c4\u683c',
+                printThNo: 'No.\u5e8f\u53f7', printThProduct: 'Product / \u54c1\u7c7b',
+                printThWidth: 'Width\u5bbd(mm)', printThHeight: 'Height\u9ad8(mm)',
+                printThArea: 'Area\u9762\u79ef(M\u00b2)', printThUnitPrice: 'Unit Price\u5355\u4ef7(\u5143/M\u00b2)',
+                printThQty: 'Qty\u6570\u91cf', printThAmount: 'Amount\u91d1\u989d(\u5143)',
+                printSubtotal: 'Product Subtotal / \u4ea7\u54c1\u5c0f\u8ba1',
+                printDiscount: 'Discount / \u6298\u6263',
+                printTotalRMB: 'Preferential Total Price (RMB) / \u4f18\u60e0\u603b\u4ef7\uff08\u4eba\u6c11\u5e01\uff09',
+                printTotalSGD: 'Preferential Total Price (SGD) / \u4f18\u60e0\u603b\u4ef7\uff08\u65b0\u5e01\uff09',
+                printTotalUSD: 'Preferential Total Price (USD) / \u4f18\u60e0\u603b\u4ef7\uff08\u7f8e\u5143\uff09',
+                printRemarks: 'Special Remarks / \u7279\u6b8a\u8bf4\u660e',
+                printProfileColor: 'Profile Color / \u578b\u6750\u989c\u8272',
+                printFabric: 'Fabric / \u9762\u6599',
+                printExchangeRate: 'to RMB exchange rate / \u5151\u4eba\u6c11\u5e01\u6c47\u7387',
+                printSeller: 'Seller / \u5356\u65b9', printBuyer: 'Buyer / \u4e70\u65b9',
+                printSignDate: 'Signature / \u7b7e\u540d & Date / \u65e5\u671f',
+                printBtn: 'Print / \u6253\u5370'
+            }
+        };
+        function getQuotText(key) {
+            var lang = getTenantLanguage();
+            var dict = quotI18n[lang] || quotI18n['en'];
+            return dict[key] || quotI18n['en'][key] || key;
+        }
 
         function loadDashboardData() {
             const slug = getCurrentTenantSlug();
@@ -8852,7 +8956,7 @@
             keyDeliverables: [
                 { id: 'd1', label: 'Measurement Report', desc: 'Opening dimensions, mounting type, obstacles, site photos', icon: 'fa-ruler', required: true },
                 { id: 'd2', label: 'Product Configuration', desc: 'Tier, fabric, drive system selections', icon: 'fa-sliders-h', required: true },
-                { id: 'd3', label: 'Formal Quotation', desc: 'Bilingual quotation document (防风卷帘报价单)', icon: 'fa-file-invoice-dollar', required: true },
+                { id: 'd3', label: 'Formal Quotation', desc: 'Formal quotation document', icon: 'fa-file-invoice-dollar', required: true },
                 { id: 'd4', label: 'Client Approval', desc: 'Customer sign-off on quotation & specs', icon: 'fa-signature', required: true }
             ],
             // Reuse Step 3 measurement panel config (already has zipBlindsFields)
@@ -10680,7 +10784,7 @@
 
                                     <!-- Action Button -->
                                     <button onclick="openQuotationEditor('${project.id}')" class="w-full py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold text-xs hover:from-blue-700 hover:to-blue-800 transition shadow-md flex items-center justify-center gap-1.5">
-                                        <i class="fas fa-file-invoice-dollar"></i> Generate Quotation (报价单)
+                                        <i class="fas fa-file-invoice-dollar"></i> Generate Quotation
                                     </button>
                                 </div>
                             </div>
@@ -10805,7 +10909,7 @@
                                         <span class="text-[10px] font-bold ${cs.marginPct >= 15 ? 'text-green-700' : 'text-amber-700'}">$${cs.profit} net</span>
                                     </div>
                                 </div>
-                                <button onclick="openQuotationEditor('${project.id}')" class="w-full py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold text-xs hover:from-blue-700 hover:to-blue-800 transition shadow-md flex items-center justify-center gap-1.5"><i class="fas fa-file-invoice-dollar"></i> Generate Quotation (报价单)</button>
+                                <button onclick="openQuotationEditor('${project.id}')" class="w-full py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold text-xs hover:from-blue-700 hover:to-blue-800 transition shadow-md flex items-center justify-center gap-1.5"><i class="fas fa-file-invoice-dollar"></i> Generate Quotation</button>
                             </div>
                         </div>
                     </div>
@@ -12996,6 +13100,28 @@
             }
             if (!project) return;
 
+            // Apply i18n labels based on tenant language
+            applyQuotI18nLabels();
+
+            // Set language-aware defaults
+            var lang = getTenantLanguage();
+            if (lang === 'en') {
+                document.getElementById('quotProfileColor').value = 'Coffee';
+                document.getElementById('quotFabric').value = 'Polyester+PVC, 5% openness';
+                document.getElementById('quotFabricColor').placeholder = 'e.g. NP33054060SP';
+            } else {
+                document.getElementById('quotProfileColor').value = '\u5496\u5561\u8272 / Coffee';
+                document.getElementById('quotFabric').value = '\u805a\u916f\u7ea4\u7ef4+PVC, 5%\u5f00\u5b54\u7387';
+                document.getElementById('quotFabricColor').placeholder = 'e.g. NP33054060SP \u9ed1\u5496\u8272';
+            }
+            document.getElementById('quotRemarks').value = getQuotText('defaultRemarks');
+            var currSel = document.getElementById('quotCurrency');
+            if (currSel) {
+                currSel.innerHTML = '<option value="RMB">' + getQuotText('optRMB') + '</option>' +
+                    '<option value="SGD">' + getQuotText('optSGD') + '</option>' +
+                    '<option value="USD">' + getQuotText('optUSD') + '</option>';
+            }
+
             // Auto-fill client info (handle both data source field names)
             document.getElementById('quotProjectRef').textContent = project.name + ' (' + project.id + ')';
             document.getElementById('quotClientName').value = project.customer || '';
@@ -13023,6 +13149,29 @@
             // Close load dropdown if open
             var dd = document.getElementById('quotLoadDropdown');
             if (dd) dd.classList.add('hidden');
+        }
+
+        /** Apply i18n labels to the quotation editor modal */
+        function applyQuotI18nLabels() {
+            var m = {
+                'quotModalTitleText':'modalTitle','quotLabelClient':'labelClient','quotLabelContact':'labelContact',
+                'quotLabelCS':'labelCS','quotLabelProfileColor':'labelProfileColor','quotLabelFabric':'labelFabric',
+                'quotLabelFabricColor':'labelFabricColor','quotLabelProductItems':'labelProductItems',
+                'quotBtnAddRow':'btnAddRow','quotThProduct':'thProduct','quotThWidth':'thWidth',
+                'quotThHeight':'thHeight','quotThArea':'thArea','quotThUnitPrice':'thUnitPrice',
+                'quotThQty':'thQty','quotThAmount':'thAmount','quotLabelAccessories':'labelAccessories',
+                'quotBtnAddAccessory':'btnAddAccessory','quotThAccItem':'thAccItem','quotThAccSpec':'thAccSpec',
+                'quotThAccUnitPrice':'thAccUnitPrice','quotThAccQty':'thAccQty','quotThAccAmount':'thAccAmount',
+                'quotLabelCurrency':'labelCurrency','quotLabelExchangeRate':'labelExchangeRate',
+                'quotLabelRemarks':'labelRemarks','quotLabelSummary':'labelSummary',
+                'quotLabelSubProducts':'labelSubProducts','quotLabelSubAccessories':'labelSubAccessories',
+                'quotLabelTotalRMB':'labelTotalRMB','quotLabelTotalForeign':'labelTotalForeign',
+                'quotLabelDiscount':'labelDiscount','quotFooterNote':'footerNote'
+            };
+            Object.keys(m).forEach(function(id) {
+                var el = document.getElementById(id);
+                if (el) el.textContent = getQuotText(m[id]);
+            });
         }
 
         // ===== Quotation Save / Load (localStorage) =====
@@ -13170,7 +13319,8 @@
         function renderQuotLineItems() {
             var tbody = document.getElementById('quotLineItems');
             if (!tbody) return;
-            var optionsHtml = zbProductNames.map(function(n) { return '<option value="' + n + '">' + n + '</option>'; }).join('');
+            var lang = getTenantLanguage();
+            var optionsHtml = zbProductNames.map(function(n) { return '<option value="' + n + '">' + getLocalizedName(n, lang) + '</option>'; }).join('');
             tbody.innerHTML = quotLineItemsData.map(function(item, i) {
                 var area = calcArea(item.width, item.height);
                 var amount = area * item.unitPrice * item.qty;
@@ -13190,13 +13340,14 @@
         function renderQuotAccessories() {
             var tbody = document.getElementById('quotAccessories');
             if (!tbody) return;
-            var presetOpts = zbAccessoryPresets.map(function(p) { return '<option value="' + p.name + '">' + p.name + '</option>'; }).join('') + '<option value="__custom">自定义 / Custom</option>';
+            var lang = getTenantLanguage();
+            var presetOpts = zbAccessoryPresets.map(function(p) { return '<option value="' + p.name + '">' + getLocalizedName(p.name, lang) + '</option>'; }).join('') + '<option value="__custom">' + getQuotText('customOption') + '</option>';
             tbody.innerHTML = quotAccessoriesData.map(function(item, i) {
                 var amount = item.unitPrice * item.qty;
                 return '<tr class="border-t border-gray-100 hover:bg-purple-50/30">' +
                     '<td class="py-2 px-3 text-gray-400 text-xs">' + (i + 1) + '</td>' +
                     '<td class="py-2 px-3"><select onchange="var v=this.value;if(v===\'__custom\'){quotAccessoriesData[' + i + '].name=\'\';quotAccessoriesData[' + i + '].unitPrice=0;}else{quotAccessoriesData[' + i + '].name=v;var pr=zbAccessoryPresets.find(function(p){return p.name===v;});if(pr)quotAccessoriesData[' + i + '].unitPrice=pr.defaultPrice;}renderQuotAccessories();updateQuotTotals();" class="w-full px-2 py-1.5 border border-gray-200 rounded text-xs focus:ring-1 focus:ring-blue-400">' + presetOpts.replace('value="' + item.name + '"', 'value="' + item.name + '" selected') + '</select></td>' +
-                    '<td class="py-2 px-3"><input type="text" value="' + (item.spec || '') + '" onchange="quotAccessoriesData[' + i + '].spec=this.value;" class="w-full px-2 py-1.5 border border-gray-200 rounded text-xs text-center focus:ring-1 focus:ring-blue-400" placeholder="规格"></td>' +
+                    '<td class="py-2 px-3"><input type="text" value="' + (item.spec || '') + '" onchange="quotAccessoriesData[' + i + '].spec=this.value;" class="w-full px-2 py-1.5 border border-gray-200 rounded text-xs text-center focus:ring-1 focus:ring-blue-400" placeholder="' + getQuotText('specPlaceholder') + '"></td>' +
                     '<td class="py-2 px-3"><input type="number" value="' + item.unitPrice + '" step="1" onchange="quotAccessoriesData[' + i + '].unitPrice=Number(this.value);renderQuotAccessories();updateQuotTotals();" class="w-full px-2 py-1.5 border border-gray-200 rounded text-xs text-center focus:ring-1 focus:ring-blue-400"></td>' +
                     '<td class="py-2 px-3"><input type="number" value="' + item.qty + '" min="1" onchange="quotAccessoriesData[' + i + '].qty=Number(this.value);renderQuotAccessories();updateQuotTotals();" class="w-full px-2 py-1.5 border border-gray-200 rounded text-xs text-center focus:ring-1 focus:ring-blue-400"></td>' +
                     '<td class="py-2 px-3 text-right text-xs font-semibold text-gray-900">' + amount.toFixed(2) + '</td>' +
@@ -13249,8 +13400,10 @@
 
             var tenantCfg = tenantConfigs[getCurrentTenantSlug()] || tenantConfigs['default'];
             var logoPath = window.location.origin + '/' + tenantCfg.logo;
+            var lang = getTenantLanguage();
+            var t = function(key) { return getQuotText(key); };
 
-            // Build product rows
+            // Build product rows (localized names)
             var prodTotal = 0;
             var prodRowsHtml = quotLineItemsData.map(function(item, i) {
                 var area = calcArea(item.width, item.height);
@@ -13258,7 +13411,7 @@
                 prodTotal += amount;
                 return '<tr>' +
                     '<td style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;color:#6b7280;">' + (i + 1) + '</td>' +
-                    '<td style="border:1px solid #d1d5db;padding:8px 10px;font-weight:500;">' + item.product + '</td>' +
+                    '<td style="border:1px solid #d1d5db;padding:8px 10px;font-weight:500;">' + getLocalizedName(item.product, lang) + '</td>' +
                     '<td style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;">' + item.width + '</td>' +
                     '<td style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;">' + item.height + '</td>' +
                     '<td style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-weight:500;">' + area.toFixed(2) + '</td>' +
@@ -13274,7 +13427,7 @@
                 accTotal += amount;
                 return '<tr>' +
                     '<td style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;color:#6b7280;">' + (quotLineItemsData.length + i + 1) + '</td>' +
-                    '<td style="border:1px solid #d1d5db;padding:8px 10px;font-weight:500;" colspan="4">' + item.name + (item.spec ? ' (' + item.spec + ')' : '') + '</td>' +
+                    '<td style="border:1px solid #d1d5db;padding:8px 10px;font-weight:500;" colspan="4">' + getLocalizedName(item.name, lang) + (item.spec ? ' (' + item.spec + ')' : '') + '</td>' +
                     '<td style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;">' + item.unitPrice.toFixed(2) + '</td>' +
                     '<td style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;">' + item.qty + '</td>' +
                     '<td style="border:1px solid #d1d5db;padding:8px 10px;text-align:right;font-weight:600;">' + amount.toFixed(2) + '</td></tr>';
@@ -13324,7 +13477,7 @@
             var html = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Zip Blinds Quotation / \u9632\u98ce\u5377\u5e18\u62a5\u4ef7\u5355 - ' + client + '</title>' +
                 '<style>' +
                 '@page { size: A4; margin: 15mm 12mm; }' +
-                'body { font-family: "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif; margin: 0; padding: 24px 32px; color: #111827; font-size: 13px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }' +
+                'body { font-family: ' + (lang === 'en' ? '"Helvetica Neue", Arial, sans-serif' : '"Microsoft YaHei", "Helvetica Neue", Arial, sans-serif') + '; margin: 0; padding: 24px 32px; color: #111827; font-size: 13px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }' +
                 'table { border-collapse: collapse; width: 100%; }' +
                 '.header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 2px solid #1e40af; }' +
                 '.header-logo { width: 60px; height: 60px; object-fit: contain; border-radius: 8px; }' +
@@ -14024,7 +14177,7 @@
             <div class="flex items-center justify-between p-6 border-b border-gray-200">
                 <div class="flex items-center gap-4">
                     <div>
-                        <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2"><i class="fas fa-file-invoice-dollar text-blue-600"></i> 防风卷帘报价单 / Zip Blinds Quotation</h2>
+                        <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2"><i class="fas fa-file-invoice-dollar text-blue-600"></i> <span id="quotModalTitleText">Zip Blinds Quotation</span></h2>
                         <p class="text-sm text-gray-500 mt-1" id="quotProjectRef"></p>
                     </div>
                     <div class="relative">
@@ -14042,47 +14195,47 @@
             </div>
             <div class="p-6 space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">客户姓名 / Client</label><input type="text" id="quotClientName" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
-                    <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">客户电话 / Contact</label><input type="text" id="quotClientPhone" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
-                    <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">客服 / Customer Service</label><input type="text" id="quotCSRep" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
+                    <div><label id="quotLabelClient" class="block text-xs font-semibold text-gray-500 uppercase mb-1">Client</label><input type="text" id="quotClientName" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
+                    <div><label id="quotLabelContact" class="block text-xs font-semibold text-gray-500 uppercase mb-1">Contact</label><input type="text" id="quotClientPhone" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
+                    <div><label id="quotLabelCS" class="block text-xs font-semibold text-gray-500 uppercase mb-1">Customer Service</label><input type="text" id="quotCSRep" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">型材颜色 / Profile Color</label><input type="text" id="quotProfileColor" value="咖啡色 / Coffee" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
-                    <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">面料 / Fabric</label><input type="text" id="quotFabric" value="聚酯纤维+PVC, 5%开孔率" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
-                    <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">面料颜色/色号</label><input type="text" id="quotFabricColor" placeholder="e.g. NP33054060SP 黑咖色" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
+                    <div><label id="quotLabelProfileColor" class="block text-xs font-semibold text-gray-500 uppercase mb-1">Profile Color</label><input type="text" id="quotProfileColor" value="Coffee" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
+                    <div><label id="quotLabelFabric" class="block text-xs font-semibold text-gray-500 uppercase mb-1">Fabric</label><input type="text" id="quotFabric" value="Polyester+PVC, 5% openness" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
+                    <div><label id="quotLabelFabricColor" class="block text-xs font-semibold text-gray-500 uppercase mb-1">Fabric Color / Code</label><input type="text" id="quotFabricColor" placeholder="e.g. NP33054060SP" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
                 </div>
                 <div>
                     <div class="flex items-center justify-between mb-2">
-                        <label class="text-xs font-semibold text-gray-500 uppercase">产品明细 / Product Items</label>
-                        <button onclick="addQuotLineItem()" class="px-3 py-1.5 text-xs font-medium bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition flex items-center gap-1"><i class="fas fa-plus"></i> 添加行</button>
+                        <label id="quotLabelProductItems" class="text-xs font-semibold text-gray-500 uppercase">Product Items</label>
+                        <button onclick="addQuotLineItem()" class="px-3 py-1.5 text-xs font-medium bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition flex items-center gap-1"><i class="fas fa-plus"></i> <span id="quotBtnAddRow">Add Row</span></button>
                     </div>
                     <div class="border border-gray-200 rounded-xl overflow-x-auto">
                         <table class="w-full text-sm"><thead><tr class="bg-gray-50 text-gray-600 text-xs uppercase">
                             <th class="py-2.5 px-3 text-left w-8">#</th>
-                            <th class="py-2.5 px-3 text-left min-w-[180px]">品类 / Product</th>
-                            <th class="py-2.5 px-3 text-center w-20">宽(mm)</th>
-                            <th class="py-2.5 px-3 text-center w-20">高(mm)</th>
-                            <th class="py-2.5 px-3 text-center w-20">面积(m²)</th>
-                            <th class="py-2.5 px-3 text-center w-24">单价(元/m²)</th>
-                            <th class="py-2.5 px-3 text-center w-16">数量</th>
-                            <th class="py-2.5 px-3 text-right w-24">金额(元)</th>
+                            <th id="quotThProduct" class="py-2.5 px-3 text-left min-w-[180px]">Product</th>
+                            <th id="quotThWidth" class="py-2.5 px-3 text-center w-20">Width(mm)</th>
+                            <th id="quotThHeight" class="py-2.5 px-3 text-center w-20">Height(mm)</th>
+                            <th id="quotThArea" class="py-2.5 px-3 text-center w-20">Area(m²)</th>
+                            <th id="quotThUnitPrice" class="py-2.5 px-3 text-center w-24">Unit Price(¥/m²)</th>
+                            <th id="quotThQty" class="py-2.5 px-3 text-center w-16">Qty</th>
+                            <th id="quotThAmount" class="py-2.5 px-3 text-right w-24">Amount(¥)</th>
                             <th class="py-2.5 px-3 w-10"></th>
                         </tr></thead><tbody id="quotLineItems"></tbody></table>
                     </div>
                 </div>
                 <div>
                     <div class="flex items-center justify-between mb-2">
-                        <label class="text-xs font-semibold text-gray-500 uppercase">附件 / Accessories</label>
-                        <button onclick="addQuotAccessory()" class="px-3 py-1.5 text-xs font-medium bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition flex items-center gap-1"><i class="fas fa-plus"></i> 添加附件</button>
+                        <label id="quotLabelAccessories" class="text-xs font-semibold text-gray-500 uppercase">Accessories</label>
+                        <button onclick="addQuotAccessory()" class="px-3 py-1.5 text-xs font-medium bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition flex items-center gap-1"><i class="fas fa-plus"></i> <span id="quotBtnAddAccessory">Add Accessory</span></button>
                     </div>
                     <div class="border border-gray-200 rounded-xl overflow-x-auto">
                         <table class="w-full text-sm"><thead><tr class="bg-gray-50 text-gray-600 text-xs uppercase">
                             <th class="py-2.5 px-3 text-left w-8">#</th>
-                            <th class="py-2.5 px-3 text-left">品名 / Item</th>
-                            <th class="py-2.5 px-3 text-center w-20">规格</th>
-                            <th class="py-2.5 px-3 text-center w-24">单价(元)</th>
-                            <th class="py-2.5 px-3 text-center w-16">数量</th>
-                            <th class="py-2.5 px-3 text-right w-24">金额(元)</th>
+                            <th id="quotThAccItem" class="py-2.5 px-3 text-left">Item</th>
+                            <th id="quotThAccSpec" class="py-2.5 px-3 text-center w-20">Spec</th>
+                            <th id="quotThAccUnitPrice" class="py-2.5 px-3 text-center w-24">Unit Price(¥)</th>
+                            <th id="quotThAccQty" class="py-2.5 px-3 text-center w-16">Qty</th>
+                            <th id="quotThAccAmount" class="py-2.5 px-3 text-right w-24">Amount(¥)</th>
                             <th class="py-2.5 px-3 w-10"></th>
                         </tr></thead><tbody id="quotAccessories"></tbody></table>
                     </div>
@@ -14090,33 +14243,33 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="space-y-3">
                         <div class="grid grid-cols-2 gap-3">
-                            <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">币种 / Currency</label>
+                            <div><label id="quotLabelCurrency" class="block text-xs font-semibold text-gray-500 uppercase mb-1">Currency</label>
                                 <select id="quotCurrency" onchange="updateQuotTotals()" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400">
-                                    <option value="RMB">人民币 RMB (¥)</option><option value="SGD">新加坡元 SGD (S$)</option><option value="USD">美元 USD ($)</option>
+                                    <option value="RMB">RMB (¥)</option><option value="SGD">SGD (S$)</option><option value="USD">USD ($)</option>
                                 </select></div>
-                            <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">汇率 / Exchange Rate</label>
+                            <div><label id="quotLabelExchangeRate" class="block text-xs font-semibold text-gray-500 uppercase mb-1">Exchange Rate</label>
                                 <input type="number" id="quotExchangeRate" value="5.3937" step="0.0001" onchange="updateQuotTotals()" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
                         </div>
-                        <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">备注 / Remarks</label>
-                            <textarea id="quotRemarks" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400">1、包含海关费及物流运输等费用 / Include customs duties, logistics, and shipping fees
-2、正常质保期：铝合金材质部分质保十年，电机质保三年，防风卷帘质保两年
-3、付款条件：下单生产前需付50%定金，发货前付清余款 / Payment: 50% deposit before production, balance before shipment</textarea></div>
+                        <div><label id="quotLabelRemarks" class="block text-xs font-semibold text-gray-500 uppercase mb-1">Remarks</label>
+                            <textarea id="quotRemarks" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400">1. Include customs duties, logistics, and shipping fees
+2. Warranty: Aluminum alloy 10 years, motor 3 years, zip blinds 2 years
+3. Payment: 50% deposit before production, balance before shipment</textarea></div>
                     </div>
                     <div class="bg-gray-50 rounded-xl p-5 space-y-3">
-                        <h4 class="text-sm font-semibold text-gray-700">报价汇总 / Quotation Summary</h4>
+                        <h4 id="quotLabelSummary" class="text-sm font-semibold text-gray-700">Quotation Summary</h4>
                         <div class="space-y-2 text-sm">
-                            <div class="flex justify-between"><span class="text-gray-500">产品小计:</span><span class="font-medium" id="quotSubProducts">¥0.00</span></div>
-                            <div class="flex justify-between"><span class="text-gray-500">附件小计:</span><span class="font-medium" id="quotSubAccessories">¥0.00</span></div>
-                            <div class="border-t border-gray-200 pt-2 flex justify-between text-base"><span class="font-semibold text-gray-700">优惠总价 (RMB):</span><span class="font-bold text-gray-900 text-lg" id="quotTotalRMB">¥0.00</span></div>
-                            <div class="flex justify-between text-base" id="quotForeignRow"><span class="font-semibold text-gray-700">优惠总价 (<span id="quotForeignLabel">SGD</span>):</span><span class="font-bold text-blue-600 text-lg" id="quotTotalForeign">S$0.00</span></div>
+                            <div class="flex justify-between"><span id="quotLabelSubProducts" class="text-gray-500">Product Subtotal:</span><span class="font-medium" id="quotSubProducts">¥0.00</span></div>
+                            <div class="flex justify-between"><span id="quotLabelSubAccessories" class="text-gray-500">Accessory Subtotal:</span><span class="font-medium" id="quotSubAccessories">¥0.00</span></div>
+                            <div class="border-t border-gray-200 pt-2 flex justify-between text-base"><span id="quotLabelTotalRMB" class="font-semibold text-gray-700">Total Price (RMB):</span><span class="font-bold text-gray-900 text-lg" id="quotTotalRMB">¥0.00</span></div>
+                            <div class="flex justify-between text-base" id="quotForeignRow"><span class="font-semibold text-gray-700"><span id="quotLabelTotalForeign">Total Price</span> (<span id="quotForeignLabel">SGD</span>):</span><span class="font-bold text-blue-600 text-lg" id="quotTotalForeign">S$0.00</span></div>
                         </div>
-                        <div><label class="block text-xs font-semibold text-gray-500 uppercase mb-1">折扣调整 / Discount (%)</label>
+                        <div><label id="quotLabelDiscount" class="block text-xs font-semibold text-gray-500 uppercase mb-1">Discount (%)</label>
                             <input type="number" id="quotDiscount" value="0" min="0" max="100" step="1" onchange="updateQuotTotals()" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
                     </div>
                 </div>
             </div>
             <div class="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
-                <div class="text-sm text-gray-500">报价单将以可打印 HTML 页面打开</div>
+                <div id="quotFooterNote" class="text-sm text-gray-500">Quotation will open as a printable HTML page</div>
                 <div class="flex items-center gap-3">
                     <button onclick="closeQuotationEditor()" class="px-4 py-2.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-100 transition">Cancel</button>
                     <button onclick="saveQuotation()" class="px-5 py-2.5 text-sm bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition font-medium flex items-center gap-2"><i class="fas fa-save"></i> Save</button>
