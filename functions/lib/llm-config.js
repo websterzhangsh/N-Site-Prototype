@@ -13,13 +13,13 @@ export const LLM_CONFIG = {
       baseUrl: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
       // 模型优先级列表（按顺序尝试，失败时降级）
       modelPriority: [
+        'qwen3.6-plus-2026-04-02',
         'qwen3.5-flash',
         'qwen3.5-flash-2026-02-23',
         'qwen3.5-plus',
-        'qwen-turbo',
-        'qwen3.6-plus-2026-04-02'
+        'qwen-turbo'
       ],
-      defaultModel: 'qwen3.5-flash'
+      defaultModel: 'qwen3.6-plus-2026-04-02'
     }
   },
 
