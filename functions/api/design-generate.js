@@ -103,7 +103,7 @@ function isServiceBusy(response, data) {
   ];
   if (data?.code && busyCodes.some(code => data.code.includes(code))) return true;
 
-  const busyMessages = ['busy', 'throttl', 'rate limit', 'quota', 'overload', 'too many', 'exhausted', 'free tier'];
+  const busyMessages = ['busy', 'throttl', 'rate limit', 'quota', 'overload', 'too many'];
   const msg = (data?.message || '').toLowerCase();
   if (busyMessages.some(keyword => msg.includes(keyword))) return true;
 
