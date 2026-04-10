@@ -13091,6 +13091,58 @@
             { name: '安装费 / Installation Fee', spec: '', defaultPrice: 0 }
         ];
 
+        // ===== Multi-Product-Type Quotation Support =====
+        var sunroomPriceLookup = {
+            'Screen Room / 纱窗阳光房': { defaultPrice: 1500, model: 'SR-SCREEN' },
+            '3-Season Sunroom / 三季阳光房': { defaultPrice: 2500, model: 'SR-3S' },
+            '4-Season Sunroom / 四季阳光房 (Low-E)': { defaultPrice: 3800, model: 'SR-4S' },
+            '4-Season Sunroom / 四季阳光房 (Insulated)': { defaultPrice: 4500, model: 'SR-4S-INS' }
+        };
+        var sunroomProductNames = Object.keys(sunroomPriceLookup);
+        var sunroomAccessoryPresets = [
+            { name: 'Roof System / 屋顶系统', spec: '', defaultPrice: 0 },
+            { name: 'Foundation / 地基基础', spec: '', defaultPrice: 0 },
+            { name: 'Electrical / 电气布线', spec: '', defaultPrice: 0 },
+            { name: 'HVAC System / 暖通空调', spec: '', defaultPrice: 0 },
+            { name: 'Installation Fee / 安装费', spec: '', defaultPrice: 0 }
+        ];
+
+        var pergolaPriceLookup = {
+            'Motorized Louvered Pergola / 电动百叶凉亭': { defaultPrice: 2200, model: 'PG-LOUVER' },
+            'Fixed Pergola / 固定凉亭': { defaultPrice: 1200, model: 'PG-FIXED' },
+            'Retractable Pergola / 可伸缩凉亭': { defaultPrice: 1800, model: 'PG-RETRACT' }
+        };
+        var pergolaProductNames = Object.keys(pergolaPriceLookup);
+        var pergolaAccessoryPresets = [
+            { name: 'LED Lighting / LED灯光系统', spec: '', defaultPrice: 0 },
+            { name: 'Rain Sensor / 雨量传感器', spec: '', defaultPrice: 0 },
+            { name: 'Side Screens / 侧面纱网', spec: '', defaultPrice: 0 },
+            { name: 'Installation Fee / 安装费', spec: '', defaultPrice: 0 }
+        ];
+
+        var quotProductType = 'zipblinds';
+
+        function getQuotProductNames() {
+            if (quotProductType === 'sunroom') return sunroomProductNames;
+            if (quotProductType === 'pergola') return pergolaProductNames;
+            return zbProductNames;
+        }
+        function getQuotPriceLookup() {
+            if (quotProductType === 'sunroom') return sunroomPriceLookup;
+            if (quotProductType === 'pergola') return pergolaPriceLookup;
+            return zbPriceLookup;
+        }
+        function getQuotAccessoryPresets() {
+            if (quotProductType === 'sunroom') return sunroomAccessoryPresets;
+            if (quotProductType === 'pergola') return pergolaAccessoryPresets;
+            return zbAccessoryPresets;
+        }
+        function getQuotTypeTitle(lang) {
+            if (quotProductType === 'sunroom') return lang === 'en' ? 'Sunroom Quotation' : '阳光房报价单 / Sunroom Quotation';
+            if (quotProductType === 'pergola') return lang === 'en' ? 'Pergola Quotation' : '凉亭报价单 / Pergola Quotation';
+            return lang === 'en' ? 'Zip Blinds Quotation' : '防风卷帘报价单 / Zip Blinds Quotation';
+        }
+
         function openQuotationEditor(projectId) {
             quotCurrentProjectId = projectId;
             // Search both workflow projects and company overview projects
@@ -13100,8 +13152,20 @@
             }
             if (!project) return;
 
+            // Detect product type from project
+            var ptype = (project.type || '').toLowerCase();
+            if (ptype.indexOf('sunroom') >= 0 || ptype.indexOf('sun room') >= 0) {
+                quotProductType = 'sunroom';
+            } else if (ptype.indexOf('pergola') >= 0) {
+                quotProductType = 'pergola';
+            } else {
+                quotProductType = 'zipblinds';
+            }
+
             // Apply i18n labels based on tenant language
             applyQuotI18nLabels();
+            // Override title with product-type-specific text
+            document.getElementById('quotModalTitleText').textContent = getQuotTypeTitle(getTenantLanguage());
 
             // Set language-aware defaults
             var lang = getTenantLanguage();
@@ -13113,6 +13177,20 @@
                 document.getElementById('quotProfileColor').value = '\u5496\u5561\u8272 / Coffee';
                 document.getElementById('quotFabric').value = '\u805a\u916f\u7ea4\u7ef4+PVC, 5%\u5f00\u5b54\u7387';
                 document.getElementById('quotFabricColor').placeholder = 'e.g. NP33054060SP \u9ed1\u5496\u8272';
+            }
+            // Override material labels/defaults for non-Zip-Blinds products
+            if (quotProductType === 'sunroom') {
+                document.getElementById('quotLabelProfileColor').textContent = lang === 'en' ? 'Frame Color' : '框架颜色 / Frame Color';
+                document.getElementById('quotLabelFabric').textContent = lang === 'en' ? 'Glass Type' : '玻璃类型 / Glass Type';
+                document.getElementById('quotProfileColor').value = lang === 'en' ? 'White' : '白色 / White';
+                document.getElementById('quotFabric').value = lang === 'en' ? 'Tempered Low-E Glass' : '钢化Low-E玻璃 / Tempered Low-E';
+                document.getElementById('quotFabricColor').placeholder = 'e.g. Clear, Tinted, Reflective';
+            } else if (quotProductType === 'pergola') {
+                document.getElementById('quotLabelProfileColor').textContent = lang === 'en' ? 'Frame Color' : '框架颜色 / Frame Color';
+                document.getElementById('quotLabelFabric').textContent = lang === 'en' ? 'Louver Material' : '百叶材质 / Louver Material';
+                document.getElementById('quotProfileColor').value = lang === 'en' ? 'Dark Gray' : '深灰色 / Dark Gray';
+                document.getElementById('quotFabric').value = lang === 'en' ? 'Aluminum Alloy' : '铝合金 / Aluminum Alloy';
+                document.getElementById('quotFabricColor').placeholder = 'e.g. RAL7016';
             }
             document.getElementById('quotRemarks').value = getQuotText('defaultRemarks');
             var currSel = document.getElementById('quotCurrency');
@@ -13129,7 +13207,7 @@
             document.getElementById('quotCSRep').value = '';
 
             // Reset line items with one default row
-            quotLineItemsData = [{ product: zbProductNames[0], width: 3000, height: 2500, unitPrice: zbPriceLookup[zbProductNames[0]].defaultPrice, qty: 1 }];
+            quotLineItemsData = [{ product: getQuotProductNames()[0], width: 3000, height: 2500, unitPrice: getQuotPriceLookup()[getQuotProductNames()[0]].defaultPrice, qty: 1 }];
             quotAccessoriesData = [];
             renderQuotLineItems();
             renderQuotAccessories();
@@ -13290,7 +13368,7 @@
         }
 
         function addQuotLineItem() {
-            quotLineItemsData.push({ product: zbProductNames[0], width: 3000, height: 2500, unitPrice: zbPriceLookup[zbProductNames[0]].defaultPrice, qty: 1 });
+            quotLineItemsData.push({ product: getQuotProductNames()[0], width: 3000, height: 2500, unitPrice: getQuotPriceLookup()[getQuotProductNames()[0]].defaultPrice, qty: 1 });
             renderQuotLineItems();
             updateQuotTotals();
         }
@@ -13302,7 +13380,7 @@
         }
 
         function addQuotAccessory() {
-            var preset = zbAccessoryPresets[0];
+            var preset = getQuotAccessoryPresets()[0];
             quotAccessoriesData.push({ name: preset.name, spec: preset.spec, unitPrice: preset.defaultPrice, qty: 1 });
             renderQuotAccessories();
             updateQuotTotals();
@@ -13320,13 +13398,13 @@
             var tbody = document.getElementById('quotLineItems');
             if (!tbody) return;
             var lang = getTenantLanguage();
-            var optionsHtml = zbProductNames.map(function(n) { return '<option value="' + n + '">' + getLocalizedName(n, lang) + '</option>'; }).join('');
+            var optionsHtml = getQuotProductNames().map(function(n) { return '<option value="' + n + '">' + getLocalizedName(n, lang) + '</option>'; }).join('');
             tbody.innerHTML = quotLineItemsData.map(function(item, i) {
                 var area = calcArea(item.width, item.height);
                 var amount = area * item.unitPrice * item.qty;
                 return '<tr class="border-t border-gray-100 hover:bg-blue-50/30">' +
                     '<td class="py-2 px-3 text-gray-400 text-xs">' + (i + 1) + '</td>' +
-                    '<td class="py-2 px-3"><select onchange="quotLineItemsData[' + i + '].product=this.value;var lk=zbPriceLookup[this.value];if(lk){quotLineItemsData[' + i + '].unitPrice=lk.defaultPrice;renderQuotLineItems();updateQuotTotals();}" class="w-full px-2 py-1.5 border border-gray-200 rounded text-xs focus:ring-1 focus:ring-blue-400">' + optionsHtml.replace('value="' + item.product + '"', 'value="' + item.product + '" selected') + '</select></td>' +
+                    '<td class="py-2 px-3"><select onchange="quotLineItemsData[' + i + '].product=this.value;var lk=getQuotPriceLookup()[this.value];if(lk){quotLineItemsData[' + i + '].unitPrice=lk.defaultPrice;renderQuotLineItems();updateQuotTotals();}" class="w-full px-2 py-1.5 border border-gray-200 rounded text-xs focus:ring-1 focus:ring-blue-400">' + optionsHtml.replace('value="' + item.product + '"', 'value="' + item.product + '" selected') + '</select></td>' +
                     '<td class="py-2 px-3"><input type="number" value="' + item.width + '" onchange="quotLineItemsData[' + i + '].width=Number(this.value);renderQuotLineItems();updateQuotTotals();" class="w-full px-2 py-1.5 border border-gray-200 rounded text-xs text-center focus:ring-1 focus:ring-blue-400"></td>' +
                     '<td class="py-2 px-3"><input type="number" value="' + item.height + '" onchange="quotLineItemsData[' + i + '].height=Number(this.value);renderQuotLineItems();updateQuotTotals();" class="w-full px-2 py-1.5 border border-gray-200 rounded text-xs text-center focus:ring-1 focus:ring-blue-400"></td>' +
                     '<td class="py-2 px-3 text-center text-xs font-medium text-gray-700">' + area.toFixed(2) + '</td>' +
@@ -13341,12 +13419,12 @@
             var tbody = document.getElementById('quotAccessories');
             if (!tbody) return;
             var lang = getTenantLanguage();
-            var presetOpts = zbAccessoryPresets.map(function(p) { return '<option value="' + p.name + '">' + getLocalizedName(p.name, lang) + '</option>'; }).join('') + '<option value="__custom">' + getQuotText('customOption') + '</option>';
+            var presetOpts = getQuotAccessoryPresets().map(function(p) { return '<option value="' + p.name + '">' + getLocalizedName(p.name, lang) + '</option>'; }).join('') + '<option value="__custom">' + getQuotText('customOption') + '</option>';
             tbody.innerHTML = quotAccessoriesData.map(function(item, i) {
                 var amount = item.unitPrice * item.qty;
                 return '<tr class="border-t border-gray-100 hover:bg-purple-50/30">' +
                     '<td class="py-2 px-3 text-gray-400 text-xs">' + (i + 1) + '</td>' +
-                    '<td class="py-2 px-3"><select onchange="var v=this.value;if(v===\'__custom\'){quotAccessoriesData[' + i + '].name=\'\';quotAccessoriesData[' + i + '].unitPrice=0;}else{quotAccessoriesData[' + i + '].name=v;var pr=zbAccessoryPresets.find(function(p){return p.name===v;});if(pr)quotAccessoriesData[' + i + '].unitPrice=pr.defaultPrice;}renderQuotAccessories();updateQuotTotals();" class="w-full px-2 py-1.5 border border-gray-200 rounded text-xs focus:ring-1 focus:ring-blue-400">' + presetOpts.replace('value="' + item.name + '"', 'value="' + item.name + '" selected') + '</select></td>' +
+                    '<td class="py-2 px-3"><select onchange="var v=this.value;if(v===\'__custom\'){quotAccessoriesData[' + i + '].name=\'\';quotAccessoriesData[' + i + '].unitPrice=0;}else{quotAccessoriesData[' + i + '].name=v;var pr=getQuotAccessoryPresets().find(function(p){return p.name===v;});if(pr)quotAccessoriesData[' + i + '].unitPrice=pr.defaultPrice;}renderQuotAccessories();updateQuotTotals();" class="w-full px-2 py-1.5 border border-gray-200 rounded text-xs focus:ring-1 focus:ring-blue-400">' + presetOpts.replace('value="' + item.name + '"', 'value="' + item.name + '" selected') + '</select></td>' +
                     '<td class="py-2 px-3"><input type="text" value="' + (item.spec || '') + '" onchange="quotAccessoriesData[' + i + '].spec=this.value;" class="w-full px-2 py-1.5 border border-gray-200 rounded text-xs text-center focus:ring-1 focus:ring-blue-400" placeholder="' + getQuotText('specPlaceholder') + '"></td>' +
                     '<td class="py-2 px-3"><input type="number" value="' + item.unitPrice + '" step="1" onchange="quotAccessoriesData[' + i + '].unitPrice=Number(this.value);renderQuotAccessories();updateQuotTotals();" class="w-full px-2 py-1.5 border border-gray-200 rounded text-xs text-center focus:ring-1 focus:ring-blue-400"></td>' +
                     '<td class="py-2 px-3"><input type="number" value="' + item.qty + '" min="1" onchange="quotAccessoriesData[' + i + '].qty=Number(this.value);renderQuotAccessories();updateQuotTotals();" class="w-full px-2 py-1.5 border border-gray-200 rounded text-xs text-center focus:ring-1 focus:ring-blue-400"></td>' +
@@ -13474,7 +13552,7 @@
             var specNote = '<div style="margin-bottom:4px;font-size:12px;color:#374151;line-height:1.6;">' + noteIdx + '\u3001Profile Color / \u578b\u6750\u989c\u8272: ' + profileColor + '\uff1bFabric / \u9762\u6599: ' + (fabricColor ? fabricColor + ' ' : '') + fabric + '</div>';
 
             // Build final HTML - proper printable page
-            var html = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Zip Blinds Quotation / \u9632\u98ce\u5377\u5e18\u62a5\u4ef7\u5355 - ' + client + '</title>' +
+            var html = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + getQuotTypeTitle('bilingual') + ' - ' + client + '</title>' +
                 '<style>' +
                 '@page { size: A4; margin: 15mm 12mm; }' +
                 'body { font-family: ' + (lang === 'en' ? '"Helvetica Neue", Arial, sans-serif' : '"Microsoft YaHei", "Helvetica Neue", Arial, sans-serif') + '; margin: 0; padding: 24px 32px; color: #111827; font-size: 13px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }' +
@@ -13502,7 +13580,7 @@
                 '<img src="' + logoPath + '" class="header-logo" onerror="this.style.display=\'none\'">' +
                 '<div class="header-text">' +
                 '<div class="header-title">' + tenantCfg.name + '</div>' +
-                '<div class="header-subtitle">Zip Blinds Quotation / \u9632\u98ce\u5377\u5e18\u62a5\u4ef7\u5355</div>' +
+                '<div class="header-subtitle">' + getQuotTypeTitle('bilingual') + '</div>' +
                 '</div>' +
                 '<div class="header-date">Date / \u65e5\u671f: ' + dateStr + '</div>' +
                 '</div>' +
