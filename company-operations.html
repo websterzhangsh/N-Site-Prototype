@@ -11553,6 +11553,49 @@
         // ===== Step 3: Measurement & Design Panel Functions =====
         // State: { measurementData, obstacles, complianceChecks, designMatrix, structuralAssessment, appointmentScheduled, appointmentDate, appointmentTime, measurementComplete }
         var step3MeasurementState = {};
+        var _measurementDbLoaded = {};  // 标记已从 DB 加载的项目
+
+        // ── Supabase Measurement 持久化 ──────────────────────────
+        function loadMeasurementFromDB(projectId) {
+            if (typeof NestopiaDB === 'undefined' || !NestopiaDB.isConnected()) return Promise.resolve(null);
+            return NestopiaDB.getClient()
+                .from('project_measurements')
+                .select('measurement_data')
+                .eq('tenant_id', NestopiaDB.getTenantId())
+                .eq('project_key', projectId)
+                .maybeSingle()
+                .then(function(res) {
+                    if (res.error) { console.warn('[Measurement] DB load error:', res.error.message); return null; }
+                    return (res.data && res.data.measurement_data) ? res.data.measurement_data : null;
+                })
+                .catch(function(err) { console.warn('[Measurement] DB load failed:', err.message); return null; });
+        }
+
+        function saveMeasurementToDB(projectId, stateObj) {
+            if (typeof NestopiaDB === 'undefined' || !NestopiaDB.isConnected()) return Promise.resolve(false);
+            var payload = {
+                tenant_id: NestopiaDB.getTenantId(),
+                project_key: projectId,
+                measurement_data: JSON.parse(JSON.stringify({
+                    measurementData: stateObj.measurementData,
+                    obstacles: stateObj.obstacles,
+                    appointmentScheduled: stateObj.appointmentScheduled,
+                    appointmentDate: stateObj.appointmentDate,
+                    appointmentTime: stateObj.appointmentTime,
+                    measurementComplete: stateObj.measurementComplete
+                })),
+                updated_at: new Date().toISOString()
+            };
+            return NestopiaDB.getClient()
+                .from('project_measurements')
+                .upsert(payload, { onConflict: 'tenant_id,project_key' })
+                .then(function(res) {
+                    if (res.error) { console.warn('[Measurement] DB save error:', res.error.message); return false; }
+                    console.log('[Measurement] Saved to Supabase:', projectId);
+                    return true;
+                })
+                .catch(function(err) { console.warn('[Measurement] DB save failed:', err.message); return false; });
+        }
 
         function getStep3State(projectId) {
             if (!step3MeasurementState[projectId]) {
@@ -11684,6 +11727,31 @@
             if (!panel) return;
 
             if (panel.classList.contains('hidden')) {
+                // 打开前先从 Supabase 加载最新数据（仅首次）
+                if (!_measurementDbLoaded[projectId] && typeof NestopiaDB !== 'undefined' && NestopiaDB.isConnected()) {
+                    _measurementDbLoaded[projectId] = true;
+                    loadMeasurementFromDB(projectId).then(function(dbData) {
+                        if (dbData && typeof dbData === 'object') {
+                            var state = getStep3State(projectId);
+                            if (dbData.measurementData) {
+                                Object.keys(dbData.measurementData).forEach(function(k) {
+                                    state.measurementData[k] = dbData.measurementData[k];
+                                });
+                            }
+                            if (dbData.obstacles && Array.isArray(dbData.obstacles)) state.obstacles = dbData.obstacles;
+                            if (dbData.appointmentScheduled !== undefined) state.appointmentScheduled = dbData.appointmentScheduled;
+                            if (dbData.appointmentDate) state.appointmentDate = dbData.appointmentDate;
+                            if (dbData.appointmentTime) state.appointmentTime = dbData.appointmentTime;
+                            if (dbData.measurementComplete !== undefined) state.measurementComplete = dbData.measurementComplete;
+                            console.log('[Measurement] Loaded from Supabase for', projectId);
+                            // 重新渲染面板
+                            if (expandedStep === 3 && currentDetailProject) {
+                                toggleStepDetail(expandedStep, currentDetailProject);
+                                toggleStepDetail(expandedStep, currentDetailProject);
+                            }
+                        }
+                    });
+                }
                 panel.classList.remove('hidden');
                 if (btn) {
                     btn.innerHTML = '<i class="fas fa-times text-[10px]"></i> Close Panel';
@@ -11750,6 +11818,9 @@
             }
 
             showToast('Measurement data saved successfully', 'success');
+
+            // 同步到 Supabase
+            saveMeasurementToDB(projectId, state);
 
             // Update generate button
             var genBtn = document.getElementById('step3GenerateDesignBtn_' + projectId);
@@ -11907,6 +11978,84 @@
 
         // ===== Step 4: Quotation & Pricing Panel Functions =====
         var step4QuotationState = {};
+        var _step4DbLoaded = {};  // 标记已从 DB 加载的项目
+        var _quotDbLoaded = {};   // 报价列表已从 DB 加载的项目
+
+        // ── Supabase Quotation 持久化 ──────────────────────────
+        function loadStep4FromDB(projectId) {
+            if (typeof NestopiaDB === 'undefined' || !NestopiaDB.isConnected()) return Promise.resolve(null);
+            return NestopiaDB.getClient()
+                .from('project_quotations')
+                .select('quotation_data')
+                .eq('tenant_id', NestopiaDB.getTenantId())
+                .eq('project_key', projectId)
+                .maybeSingle()
+                .then(function(res) {
+                    if (res.error) { console.warn('[Quotation] DB load error:', res.error.message); return null; }
+                    return (res.data && res.data.quotation_data) ? res.data.quotation_data : null;
+                })
+                .catch(function(err) { console.warn('[Quotation] DB load failed:', err.message); return null; });
+        }
+
+        function saveStep4ToDBAuto(projectId, stateObj) {
+            if (typeof NestopiaDB === 'undefined' || !NestopiaDB.isConnected()) return Promise.resolve(false);
+            var payload = {
+                tenant_id: NestopiaDB.getTenantId(),
+                project_key: projectId,
+                quotation_data: JSON.parse(JSON.stringify({
+                    step4State: {
+                        pricingMode: stateObj.pricingMode,
+                        productTier: stateObj.productTier,
+                        selectedQuote: stateObj.selectedQuote,
+                        discount: stateObj.discount,
+                        quantity: stateObj.quantity,
+                        widthM: stateObj.widthM,
+                        heightM: stateObj.heightM,
+                        unitArea: stateObj.unitArea,
+                        fabric: stateObj.fabric,
+                        driveSystem: stateObj.driveSystem,
+                        lengthFt: stateObj.lengthFt,
+                        widthFt: stateObj.widthFt,
+                        areaSqft: stateObj.areaSqft,
+                        glassType: stateObj.glassType,
+                        louverType: stateObj.louverType
+                    }
+                })),
+                updated_at: new Date().toISOString()
+            };
+            return NestopiaDB.getClient()
+                .from('project_quotations')
+                .upsert(payload, { onConflict: 'tenant_id,project_key' })
+                .then(function(res) {
+                    if (res.error) { console.warn('[Quotation] DB save error:', res.error.message); return false; }
+                    console.log('[Quotation] Step4 state saved to Supabase:', projectId);
+                    return true;
+                })
+                .catch(function(err) { console.warn('[Quotation] DB save failed:', err.message); return false; });
+        }
+
+        function saveQuotListToDB(projectId, quotList) {
+            if (typeof NestopiaDB === 'undefined' || !NestopiaDB.isConnected()) return Promise.resolve(false);
+            // 读取现有记录并合并 savedQuotations 字段
+            return loadStep4FromDB(projectId).then(function(existing) {
+                var data = (existing && typeof existing === 'object') ? existing : {};
+                data.savedQuotations = quotList;
+                var payload = {
+                    tenant_id: NestopiaDB.getTenantId(),
+                    project_key: projectId,
+                    quotation_data: JSON.parse(JSON.stringify(data)),
+                    updated_at: new Date().toISOString()
+                };
+                return NestopiaDB.getClient()
+                    .from('project_quotations')
+                    .upsert(payload, { onConflict: 'tenant_id,project_key' })
+                    .then(function(res) {
+                        if (res.error) { console.warn('[Quotation] DB save list error:', res.error.message); return false; }
+                        console.log('[Quotation] Quotation list saved to Supabase:', projectId);
+                        return true;
+                    });
+            }).catch(function(err) { console.warn('[Quotation] DB save list failed:', err.message); return false; });
+        }
 
         function getStep4State(projectId) {
             if (!step4QuotationState[projectId]) {
@@ -12031,6 +12180,37 @@
                         return;
                     }
                 }
+                // 打开前先从 Supabase 加载最新 Step4 状态（仅首次）
+                if (!_step4DbLoaded[projectId] && typeof NestopiaDB !== 'undefined' && NestopiaDB.isConnected()) {
+                    _step4DbLoaded[projectId] = true;
+                    loadStep4FromDB(projectId).then(function(dbData) {
+                        if (dbData && dbData.step4State && typeof dbData.step4State === 'object') {
+                            var state = getStep4State(projectId);
+                            var s4 = dbData.step4State;
+                            // 合并 DB 数据到内存（DB 优先）
+                            if (s4.pricingMode) state.pricingMode = s4.pricingMode;
+                            if (s4.productTier) state.productTier = s4.productTier;
+                            if (s4.selectedQuote) state.selectedQuote = s4.selectedQuote;
+                            if (s4.discount !== undefined) state.discount = s4.discount;
+                            if (s4.quantity !== undefined) state.quantity = s4.quantity;
+                            if (s4.widthM !== undefined) state.widthM = s4.widthM;
+                            if (s4.heightM !== undefined) state.heightM = s4.heightM;
+                            if (s4.unitArea !== undefined) state.unitArea = s4.unitArea;
+                            if (s4.fabric) state.fabric = s4.fabric;
+                            if (s4.driveSystem) state.driveSystem = s4.driveSystem;
+                            if (s4.lengthFt !== undefined) state.lengthFt = s4.lengthFt;
+                            if (s4.widthFt !== undefined) state.widthFt = s4.widthFt;
+                            if (s4.areaSqft !== undefined) state.areaSqft = s4.areaSqft;
+                            if (s4.glassType) state.glassType = s4.glassType;
+                            if (s4.louverType) state.louverType = s4.louverType;
+                            // 重新计算定价
+                            var proj = allProjectsData.find(function(p) { return p.id === projectId; });
+                            state.costSummary = calcStep4Cost(proj, state);
+                            console.log('[Quotation] Step4 state loaded from Supabase for', projectId);
+                            refreshStep4Panel(projectId);
+                        }
+                    });
+                }
                 panel.classList.remove('hidden');
                 if (btn) { btn.innerHTML = '<i class="fas fa-times text-[10px]"></i> Close Panel'; btn.classList.replace('bg-orange-600', 'bg-gray-600'); btn.classList.replace('hover:bg-orange-700', 'hover:bg-gray-700'); }
             } else {
@@ -12088,6 +12268,8 @@
             }
             state.costSummary = calcStep4Cost(project, state);
             refreshStep4Panel(projectId);
+            // 自动同步到 Supabase
+            saveStep4ToDBAuto(projectId, state);
         }
 
         function calculateStep4Pricing(projectId) {
@@ -13412,7 +13594,31 @@
             try {
                 var key = getQuotStorageKey(projectId);
                 var data = localStorage.getItem(key);
-                return data ? JSON.parse(data) : [];
+                var localList = data ? JSON.parse(data) : [];
+                // 首次调用时从 Supabase 补充（异步，下次调用生效）
+                if (!_quotDbLoaded[projectId] && typeof NestopiaDB !== 'undefined' && NestopiaDB.isConnected()) {
+                    _quotDbLoaded[projectId] = true;
+                    loadStep4FromDB(projectId).then(function(dbData) {
+                        if (dbData && dbData.savedQuotations && Array.isArray(dbData.savedQuotations)) {
+                            var localKey = getQuotStorageKey(projectId);
+                            var existingRaw = localStorage.getItem(localKey);
+                            var existingList = existingRaw ? JSON.parse(existingRaw) : [];
+                            var existingIds = {};
+                            existingList.forEach(function(q) { existingIds[q.id] = true; });
+                            var merged = existingList.slice();
+                            dbData.savedQuotations.forEach(function(q) {
+                                if (!existingIds[q.id]) merged.push(q);
+                            });
+                            // 按时间倒序
+                            merged.sort(function(a, b) { return new Date(b.savedAt) - new Date(a.savedAt); });
+                            if (merged.length > 20) merged = merged.slice(0, 20);
+                            localStorage.setItem(localKey, JSON.stringify(merged));
+                            console.log('[Quotation] Synced', dbData.savedQuotations.length, 'quotations from Supabase');
+                            refreshQuotLoadDropdown(projectId);
+                        }
+                    });
+                }
+                return localList;
             } catch(e) { return []; }
         }
 
@@ -13442,6 +13648,8 @@
                 localStorage.setItem(getQuotStorageKey(quotCurrentProjectId), JSON.stringify(list));
                 showToast('Quotation saved ✓', 'success');
                 refreshQuotLoadDropdown(quotCurrentProjectId);
+                // 同步到 Supabase
+                saveQuotListToDB(quotCurrentProjectId, list);
             } catch(e) {
                 showToast('Failed to save: storage full', 'error');
             }
