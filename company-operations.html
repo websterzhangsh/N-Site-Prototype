@@ -9770,7 +9770,66 @@
             return intakeUploadedFiles[projectId];
         }
 
+        // ── Supabase Intake Form 持久化 ──────────────────────────
+        var _intakeDbLoaded = {};  // 标记哪些项目已从 DB 加载
+
+        function loadIntakeFromDB(projectId) {
+            if (typeof NestopiaDB === 'undefined' || !NestopiaDB.isConnected()) return Promise.resolve(null);
+            return NestopiaDB.getClient()
+                .from('project_intake_data')
+                .select('form_data')
+                .eq('tenant_id', NestopiaDB.getTenantId())
+                .eq('project_key', projectId)
+                .maybeSingle()
+                .then(function(res) {
+                    if (res.error) { console.warn('[Intake] DB load error:', res.error.message); return null; }
+                    return (res.data && res.data.form_data) ? res.data.form_data : null;
+                })
+                .catch(function(err) { console.warn('[Intake] DB load failed:', err.message); return null; });
+        }
+
+        function saveIntakeToDB(projectId, data) {
+            if (typeof NestopiaDB === 'undefined' || !NestopiaDB.isConnected()) return Promise.resolve(false);
+            var payload = {
+                tenant_id: NestopiaDB.getTenantId(),
+                project_key: projectId,
+                form_data: JSON.parse(JSON.stringify(data)),
+                updated_at: new Date().toISOString()
+            };
+            return NestopiaDB.getClient()
+                .from('project_intake_data')
+                .upsert(payload, { onConflict: 'tenant_id,project_key' })
+                .then(function(res) {
+                    if (res.error) { console.warn('[Intake] DB save error:', res.error.message); return false; }
+                    console.log('[Intake] Saved to Supabase:', projectId);
+                    return true;
+                })
+                .catch(function(err) { console.warn('[Intake] DB save failed:', err.message); return false; });
+        }
+
         function openIntakeModule(moduleKey, projectId) {
+            const config = INTAKE_MODULE_FIELDS[moduleKey];
+            if (!config) return;
+
+            // 如果还没从 Supabase 加载过，先加载再渲染
+            if (!_intakeDbLoaded[projectId] && typeof NestopiaDB !== 'undefined' && NestopiaDB.isConnected()) {
+                _intakeDbLoaded[projectId] = true;
+                loadIntakeFromDB(projectId).then(function(dbData) {
+                    if (dbData && typeof dbData === 'object') {
+                        var local = getIntakeData(projectId);
+                        // DB 数据合并到内存（DB 优先）
+                        Object.keys(dbData).forEach(function(k) { local[k] = dbData[k]; });
+                        console.log('[Intake] Loaded from Supabase for', projectId);
+                    }
+                    _renderIntakeModal(moduleKey, projectId);
+                });
+                return;
+            }
+
+            _renderIntakeModal(moduleKey, projectId);
+        }
+
+        function _renderIntakeModal(moduleKey, projectId) {
             const config = INTAKE_MODULE_FIELDS[moduleKey];
             if (!config) return;
             const data = getIntakeData(projectId);
@@ -9910,6 +9969,9 @@
             data._modules[moduleKey] = allRequiredFilled ? 'completed' : 'partial';
 
             closeIntakeModal();
+
+            // 同步到 Supabase
+            saveIntakeToDB(projectId, data);
 
             // Re-render step detail if open
             if (expandedStep && currentDetailProject) {
