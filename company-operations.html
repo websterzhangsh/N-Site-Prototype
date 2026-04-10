@@ -13272,6 +13272,71 @@
             return greenscapeWorkflowProjects;
         }
         const workflowProjects = getWorkflowProjects();
+        var _workflowDbLoaded = false;  // 标记是否已从 DB 加载
+
+        // ── Supabase Workflow 持久化 ──────────────────────────
+        function loadWorkflowFromDB() {
+            if (typeof NestopiaDB === 'undefined' || !NestopiaDB.isConnected()) return Promise.resolve(null);
+            return NestopiaDB.getClient()
+                .from('project_workflow_state')
+                .select('project_key,workflow_data')
+                .eq('tenant_id', NestopiaDB.getTenantId())
+                .then(function(res) {
+                    if (res.error) { console.warn('[Workflow] DB load error:', res.error.message); return null; }
+                    return res.data || [];
+                })
+                .catch(function(err) { console.warn('[Workflow] DB load failed:', err.message); return null; });
+        }
+
+        function saveWorkflowToDB(projectId) {
+            if (typeof NestopiaDB === 'undefined' || !NestopiaDB.isConnected()) return Promise.resolve(false);
+            var project = workflowProjects.find(function(p) { return p.id === projectId; });
+            if (!project) return Promise.resolve(false);
+            var payload = {
+                tenant_id: NestopiaDB.getTenantId(),
+                project_key: projectId,
+                workflow_data: JSON.parse(JSON.stringify({
+                    workflowStep: project.workflowStep,
+                    payments: project.payments,
+                    checklist: project.checklist,
+                    documents: project.documents,
+                    questionnaire: project.questionnaire,
+                    hoa: project.hoa,
+                    notes: project.notes,
+                    config: project.config,
+                    installation: project.installation
+                })),
+                updated_at: new Date().toISOString()
+            };
+            return NestopiaDB.getClient()
+                .from('project_workflow_state')
+                .upsert(payload, { onConflict: 'tenant_id,project_key' })
+                .then(function(res) {
+                    if (res.error) { console.warn('[Workflow] DB save error:', res.error.message); return false; }
+                    console.log('[Workflow] Saved to Supabase:', projectId);
+                    return true;
+                })
+                .catch(function(err) { console.warn('[Workflow] DB save failed:', err.message); return false; });
+        }
+
+        function applyWorkflowOverrides(dbRows) {
+            if (!dbRows || !Array.isArray(dbRows)) return;
+            dbRows.forEach(function(row) {
+                var project = workflowProjects.find(function(p) { return p.id === row.project_key; });
+                if (!project || !row.workflow_data) return;
+                var d = row.workflow_data;
+                if (d.workflowStep !== undefined) project.workflowStep = d.workflowStep;
+                if (d.payments) project.payments = d.payments;
+                if (d.checklist) project.checklist = d.checklist;
+                if (d.documents) project.documents = d.documents;
+                if (d.questionnaire) project.questionnaire = d.questionnaire;
+                if (d.hoa !== undefined) project.hoa = d.hoa;
+                if (d.notes !== undefined) project.notes = d.notes;
+                if (d.config) project.config = d.config;
+                if (d.installation) project.installation = d.installation;
+            });
+            console.log('[Workflow] Applied', dbRows.length, 'overrides from Supabase');
+        }
 
         function getStepMeta(step) { return WORKFLOW_STEPS.find(s => s.step === step) || WORKFLOW_STEPS[0]; }
 
@@ -13285,6 +13350,17 @@
         function renderWorkflowPipeline() {
             const el = document.getElementById('workflowPipeline');
             if (!el) return;
+            // 首次渲染时从 Supabase 加载覆写数据
+            if (!_workflowDbLoaded && typeof NestopiaDB !== 'undefined' && NestopiaDB.isConnected()) {
+                _workflowDbLoaded = true;
+                loadWorkflowFromDB().then(function(rows) {
+                    if (rows && rows.length > 0) {
+                        applyWorkflowOverrides(rows);
+                        renderWorkflowPipeline();  // 重新渲染
+                        renderWorkflowTable();
+                    }
+                });
+            }
             el.innerHTML = WORKFLOW_STEPS.map(function(ws) {
                 var count = workflowProjects.filter(function(p) { return p.workflowStep === ws.step; }).length;
                 var cm = { blue:{ bg:'bg-blue-50',border:'border-blue-200',text:'text-blue-700',dot:'bg-blue-500',num:'text-blue-600' }, indigo:{ bg:'bg-indigo-50',border:'border-indigo-200',text:'text-indigo-700',dot:'bg-indigo-500',num:'text-indigo-600' }, purple:{ bg:'bg-purple-50',border:'border-purple-200',text:'text-purple-700',dot:'bg-purple-500',num:'text-purple-600' }, orange:{ bg:'bg-orange-50',border:'border-orange-200',text:'text-orange-700',dot:'bg-orange-500',num:'text-orange-600' }, yellow:{ bg:'bg-yellow-50',border:'border-yellow-200',text:'text-yellow-700',dot:'bg-yellow-500',num:'text-yellow-600' }, green:{ bg:'bg-green-50',border:'border-green-200',text:'text-green-700',dot:'bg-green-500',num:'text-green-600' } };
@@ -13495,7 +13571,19 @@
         function advanceStep(projectId) {
             var project = workflowProjects.find(function(p) { return p.id === projectId; });
             if (!project || project.workflowStep >= 6) return;
-            alert('Advance to Step ' + (project.workflowStep + 1) + '\n\nProject: ' + project.name + '\nFrom: Step ' + project.workflowStep + ' (' + getStepMeta(project.workflowStep).name + ')\nTo: Step ' + (project.workflowStep + 1) + ' (' + getStepMeta(project.workflowStep + 1).name + ')\n\n(Backend integration pending)');
+            var fromStep = project.workflowStep;
+            var toStep = fromStep + 1;
+            if (!confirm('Advance project "' + project.name + '" from Step ' + fromStep + ' (' + getStepMeta(fromStep).name + ') to Step ' + toStep + ' (' + getStepMeta(toStep).name + ')?')) return;
+            project.workflowStep = toStep;
+            // 初始化新步骤的 checklist
+            if (!project.checklist[toStep]) project.checklist[toStep] = { total: 5, done: 0 };
+            if (!project.documents[toStep]) project.documents[toStep] = 0;
+            // 保存到 Supabase
+            saveWorkflowToDB(projectId);
+            // 重新渲染
+            renderWorkflowPipeline();
+            renderWorkflowTable();
+            showToast('Project advanced to Step ' + toStep + ': ' + getStepMeta(toStep).name, 'success');
         }
 
         function openNewProjectModal() {
@@ -14365,6 +14453,46 @@
             sessions: [],
             currentSessionId: null,
             isFloatingOpen: false,
+            _dbLoaded: false,
+
+            // ── Supabase Chat 持久化 ──────────────────────────
+            loadFromDB: function() {
+                if (typeof NestopiaDB === 'undefined' || !NestopiaDB.isConnected()) return Promise.resolve(null);
+                return NestopiaDB.getClient()
+                    .from('chat_sessions')
+                    .select('chat_data')
+                    .eq('tenant_id', NestopiaDB.getTenantId())
+                    .eq('session_key', 'default')
+                    .maybeSingle()
+                    .then(function(res) {
+                        if (res.error) { console.warn('[Chat] DB load error:', res.error.message); return null; }
+                        return (res.data && res.data.chat_data) ? res.data.chat_data : null;
+                    })
+                    .catch(function(err) { console.warn('[Chat] DB load failed:', err.message); return null; });
+            },
+
+            saveToDB: function() {
+                if (typeof NestopiaDB === 'undefined' || !NestopiaDB.isConnected()) return Promise.resolve(false);
+                var self = this;
+                var payload = {
+                    tenant_id: NestopiaDB.getTenantId(),
+                    session_key: 'default',
+                    chat_data: JSON.parse(JSON.stringify({
+                        sessions: self.sessions,
+                        currentSessionId: self.currentSessionId
+                    })),
+                    updated_at: new Date().toISOString()
+                };
+                return NestopiaDB.getClient()
+                    .from('chat_sessions')
+                    .upsert(payload, { onConflict: 'tenant_id,session_key' })
+                    .then(function(res) {
+                        if (res.error) { console.warn('[Chat] DB save error:', res.error.message); return false; }
+                        console.log('[Chat] Saved to Supabase');
+                        return true;
+                    })
+                    .catch(function(err) { console.warn('[Chat] DB save failed:', err.message); return false; });
+            },
 
             agents: {
                 'designer':         { name: 'AI Designer',        icon: 'fa-palette',    css: 'designer' },
@@ -14375,6 +14503,31 @@
             },
 
             init() {
+                var self = this;
+                // 先尝试从 Supabase 加载会话
+                if (!self._dbLoaded && typeof NestopiaDB !== 'undefined' && NestopiaDB.isConnected()) {
+                    self._dbLoaded = true;
+                    self.loadFromDB().then(function(dbData) {
+                        if (dbData && dbData.sessions && Array.isArray(dbData.sessions) && dbData.sessions.length > 0) {
+                            self.sessions = dbData.sessions;
+                            self.currentSessionId = dbData.currentSessionId || dbData.sessions[0].id;
+                            console.log('[Chat] Loaded', dbData.sessions.length, 'sessions from Supabase');
+                            self.renderSessionsList();
+                            self.renderMessages('full');
+                            self.addWelcomeMessage('float');
+                            return;
+                        }
+                        // DB 为空，使用默认 demo 数据
+                        self._initDefaultSessions();
+                    });
+                    // 先用默认数据渲染，DB 加载完成后会覆盖
+                    self._initDefaultSessions();
+                    return;
+                }
+                self._initDefaultSessions();
+            },
+
+            _initDefaultSessions() {
                 this.sessions = [
                     {
                         id: 'sess-001',
@@ -14467,6 +14620,8 @@
                 // Re-show quick actions
                 const qa = document.getElementById('fullQuickActions');
                 if (qa) qa.style.display = '';
+                // 自动保存到 Supabase
+                this.saveToDB();
             },
 
             switchSession(sessionId) {
@@ -14492,6 +14647,8 @@
                     this.renderSessionsList();
                     const qa = document.getElementById('fullQuickActions');
                     if (qa) qa.style.display = '';
+                    // 自动保存到 Supabase
+                    this.saveToDB();
                 }
             },
 
@@ -14624,6 +14781,8 @@
                 container.innerHTML += this.msgHTML(botMsg);
                 container.scrollTop = container.scrollHeight;
                 this.renderSessionsList();
+                // 自动保存到 Supabase
+                this.saveToDB();
             },
 
             removeTyping() {
