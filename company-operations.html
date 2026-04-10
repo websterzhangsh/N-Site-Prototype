@@ -13519,18 +13519,18 @@
             var subtotalHtml = '';
             if (accRowsHtml) {
                 subtotalHtml = '<tr style="background:#f9fafb;">' +
-                    '<td style="border:1px solid #d1d5db;padding:8px 10px;" colspan="7"><strong>Product Subtotal / \u4ea7\u54c1\u5c0f\u8ba1</strong></td>' +
+                    '<td style="border:1px solid #d1d5db;padding:8px 10px;" colspan="7"><strong>' + t('printSubtotal') + '</strong></td>' +
                     '<td style="border:1px solid #d1d5db;padding:8px 10px;text-align:right;font-weight:600;">\u00a5' + prodTotal.toFixed(2) + '</td></tr>';
             }
 
             // Total rows
-            var discountNote = discount > 0 ? ' (Discount / \u6298\u6263: ' + discount + '%)' : '';
+            var discountNote = discount > 0 ? ' (' + t('printDiscount') + ': ' + discount + '%)' : '';
             var totalRowsHtml = '<tr style="background:#eff6ff;">' +
-                '<td style="border:1px solid #d1d5db;padding:10px;font-weight:700;" colspan="7">Preferential Total Price (RMB) / \u4f18\u60e0\u603b\u4ef7\uff08\u4eba\u6c11\u5e01\uff09' + discountNote + '</td>' +
+                '<td style="border:1px solid #d1d5db;padding:10px;font-weight:700;" colspan="7">' + t('printTotalRMB') + discountNote + '</td>' +
                 '<td style="border:1px solid #d1d5db;padding:10px;text-align:right;font-weight:700;font-size:16px;color:#1e40af;">\u00a5' + grandRMB.toFixed(2) + '</td></tr>';
             if (currency !== 'RMB') {
                 totalRowsHtml += '<tr style="background:#eff6ff;">' +
-                    '<td style="border:1px solid #d1d5db;padding:10px;font-weight:700;" colspan="7">Preferential Total Price (' + currency + ') / \u4f18\u60e0\u603b\u4ef7\uff08' + (currency === 'SGD' ? '\u65b0\u5e01' : '\u7f8e\u5143') + '\uff09</td>' +
+                    '<td style="border:1px solid #d1d5db;padding:10px;font-weight:700;" colspan="7">' + t(currency === 'SGD' ? 'printTotalSGD' : 'printTotalUSD') + '</td>' +
                     '<td style="border:1px solid #d1d5db;padding:10px;text-align:right;font-weight:700;font-size:16px;color:#1e40af;">' + foreignSymbol + foreignAmount.toFixed(2) + '</td></tr>';
             }
 
@@ -13544,15 +13544,17 @@
             var noteIdx = remarkLines.length + 1;
             var rateNote = '';
             if (currency !== 'RMB') {
-                rateNote = '<div style="margin-bottom:4px;font-size:12px;color:#374151;line-height:1.6;">' + noteIdx + '\u3001' + currency + ' to RMB exchange rate / ' + (currency === 'SGD' ? '\u65b0\u5e01' : '\u7f8e\u5143') + '\u5151\u4eba\u6c11\u5e01\u6c47\u7387: ' + rate + ' (' + dateStr + ')</div>';
+                rateNote = '<div style="margin-bottom:4px;font-size:12px;color:#374151;line-height:1.6;">' + noteIdx + (lang === 'en' ? '. ' : '\u3001') + currency + ' ' + t('printExchangeRate') + ': ' + rate + ' (' + dateStr + ')</div>';
                 noteIdx++;
             }
 
             // Material spec note
-            var specNote = '<div style="margin-bottom:4px;font-size:12px;color:#374151;line-height:1.6;">' + noteIdx + '\u3001Profile Color / \u578b\u6750\u989c\u8272: ' + profileColor + '\uff1bFabric / \u9762\u6599: ' + (fabricColor ? fabricColor + ' ' : '') + fabric + '</div>';
+            var matLabel1 = document.getElementById('quotLabelProfileColor').textContent;
+            var matLabel2 = document.getElementById('quotLabelFabric').textContent;
+            var specNote = '<div style="margin-bottom:4px;font-size:12px;color:#374151;line-height:1.6;">' + noteIdx + (lang === 'en' ? '. ' : '\u3001') + matLabel1 + ': ' + profileColor + '; ' + matLabel2 + ': ' + (fabricColor ? fabricColor + ' ' : '') + fabric + '</div>';
 
             // Build final HTML - proper printable page
-            var html = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + getQuotTypeTitle('bilingual') + ' - ' + client + '</title>' +
+            var html = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + getQuotTypeTitle(lang) + ' - ' + client + '</title>' +
                 '<style>' +
                 '@page { size: A4; margin: 15mm 12mm; }' +
                 'body { font-family: ' + (lang === 'en' ? '"Helvetica Neue", Arial, sans-serif' : '"Microsoft YaHei", "Helvetica Neue", Arial, sans-serif') + '; margin: 0; padding: 24px 32px; color: #111827; font-size: 13px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }' +
@@ -13580,47 +13582,47 @@
                 '<img src="' + logoPath + '" class="header-logo" onerror="this.style.display=\'none\'">' +
                 '<div class="header-text">' +
                 '<div class="header-title">' + tenantCfg.name + '</div>' +
-                '<div class="header-subtitle">' + getQuotTypeTitle('bilingual') + '</div>' +
+                '<div class="header-subtitle">' + getQuotTypeTitle(lang) + '</div>' +
                 '</div>' +
-                '<div class="header-date">Date / \u65e5\u671f: ' + dateStr + '</div>' +
+                '<div class="header-date">' + t('printDate') + ': ' + dateStr + '</div>' +
                 '</div>' +
 
                 // Client info grid
                 '<div class="info-grid">' +
-                '<div><span class="label">Client / \u5ba2\u6237\u59d3\u540d: </span><span class="value">' + client + '</span></div>' +
-                '<div><span class="label">CS Rep / \u5ba2\u670d: </span><span class="value">' + csRep + '</span></div>' +
-                '<div><span class="label">Contact / \u5ba2\u6237\u7535\u8bdd: </span><span class="value">' + phone + '</span></div>' +
-                '<div><span class="label">CS Contact / \u5ba2\u670d\u7535\u8bdd: </span><span class="value"></span></div>' +
+                '<div><span class="label">' + t('printClient') + ': </span><span class="value">' + client + '</span></div>' +
+                '<div><span class="label">' + t('printCSRep') + ': </span><span class="value">' + csRep + '</span></div>' +
+                '<div><span class="label">' + t('printContact') + ': </span><span class="value">' + phone + '</span></div>' +
+                '<div><span class="label">' + t('printCSContact') + ': </span><span class="value"></span></div>' +
                 '</div>' +
 
                 // Product table
-                '<div class="section-title">Product Dimensions / \u4ea7\u54c1\u5c3a\u5bf8\u6216\u89c4\u683c</div>' +
+                '<div class="section-title">' + t('printSectionDims') + '</div>' +
                 '<table><thead><tr style="background:#f3f4f6;">' +
-                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:11px;color:#6b7280;width:36px;">No.<br>\u5e8f\u53f7</th>' +
-                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:left;font-size:11px;color:#6b7280;">Product / \u54c1\u7c7b</th>' +
-                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:11px;color:#6b7280;width:60px;">Width<br>\u5bbd(mm)</th>' +
-                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:11px;color:#6b7280;width:60px;">Height<br>\u9ad8(mm)</th>' +
-                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:11px;color:#6b7280;width:70px;">Area<br>\u9762\u79ef(M\u00b2)</th>' +
-                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:11px;color:#6b7280;width:80px;">Unit Price<br>\u5355\u4ef7(\u5143/M\u00b2)</th>' +
-                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:11px;color:#6b7280;width:50px;">Qty<br>\u6570\u91cf</th>' +
-                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:right;font-size:11px;color:#6b7280;width:90px;">Amount<br>\u91d1\u989d(\u5143)</th></tr></thead><tbody>' +
+                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:11px;color:#6b7280;width:36px;">' + t('printThNo') + '</th>' +
+                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:left;font-size:11px;color:#6b7280;">' + t('printThProduct') + '</th>' +
+                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:11px;color:#6b7280;width:60px;">' + t('printThWidth') + '</th>' +
+                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:11px;color:#6b7280;width:60px;">' + t('printThHeight') + '</th>' +
+                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:11px;color:#6b7280;width:70px;">' + t('printThArea') + '</th>' +
+                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:11px;color:#6b7280;width:80px;">' + t('printThUnitPrice') + '</th>' +
+                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:11px;color:#6b7280;width:50px;">' + t('printThQty') + '</th>' +
+                '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:right;font-size:11px;color:#6b7280;width:90px;">' + t('printThAmount') + '</th></tr></thead><tbody>' +
                 prodRowsHtml + subtotalHtml + accRowsHtml + totalRowsHtml +
                 '</tbody></table>' +
 
                 // Remarks
                 '<div class="remarks-box">' +
-                '<div class="remarks-title">Special Remarks / \u7279\u6b8a\u8bf4\u660e</div>' +
+                '<div class="remarks-title">' + t('printRemarks') + '</div>' +
                 specNote + rateNote + remarksHtml + '</div>' +
 
                 // Signature area
                 '<div class="footer">' +
-                '<div><strong>Seller / \u5356\u65b9:</strong> ' + tenantCfg.name + '<div class="sig-line">Signature / \u7b7e\u540d & Date / \u65e5\u671f</div></div>' +
-                '<div><strong>Buyer / \u4e70\u65b9:</strong> ' + client + '<div class="sig-line">Signature / \u7b7e\u540d & Date / \u65e5\u671f</div></div>' +
+                '<div><strong>' + t('printSeller') + ':</strong> ' + tenantCfg.name + '<div class="sig-line">' + t('printSignDate') + '</div></div>' +
+                '<div><strong>' + t('printBuyer') + ':</strong> ' + client + '<div class="sig-line">' + t('printSignDate') + '</div></div>' +
                 '</div>' +
 
                 // Print button
                 '<div class="no-print" style="text-align:center;margin-top:30px;">' +
-                '<button onclick="window.print()" style="padding:10px 32px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-right:10px;">Print / \u6253\u5370</button>' +
+                '<button onclick="window.print()" style="padding:10px 32px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-right:10px;">' + t('printBtn') + '</button>' +
                 '</div>' +
 
                 '</body></html>';
