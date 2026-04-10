@@ -9790,10 +9790,16 @@
 
         function saveIntakeToDB(projectId, data) {
             if (typeof NestopiaDB === 'undefined' || !NestopiaDB.isConnected()) return Promise.resolve(false);
+            // 合并上传文件引用到 form_data
+            var dataClone = JSON.parse(JSON.stringify(data));
+            var uploadedFiles = getUploadedFiles(projectId);
+            if (uploadedFiles && Object.keys(uploadedFiles).length > 0) {
+                dataClone._uploadedFiles = JSON.parse(JSON.stringify(uploadedFiles));
+            }
             var payload = {
                 tenant_id: NestopiaDB.getTenantId(),
                 project_key: projectId,
-                form_data: JSON.parse(JSON.stringify(data)),
+                form_data: dataClone,
                 updated_at: new Date().toISOString()
             };
             return NestopiaDB.getClient()
@@ -9818,7 +9824,20 @@
                     if (dbData && typeof dbData === 'object') {
                         var local = getIntakeData(projectId);
                         // DB 数据合并到内存（DB 优先）
-                        Object.keys(dbData).forEach(function(k) { local[k] = dbData[k]; });
+                        Object.keys(dbData).forEach(function(k) {
+                            if (k === '_uploadedFiles') return;  // 单独处理
+                            local[k] = dbData[k];
+                        });
+                        // 恢复上传文件引用
+                        if (dbData._uploadedFiles && typeof dbData._uploadedFiles === 'object') {
+                            var localFiles = getUploadedFiles(projectId);
+                            Object.keys(dbData._uploadedFiles).forEach(function(fk) {
+                                if (!localFiles[fk] || localFiles[fk].length === 0) {
+                                    localFiles[fk] = dbData._uploadedFiles[fk];
+                                }
+                            });
+                            console.log('[Intake] Restored uploaded file refs from Supabase');
+                        }
                         console.log('[Intake] Loaded from Supabase for', projectId);
                     }
                     _renderIntakeModal(moduleKey, projectId);
@@ -9986,6 +10005,8 @@
             for (const f of input.files) {
                 files[uploadKey].push({ name: f.name, size: f.size, type: f.type, uploadedAt: new Date().toISOString() });
             }
+            // 自动同步文件引用到 Supabase
+            saveIntakeToDB(projectId, getIntakeData(projectId));
             // Refresh modal upload section
             const existingModal = document.getElementById('intakeFormModal');
             if (existingModal) {
@@ -10005,6 +10026,8 @@
             if (files[uploadKey]) {
                 files[uploadKey].splice(fileIndex, 1);
             }
+            // 自动同步文件引用到 Supabase
+            saveIntakeToDB(projectId, getIntakeData(projectId));
             // Find and refresh modal
             for (const [mk, mc] of Object.entries(INTAKE_MODULE_FIELDS)) {
                 if (mc.uploads && mc.uploads.some(u => u.key === uploadKey)) {
@@ -11181,6 +11204,8 @@
                     el.insertAdjacentHTML('beforeend', '<i class="fas fa-check-circle text-indigo-500 text-[10px]"></i>');
                 }
             }
+            // 自动同步到 Supabase
+            if (projectId) saveDesignerToDB(projectId);
         }
 
         function triggerPhotoUpload(projectId) {
@@ -11190,6 +11215,52 @@
         // ===== Step 2 Inline AI Designer Functions =====
         // State: { photos: [base64|null x3], selectedProduct, generated, lastResultImage, currentIteration, maxIterations }
         var step2DesignerState = {};
+        var _designerDbLoaded = {};  // 标记已从 DB 加载的项目
+
+        // ── Supabase Designer 持久化 ──────────────────────────
+        function loadDesignerFromDB(projectId) {
+            if (typeof NestopiaDB === 'undefined' || !NestopiaDB.isConnected()) return Promise.resolve(null);
+            return NestopiaDB.getClient()
+                .from('project_designer_state')
+                .select('designer_data')
+                .eq('tenant_id', NestopiaDB.getTenantId())
+                .eq('project_key', projectId)
+                .maybeSingle()
+                .then(function(res) {
+                    if (res.error) { console.warn('[Designer] DB load error:', res.error.message); return null; }
+                    return (res.data && res.data.designer_data) ? res.data.designer_data : null;
+                })
+                .catch(function(err) { console.warn('[Designer] DB load failed:', err.message); return null; });
+        }
+
+        function saveDesignerToDB(projectId) {
+            if (typeof NestopiaDB === 'undefined' || !NestopiaDB.isConnected()) return Promise.resolve(false);
+            var state = getStep2State(projectId);
+            var styles = designerSelectedStyles[projectId] || [];
+            var payload = {
+                tenant_id: NestopiaDB.getTenantId(),
+                project_key: projectId,
+                designer_data: JSON.parse(JSON.stringify({
+                    photos: state.photos,
+                    selectedProduct: state.selectedProduct,
+                    generated: state.generated,
+                    lastResultImage: state.lastResultImage,
+                    currentIteration: state.currentIteration,
+                    maxIterations: state.maxIterations,
+                    selectedStyles: styles
+                })),
+                updated_at: new Date().toISOString()
+            };
+            return NestopiaDB.getClient()
+                .from('project_designer_state')
+                .upsert(payload, { onConflict: 'tenant_id,project_key' })
+                .then(function(res) {
+                    if (res.error) { console.warn('[Designer] DB save error:', res.error.message); return false; }
+                    console.log('[Designer] Saved to Supabase:', projectId);
+                    return true;
+                })
+                .catch(function(err) { console.warn('[Designer] DB save failed:', err.message); return false; });
+        }
 
         function getStep2State(projectId) {
             if (!step2DesignerState[projectId]) {
@@ -11217,6 +11288,29 @@
                     if (!confirm('⚠️ This project is currently at Step ' + project.workflowStep + ' (' + (stepNames[project.workflowStep] || '') + ').\n\nRe-launching the AI Designer at this stage may incur additional design fees.\n\nDo you want to proceed?')) {
                         return;
                     }
+                }
+                // 打开前先从 Supabase 加载最新设计师数据（仅首次）
+                if (!_designerDbLoaded[projectId] && typeof NestopiaDB !== 'undefined' && NestopiaDB.isConnected()) {
+                    _designerDbLoaded[projectId] = true;
+                    loadDesignerFromDB(projectId).then(function(dbData) {
+                        if (dbData && typeof dbData === 'object') {
+                            var state = getStep2State(projectId);
+                            if (dbData.photos && Array.isArray(dbData.photos)) state.photos = dbData.photos;
+                            if (dbData.selectedProduct) state.selectedProduct = dbData.selectedProduct;
+                            if (dbData.generated !== undefined) state.generated = dbData.generated;
+                            if (dbData.lastResultImage) state.lastResultImage = dbData.lastResultImage;
+                            if (dbData.currentIteration !== undefined) state.currentIteration = dbData.currentIteration;
+                            if (dbData.selectedStyles && Array.isArray(dbData.selectedStyles)) {
+                                designerSelectedStyles[projectId] = dbData.selectedStyles;
+                            }
+                            console.log('[Designer] Loaded from Supabase for', projectId);
+                            // 重新渲染面板以反映加载的数据
+                            if (expandedStep === 2 && currentDetailProject) {
+                                toggleStepDetail(expandedStep, currentDetailProject);
+                                toggleStepDetail(expandedStep, currentDetailProject);
+                            }
+                        }
+                    });
                 }
                 panel.classList.remove('hidden');
                 btn.innerHTML = '<i class="fas fa-chevron-up text-[10px]"></i> Collapse';
@@ -11255,6 +11349,8 @@
                     }
                     updateStep2PhotoCount(projectId);
                     updateStep2GenerateBtn(projectId);
+                    // 自动同步到 Supabase
+                    saveDesignerToDB(projectId);
                 };
                 reader.readAsDataURL(file);
                 input.remove();
@@ -11277,6 +11373,8 @@
             }
             updateStep2PhotoCount(projectId);
             updateStep2GenerateBtn(projectId);
+            // 自动同步到 Supabase
+            saveDesignerToDB(projectId);
         }
 
         function updateStep2PhotoCount(projectId) {
@@ -11328,6 +11426,8 @@
                 document.getElementById('step2StatSeries_' + projectId).textContent = product.series.replace(' Series', '');
             }
             updateStep2GenerateBtn(projectId);
+            // 自动同步到 Supabase
+            saveDesignerToDB(projectId);
         }
 
         // --- Generate Button Enable/Disable ---
