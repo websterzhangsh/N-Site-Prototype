@@ -607,12 +607,14 @@
             }
 
             // Authentication successful — generate token and store
+            // Always read tenant from dropdown (defensive — don't rely solely on currentTenant)
+            const selectedTenantSlug = document.getElementById('companySelect').value || 'default';
             const authToken = 'nestopia-auth-' + result.prefix + '-' + Date.now();
             const authData = {
                 token: authToken,
                 email: result.email,
                 prefix: result.prefix,
-                tenant: currentTenant?.slug || 'default',
+                tenant: selectedTenantSlug,
                 loginTime: new Date().toISOString()
             };
             
@@ -643,12 +645,36 @@
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('loadingOverlay').classList.add('show');
-            loadTenantConfig();
+
+            // Use dropdown's current value as initial slug
+            // (handles browser form auto-restore which sets value before DOMContentLoaded)
+            const initialSlug = document.getElementById('companySelect').value;
+            loadTenantConfig(initialSlug);
 
             // Switch tenant when company dropdown changes
             document.getElementById('companySelect').addEventListener('change', function() {
                 loadTenantConfig(this.value);
             });
+
+            // Handle browser back/forward cache (bfcache) and late form restoration
+            // Some browsers restore form state AFTER DOMContentLoaded without firing change events
+            requestAnimationFrame(function() {
+                const sel = document.getElementById('companySelect');
+                const dropdownVal = sel.value;
+                const curSlug = currentTenant ? currentTenant.slug : null;
+                const normalizedCur = (curSlug === 'partner1') ? 'default' : curSlug;
+                if (dropdownVal !== normalizedCur) {
+                    loadTenantConfig(dropdownVal);
+                }
+            });
+        });
+
+        // Handle bfcache page restore (user clicks back after login)
+        window.addEventListener('pageshow', function(e) {
+            if (e.persisted) {
+                const sel = document.getElementById('companySelect');
+                if (sel) loadTenantConfig(sel.value);
+            }
         });
     </script>
 </body>
