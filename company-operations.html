@@ -854,7 +854,7 @@
                     .then(function(dbRecord) {
                         if (!dbRecord) throw new Error('Metadata save failed');
                         LocalStorage.saveFile(projectId, { id: dbRecord.id, name: dbRecord.name, type: dbRecord.mime_type, size: dbRecord.file_size_bytes, category: dbRecord.category, thumbnailUrl: null, url: dbRecord.file_url, storageMode: 'supabase', storagePath: dbRecord.storage_path });
-                        return { id: dbRecord.id, name: dbRecord.name, type: dbRecord.mime_type, size: dbRecord.file_size_bytes, category: dbRecord.category, url: dbRecord.file_url, status: 'uploaded', storageMode: 'supabase', uploadedAt: dbRecord.created_at };
+                        return { id: dbRecord.id, name: dbRecord.name, type: dbRecord.mime_type, size: dbRecord.file_size_bytes, category: dbRecord.category, url: dbRecord.file_url, storagePath: dbRecord.storage_path, status: 'uploaded', storageMode: 'supabase', uploadedAt: dbRecord.created_at };
                     })
                     .catch(function(err) {
                         console.error('[NestopiaStorage] Supabase 上传失败，回退 localStorage:', err.message);
