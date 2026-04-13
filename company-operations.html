@@ -9463,6 +9463,25 @@
                     st = st.charAt(0).toUpperCase() + st.slice(1);
                     return { name: c.name || 'Unknown', email: c.email || '', location: loc, projects: projCount, spent: '$0', status: st, avatar: (c.name || 'U').charAt(0).toUpperCase() };
                 });
+                // Merge project customers not yet in Supabase
+                if (typeof allProjectsData !== 'undefined') {
+                    var seen = {};
+                    displayData.forEach(function(d) { seen[d.name] = true; });
+                    allProjectsData.forEach(function(p) {
+                        if (!p.customer || p.hidden || seen[p.customer]) return;
+                        seen[p.customer] = true;
+                        var projCount = allProjectsData.filter(function(pp) { return pp.customer === p.customer; }).length;
+                        displayData.push({
+                            name: p.customer,
+                            email: p.customerEmail || '',
+                            location: p.customerAddress || '',
+                            projects: projCount,
+                            spent: '$0',
+                            status: 'New',
+                            avatar: p.customer.charAt(0).toUpperCase()
+                        });
+                    });
+                }
             } else {
                 displayData = overviewCustomersData;
             }
