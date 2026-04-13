@@ -305,11 +305,13 @@ The Knowledge Base serves as a **private domain data repository** that feeds our
 ## 5. Implementation Roadmap (Timeline-Based)
 
 ### Phase 0: Foundation (Months 0-3) ✅
-**Status**: Core infrastructure complete
+**Status**: Core infrastructure complete — 详见 [SUPABASE_ADOPTION.md](SUPABASE_ADOPTION.md) 获取实时进度
 
-- [x] Multi-tenant database schema (Supabase)
+- [x] Multi-tenant database schema (Supabase) — 10 张表已对接前端，18 张表已定义 DDL
 - [x] Test data creation (seed_data.sql with 47 realistic documents)
-- [x] Knowledge Base UI in Dashboard
+- [x] Knowledge Base UI in Dashboard — ✅ 已对接 Supabase Storage + DB
+- [x] 产品目录 CRUD — ✅ 租户自定义产品，Supabase 持久化
+- [x] 工作流数据持久化 — ✅ Intake/设计/测量/报价/工作流/聊天全部完成
 - [ ] Lake storage setup (S3/R2)
 - [ ] ELT pipeline for ERP/OA data
 - [ ] Unified ID system implementation
@@ -524,6 +526,8 @@ The Knowledge Base serves as a **private domain data repository** that feeds our
 - `docs/Pricing_Cost_Controller_Agent_Spec.md` - Pricing Agent spec
 - `docs/Compliance_Manager_Agent_Spec.md` - Compliance Agent spec
 - `docs/Customer_Service_Executive_Agent_Spec.md` - Service Agent spec
+- **[SUPABASE_ADOPTION.md](SUPABASE_ADOPTION.md)** — Supabase 实施进度跟踪（本文档 §4 数据架构的落地执行状态）
+- **[STORAGE_STRATEGY.md](STORAGE_STRATEGY.md)** — 存储技术选型 & 架构设计（Supabase + Cloudflare R2）
 
 ---
 

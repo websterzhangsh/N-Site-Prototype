@@ -1,7 +1,7 @@
 # Nestopia 存储策略
 
 > **版本:** 1.0 | **日期:** 2026-04-08 | **状态:** 草案  
-> **关联文档:** [DATA_AI_STRATEGY.md](DATA_AI_STRATEGY.md) (v3.1), [KB_STORAGE_DESIGN.md](KB_STORAGE_DESIGN.md) (v1.0), [ZB_KB_KNOWLEDGE_AGENT_DESIGN.md](ZB_KB_KNOWLEDGE_AGENT_DESIGN.md) (v1.0)
+> **关联文档:** [DATA_AI_STRATEGY.md](DATA_AI_STRATEGY.md) (v3.1), [KB_STORAGE_DESIGN.md](KB_STORAGE_DESIGN.md) (v1.0), [ZB_KB_KNOWLEDGE_AGENT_DESIGN.md](ZB_KB_KNOWLEDGE_AGENT_DESIGN.md) (v1.0), **[SUPABASE_ADOPTION.md](SUPABASE_ADOPTION.md)** (v1.0 — 实施进度跟踪)
 
 ---
 
@@ -193,13 +193,17 @@ kb_documents:
 
 ### Phase 1：Demo/POC（🔵 当前阶段 — 已部分完成）
 
-**存储方式**：localStorage + JS 内存数据
+**存储方式**：localStorage + JS 内存数据 → **已升级为 Supabase 优先**
+
+> 📊 **实施进度详见** [SUPABASE_ADOPTION.md](SUPABASE_ADOPTION.md) — 截至 2026-04-13 已完成 10/16 模块对接。
 
 | 组件 | 实现方式 | 状态 |
 |------|---------|------|
-| 租户级 KB 元数据 | `zbProductKB` JS 数组（20 条） | ✅ 已完成 |
-| 项目文件上传（<5MB） | localStorage base64 | ✅ 已完成 |
-| 项目文件上传（≥5MB） | 仅存元数据，提示 Phase 2 | ✅ 已完成 |
+| 租户级 KB 元数据 | ~~`zbProductKB` JS 数组~~ → Supabase `kb_documents` | ✅ 已升级 |
+| 项目文件上传（<5MB） | ~~localStorage base64~~ → Supabase Storage | ✅ 已升级 |
+| 项目文件上传（≥5MB） | Supabase Storage（50MB 限制） | ✅ 已升级 |
+| 产品目录 | ~~`productCatalog` const~~ → Supabase `tenant_products` CRUD | ✅ 已升级 |
+| 工作流数据 | ~~JS 内存~~ → Supabase JSONB（6 张表） | ✅ 已升级 |
 | KB Quick Reference 面板 | 工作流内嵌，上下文推送 | ✅ 已完成 |
 | 文档预览模态框 | 元数据展示 + Phase 2 占位 | ✅ 已完成 |
 | KB 页面双 Tab 改造 | — | ⏳ Phase 1c |
@@ -211,18 +215,20 @@ kb_documents:
 
 **存储方式**：Supabase Storage + PostgreSQL
 
+> ✅ **Phase 2 核心步骤已大部分完成**，详见 [SUPABASE_ADOPTION.md §7](SUPABASE_ADOPTION.md) 的实施历史。
+
 | 步骤 | 工作内容 | 前置条件 | 状态 |
 |------|---------|---------|------|
-| 2.1 | 注册 Supabase 账号，创建 US East 项目 | 无 | ⏳ 待执行 |
-| 2.2 | 运行 `supabase/schema.sql` 创建表结构 | 2.1 | ⏳ 待执行 |
+| 2.1 | 注册 Supabase 账号，创建 US East 项目 | 无 | ✅ 已完成 |
+| 2.2 | 运行 `supabase/schema.sql` 创建表结构 | 2.1 | ✅ 已完成（部分表） |
 | 2.3 | 运行 `supabase/seed_data.sql` 导入测试数据 | 2.2 | ⏳ 待执行 |
-| 2.4 | 创建 Storage Buckets — `003_storage_buckets.sql` | 2.1 | ✅ SQL 已编写 |
-| 2.5 | 配置 Bucket RLS 策略 | 2.4 | ✅ 含在 003 中 |
-| 2.6 | 前端集成 Supabase JS SDK — `js/supabase-config.js` | 2.1 | ✅ 已集成 |
-| 2.7 | 改造 `handleProjectFileUpload()` — `js/supabase-storage.js` | 2.4, 2.6 | ✅ 已重构 |
-| 2.8 | 改造 `getProjectFiles()` / `saveProjectFile()` → Supabase DB | 2.2, 2.6 | ✅ 已重构 |
+| 2.4 | 创建 Storage Buckets — `003_storage_buckets.sql` | 2.1 | ✅ 已完成 |
+| 2.5 | 配置 Bucket RLS 策略 | 2.4 | ✅ 已完成（含 DEV-ONLY 临时策略） |
+| 2.6 | 前端集成 Supabase JS SDK — `js/supabase-config.js` | 2.1 | ✅ 已完成 |
+| 2.7 | 改造 `handleProjectFileUpload()` — `js/supabase-storage.js` | 2.4, 2.6 | ✅ 已完成 |
+| 2.8 | 改造 `getProjectFiles()` / `saveProjectFile()` → Supabase DB | 2.2, 2.6 | ✅ 已完成 |
 | 2.9 | 上传租户级 KB 样本文件（PDF/视频） | 2.4 | ⏳ 待执行 |
-| 2.10 | 端到端测试：上传 → 存储 → 预览 → 下载 | 全部 | ⏳ 待执行 |
+| 2.10 | 端到端测试：上传 → 存储 → 预览 → 下载 | 全部 | ✅ KB 已验证 |
 
 **前端集成方式**：
 
@@ -375,6 +381,9 @@ CREATE POLICY project_access ON kb_documents
 │       │                                                       │
 │       ├── STORAGE_STRATEGY.md ← 本文档：存储技术选型 & 实施计划   │
 │       │       │                                               │
+│       │       ├── SUPABASE_ADOPTION.md  ← Supabase 实施进度跟踪  │
+│       │       │                          (表清单、模块覆盖、安全)  │
+│       │       │                                               │
 │       │       ├── KB_STORAGE_DESIGN.md   ← KB 存储架构细节      │
 │       │       │                            (目录结构、DB 模型)   │
 │       │       │                                               │
@@ -384,11 +393,12 @@ CREATE POLICY project_access ON kb_documents
 │       │                                                       │
 │       └── supabase/schema.sql            ← 数据库 DDL          │
 │           supabase/seed_data.sql         ← 测试数据             │
+│           supabase/tenant_products.sql   ← 租户产品表 DDL       │
 │           supabase/config.toml           ← 本地开发配置          │
 │           supabase/functions/            ← Edge Functions       │
 │                                                               │
 │  company-operations.html                 ← 前端实现              │
-│       └── zbProductKB[], handleProjectFileUpload() 等          │
+│       └── NestopiaDB（93 处引用）、NestopiaStorage 等            │
 │                                                               │
 │  Cloudflare Pages                        ← 前端部署              │
 │       └── main 分支 → Staging                                  │
