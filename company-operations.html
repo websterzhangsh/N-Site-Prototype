@@ -8748,6 +8748,8 @@
                 project.customerAddress = address;
                 if (currentDetailProject && currentDetailProject.id === projectId) {
                     renderProjectCustomer(project);
+                    var metaEl = document.getElementById('projDetailMeta');
+                    if (metaEl) metaEl.textContent = name + ' \u00b7 ' + project.type + ' \u00b7 Started ' + project.startDate + ' \u00b7 Budget $' + project.budget.toLocaleString();
                 }
                 renderSidebarProjects();
             }
@@ -8790,6 +8792,55 @@
                 }
             }
         }
+
+        // -- Page-load: sync A.1 intake data from Supabase to project objects --
+        function syncAllA1OnLoad() {
+            if (typeof NestopiaDB === 'undefined' || !NestopiaDB.isConnected()) return;
+            var pending = allProjectsData.length;
+            var anyUpdated = false;
+            allProjectsData.forEach(function(project) {
+                NestopiaDB.getClient()
+                    .from('project_intake_data')
+                    .select('form_data')
+                    .eq('tenant_id', NestopiaDB.getTenantId())
+                    .eq('project_key', project.id)
+                    .maybeSingle()
+                    .then(function(res) {
+                        if (res.data && res.data.form_data) {
+                            var fd = res.data.form_data;
+                            if (fd.a1_client_name) {
+                                project.customer = fd.a1_client_name;
+                                if (fd.a1_email) project.customerEmail = fd.a1_email;
+                                if (fd.a1_phone) project.customerPhone = fd.a1_phone;
+                                var addrParts = [];
+                                if (fd.a1_address_street) addrParts.push(fd.a1_address_street);
+                                if (fd.a1_address_city) addrParts.push(fd.a1_address_city);
+                                if (fd.a1_address_state) addrParts.push(fd.a1_address_state);
+                                if (fd.a1_address_zip) addrParts.push(fd.a1_address_zip);
+                                if (addrParts.length > 0) project.customerAddress = addrParts.join(', ');
+                                anyUpdated = true;
+                                if (currentDetailProject && currentDetailProject.id === project.id) {
+                                    renderProjectCustomer(project);
+                                    var metaEl = document.getElementById('projDetailMeta');
+                                    if (metaEl) metaEl.textContent = project.customer + ' \u00b7 ' + project.type + ' \u00b7 Started ' + project.startDate + ' \u00b7 Budget $' + project.budget.toLocaleString();
+                                }
+                                console.log('[A.1 Sync] Page-load sync for', project.id, '->', project.customer);
+                            }
+                            // Merge into intakeFormData so form shows latest data
+                            var localData = getIntakeData(project.id);
+                            Object.keys(fd).forEach(function(k) {
+                                localData[k] = fd[k];
+                            });
+                        }
+                        pending--;
+                        if (pending === 0 && anyUpdated) {
+                            renderSidebarProjects();
+                        }
+                    })
+                    .catch(function() { pending--; });
+            });
+        }
+
 
         // ===== Knowledge Base Functions =====
         const kbState = {
@@ -9304,9 +9355,9 @@
                 { id: 'OMY-ORD-001', customer: 'Miss Xu', email: 'miss.xu@email.com', product: 'Zip Blinds Motorized', total: '$6,500', status: 'Pending', statusColor: 'amber', date: 'Apr 1, 2026' }
             ];
             if (slug === 'nestopia-chn') return [
-                { id: 'CHN-ORD-001', customer: 'Larrr Zhang', email: 'larrr.zhang@email.com', product: 'L-Classic Sunroom', total: '$50,000', status: 'Pending', statusColor: 'amber', date: 'Apr 1, 2026' },
-                { id: 'CHN-ORD-002', customer: 'Larrr Zhang', email: 'larrr.zhang@email.com', product: 'Pergola Basic', total: '$15,000', status: 'Pending', statusColor: 'amber', date: 'Apr 1, 2026' },
-                { id: 'CHN-ORD-003', customer: 'Larrr Zhang', email: 'larrr.zhang@email.com', product: 'Zip Blinds Standard', total: '$8,000', status: 'Pending', statusColor: 'amber', date: 'Apr 1, 2026' }
+                { id: 'CHN-ORD-001', customer: 'Larry Zhang', email: 'larry.zhang@email.com', product: 'L-Classic Sunroom', total: '$50,000', status: 'Pending', statusColor: 'amber', date: 'Apr 1, 2026' },
+                { id: 'CHN-ORD-002', customer: 'Larry Zhang', email: 'larry.zhang@email.com', product: 'Pergola Basic', total: '$15,000', status: 'Pending', statusColor: 'amber', date: 'Apr 1, 2026' },
+                { id: 'CHN-ORD-003', customer: 'Larry Zhang', email: 'larry.zhang@email.com', product: 'Zip Blinds Standard', total: '$8,000', status: 'Pending', statusColor: 'amber', date: 'Apr 1, 2026' }
             ];
             return [
                 { id: 'ORD-2024-0156', customer: 'Mr. Johnson', email: 'johnson@email.com', product: 'Classic Sunroom', total: '$18,500', status: 'In Production', statusColor: 'blue', date: 'Mar 10, 2026' },
@@ -9327,7 +9378,7 @@
                 { name: 'Miss Xu', email: 'miss.xu@email.com', location: '88 Orchard Road, Singapore', projects: 1, spent: '$0', status: 'New', avatar: 'X' }
             ];
             if (slug === 'nestopia-chn') return [
-                { name: 'Larrr Zhang', email: 'larrr.zhang@email.com', location: '1288 Nanjing West Rd, Shanghai', projects: 3, spent: '$0', status: 'New', avatar: 'Z' }
+                { name: 'Larry Zhang', email: 'larry.zhang@email.com', location: '1288 Nanjing West Rd, Shanghai', projects: 3, spent: '$0', status: 'New', avatar: 'Z' }
             ];
             return [
             { name: 'Mr. Johnson', email: 'johnson@email.com', location: '123 Sunshine Ave, Los Angeles, CA', projects: 3, spent: '$42,500', status: 'VIP', avatar: 'J' },
@@ -10369,27 +10420,27 @@
         };
 
         // ===== Omeya-SIN: MX Zip Blinds =====
-        intakeFormData['OMY-WF-001'] = {
+        intakeFormData['OMY-001'] = {
             a1_client_name: 'Miss Xu', a1_address_street: '88 Orchard Road, #12-01', a1_address_city: 'Singapore', a1_address_state: 'SG', a1_address_zip: '238839',
             a1_phone: '+65 9123-4567', a1_email: 'miss.xu@email.com', a1_preferred_contact: 'phone', a1_other_decision_makers: '',
             _modules: { 'A.1': 'completed', 'A.2': 'not_started', 'A.3': 'not_started', 'A.4': 'not_started', 'A.5': 'not_started', 'A.6': 'not_started', 'A.7': 'not_started', 'A.8': 'not_started' }
         };
         // ===== Nestopia-CHN: LZ Sunroom =====
-        intakeFormData['CHN-WF-001'] = {
-            a1_client_name: 'Larrr Zhang', a1_address_street: '1288 Nanjing West Rd', a1_address_city: 'Shanghai', a1_address_state: 'China', a1_address_zip: '200040',
-            a1_phone: '+86 138-0000-0001', a1_email: 'larrr.zhang@email.com', a1_preferred_contact: 'phone', a1_other_decision_makers: '',
+        intakeFormData['CHN-001'] = {
+            a1_client_name: 'Larry Zhang', a1_address_street: '1288 Nanjing West Rd', a1_address_city: 'Shanghai', a1_address_state: 'China', a1_address_zip: '200040',
+            a1_phone: '+86 138-0000-0001', a1_email: 'larry.zhang@email.com', a1_preferred_contact: 'phone', a1_other_decision_makers: '',
             _modules: { 'A.1': 'completed', 'A.2': 'not_started', 'A.3': 'not_started', 'A.4': 'not_started', 'A.5': 'not_started', 'A.6': 'not_started', 'A.7': 'not_started', 'A.8': 'not_started' }
         };
         // ===== Nestopia-CHN: LZ Pergola =====
-        intakeFormData['CHN-WF-002'] = {
-            a1_client_name: 'Larrr Zhang', a1_address_street: '1288 Nanjing West Rd', a1_address_city: 'Shanghai', a1_address_state: 'China', a1_address_zip: '200040',
-            a1_phone: '+86 138-0000-0001', a1_email: 'larrr.zhang@email.com', a1_preferred_contact: 'phone', a1_other_decision_makers: '',
+        intakeFormData['CHN-002'] = {
+            a1_client_name: 'Larry Zhang', a1_address_street: '1288 Nanjing West Rd', a1_address_city: 'Shanghai', a1_address_state: 'China', a1_address_zip: '200040',
+            a1_phone: '+86 138-0000-0001', a1_email: 'larry.zhang@email.com', a1_preferred_contact: 'phone', a1_other_decision_makers: '',
             _modules: { 'A.1': 'completed', 'A.2': 'not_started', 'A.3': 'not_started', 'A.4': 'not_started', 'A.5': 'not_started', 'A.6': 'not_started', 'A.7': 'not_started', 'A.8': 'not_started' }
         };
         // ===== Nestopia-CHN: LZ Zip Blinds =====
-        intakeFormData['CHN-WF-003'] = {
-            a1_client_name: 'Larrr Zhang', a1_address_street: '1288 Nanjing West Rd', a1_address_city: 'Shanghai', a1_address_state: 'China', a1_address_zip: '200040',
-            a1_phone: '+86 138-0000-0001', a1_email: 'larrr.zhang@email.com', a1_preferred_contact: 'phone', a1_other_decision_makers: '',
+        intakeFormData['CHN-003'] = {
+            a1_client_name: 'Larry Zhang', a1_address_street: '1288 Nanjing West Rd', a1_address_city: 'Shanghai', a1_address_state: 'China', a1_address_zip: '200040',
+            a1_phone: '+86 138-0000-0001', a1_email: 'larry.zhang@email.com', a1_preferred_contact: 'phone', a1_other_decision_makers: '',
             _modules: { 'A.1': 'completed', 'A.2': 'not_started', 'A.3': 'not_started', 'A.4': 'not_started', 'A.5': 'not_started', 'A.6': 'not_started', 'A.7': 'not_started', 'A.8': 'not_started' }
         };
 
@@ -13582,9 +13633,9 @@
 
         // --- Nestopia-CHN Projects (All products, 1 customer: Larrr Zhang, 3 projects at Step 1) ---
         const nestopiaChnProjects = [
-            { id: 'CHN-001', name: 'LZ Sunroom', customer: 'Larrr Zhang', customerEmail: 'larrr.zhang@email.com', customerPhone: '+86 138-0000-0001', customerAddress: '1288 Nanjing West Rd, Shanghai, China', type: 'Sunroom', workflowStep: 1, stage: 'intent', riskLevel: 'low', budget: 50000, paid: 0, timeline: '8 weeks', startDate: '2026-04-01', risks: [], issues: [], order: null },
-            { id: 'CHN-002', name: 'LZ Pergola', customer: 'Larrr Zhang', customerEmail: 'larrr.zhang@email.com', customerPhone: '+86 138-0000-0001', customerAddress: '1288 Nanjing West Rd, Shanghai, China', type: 'Pergola', workflowStep: 1, stage: 'intent', riskLevel: 'low', budget: 15000, paid: 0, timeline: '4 weeks', startDate: '2026-04-01', risks: [], issues: [], order: null },
-            { id: 'CHN-003', name: 'LZ Zip Blinds', customer: 'Larrr Zhang', customerEmail: 'larrr.zhang@email.com', customerPhone: '+86 138-0000-0001', customerAddress: '1288 Nanjing West Rd, Shanghai, China', type: 'Zip Blinds', workflowStep: 1, stage: 'intent', riskLevel: 'low', budget: 8000, paid: 0, timeline: '3 weeks', startDate: '2026-04-01', risks: [], issues: [], order: null }
+            { id: 'CHN-001', name: 'LZ Sunroom', customer: 'Larry Zhang', customerEmail: 'larry.zhang@email.com', customerPhone: '+86 138-0000-0001', customerAddress: '1288 Nanjing West Rd, Shanghai, China', type: 'Sunroom', workflowStep: 1, stage: 'intent', riskLevel: 'low', budget: 50000, paid: 0, timeline: '8 weeks', startDate: '2026-04-01', risks: [], issues: [], order: null },
+            { id: 'CHN-002', name: 'LZ Pergola', customer: 'Larry Zhang', customerEmail: 'larry.zhang@email.com', customerPhone: '+86 138-0000-0001', customerAddress: '1288 Nanjing West Rd, Shanghai, China', type: 'Pergola', workflowStep: 1, stage: 'intent', riskLevel: 'low', budget: 15000, paid: 0, timeline: '4 weeks', startDate: '2026-04-01', risks: [], issues: [], order: null },
+            { id: 'CHN-003', name: 'LZ Zip Blinds', customer: 'Larry Zhang', customerEmail: 'larry.zhang@email.com', customerPhone: '+86 138-0000-0001', customerAddress: '1288 Nanjing West Rd, Shanghai, China', type: 'Zip Blinds', workflowStep: 1, stage: 'intent', riskLevel: 'low', budget: 8000, paid: 0, timeline: '3 weeks', startDate: '2026-04-01', risks: [], issues: [], order: null }
         ];
 
         // --- Select projects based on current tenant ---
@@ -13945,6 +13996,7 @@
                 initCustomersPage();
                 initKnowledgeBase();
                 initProjectsPage();
+                syncAllA1OnLoad();
                 initTeamPage();
                 initSettingsPage();
                 initB2BChatbot();
@@ -14080,7 +14132,7 @@
             if (slug === 'nestopia-chn') return [
                 {
                     id: 'CHN-WF-001', name: 'LZ Sunroom',
-                    customer: 'Larrr Zhang', phone: '+86 138-0000-0001', email: 'larrr.zhang@email.com',
+                    customer: 'Larry Zhang', phone: '+86 138-0000-0001', email: 'larry.zhang@email.com',
                     address: '1288 Nanjing West Rd, Jing\'an District, Shanghai, China', type: 'Sunroom', workflowStep: 1,
                     budget: '$50,000', contractTotal: null, sqft: 400, createdAt: '2026-04-01',
                     payments: { intent: null, design: null, deposit: null, production: null, final: null },
@@ -14090,7 +14142,7 @@
                 },
                 {
                     id: 'CHN-WF-002', name: 'LZ Pergola',
-                    customer: 'Larrr Zhang', phone: '+86 138-0000-0001', email: 'larrr.zhang@email.com',
+                    customer: 'Larry Zhang', phone: '+86 138-0000-0001', email: 'larry.zhang@email.com',
                     address: '1288 Nanjing West Rd, Jing\'an District, Shanghai, China', type: 'Pergola', workflowStep: 1,
                     budget: '$15,000', contractTotal: null, sqft: 200, createdAt: '2026-04-01',
                     payments: { intent: null, design: null, deposit: null, production: null, final: null },
@@ -14100,7 +14152,7 @@
                 },
                 {
                     id: 'CHN-WF-003', name: 'LZ Zip Blinds',
-                    customer: 'Larrr Zhang', phone: '+86 138-0000-0001', email: 'larrr.zhang@email.com',
+                    customer: 'Larry Zhang', phone: '+86 138-0000-0001', email: 'larry.zhang@email.com',
                     address: '1288 Nanjing West Rd, Jing\'an District, Shanghai, China', type: 'Zip Blinds', workflowStep: 1,
                     budget: '$8,000', contractTotal: null, sqft: 80, createdAt: '2026-04-01',
                     payments: { intent: null, design: null, deposit: null, production: null, final: null },
@@ -15076,9 +15128,9 @@
                 { id: 'OMY-001', name: 'MX Zip Blinds', customer: 'Miss Xu', type: 'Zip Blinds', stage: 'design', budget: 6500, timeline: '3 weeks', riskLevel: 'low', issues: 0 }
             ];
             if (slug === 'nestopia-chn') return [
-                { id: 'CHN-001', name: 'LZ Sunroom', customer: 'Larrr Zhang', type: 'Sunroom', stage: 'design', budget: 50000, timeline: '8 weeks', riskLevel: 'low', issues: 0 },
-                { id: 'CHN-002', name: 'LZ Pergola', customer: 'Larrr Zhang', type: 'Pergola', stage: 'design', budget: 15000, timeline: '4 weeks', riskLevel: 'low', issues: 0 },
-                { id: 'CHN-003', name: 'LZ Zip Blinds', customer: 'Larrr Zhang', type: 'Zip Blinds', stage: 'design', budget: 8000, timeline: '3 weeks', riskLevel: 'low', issues: 0 }
+                { id: 'CHN-001', name: 'LZ Sunroom', customer: 'Larry Zhang', type: 'Sunroom', stage: 'design', budget: 50000, timeline: '8 weeks', riskLevel: 'low', issues: 0 },
+                { id: 'CHN-002', name: 'LZ Pergola', customer: 'Larry Zhang', type: 'Pergola', stage: 'design', budget: 15000, timeline: '4 weeks', riskLevel: 'low', issues: 0 },
+                { id: 'CHN-003', name: 'LZ Zip Blinds', customer: 'Larry Zhang', type: 'Zip Blinds', stage: 'design', budget: 8000, timeline: '3 weeks', riskLevel: 'low', issues: 0 }
             ];
             return [
                 { id: 'PRJ-001', name: 'Johnson Residence', customer: 'Robert Johnson', type: 'Pergola', stage: 'permit', budget: 35000, timeline: '6 weeks', riskLevel: 'high', issues: 2 },

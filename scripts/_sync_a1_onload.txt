@@ -1,0 +1,48 @@
+        // -- Page-load: sync A.1 intake data from Supabase to project objects --
+        function syncAllA1OnLoad() {
+            if (typeof NestopiaDB === 'undefined' || !NestopiaDB.isConnected()) return;
+            var pending = allProjectsData.length;
+            var anyUpdated = false;
+            allProjectsData.forEach(function(project) {
+                NestopiaDB.getClient()
+                    .from('project_intake_data')
+                    .select('form_data')
+                    .eq('tenant_id', NestopiaDB.getTenantId())
+                    .eq('project_key', project.id)
+                    .maybeSingle()
+                    .then(function(res) {
+                        if (res.data && res.data.form_data) {
+                            var fd = res.data.form_data;
+                            if (fd.a1_client_name) {
+                                project.customer = fd.a1_client_name;
+                                if (fd.a1_email) project.customerEmail = fd.a1_email;
+                                if (fd.a1_phone) project.customerPhone = fd.a1_phone;
+                                var addrParts = [];
+                                if (fd.a1_address_street) addrParts.push(fd.a1_address_street);
+                                if (fd.a1_address_city) addrParts.push(fd.a1_address_city);
+                                if (fd.a1_address_state) addrParts.push(fd.a1_address_state);
+                                if (fd.a1_address_zip) addrParts.push(fd.a1_address_zip);
+                                if (addrParts.length > 0) project.customerAddress = addrParts.join(', ');
+                                anyUpdated = true;
+                                if (currentDetailProject && currentDetailProject.id === project.id) {
+                                    renderProjectCustomer(project);
+                                    var metaEl = document.getElementById('projDetailMeta');
+                                    if (metaEl) metaEl.textContent = project.customer + ' \u00b7 ' + project.type + ' \u00b7 Started ' + project.startDate + ' \u00b7 Budget $' + project.budget.toLocaleString();
+                                }
+                                console.log('[A.1 Sync] Page-load sync for', project.id, '->', project.customer);
+                            }
+                            // Merge into intakeFormData so form shows latest data
+                            var localData = getIntakeData(project.id);
+                            Object.keys(fd).forEach(function(k) {
+                                localData[k] = fd[k];
+                            });
+                        }
+                        pending--;
+                        if (pending === 0 && anyUpdated) {
+                            renderSidebarProjects();
+                        }
+                    })
+                    .catch(function() { pending--; });
+            });
+        }
+
