@@ -9481,17 +9481,39 @@
             catch(e) { return []; }
         }
 
+        // 生成项目文件的签名 URL（Private Bucket 需要签名才能访问）
+        async function getProjectFileSignedUrl(storagePath) {
+            if (typeof NestopiaDB === 'undefined' || !NestopiaDB.isConnected()) return null;
+            try {
+                var client = NestopiaDB.getClient();
+                if (!client || !client.storage) return null;
+                var bucket = NestopiaDB.getBucket('projectFiles');
+                var res = await client.storage.from(bucket).createSignedUrl(storagePath, 3600);
+                return (res.data && res.data.signedUrl) ? res.data.signedUrl : null;
+            } catch(e) { return null; }
+        }
+
         // 从 Supabase 同步文件列表到 localStorage 缓存（页面加载时调用）
-        function syncProjectFilesFromCloud(projectId) {
+        async function syncProjectFilesFromCloud(projectId) {
             if (typeof NestopiaStorage === 'undefined' || !NestopiaDB.isConnected()) return;
-            NestopiaStorage.getProjectFiles(projectId)
-                .then(function(files) {
-                    if (files && files.length) {
-                        localStorage.setItem('nestopia_pf_' + projectId, JSON.stringify(files));
-                        refreshProjectFilesPanel(projectId);
+            try {
+                var files = await NestopiaStorage.getProjectFiles(projectId);
+                if (files && files.length) {
+                    // 为 Supabase 文件生成签名 URL（Private Bucket 必须用签名 URL）
+                    for (var i = 0; i < files.length; i++) {
+                        var f = files[i];
+                        if (f.storagePath && f.storageMode === 'supabase') {
+                            var signedUrl = await getProjectFileSignedUrl(f.storagePath);
+                            if (signedUrl) {
+                                f.url = signedUrl;
+                                if (f.category === 'site-photos') f.thumbnailUrl = signedUrl;
+                            }
+                        }
                     }
-                })
-                .catch(function() { /* 静默失败，使用本地缓存 */ });
+                    localStorage.setItem('nestopia_pf_' + projectId, JSON.stringify(files));
+                    refreshProjectFilesPanel(projectId);
+                }
+            } catch(e) { /* 静默失败，使用本地缓存 */ }
         }
 
         // 保存文件记录到 localStorage 缓存（内部用）
@@ -9569,11 +9591,11 @@
                     + '<div class="grid grid-cols-4 gap-1.5 mb-2">';
                 photos.forEach(function(p) {
                     var sizeLabel = (typeof NestopiaDB !== 'undefined') ? NestopiaDB.formatFileSize(p.size) : '';
-                    html += '<div class="relative group">'
-                        + '<div class="w-full h-16 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">'
-                        + (p.thumbnailUrl ? '<img src="' + p.thumbnailUrl + '" class="w-full h-full object-cover">'
-                            : (p.url ? '<img src="' + p.url + '" class="w-full h-full object-cover">'
-                            : '<i class="fas fa-image text-gray-300 text-lg"></i>'))
+                    var imgUrl = p.thumbnailUrl || p.url || '';
+                    html += '<div class="relative group cursor-pointer" onclick="previewProjectFile(\'' + encodeURIComponent(imgUrl) + '\', \'' + encodeURIComponent(p.name) + '\', \'' + (p.type || 'image') + '\', \'' + (p.storagePath || '') + '\')">'
+                        + '<div class="w-full h-16 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center hover:ring-2 hover:ring-blue-400 transition">'
+                        + (imgUrl ? '<img src="' + imgUrl + '" class="w-full h-full object-cover">'
+                            : '<i class="fas fa-image text-gray-300 text-lg"></i>')
                         + '</div>'
                         + '<div class="text-[8px] text-gray-500 truncate mt-0.5">' + p.name + '</div>'
                         + (sizeLabel ? '<div class="text-[7px] text-gray-300">' + sizeLabel + '</div>' : '')
@@ -9587,7 +9609,8 @@
                 videos.forEach(function(v) {
                     var sizeLabel = (typeof NestopiaDB !== 'undefined') ? NestopiaDB.formatFileSize(v.size) : '';
                     var modeIcon = v.storageMode === 'supabase' ? '<i class="fas fa-cloud text-green-400 text-[8px]" title="Cloud"></i>' : '';
-                    html += '<div class="flex items-center gap-2 py-1 px-2 bg-indigo-50/50 rounded-lg mb-1">'
+                    var vidUrl = v.url || '';
+                    html += '<div class="flex items-center gap-2 py-1 px-2 bg-indigo-50/50 rounded-lg mb-1 cursor-pointer hover:bg-indigo-100/50 transition" onclick="previewProjectFile(\'' + encodeURIComponent(vidUrl) + '\', \'' + encodeURIComponent(v.name) + '\', \'' + (v.type || 'video') + '\', \'' + (v.storagePath || '') + '\')">'
                         + '<i class="fas fa-video text-indigo-400 text-xs"></i>'
                         + '<span class="text-[10px] text-gray-700 flex-1 truncate">' + v.name + '</span>'
                         + (sizeLabel ? '<span class="text-[8px] text-gray-300">' + sizeLabel + '</span>' : '')
@@ -9600,7 +9623,8 @@
                 html += '<div class="text-[9px] text-gray-500 mb-1"><i class="fas fa-file-alt mr-1"></i>Documents (' + docs.length + ')</div>';
                 docs.forEach(function(d) {
                     var sizeLabel = (typeof NestopiaDB !== 'undefined') ? NestopiaDB.formatFileSize(d.size) : '';
-                    html += '<div class="flex items-center gap-2 py-1 px-2 bg-gray-50/50 rounded-lg mb-1">'
+                    var docUrl = d.url || '';
+                    html += '<div class="flex items-center gap-2 py-1 px-2 bg-gray-50/50 rounded-lg mb-1 cursor-pointer hover:bg-gray-100/50 transition" onclick="previewProjectFile(\'' + encodeURIComponent(docUrl) + '\', \'' + encodeURIComponent(d.name) + '\', \'' + (d.type || 'application/pdf') + '\', \'' + (d.storagePath || '') + '\')">'
                         + '<i class="fas fa-file-pdf text-red-400 text-xs"></i>'
                         + '<span class="text-[10px] text-gray-700 flex-1 truncate">' + d.name + '</span>'
                         + (sizeLabel ? '<span class="text-[8px] text-gray-300">' + sizeLabel + '</span>' : '')
@@ -9628,8 +9652,20 @@
                 if (useCloud) {
                     // ── Supabase 云端上传路径 ──
                     NestopiaStorage.uploadProjectFile(projectId, file)
-                        .then(function(record) {
-                            // 上传成功，record 已自动写入 localStorage 缓存
+                        .then(async function(record) {
+                            // 上传成功 — 生成签名 URL 更新缓存
+                            if (record && record.storagePath) {
+                                var signedUrl = await getProjectFileSignedUrl(record.storagePath);
+                                if (signedUrl) {
+                                    var cached = getProjectFiles(projectId);
+                                    var found = cached.find(function(f) { return f.id === record.id; });
+                                    if (found) {
+                                        found.url = signedUrl;
+                                        found.thumbnailUrl = signedUrl;
+                                        localStorage.setItem('nestopia_pf_' + projectId, JSON.stringify(cached));
+                                    }
+                                }
+                            }
                             refreshProjectFilesPanel(projectId);
                         })
                         .catch(function(err) {
@@ -9674,6 +9710,61 @@
                 removeProjectFileLocal(projectId, fileId);
                 refreshProjectFilesPanel(projectId);
             }
+        }
+
+        // 项目文件预览 Lightbox — 支持图片/视频/文档
+        async function previewProjectFile(encodedUrl, encodedName, mimeType, storagePath) {
+            var url = decodeURIComponent(encodedUrl);
+            var name = decodeURIComponent(encodedName);
+
+            // 如果 URL 为空但有 storagePath，尝试生成签名 URL
+            if (!url && storagePath) {
+                url = await getProjectFileSignedUrl(storagePath);
+            }
+            // 如果 URL 过期或无效，尝试重新生成
+            if (storagePath && url && url.includes('token=')) {
+                var freshUrl = await getProjectFileSignedUrl(storagePath);
+                if (freshUrl) url = freshUrl;
+            }
+            if (!url) {
+                showToast('File URL not available. Try refreshing the page.', 'error');
+                return;
+            }
+
+            var existing = document.getElementById('projectFilePreview');
+            if (existing) existing.remove();
+
+            var isImage = mimeType && (mimeType.startsWith('image') || /\.(jpg|jpeg|png|gif|webp|bmp)$/i.test(name));
+            var isVideo = mimeType && (mimeType.startsWith('video') || /\.(mp4|mov|webm|avi)$/i.test(name));
+            var isPdf = mimeType && (mimeType.includes('pdf') || /\.pdf$/i.test(name));
+
+            var contentHTML = '';
+            if (isImage) {
+                contentHTML = '<img src="' + url + '" class="max-w-full max-h-[75vh] rounded-lg shadow-lg object-contain" alt="' + name + '">';
+            } else if (isVideo) {
+                contentHTML = '<video src="' + url + '" controls autoplay class="max-w-full max-h-[75vh] rounded-lg shadow-lg" style="min-width:320px"></video>';
+            } else if (isPdf) {
+                contentHTML = '<iframe src="' + url + '" class="w-full rounded-lg shadow-lg" style="height:75vh;min-width:600px" frameborder="0"></iframe>';
+            } else {
+                contentHTML = '<div class="bg-white rounded-xl p-8 text-center shadow-lg">'
+                    + '<i class="fas fa-file text-gray-300 text-5xl mb-3"></i>'
+                    + '<div class="text-sm font-medium text-gray-700">' + name + '</div>'
+                    + '<a href="' + url + '" target="_blank" download class="mt-3 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition">'
+                    + '<i class="fas fa-download"></i> Download File</a></div>';
+            }
+
+            var overlay = document.createElement('div');
+            overlay.id = 'projectFilePreview';
+            overlay.className = 'fixed inset-0 bg-black/80 backdrop-blur-sm z-[400] flex flex-col items-center justify-center p-4';
+            overlay.onclick = function(e) { if (e.target === overlay) overlay.remove(); };
+            overlay.innerHTML = '<div class="flex items-center gap-3 mb-3" onclick="event.stopPropagation()">'
+                + '<div class="text-white/90 text-sm font-medium truncate max-w-md">' + name + '</div>'
+                + '<a href="' + url + '" target="_blank" download class="text-white/60 hover:text-white transition" title="Download"><i class="fas fa-download"></i></a>'
+                + '<a href="' + url + '" target="_blank" class="text-white/60 hover:text-white transition" title="Open in new tab"><i class="fas fa-external-link-alt"></i></a>'
+                + '<button onclick="var e=document.getElementById(&quot;projectFilePreview&quot;);if(e)e.remove()" class="text-white/60 hover:text-white transition ml-2" title="Close"><i class="fas fa-times text-lg"></i></button>'
+                + '</div>'
+                + '<div onclick="event.stopPropagation()">' + contentHTML + '</div>';
+            document.body.appendChild(overlay);
         }
 
         function refreshProjectFilesPanel(projectId) {
@@ -13132,8 +13223,7 @@
 
         let currentProjectFilter = 'all';
 
-        function renderProjectList() {
-            // v1.2.0: Old project list panel removed; sync sidebar instead
+        function renderProjectList() v1.2.0: Old project list panel removed; sync sidebar instead
             renderSidebarProjects();
             const container = document.getElementById('projectListContainer');
             if (!container) return;
