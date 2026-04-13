@@ -1,0 +1,45 @@
+#!/bin/bash
+# ── pre-commit hook ──────────────────────────────────────
+# 在 git commit 之前自动验证 company-operations.html 中所有
+# <script> 块的 JavaScript 语法，防止语法错误导致页面瘫痪。
+#
+# 安装:
+#   cp scripts/pre-commit .git/hooks/pre-commit
+#   chmod +x .git/hooks/pre-commit
+#
+# 跳过（紧急情况）:
+#   git commit --no-verify
+# ─────────────────────────────────────────────────────────
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+TARGET="company-operations.html"
+
+# 只在 company-operations.html 有变更时检查
+if ! git diff --cached --name-only | grep -q "^${TARGET}$"; then
+    exit 0
+fi
+
+echo ""
+echo "🔍 pre-commit: 检查 ${TARGET} JavaScript 语法..."
+echo ""
+
+# 运行验证脚本
+python3 "${REPO_ROOT}/scripts/validate-js-syntax.py" "${TARGET}"
+EXIT_CODE=$?
+
+if [ $EXIT_CODE -eq 2 ]; then
+    # Node.js 不可用 — 警告但不阻止
+    echo ""
+    echo "⚠️  语法检查跳过（Node.js 不可用）"
+    echo "   建议安装 Node.js 以启用完整的语法验证。"
+    echo ""
+    exit 0
+elif [ $EXIT_CODE -ne 0 ]; then
+    echo ""
+    echo "🚫 commit 被阻止 — 请修复语法错误后重试"
+    echo "   紧急跳过: git commit --no-verify"
+    echo ""
+    exit 1
+fi
+
+exit 0
