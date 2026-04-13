@@ -10359,13 +10359,21 @@
                         const existingFiles = files[u.key] || [];
                         const fileListHTML = existingFiles.length > 0 ? `
                             <div class="mt-2 space-y-1">
-                                ${existingFiles.map((ef, fi) => `
-                                    <div class="flex items-center gap-2 py-1 px-2 bg-green-50 rounded text-xs text-green-700">
-                                        <i class="fas fa-file-check"></i>
+                                ${existingFiles.map((ef, fi) => {
+                                    var isImg = ef.type && ef.type.startsWith('image/');
+                                    var thumbSrc = ef.thumbnailUrl || ef.url || '';
+                                    var cloudBadge = ef.storageMode === 'supabase'
+                                        ? '<i class="fas fa-cloud text-green-400 text-[8px]" title="Cloud"></i>'
+                                        : '<i class="fas fa-hdd text-gray-300 text-[8px]" title="Local"></i>';
+                                    return `<div class="flex items-center gap-2 py-1.5 px-2 bg-green-50/80 rounded-lg text-xs text-green-700 group">
+                                        ${isImg && thumbSrc
+                                            ? '<img src="' + thumbSrc + '" class="w-8 h-8 rounded object-cover flex-shrink-0 cursor-pointer" onclick="previewProjectFile(\'' + encodeURIComponent(thumbSrc) + '\', \'' + encodeURIComponent(ef.name) + '\', \'' + ef.type + '\', \'' + (ef.storagePath || '') + '\')">'
+                                            : '<i class="fas fa-file-check flex-shrink-0"></i>'}
                                         <span class="flex-1 truncate">${ef.name}</span>
-                                        <button onclick="removeUploadedFile('${projectId}', '${u.key}', ${fi})" class="text-red-400 hover:text-red-600"><i class="fas fa-times"></i></button>
-                                    </div>
-                                `).join('')}
+                                        ${cloudBadge}
+                                        <button onclick="removeUploadedFile('${projectId}', '${u.key}', ${fi})" class="text-red-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition"><i class="fas fa-times"></i></button>
+                                    </div>`;
+                                }).join('')}
                             </div>` : '';
                         return `<div class="mb-3">
                             <label class="text-xs font-medium text-gray-600 mb-1.5 block">${u.label}</label>
@@ -10373,7 +10381,7 @@
                                 <i class="fas ${u.icon} text-gray-300 text-2xl mb-2"></i>
                                 <p class="text-xs text-gray-400">${u.hint}</p>
                                 <p class="text-[10px] text-gray-300 mt-1">Click to browse or drag & drop</p>
-                                <input type="file" id="file_${u.key}" accept="${u.accept}" ${u.multiple ? 'multiple' : ''} class="hidden" onchange="handleFileUpload('${projectId}', '${u.key}', this)">
+                                <input type="file" id="file_${u.key}" accept="${u.accept}" ${u.multiple ? 'multiple' : ''} class="hidden" onchange="handleIntakeFileUpload('${projectId}', '${u.key}', this)">
                             </div>
                             ${fileListHTML}
                         </div>`;
@@ -10463,43 +10471,95 @@
             }
         }
 
-        function handleFileUpload(projectId, uploadKey, input) {
-            const files = getUploadedFiles(projectId);
-            if (!files[uploadKey]) files[uploadKey] = [];
-            for (const f of input.files) {
-                files[uploadKey].push({ name: f.name, size: f.size, type: f.type, uploadedAt: new Date().toISOString() });
-            }
-            // 自动同步文件引用到 Supabase
-            saveIntakeToDB(projectId, getIntakeData(projectId));
-            // Refresh modal upload section
-            const existingModal = document.getElementById('intakeFormModal');
-            if (existingModal) {
-                // Find module key from upload key mapping
-                for (const [mk, mc] of Object.entries(INTAKE_MODULE_FIELDS)) {
-                    if (mc.uploads && mc.uploads.some(u => u.key === uploadKey)) {
-                        closeIntakeModal();
-                        openIntakeModule(mk, projectId);
-                        break;
-                    }
+        function handleIntakeFileUpload(projectId, uploadKey, input) {
+            var fileList = Array.from(input.files);
+            if (!fileList.length) return;
+            var localFiles = getUploadedFiles(projectId);
+            if (!localFiles[uploadKey]) localFiles[uploadKey] = [];
+            var useCloud = (typeof NestopiaStorage !== 'undefined' && typeof NestopiaDB !== 'undefined' && NestopiaDB.isConnected());
+
+            var pending = fileList.length;
+            function oneDone() {
+                pending--;
+                if (pending <= 0) {
+                    saveIntakeToDB(projectId, getIntakeData(projectId));
+                    refreshIntakeModal(projectId, uploadKey);
                 }
             }
+
+            fileList.forEach(function(file) {
+                if (useCloud) {
+                    // Supabase Storage 上传
+                    NestopiaStorage.uploadProjectFile(projectId, file, { category: 'intake/' + uploadKey })
+                        .then(function(record) {
+                            var entry = {
+                                name: file.name, size: file.size, type: file.type,
+                                uploadedAt: new Date().toISOString(),
+                                storageMode: 'supabase',
+                                storagePath: record.storagePath || null,
+                                fileId: record.id || null,
+                                url: null, thumbnailUrl: null
+                            };
+                            // 为图片生成签名 URL 作为缩略图
+                            if (file.type && file.type.startsWith('image/') && record.storagePath) {
+                                getProjectFileSignedUrl(record.storagePath).then(function(sUrl) {
+                                    entry.url = sUrl;
+                                    entry.thumbnailUrl = sUrl;
+                                    localFiles[uploadKey].push(entry);
+                                    oneDone();
+                                });
+                            } else {
+                                localFiles[uploadKey].push(entry);
+                                oneDone();
+                            }
+                        })
+                        .catch(function(err) {
+                            console.error('[IntakeUpload] Cloud upload failed:', err);
+                            localFiles[uploadKey].push({
+                                name: file.name, size: file.size, type: file.type,
+                                uploadedAt: new Date().toISOString(),
+                                storageMode: 'local', error: err.message
+                            });
+                            oneDone();
+                        });
+                } else {
+                    // localStorage 回退（仅元数据）
+                    localFiles[uploadKey].push({
+                        name: file.name, size: file.size, type: file.type,
+                        uploadedAt: new Date().toISOString(),
+                        storageMode: 'local'
+                    });
+                    oneDone();
+                }
+            });
+            // 清空 input 以便重复选择
+            input.value = '';
         }
 
-        function removeUploadedFile(projectId, uploadKey, fileIndex) {
-            const files = getUploadedFiles(projectId);
-            if (files[uploadKey]) {
-                files[uploadKey].splice(fileIndex, 1);
-            }
-            // 自动同步文件引用到 Supabase
-            saveIntakeToDB(projectId, getIntakeData(projectId));
-            // Find and refresh modal
-            for (const [mk, mc] of Object.entries(INTAKE_MODULE_FIELDS)) {
-                if (mc.uploads && mc.uploads.some(u => u.key === uploadKey)) {
+        function refreshIntakeModal(projectId, uploadKey) {
+            for (var mk in INTAKE_MODULE_FIELDS) {
+                var mc = INTAKE_MODULE_FIELDS[mk];
+                if (mc.uploads && mc.uploads.some(function(u) { return u.key === uploadKey; })) {
                     closeIntakeModal();
                     openIntakeModule(mk, projectId);
                     break;
                 }
             }
+        }
+
+        function removeUploadedFile(projectId, uploadKey, fileIndex) {
+            var files = getUploadedFiles(projectId);
+            if (!files[uploadKey]) return;
+            var removed = files[uploadKey].splice(fileIndex, 1)[0];
+            // 如果是 Supabase 文件，也从 Storage 删除
+            if (removed && removed.storageMode === 'supabase' && removed.storagePath) {
+                if (typeof NestopiaStorage !== 'undefined' && NestopiaDB.isConnected()) {
+                    NestopiaStorage.removeProjectFile(projectId, removed.fileId || null, removed.storagePath)
+                        .catch(function(e) { console.warn('[IntakeUpload] Storage delete failed:', e); });
+                }
+            }
+            saveIntakeToDB(projectId, getIntakeData(projectId));
+            refreshIntakeModal(projectId, uploadKey);
         }
 
         function toggleStepDetail(stepNum, project) {
@@ -13589,7 +13649,7 @@
 
         const STEP_UPLOADS = {
             1: [
-                { key: 'payment_receipt_intent', label: 'Intent Fee Receipt ($100)', icon: 'fa-receipt', required: true },
+                { key: 'payment_receipt_intent', label: 'Intent Fee Receipt ($100)', icon: 'fa-receipt', required: true, accept: '.pdf,.jpg,.png' },
                 { key: 'signature_phase1', label: 'Phase 1 Customer Sign-off', icon: 'fa-signature', required: true }
             ],
             2: [
@@ -13924,7 +13984,7 @@
                 return '<div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-dashed border-gray-300 hover:border-gray-400 transition group">' +
                     '<div class="flex items-center gap-3"><div class="w-8 h-8 bg-white rounded-lg border border-gray-200 flex items-center justify-center group-hover:bg-blue-50"><i class="fas ' + u.icon + ' text-gray-400 group-hover:text-blue-500 text-sm"></i></div>' +
                     '<div><div class="text-sm font-medium text-gray-700">' + u.label + '</div><div class="text-[0.65rem] text-gray-400">' + (u.required ? 'Required' : 'Optional') + '</div></div></div>' +
-                    '<button class="px-3 py-1.5 text-xs font-medium bg-white border border-gray-300 rounded-lg hover:bg-gray-100 transition flex items-center gap-1" onclick="event.stopPropagation();handleFileUpload(\'' + project.id + '\',\'' + u.key + '\')"><i class="fas fa-cloud-upload-alt"></i> Upload</button></div>';
+                    '<button class="px-3 py-1.5 text-xs font-medium bg-white border border-gray-300 rounded-lg hover:bg-gray-100 transition flex items-center gap-1" onclick="event.stopPropagation();handleStepFileUpload(\'' + project.id + '\',\'' + u.key + '\')"><i class="fas fa-cloud-upload-alt"></i> Upload</button></div>';
             }).join('');
 
             var paymentPhases = [
@@ -14026,10 +14086,42 @@
             document.body.style.overflow = '';
         }
 
-        function handleFileUpload(projectId, docType) {
-            var project = workflowProjects.find(function(p) { return p.id === projectId; });
+        function handleStepFileUpload(projectId, docType) {
             var uploadDef = Object.values(STEP_UPLOADS).flat().find(function(u) { return u.key === docType; });
-            alert('File Upload Placeholder\n\nProject: ' + (project ? project.name : projectId) + '\nDocument: ' + (uploadDef ? uploadDef.label : docType) + '\nType: ' + docType + '\nStep: ' + (project ? project.workflowStep : '?') + '\n\n(Backend integration with Supabase Storage pending)');
+            var accept = (uploadDef && uploadDef.accept) || '.pdf,.doc,.docx,.jpg,.png';
+            // 创建隐藏 file input 并触发
+            var input = document.createElement('input');
+            input.type = 'file';
+            input.accept = accept;
+            input.style.display = 'none';
+            input.onchange = function() {
+                if (!input.files || !input.files.length) return;
+                var file = input.files[0];
+                var useCloud = (typeof NestopiaStorage !== 'undefined' && typeof NestopiaDB !== 'undefined' && NestopiaDB.isConnected());
+                if (useCloud) {
+                    showToast('Uploading ' + file.name + '...', 'info');
+                    NestopiaStorage.uploadProjectFile(projectId, file, { category: 'step-docs/' + docType })
+                        .then(function(record) {
+                            showToast(file.name + ' uploaded successfully', 'success');
+                            // 更新 project document count
+                            var project = workflowProjects.find(function(p) { return p.id === projectId; });
+                            if (project) {
+                                var step = project.workflowStep;
+                                if (!project.documents[step]) project.documents[step] = 0;
+                                project.documents[step]++;
+                                saveWorkflowToDB(projectId);
+                            }
+                        })
+                        .catch(function(err) {
+                            showToast('Upload failed: ' + err.message, 'error');
+                        });
+                } else {
+                    showToast(file.name + ' — connect Supabase for cloud upload', 'warning');
+                }
+                input.remove();
+            };
+            document.body.appendChild(input);
+            input.click();
         }
 
         function advanceStep(projectId) {
