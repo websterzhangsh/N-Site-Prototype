@@ -10241,6 +10241,15 @@
             const actionTotal = config ? config.coreActions.length : 6;
             const deliverableTotal = config ? config.keyDeliverables.length : 3;
 
+            // 动态计算问卷完成模块数（取代硬编码值）
+            var _mData = getIntakeData(project.id);
+            var _qDynamic = 0;
+            if (_mData && _mData._modules) {
+                Object.keys(_mData._modules).forEach(function(k) {
+                    if (_mData._modules[k] === 'completed') _qDynamic++;
+                });
+            }
+
             // Zip Blinds combined step — derive progress from original workflowStep
             if (project.type === 'Zip Blinds' && useConfig === ZB_COMBINED_CONFIG) {
                 const ws = project.workflowStep; // original step (1-4)
@@ -10256,7 +10265,7 @@
                 return { actionsCompleted: actionTotal, actionTotal, deliverablesCompleted: deliverableTotal, deliverableTotal, questionnaireCompleted: 8, questionnaireTotal: 8, paymentStatus: 'paid', photosUploaded: 6, stylesSelected: 1, renderingsGenerated: 2 };
             } else if (stepNum === project.workflowStep) {
                 // Current step - partially done
-                if (stepNum === 1) return { actionsCompleted: 3, actionTotal, deliverablesCompleted: 0, deliverableTotal, questionnaireCompleted: 5, questionnaireTotal: 8, paymentStatus: 'pending' };
+                if (stepNum === 1) return { actionsCompleted: 3, actionTotal, deliverablesCompleted: 0, deliverableTotal, questionnaireCompleted: _qDynamic, questionnaireTotal: 8, paymentStatus: 'pending' };
                 if (stepNum === 2) return { actionsCompleted: 2, actionTotal, deliverablesCompleted: 0, deliverableTotal, questionnaireCompleted: 0, questionnaireTotal: 8, paymentStatus: 'pending', photosUploaded: 3, stylesSelected: 1, renderingsGenerated: 0 };
                 if (stepNum === 3) return { actionsCompleted: 4, actionTotal, deliverablesCompleted: 2, deliverableTotal, questionnaireCompleted: 0, questionnaireTotal: 8, paymentStatus: 'paid', measurementComplete: project.measurement ? true : false, obstaclesRecorded: project.measurement ? project.measurement.obstacles.length : 0 };
                 if (stepNum === 4) return { actionsCompleted: 3, actionTotal, deliverablesCompleted: 1, deliverableTotal, questionnaireCompleted: 0, questionnaireTotal: 8, paymentStatus: 'pending', quoteGenerated: false, contractSigned: false, depositCollected: false };
