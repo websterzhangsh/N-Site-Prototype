@@ -10132,7 +10132,7 @@
         }
 
         // 项目文件预览 Lightbox — 支持图片/视频/文档
-        async function previewProjectFile(encodedUrl, encodedName, mimeType, storagePath) {
+        async function previewProjectFile(encodedUrl, encodedName, mimeType, storagePath, fileId) {
             var url = decodeURIComponent(encodedUrl);
             var name = decodeURIComponent(encodedName);
 
@@ -10141,6 +10141,16 @@
                 if (/\.(jpg|jpeg|png|gif|webp|bmp)$/i.test(name)) mimeType = 'image';
                 else if (/\.(mp4|mov|webm|avi)$/i.test(name)) mimeType = 'video';
                 else if (/\.pdf$/i.test(name)) mimeType = 'application/pdf';
+            }
+            // 如果没有 storagePath 但有 fileId，从 DB 回退查找 storage_path（兼容旧上传数据）
+            if (!storagePath && fileId && typeof NestopiaDB !== 'undefined' && NestopiaDB.isConnected()) {
+                try {
+                    var client = NestopiaDB.getClient();
+                    if (client) {
+                        var dbRes = await client.from('kb_documents').select('storage_path').eq('id', fileId).single();
+                        if (dbRes.data && dbRes.data.storage_path) storagePath = dbRes.data.storage_path;
+                    }
+                } catch(e) { /* silent */ }
             }
             // 只要有 storagePath，始终生成最新签名 URL（Private Bucket 必须签名访问）
             if (storagePath) {
@@ -10795,10 +10805,10 @@
                                     var cloudBadge = ef.storageMode === 'supabase'
                                         ? '<i class="fas fa-cloud text-green-400 text-[8px]" title="Cloud"></i>'
                                         : '<i class="fas fa-hdd text-gray-300 text-[8px]" title="Local"></i>';
-                                    return `<div class="flex items-center gap-2 py-1.5 px-2 bg-green-50/80 rounded-lg text-xs text-green-700 group cursor-pointer hover:bg-green-100/80 transition" onclick="previewProjectFile('${encodeURIComponent(ef.url || '')}', '${encodeURIComponent(ef.name)}', '${ef.type || ''}', '${ef.storagePath || ''}')">
+                                    return `<div class="flex items-center gap-2 py-1.5 px-2 bg-green-50/80 rounded-lg text-xs text-green-700 group cursor-pointer hover:bg-green-100/80 transition" onclick="previewProjectFile('${encodeURIComponent(ef.url || '')}', '${encodeURIComponent(ef.name)}', '${ef.type || ''}', '${ef.storagePath || ''}', '${ef.fileId || ''}')">
                                         ${isImg && thumbSrc
-                                            ? '<img src="' + thumbSrc + '" class="w-8 h-8 rounded object-cover flex-shrink-0 cursor-pointer" onclick="previewProjectFile(\'' + encodeURIComponent(thumbSrc) + '\', \'' + encodeURIComponent(ef.name) + '\', \'' + ef.type + '\', \'' + (ef.storagePath || '') + '\')">'
-                                            : '<i class="fas fa-file-check flex-shrink-0 cursor-pointer hover:text-blue-600 transition" onclick="previewProjectFile(\'' + encodeURIComponent(ef.url || '') + '\', \'' + encodeURIComponent(ef.name) + '\', \'' + (ef.type || '') + '\', \'' + (ef.storagePath || '') + '\')"></i>'}
+                                            ? '<img src="' + thumbSrc + '" class="w-8 h-8 rounded object-cover flex-shrink-0 cursor-pointer" onclick="previewProjectFile(\'' + encodeURIComponent(thumbSrc) + '\', \'' + encodeURIComponent(ef.name) + '\', \'' + ef.type + '\', \'' + (ef.storagePath || '') + '\', \'' + (ef.fileId || '') + '\')">'
+                                            : '<i class="fas fa-file-check flex-shrink-0 cursor-pointer hover:text-blue-600 transition" onclick="previewProjectFile(\'' + encodeURIComponent(ef.url || '') + '\', \'' + encodeURIComponent(ef.name) + '\', \'' + (ef.type || '') + '\', \'' + (ef.storagePath || '') + '\', \'' + (ef.fileId || '') + '\')"></i>'}
                                         <span class="flex-1 truncate">${ef.name}</span>
                                         ${cloudBadge}
                                         <button onclick="removeUploadedFile('${projectId}', '${u.key}', ${fi})" class="text-red-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition"><i class="fas fa-times"></i></button>
