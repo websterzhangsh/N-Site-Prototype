@@ -13882,6 +13882,33 @@
             // 异步刷新项目文件签名 URL（Private Bucket 签名 URL 1 小时过期）
             syncProjectFilesFromCloud(projectId);
 
+            // 预加载 Intake 表单数据（确保进度条反映 DB 中的真实完成状态，而非硬编码种子数据）
+            if (!_intakeDbLoaded[projectId] && typeof NestopiaDB !== 'undefined' && NestopiaDB.isConnected()) {
+                _intakeDbLoaded[projectId] = true;
+                loadIntakeFromDB(projectId).then(function(dbData) {
+                    if (dbData && typeof dbData === 'object') {
+                        var local = getIntakeData(projectId);
+                        Object.keys(dbData).forEach(function(k) {
+                            if (k === '_uploadedFiles') return;
+                            local[k] = dbData[k];
+                        });
+                        if (dbData._uploadedFiles && typeof dbData._uploadedFiles === 'object') {
+                            var localFiles = getUploadedFiles(projectId);
+                            Object.keys(dbData._uploadedFiles).forEach(function(fk) {
+                                if (!localFiles[fk] || localFiles[fk].length === 0) {
+                                    localFiles[fk] = dbData._uploadedFiles[fk];
+                                }
+                            });
+                        }
+                        // 如果当前有展开的 Step Detail，重新渲染以刷新进度条
+                        if (expandedStep && currentDetailProject && currentDetailProject.id === projectId) {
+                            toggleStepDetail(expandedStep, currentDetailProject);
+                            toggleStepDetail(expandedStep, currentDetailProject);
+                        }
+                    }
+                });
+            }
+
             // Risk List
             renderProjectRisks(project);
 
