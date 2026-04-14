@@ -704,7 +704,7 @@
             },
             saveFile: function(projectId, fileObj) {
                 var files = this.getFiles(projectId);
-                var record = Object.assign({}, fileObj, { id: fileObj.id || generateLocalId(), uploadedAt: new Date().toISOString(), storageMode: 'local' });
+                var record = Object.assign({}, fileObj, { id: fileObj.id || generateLocalId(), uploadedAt: new Date().toISOString(), storageMode: fileObj.storageMode || 'local' });
                 files.push(record);
                 localStorage.setItem(LS_PREFIX + projectId, JSON.stringify(files));
                 return record;
@@ -9921,11 +9921,11 @@
                     // 为 Supabase 文件生成签名 URL（Private Bucket 必须用签名 URL）
                     for (var i = 0; i < files.length; i++) {
                         var f = files[i];
-                        if (f.storagePath && f.storageMode === 'supabase') {
+                        if (f.storagePath) {
                             var signedUrl = await getProjectFileSignedUrl(f.storagePath);
                             if (signedUrl) {
                                 f.url = signedUrl;
-                                if (f.category === 'site-photos') f.thumbnailUrl = signedUrl;
+                                f.thumbnailUrl = signedUrl;
                             }
                         }
                     }
@@ -10136,12 +10136,14 @@
             var url = decodeURIComponent(encodedUrl);
             var name = decodeURIComponent(encodedName);
 
-            // 如果 URL 为空但有 storagePath，尝试生成签名 URL
-            if (!url && storagePath) {
-                url = await getProjectFileSignedUrl(storagePath);
+            // 自动检测 mimeType — 当调用方传入空值时基于文件扩展名推断
+            if (!mimeType || mimeType === 'file') {
+                if (/\.(jpg|jpeg|png|gif|webp|bmp)$/i.test(name)) mimeType = 'image';
+                else if (/\.(mp4|mov|webm|avi)$/i.test(name)) mimeType = 'video';
+                else if (/\.pdf$/i.test(name)) mimeType = 'application/pdf';
             }
-            // 如果 URL 过期或无效，尝试重新生成
-            if (storagePath && url && url.includes('token=')) {
+            // 只要有 storagePath，始终生成最新签名 URL（Private Bucket 必须签名访问）
+            if (storagePath) {
                 var freshUrl = await getProjectFileSignedUrl(storagePath);
                 if (freshUrl) url = freshUrl;
             }
@@ -13866,6 +13868,9 @@
 
             // Service Workflow
             renderProjectWorkflow(project);
+
+            // 异步刷新项目文件签名 URL（Private Bucket 签名 URL 1 小时过期）
+            syncProjectFilesFromCloud(projectId);
 
             // Risk List
             renderProjectRisks(project);
