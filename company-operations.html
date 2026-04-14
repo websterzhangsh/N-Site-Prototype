@@ -5489,8 +5489,8 @@
                 var p = productCatalog[key];
                 var shapeLabel = p.shape ? p.shape : '';
                 var seriesShort = p.series.replace(' Series', '').replace(' Type', '');
-                var priceMin = p.pricing.tiers[0].priceRange[0];
-                var priceMax = p.pricing.tiers[p.pricing.tiers.length - 1].priceRange[1];
+                var priceMin = p.cost.tiers[0].priceRange[0];
+                var priceMax = p.cost.tiers[p.cost.tiers.length - 1].priceRange[1];
                 var controlIcon = p.control === 'Manual' ? 'fa-hand-paper' : p.control === 'Motorized' ? 'fa-cog' : 'fa-solar-panel';
                 var controlColor = p.control === 'Manual' ? 'text-gray-500' : p.control === 'Motorized' ? 'text-blue-500' : 'text-amber-500';
 
@@ -5536,8 +5536,8 @@
             document.getElementById('designerSelectedName').textContent = product.name;
             var shapeMeta = product.shape ? product.shape + ' · ' : '';
             document.getElementById('designerSelectedMeta').textContent = shapeMeta + product.series + ' · ' + product.control;
-            var priceMin = product.pricing.tiers[0].priceRange[0];
-            var priceMax = product.pricing.tiers[product.pricing.tiers.length - 1].priceRange[1];
+            var priceMin = product.cost.tiers[0].priceRange[0];
+            var priceMax = product.cost.tiers[product.cost.tiers.length - 1].priceRange[1];
             document.getElementById('designerSelectedPrice').innerHTML = '<div class="text-sm font-bold text-indigo-700">$' + priceMin + '-' + priceMax + '</div><div class="text-xs text-gray-400">per sqft</div>';
 
             // Show and populate config section
@@ -5555,7 +5555,7 @@
             var colCount = product.spans.length;
             spanGrid.className = 'grid grid-cols-' + (colCount <= 3 ? '3' : '5') + ' gap-2';
             product.spans.forEach(function(span, idx) {
-                var tier = product.pricing.tiers[idx];
+                var tier = product.cost.tiers[idx];
                 var priceLabel = tier ? '$' + tier.priceRange[0] + '-' + tier.priceRange[1] : '';
                 var isSelected = designerState.selectedSpan === span;
                 var cls = isSelected
@@ -5605,7 +5605,7 @@
                 var spanGrid = document.getElementById('designerSpanGrid');
                 var spanHTML = '';
                 product.spans.forEach(function(s, idx) {
-                    var tier = product.pricing.tiers[idx];
+                    var tier = product.cost.tiers[idx];
                     var priceLabel = tier ? '$' + tier.priceRange[0] + '-' + tier.priceRange[1] : '';
                     var isSelected = designerState.selectedSpan === s;
                     var cls = isSelected
@@ -5617,8 +5617,8 @@
 
                 // Update price in stats for this span
                 var spanIdx = product.spans.indexOf(span);
-                if (spanIdx >= 0 && product.pricing.tiers[spanIdx]) {
-                    var tier = product.pricing.tiers[spanIdx];
+                if (spanIdx >= 0 && product.cost.tiers[spanIdx]) {
+                    var tier = product.cost.tiers[spanIdx];
                     document.getElementById('statPriceRange').textContent = '$' + tier.priceRange[0] + '-' + tier.priceRange[1];
                 }
             }
@@ -5639,8 +5639,8 @@
         // Update Quick Stats from product data
         function updateDesignerStats(product) {
             document.getElementById('statControl').textContent = product.control;
-            var priceMin = product.pricing.tiers[0].priceRange[0];
-            var priceMax = product.pricing.tiers[0].priceRange[1];
+            var priceMin = product.cost.tiers[0].priceRange[0];
+            var priceMax = product.cost.tiers[0].priceRange[1];
             document.getElementById('statPriceRange').textContent = '$' + priceMin + '-' + priceMax;
             document.getElementById('statLeadTime').textContent = product.leadTime;
             document.getElementById('statSeries').textContent = product.series.replace(' Series', '').replace(' Type', '');
@@ -5664,7 +5664,7 @@
             html += '<div class="flex items-center justify-between py-2"><span class="text-gray-500">Available Spans</span><span class="font-medium text-gray-900">' + product.spans.join(', ') + '</span></div>';
 
             document.getElementById('specContent').innerHTML = html;
-            document.getElementById('specPricingNote').querySelector('span').textContent = product.pricing.note;
+            document.getElementById('specPricingNote').querySelector('span').textContent = product.cost.note;
         }
 
         // Reset output section
@@ -7188,7 +7188,7 @@
                 colors: 'Standard & Non-standard',
                 spans: ['≤4m', '≤5m', '≤6m', '≤7m', '>7m'],
                 extras: [], optionSet: 'sunroom', noteSet: 'sunroom',
-                pricing: {
+                cost: {
                     unit: 'sqft', currency: 'USD',
                     tiers: [
                         { span: '≤4m', priceRange: [26, 30] },
@@ -7198,6 +7198,17 @@
                         { span: '>7m',  priceRange: [36, 42] }
                     ],
                     note: 'Material cost only — installation, foundation, and permits not included.'
+                },
+                price: {
+                    unit: 'sqft', currency: 'USD',
+                    tiers: [
+                        { span: '≤4m', retail: [36, 42], wholesale: [30, 35] },
+                        { span: '≤5m', retail: [39, 45], wholesale: [32, 37] },
+                        { span: '≤6m', retail: [42, 49], wholesale: [35, 40] },
+                        { span: '≤7m', retail: [46, 53], wholesale: [38, 44] },
+                        { span: '>7m',  retail: [50, 59], wholesale: [41, 48] }
+                    ],
+                    note: 'Suggested selling price — installation, foundation, and permits not included.'
                 }
             },
             'sr-l-smart': {
@@ -7210,7 +7221,7 @@
                 colors: 'Standard & Non-standard',
                 spans: ['≤4m', '≤5m', '≤6m', '≤7m', '>7m'],
                 extras: ['Motor & drive control system'], optionSet: 'sunroom', noteSet: 'sunroom',
-                pricing: {
+                cost: {
                     unit: 'sqft', currency: 'USD',
                     tiers: [
                         { span: '≤4m', priceRange: [32, 36] },
@@ -7220,6 +7231,17 @@
                         { span: '>7m',  priceRange: [44, 52] }
                     ],
                     note: 'Material cost only — installation, foundation, and permits not included.'
+                },
+                price: {
+                    unit: 'sqft', currency: 'USD',
+                    tiers: [
+                        { span: '≤4m', retail: [45, 50], wholesale: [37, 41] },
+                        { span: '≤5m', retail: [48, 55], wholesale: [39, 45] },
+                        { span: '≤6m', retail: [50, 59], wholesale: [41, 48] },
+                        { span: '≤7m', retail: [56, 64], wholesale: [46, 53] },
+                        { span: '>7m',  retail: [62, 73], wholesale: [51, 60] }
+                    ],
+                    note: 'Suggested selling price — installation, foundation, and permits not included.'
                 }
             },
             'sr-l-pro': {
@@ -7232,7 +7254,7 @@
                 colors: 'Standard & Non-standard',
                 spans: ['≤4m', '≤5m', '≤6m', '≤7m', '>7m'],
                 extras: ['Solar power & energy storage system', '(Motor & drive control system)'], optionSet: 'sunroom', noteSet: 'sunroom',
-                pricing: {
+                cost: {
                     unit: 'sqft', currency: 'USD',
                     tiers: [
                         { span: '≤4m', priceRange: [40, 46] },
@@ -7242,6 +7264,17 @@
                         { span: '>7m',  priceRange: [55, 65] }
                     ],
                     note: 'Material cost only — installation, foundation, and permits not included.'
+                },
+                price: {
+                    unit: 'sqft', currency: 'USD',
+                    tiers: [
+                        { span: '≤4m', retail: [56, 64], wholesale: [46, 53] },
+                        { span: '≤5m', retail: [60, 69], wholesale: [49, 56] },
+                        { span: '≤6m', retail: [64, 74], wholesale: [53, 61] },
+                        { span: '≤7m', retail: [70, 81], wholesale: [58, 67] },
+                        { span: '>7m',  retail: [77, 91], wholesale: [63, 75] }
+                    ],
+                    note: 'Suggested selling price — installation, foundation, and permits not included.'
                 }
             },
             'sr-m-classic': {
@@ -7254,7 +7287,7 @@
                 colors: 'Standard & Non-standard',
                 spans: ['≤4m', '≤5m', '≤6m', '≤7m', '>7m'],
                 extras: [], optionSet: 'sunroom', noteSet: 'sunroom',
-                pricing: {
+                cost: {
                     unit: 'sqft', currency: 'USD',
                     tiers: [
                         { span: '≤4m', priceRange: [27, 31] },
@@ -7264,6 +7297,17 @@
                         { span: '>7m',  priceRange: [38, 44] }
                     ],
                     note: 'Material cost only — installation, foundation, and permits not included.'
+                },
+                price: {
+                    unit: 'sqft', currency: 'USD',
+                    tiers: [
+                        { span: '≤4m', retail: [38, 43], wholesale: [31, 36] },
+                        { span: '≤5m', retail: [41, 48], wholesale: [33, 39] },
+                        { span: '≤6m', retail: [43, 52], wholesale: [36, 43] },
+                        { span: '≤7m', retail: [49, 56], wholesale: [40, 46] },
+                        { span: '>7m',  retail: [53, 62], wholesale: [44, 51] }
+                    ],
+                    note: 'Suggested selling price — installation, foundation, and permits not included.'
                 }
             },
             'sr-m-smart': {
@@ -7276,7 +7320,7 @@
                 colors: 'Standard & Non-standard',
                 spans: ['≤4m', '≤5m', '≤6m', '≤7m', '>7m'],
                 extras: ['Motor & drive control system'], optionSet: 'sunroom', noteSet: 'sunroom',
-                pricing: {
+                cost: {
                     unit: 'sqft', currency: 'USD',
                     tiers: [
                         { span: '≤4m', priceRange: [33, 38] },
@@ -7286,6 +7330,17 @@
                         { span: '>7m',  priceRange: [46, 54] }
                     ],
                     note: 'Material cost only — installation, foundation, and permits not included.'
+                },
+                price: {
+                    unit: 'sqft', currency: 'USD',
+                    tiers: [
+                        { span: '≤4m', retail: [46, 53], wholesale: [38, 44] },
+                        { span: '≤5m', retail: [50, 57], wholesale: [41, 47] },
+                        { span: '≤6m', retail: [53, 62], wholesale: [44, 51] },
+                        { span: '≤7m', retail: [59, 67], wholesale: [48, 55] },
+                        { span: '>7m',  retail: [64, 76], wholesale: [53, 62] }
+                    ],
+                    note: 'Suggested selling price — installation, foundation, and permits not included.'
                 }
             },
             'sr-m-pro': {
@@ -7298,7 +7353,7 @@
                 colors: 'Standard & Non-standard',
                 spans: ['≤4m', '≤5m', '≤6m', '≤7m', '>7m'],
                 extras: ['Solar power & energy storage system', '(Motor & drive control system)'], optionSet: 'sunroom', noteSet: 'sunroom',
-                pricing: {
+                cost: {
                     unit: 'sqft', currency: 'USD',
                     tiers: [
                         { span: '≤4m', priceRange: [42, 48] },
@@ -7308,6 +7363,17 @@
                         { span: '>7m',  priceRange: [58, 68] }
                     ],
                     note: 'Material cost only — installation, foundation, and permits not included.'
+                },
+                price: {
+                    unit: 'sqft', currency: 'USD',
+                    tiers: [
+                        { span: '≤4m', retail: [59, 67], wholesale: [48, 55] },
+                        { span: '≤5m', retail: [63, 71], wholesale: [52, 59] },
+                        { span: '≤6m', retail: [67, 78], wholesale: [55, 64] },
+                        { span: '≤7m', retail: [73, 84], wholesale: [60, 69] },
+                        { span: '>7m',  retail: [81, 95], wholesale: [67, 78] }
+                    ],
+                    note: 'Suggested selling price — installation, foundation, and permits not included.'
                 }
             },
             // ===== PERGOLA 凉亭 =====
@@ -7321,7 +7387,7 @@
                 colors: 'Standard & Non-standard',
                 spans: ['≤3m', '≤4m', '≤5m', '≤6m', '>6m'],
                 extras: [], optionSet: 'pergola', noteSet: 'pergola',
-                pricing: {
+                cost: {
                     unit: 'sqft', currency: 'USD',
                     tiers: [
                         { span: '≤3m', priceRange: [18, 22] },
@@ -7331,6 +7397,17 @@
                         { span: '>6m',  priceRange: [27, 34] }
                     ],
                     note: 'Material cost only — installation, foundation, and permits not included.'
+                },
+                price: {
+                    unit: 'sqft', currency: 'USD',
+                    tiers: [
+                        { span: '≤3m', retail: [25, 31], wholesale: [21, 25] },
+                        { span: '≤4m', retail: [28, 34], wholesale: [23, 28] },
+                        { span: '≤5m', retail: [31, 38], wholesale: [25, 31] },
+                        { span: '≤6m', retail: [34, 42], wholesale: [28, 35] },
+                        { span: '>6m',  retail: [38, 48], wholesale: [31, 39] }
+                    ],
+                    note: 'Suggested selling price — installation, foundation, and permits not included.'
                 }
             },
             'pg-classic': {
@@ -7343,7 +7420,7 @@
                 colors: 'Standard & Non-standard',
                 spans: ['≤3m', '≤4m', '≤5m', '≤6m', '>6m'],
                 extras: ['Motorized rotating louver system', 'Motor control system'], optionSet: 'pergola', noteSet: 'pergola',
-                pricing: {
+                cost: {
                     unit: 'sqft', currency: 'USD',
                     tiers: [
                         { span: '≤3m', priceRange: [28, 33] },
@@ -7353,6 +7430,17 @@
                         { span: '>6m',  priceRange: [40, 48] }
                     ],
                     note: 'Material cost only — installation, foundation, and permits not included.'
+                },
+                price: {
+                    unit: 'sqft', currency: 'USD',
+                    tiers: [
+                        { span: '≤3m', retail: [39, 46], wholesale: [32, 38] },
+                        { span: '≤4m', retail: [42, 50], wholesale: [35, 41] },
+                        { span: '≤5m', retail: [46, 55], wholesale: [38, 45] },
+                        { span: '≤6m', retail: [50, 60], wholesale: [41, 49] },
+                        { span: '>6m',  retail: [56, 67], wholesale: [46, 55] }
+                    ],
+                    note: 'Suggested selling price — installation, foundation, and permits not included.'
                 }
             },
             // ===== ZIP BLINDS 防风卷帘 =====
@@ -7366,7 +7454,7 @@
                 colors: 'Standard & Non-standard',
                 spans: ['≤3.8m', '≤5.5m', '>5.5m'],
                 extras: [], optionSet: 'blinds', noteSet: 'blinds',
-                pricing: {
+                cost: {
                     unit: 'sqft', currency: 'USD',
                     tiers: [
                         { span: '≤3.8m', priceRange: [12, 15] },
@@ -7374,6 +7462,16 @@
                         { span: '>5.5m',  priceRange: [17, 22] }
                     ],
                     note: 'Material cost only — installation not included.'
+                },
+                price: {
+                    unit: 'sqm', currency: 'USD',
+                    mode: 'strategy',
+                    tiers: [
+                        { label: 'ZB-100 Standard', retail: [38, 45], wholesale: [31, 37] },
+                        { label: 'ZB-200 Professional', retail: [52, 62], wholesale: [43, 51] },
+                        { label: 'ZB-300 Elite', retail: [58, 85], wholesale: [48, 70] }
+                    ],
+                    note: 'Base fabric price per sqm. Drive system and surcharges applied via quotation engine.'
                 }
             },
             'zb-motorized': {
@@ -7386,7 +7484,7 @@
                 colors: 'Standard & Non-standard',
                 spans: ['≤3.8m', '≤5.5m', '>5.5m'],
                 extras: ['Electric motor & control system'], optionSet: 'blinds', noteSet: 'blinds',
-                pricing: {
+                cost: {
                     unit: 'sqft', currency: 'USD',
                     tiers: [
                         { span: '≤3.8m', priceRange: [18, 22] },
@@ -7394,6 +7492,16 @@
                         { span: '>5.5m',  priceRange: [25, 32] }
                     ],
                     note: 'Material cost only — installation not included.'
+                },
+                price: {
+                    unit: 'sqm', currency: 'USD',
+                    mode: 'strategy',
+                    tiers: [
+                        { label: 'ZB-100 Standard', retail: [38, 45], wholesale: [31, 37] },
+                        { label: 'ZB-200 Professional', retail: [52, 62], wholesale: [43, 51] },
+                        { label: 'ZB-300 Elite', retail: [58, 85], wholesale: [48, 70] }
+                    ],
+                    note: 'Base fabric price per sqm. Motorized drive ($68-$215/unit) added in quotation engine.'
                 }
             },
             // ===== ADU =====
@@ -7407,12 +7515,19 @@
                 colors: 'Custom design options',
                 spans: ['300-500 sqft'],
                 extras: [], optionSet: 'adu', noteSet: 'adu',
-                pricing: {
+                cost: {
                     unit: 'sqft', currency: 'USD',
                     tiers: [
                         { span: '300-500 sqft', priceRange: [180, 220] }
                     ],
                     note: 'Turnkey material cost per sqft — permits, site prep, and utility connections not included.'
+                },
+                price: {
+                    unit: 'sqft', currency: 'USD',
+                    tiers: [
+                        { span: '300-500 sqft', retail: [252, 308], wholesale: [207, 253] }
+                    ],
+                    note: 'Suggested selling price — permits, site prep, and utility connections not included.'
                 }
             },
             'adu-2bed': {
@@ -7425,12 +7540,19 @@
                 colors: 'Custom design options',
                 spans: ['500-800 sqft'],
                 extras: [], optionSet: 'adu', noteSet: 'adu',
-                pricing: {
+                cost: {
                     unit: 'sqft', currency: 'USD',
                     tiers: [
                         { span: '500-800 sqft', priceRange: [200, 250] }
                     ],
                     note: 'Turnkey material cost per sqft — permits, site prep, and utility connections not included.'
+                },
+                price: {
+                    unit: 'sqft', currency: 'USD',
+                    tiers: [
+                        { span: '500-800 sqft', retail: [280, 350], wholesale: [230, 288] }
+                    ],
+                    note: 'Suggested selling price — permits, site prep, and utility connections not included.'
                 }
             }
         };
@@ -7543,16 +7665,23 @@
                 components: [], colors: 'Standard & Non-standard',
                 spans: [], extras: [],
                 optionSet: 'sunroom', noteSet: 'sunroom',
-                pricing: { unit: 'sqft', currency: 'USD', tiers: [], note: '' }
+                cost: { unit: 'sqft', currency: 'USD', tiers: [], note: '' },
+                price: { unit: 'sqft', currency: 'USD', tiers: [], note: '' }
             };
 
             // 把数组转成逗号分隔文本用于编辑
             const componentsStr = (p.components || []).join('\n');
             const spansStr = (p.spans || []).join(', ');
             const extrasStr = (p.extras || []).join('\n');
-            const tiersStr = (p.pricing && p.pricing.tiers || []).map(t =>
+            const tiersStr = (p.cost && p.cost.tiers || []).map(t =>
                 t.span + '|' + (t.priceRange ? t.priceRange[0] + '-' + t.priceRange[1] : 'TBD')
             ).join('\n');
+            const priceTiersStr = (p.price && p.price.tiers || []).map(t => {
+                var key = t.label || t.span || '';
+                var r = t.retail ? t.retail[0] + '-' + t.retail[1] : 'TBD';
+                var w = t.wholesale ? t.wholesale[0] + '-' + t.wholesale[1] : 'TBD';
+                return key + '|' + r + '|' + w;
+            }).join('\n');
 
             const modal = document.createElement('div');
             modal.id = 'productCrudModal';
@@ -7664,24 +7793,47 @@
 
                         <!-- Pricing Section -->
                         <div class="border border-gray-200 rounded-xl p-4 bg-gray-50/50">
-                            <h5 class="text-xs font-bold text-gray-600 uppercase tracking-wider mb-3"><i class="fas fa-dollar-sign mr-1"></i>Pricing</h5>
+                            <h5 class="text-xs font-bold text-gray-600 uppercase tracking-wider mb-3"><i class="fas fa-coins mr-1"></i>Material Cost (COGS)</h5>
                             <div class="grid grid-cols-2 gap-4 mb-3">
                                 <div>
                                     <label class="block text-xs text-gray-500 mb-1">Unit</label>
-                                    <input id="pcm_priceUnit" type="text" value="${(p.pricing && p.pricing.unit || 'sqft').replace(/"/g, '&quot;')}" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <input id="pcm_costUnit" type="text" value="${(p.cost && p.cost.unit || 'sqft').replace(/"/g, '&quot;')}" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                 </div>
                                 <div>
                                     <label class="block text-xs text-gray-500 mb-1">Currency</label>
-                                    <input id="pcm_priceCurrency" type="text" value="${(p.pricing && p.pricing.currency || 'USD').replace(/"/g, '&quot;')}" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <input id="pcm_costCurrency" type="text" value="${(p.cost && p.cost.currency || 'USD').replace(/"/g, '&quot;')}" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-xs text-gray-500 mb-1">Price Tiers <span class="text-gray-400">(one per line: span|low-high, e.g. ≤4m|26-30)</span></label>
+                                <label class="block text-xs text-gray-500 mb-1">Cost Tiers <span class="text-gray-400">(one per line: span|low-high, e.g. ≤4m|26-30)</span></label>
                                 <textarea id="pcm_tiers" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm font-mono focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="≤4m|26-30&#10;≤5m|28-32&#10;...">${tiersStr.replace(/</g, '&lt;')}</textarea>
                             </div>
                             <div class="mt-3">
-                                <label class="block text-xs text-gray-500 mb-1">Pricing Note</label>
-                                <input id="pcm_priceNote" type="text" value="${(p.pricing && p.pricing.note || '').replace(/"/g, '&quot;')}" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Material cost only...">
+                                <label class="block text-xs text-gray-500 mb-1">Cost Note</label>
+                                <input id="pcm_costNote" type="text" value="${(p.cost && p.cost.note || '').replace(/"/g, '&quot;')}" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Material cost only...">
+                            </div>
+                        </div>
+
+                        <!-- Selling Price Section -->
+                        <div class="border border-orange-200 rounded-xl p-4 bg-orange-50/30">
+                            <h5 class="text-xs font-bold text-orange-700 uppercase tracking-wider mb-3"><i class="fas fa-tags mr-1"></i>Selling Price</h5>
+                            <div class="grid grid-cols-2 gap-4 mb-3">
+                                <div>
+                                    <label class="block text-xs text-gray-500 mb-1">Unit</label>
+                                    <input id="pcm_priceUnit" type="text" value="${(p.price && p.price.unit || 'sqft').replace(/"/g, '&quot;')}" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-500 mb-1">Currency</label>
+                                    <input id="pcm_priceCurrency" type="text" value="${(p.price && p.price.currency || 'USD').replace(/"/g, '&quot;')}" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">Price Tiers <span class="text-gray-400">(one per line: span|retail_low-high|wholesale_low-high)</span></label>
+                                <textarea id="pcm_priceTiers" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm font-mono focus:ring-2 focus:ring-orange-500 focus:border-orange-500" placeholder="≤4m|36-42|30-35&#10;≤5m|39-45|32-37&#10;...">${priceTiersStr.replace(/</g, '&lt;')}</textarea>
+                            </div>
+                            <div class="mt-3">
+                                <label class="block text-xs text-gray-500 mb-1">Price Note</label>
+                                <input id="pcm_priceNote" type="text" value="${(p.price && p.price.note || '').replace(/"/g, '&quot;')}" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500" placeholder="Suggested selling price...">
                             </div>
                         </div>
                     </div>
@@ -7734,12 +7886,35 @@
                 extras: document.getElementById('pcm_extras').value.trim().split('\n').map(s => s.trim()).filter(Boolean),
                 optionSet: category,
                 noteSet: category,
-                pricing: {
-                    unit: document.getElementById('pcm_priceUnit').value.trim() || 'sqft',
-                    currency: document.getElementById('pcm_priceCurrency').value.trim() || 'USD',
+                cost: {
+                    unit: document.getElementById('pcm_costUnit').value.trim() || 'sqft',
+                    currency: document.getElementById('pcm_costCurrency').value.trim() || 'USD',
                     tiers: tiers,
-                    note: document.getElementById('pcm_priceNote').value.trim()
-                }
+                    note: document.getElementById('pcm_costNote').value.trim()
+                },
+                price: (function() {
+                    var pUnit = document.getElementById('pcm_priceUnit').value.trim() || 'sqft';
+                    var pCurr = document.getElementById('pcm_priceCurrency').value.trim() || 'USD';
+                    var pNote = document.getElementById('pcm_priceNote').value.trim();
+                    var pRaw = document.getElementById('pcm_priceTiers').value.trim().split('\n').filter(function(l) { return l.trim(); });
+                    var isStrategy = pRaw.length > 0 && pRaw[0].indexOf('ZB-') === 0;
+                    var pTiers = pRaw.map(function(line) {
+                        var parts = line.split('|');
+                        var key = (parts[0] || '').trim();
+                        var rPart = (parts[1] || '').trim();
+                        var wPart = (parts[2] || '').trim();
+                        var rNums = rPart && rPart !== 'TBD' ? rPart.split('-').map(Number) : null;
+                        var wNums = wPart && wPart !== 'TBD' ? wPart.split('-').map(Number) : null;
+                        var tier = {};
+                        if (isStrategy) tier.label = key; else tier.span = key;
+                        if (rNums && rNums.length >= 2) tier.retail = [rNums[0], rNums[1]];
+                        if (wNums && wNums.length >= 2) tier.wholesale = [wNums[0], wNums[1]];
+                        return tier;
+                    });
+                    var result = { unit: pUnit, currency: pCurr, tiers: pTiers, note: pNote };
+                    if (isStrategy) result.mode = 'strategy';
+                    return result;
+                })()
             };
 
             // 更新本地 catalog
@@ -8023,8 +8198,13 @@
             const container = document.getElementById('productDetailContent');
             if (!container) return;
             const iconSrc = productIcons[productId] || p.image;
-            const priceSummary = p.pricing && p.pricing.tiers.length > 0
-                ? ('$' + p.pricing.tiers[0].priceRange[0] + ' – $' + p.pricing.tiers[p.pricing.tiers.length - 1].priceRange[1] + '/' + p.pricing.unit)
+            const priceSummary = p.price && p.price.tiers && p.price.tiers.length > 0
+                ? (p.price.mode === 'strategy'
+                    ? ('$' + p.price.tiers[0].retail[0] + ' – $' + p.price.tiers[p.price.tiers.length - 1].retail[1] + '/' + p.price.unit)
+                    : ('$' + p.price.tiers[0].retail[0] + ' – $' + p.price.tiers[p.price.tiers.length - 1].retail[1] + '/' + p.price.unit))
+                : '—';
+            const costSummary = p.cost && p.cost.tiers && p.cost.tiers.length > 0
+                ? ('$' + p.cost.tiers[0].priceRange[0] + ' – $' + p.cost.tiers[p.cost.tiers.length - 1].priceRange[1] + '/' + p.cost.unit)
                 : '—';
 
             container.innerHTML = `
@@ -8049,8 +8229,12 @@
                                 <div class="text-sm font-bold text-gray-900 mt-0.5">${p.colors}</div>
                             </div>
                             <div class="bg-gray-50 rounded-lg p-2.5">
-                                <label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Price</label>
-                                <div class="text-sm font-bold text-emerald-700 mt-0.5">${priceSummary}</div>
+                                <label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Cost</label>
+                                <div class="text-sm font-bold text-gray-600 mt-0.5">${costSummary}</div>
+                            </div>
+                            <div class="bg-orange-50 rounded-lg p-2.5">
+                                <label class="text-[10px] text-orange-400 uppercase tracking-wider font-medium">Retail Price</label>
+                                <div class="text-sm font-bold text-orange-700 mt-0.5">${priceSummary}</div>
                             </div>
                             <div class="bg-gray-50 rounded-lg p-2.5">
                                 <label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Lead Time</label>
@@ -8083,15 +8267,15 @@
                         </div>
                         <div>
                             <h5 class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-3">
-                                ${p.pricing ? '<i class="fas fa-dollar-sign mr-1"></i>Material Cost by Span' : 'Span / Size Options'}
+                                ${p.cost ? '<i class="fas fa-dollar-sign mr-1"></i>Material Cost by Span' : 'Span / Size Options'}
                             </h5>
-                            ${p.pricing ? `
+                            ${p.cost ? `
                             <div class="space-y-1.5 mb-3">
                                 <div class="flex items-center justify-between px-3 py-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                                     <span>Span / Size</span>
-                                    <span>Material Cost (${p.pricing.currency}/${p.pricing.unit})</span>
+                                    <span>Material Cost (${p.cost.currency}/${p.cost.unit})</span>
                                 </div>
-                                ${p.pricing.tiers.map((t, i) => `
+                                ${p.cost.tiers.map((t, i) => `
                                 <div class="flex items-center justify-between px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg hover:border-emerald-300 hover:bg-emerald-50/30 transition group">
                                     <div class="flex items-center gap-2">
                                         <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold">${i + 1}</span>
@@ -8105,8 +8289,43 @@
                             </div>
                             <p class="text-[11px] text-amber-600 bg-amber-50 rounded-lg px-3 py-2 flex items-start gap-1.5">
                                 <i class="fas fa-info-circle mt-0.5 flex-shrink-0"></i>
-                                <span>${p.pricing.note}</span>
+                                <span>${p.cost.note}</span>
                             </p>
+
+                            ${p.price && p.price.tiers && p.price.tiers.length > 0 ? `
+                            <h5 class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-3 mt-5">
+                                <i class="fas fa-tags mr-1"></i>Selling Price${p.price.mode === 'strategy' ? ' (by Product Tier)' : ' by Span'}
+                            </h5>
+                            <div class="space-y-1.5 mb-3">
+                                <div class="flex items-center justify-between px-3 py-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                                    <span>${p.price.mode === 'strategy' ? 'Product Tier' : 'Span / Size'}</span>
+                                    <div class="flex gap-6">
+                                        <span class="text-orange-400">Retail (${p.price.currency}/${p.price.unit})</span>
+                                        <span class="text-blue-400">Wholesale</span>
+                                    </div>
+                                </div>
+                                ${p.price.tiers.map((t, i) => `
+                                <div class="flex items-center justify-between px-4 py-2.5 bg-orange-50/40 border border-orange-200/60 rounded-lg hover:border-orange-300 hover:bg-orange-50/60 transition group">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-5 h-5 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-[10px] font-bold">${i + 1}</span>
+                                        <span class="text-sm font-semibold text-gray-900">${t.label || t.span}</span>
+                                    </div>
+                                    <div class="flex gap-6">
+                                        <div class="text-sm font-bold text-orange-700 group-hover:text-orange-800">
+                                            ${t.retail ? '$' + t.retail[0] + ' – $' + t.retail[1] : '<span class="text-gray-400 font-normal">TBD</span>'}
+                                        </div>
+                                        <div class="text-sm font-medium text-blue-600 group-hover:text-blue-700 min-w-[80px] text-right">
+                                            ${t.wholesale ? '$' + t.wholesale[0] + ' – $' + t.wholesale[1] : '<span class="text-gray-400 font-normal">TBD</span>'}
+                                        </div>
+                                    </div>
+                                </div>
+                                `).join('')}
+                            </div>
+                            <p class="text-[11px] text-orange-600 bg-orange-50 rounded-lg px-3 py-2 flex items-start gap-1.5">
+                                <i class="fas fa-tags mt-0.5 flex-shrink-0"></i>
+                                <span>${p.price.note}</span>
+                            </p>
+                            ` : ''}
                             ` : `
                             <div class="flex flex-wrap gap-2 mb-3">
                                 ${p.spans.map(s => `
@@ -11224,7 +11443,7 @@
                 const productCards = styles.map(s => {
                     const prod = productCatalog[s.value];
                     const iconSrc = productIcons[s.value] || '';
-                    const priceRange = prod ? ('$' + prod.pricing.tiers[0].priceRange[0] + '-' + prod.pricing.tiers[0].priceRange[1] + '/sqft') : '';
+                    const priceRange = prod && prod.price && prod.price.tiers && prod.price.tiers.length > 0 ? (prod.price.mode === 'strategy' ? ('$' + prod.price.tiers[0].retail[0] + '-' + prod.price.tiers[0].retail[1] + '/' + prod.price.unit) : ('$' + prod.price.tiers[0].retail[0] + '-' + prod.price.tiers[0].retail[1] + '/' + prod.price.unit)) : '';
                     return `<div class="step2-product-card flex flex-col items-center gap-1 p-2.5 rounded-lg border border-gray-100 hover:border-indigo-300 hover:bg-indigo-50/30 cursor-pointer transition" data-catalog-id="${s.value}" onclick="selectStep2Product('${project.id}', '${s.value}', this)">
                         <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-gray-50">
                             ${iconSrc ? '<img src="' + iconSrc + '" alt="' + s.label + '" class="w-8 h-8 object-contain">' : '<i class="fas ' + s.icon + ' text-sm text-gray-400"></i>'}
@@ -12388,7 +12607,7 @@
             if (label && product) label.textContent = product.name;
             // Update stats
             if (product) {
-                var tier0 = product.pricing.tiers[0].priceRange;
+                var tier0 = product.cost.tiers[0].priceRange;
                 document.getElementById('step2StatControl_' + projectId).textContent = product.control;
                 document.getElementById('step2StatPrice_' + projectId).textContent = '$' + tier0[0] + '-' + tier0[1];
                 document.getElementById('step2StatLead_' + projectId).textContent = product.leadTime;
