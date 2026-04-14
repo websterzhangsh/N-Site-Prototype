@@ -860,9 +860,9 @@
                         console.error('[NestopiaStorage] Supabase 上传失败，回退 localStorage:', err.message);
                         return new Promise(function(resolve) {
                             var isImg = file.type.startsWith('image/');
-                            if (file.size > 5 * 1024 * 1024) { resolve(LocalStorage.saveFile(projectId, { name: file.name, type: file.type, size: file.size, category: category, thumbnailUrl: null, url: null, note: 'Cloud upload failed: ' + err.message })); return; }
+                            if (file.size > 5 * 1024 * 1024) { resolve(LocalStorage.saveFile(projectId, { name: file.name, type: file.type, size: file.size, category: category, thumbnailUrl: null, url: null, storagePath: storagePath, storageMode: 'supabase', note: 'Cloud upload failed: ' + err.message })); return; }
                             var reader = new FileReader();
-                            reader.onload = function(e) { resolve(LocalStorage.saveFile(projectId, { name: file.name, type: file.type, size: file.size, category: category, thumbnailUrl: isImg ? e.target.result : null, url: e.target.result, note: 'Cloud upload failed, saved locally' })); };
+                            reader.onload = function(e) { resolve(LocalStorage.saveFile(projectId, { name: file.name, type: file.type, size: file.size, category: category, thumbnailUrl: isImg ? e.target.result : null, url: e.target.result, storagePath: storagePath, storageMode: 'supabase', note: 'Cloud upload failed, saved locally' })); };
                             reader.readAsDataURL(file);
                         });
                     });
@@ -10935,7 +10935,7 @@
             fileList.forEach(function(file) {
                 if (useCloud) {
                     // Supabase Storage 上传
-                    NestopiaStorage.uploadProjectFile(projectId, file, { category: 'intake/' + uploadKey })
+                    NestopiaStorage.uploadProjectFile(projectId, file, { category: 'site-photos', description: 'Intake: ' + uploadKey })
                         .then(function(record) {
                             var entry = {
                                 name: file.name, size: file.size, type: file.type,
