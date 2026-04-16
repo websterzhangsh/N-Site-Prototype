@@ -10038,39 +10038,75 @@
 
         // ===== Zip Blinds: Combined "Measure & Quote" Config (OMEYA SOP-aligned) =====
         // Lightweight product workflow — merge Steps 1-4 into a single step
-        const ZB_COMBINED_CONFIG = {
-            name: 'Measure & Quote',
-            nameEn: 'Measure & Quote',
-            goal: 'Client consultation, site measurement & quotation — aligned with OMEYA Blind SOP',
-            payment: '—',
-            coreActions: [
-                { id: 'a1', label: 'Client Consultation', desc: 'Determine requirements: light control, privacy, aesthetics, child safety (OMEYA SOP §1A)', icon: 'fa-comments' },
-                { id: 'a2', label: 'Product Recommendation', desc: 'Recommend fabric, opacity, color, operation style; advise track options & stacking direction', icon: 'fa-lightbulb' },
-                { id: 'a3', label: 'Site Measurement', desc: 'On-site measurement: inside/face/ceiling mount, 3-point method, obstacle & utility check (OMEYA SOP §1B)', icon: 'fa-ruler-combined' },
-                { id: 'a4', label: 'Product Configuration', desc: 'Select product tier (ZB-100/200/300), fabric screen, drive system, and all optional upgrades', icon: 'fa-sliders-h' },
-                { id: 'a5', label: 'Quotation Generation', desc: 'Auto-calculate pricing with 6-strategy engine, generate formal bilingual quotation document', icon: 'fa-file-invoice-dollar' },
-                { id: 'a6', label: 'Client Review & Sign-off', desc: 'Walk through line-by-line quotation, confirm specs, obtain client approval (OMEYA SOP §1C)', icon: 'fa-signature' }
-            ],
-            keyDeliverables: [
-                { id: 'd1', label: 'Measurement Report', desc: 'Opening dimensions, mounting type, obstacles, site photos', icon: 'fa-ruler', required: true },
-                { id: 'd2', label: 'Product Configuration', desc: 'Tier, fabric, drive system selections', icon: 'fa-sliders-h', required: true },
-                { id: 'd3', label: 'Formal Quotation', desc: 'Formal quotation document', icon: 'fa-file-invoice-dollar', required: true },
-                { id: 'd4', label: 'Client Approval', desc: 'Customer sign-off on quotation & specs', icon: 'fa-signature', required: true }
-            ],
-            // Reuse Step 3 measurement panel config (already has zipBlindsFields)
-            measurementPanel: STEP_DETAIL_CONFIG[3].measurementPanel,
-            // Enable quotation panel (Step 4 logic)
-            quotationPanel: true,
-            agentSupport: [
-                { agent: 'Pricing Agent', ability: 'Auto-generate detailed quotation with 6-strategy pricing engine' },
-                { agent: 'Knowledge Base', ability: 'OMEYA measurement SOP, product specs, pricing references' }
-            ]
+        // Zip Blinds 3+1 step workflow configs (Measurement → Quotation → Measurement Verification → Order & Install)
+        const ZB_STEP_CONFIGS = {
+            1: {
+                name: 'Measurement',
+                nameEn: 'Measurement',
+                goal: 'Client consultation & initial site measurement — aligned with OMEYA Blind SOP §1A & §1B',
+                payment: '—',
+                coreActions: [
+                    { id: 'a1', label: 'Client Consultation', desc: 'Determine requirements: light control, privacy, aesthetics, child safety (OMEYA SOP §1A)', icon: 'fa-comments' },
+                    { id: 'a2', label: 'Product Recommendation', desc: 'Recommend fabric, opacity, color, operation style; advise track options & stacking direction', icon: 'fa-lightbulb' },
+                    { id: 'a3', label: 'Site Measurement', desc: 'On-site measurement: inside/face/ceiling mount, 3-point method, obstacle & utility check (OMEYA SOP §1B)', icon: 'fa-ruler-combined' }
+                ],
+                keyDeliverables: [
+                    { id: 'd1', label: 'Measurement Report', desc: 'Opening dimensions, mounting type, obstacles, site photos', icon: 'fa-ruler', required: true },
+                    { id: 'd2', label: 'Product Configuration', desc: 'Tier, fabric, drive system selections', icon: 'fa-sliders-h', required: true }
+                ],
+                measurementPanel: STEP_DETAIL_CONFIG[3].measurementPanel,
+                agentSupport: [
+                    { agent: 'Knowledge Base', ability: 'OMEYA measurement SOP, product specs, measurement guides' }
+                ]
+            },
+            2: {
+                name: 'Quotation',
+                nameEn: 'Quotation',
+                goal: 'Product configuration, pricing & client approval — aligned with OMEYA SOP §1C',
+                payment: '—',
+                coreActions: [
+                    { id: 'a4', label: 'Product Configuration', desc: 'Select product tier (ZB-100/200/300), fabric screen, drive system, and all optional upgrades', icon: 'fa-sliders-h' },
+                    { id: 'a5', label: 'Quotation Generation', desc: 'Auto-calculate pricing with 6-strategy engine, generate formal bilingual quotation document', icon: 'fa-file-invoice-dollar' },
+                    { id: 'a6', label: 'Client Review & Sign-off', desc: 'Walk through line-by-line quotation, confirm specs, obtain client approval (OMEYA SOP §1C)', icon: 'fa-signature' }
+                ],
+                keyDeliverables: [
+                    { id: 'd3', label: 'Formal Quotation', desc: 'Formal quotation document', icon: 'fa-file-invoice-dollar', required: true },
+                    { id: 'd4', label: 'Client Approval', desc: 'Customer sign-off on quotation & specs', icon: 'fa-signature', required: true }
+                ],
+                quotationPanel: true,
+                agentSupport: [
+                    { agent: 'Pricing Agent', ability: 'Auto-generate detailed quotation with 6-strategy pricing engine' }
+                ]
+            },
+            3: {
+                name: 'Measurement Verification',
+                nameEn: 'Measurement Verification',
+                goal: 'Second on-site measurement to verify & confirm initial data before order placement',
+                payment: '—',
+                coreActions: [
+                    { id: 'v1', label: 'Verification Visit', desc: 'Schedule & conduct second on-site visit to re-measure all openings', icon: 'fa-calendar-check' },
+                    { id: 'v2', label: 'Cross-check Measurements', desc: 'Compare second measurement against initial report; flag any discrepancies > 3mm', icon: 'fa-check-double' },
+                    { id: 'v3', label: 'Final Confirmation', desc: 'Confirm mounting type, guide rail clearance, motor wiring path, and obstacle clearance', icon: 'fa-clipboard-check' }
+                ],
+                keyDeliverables: [
+                    { id: 'v_d1', label: 'Verified Measurement Report', desc: 'Confirmed dimensions with comparison to initial measurement', icon: 'fa-file-circle-check', required: true },
+                    { id: 'v_d2', label: 'Installation Readiness', desc: 'Site confirmed ready for installation — no obstructions, wiring in place', icon: 'fa-thumbs-up', required: true }
+                ],
+                measurementPanel: STEP_DETAIL_CONFIG[3].measurementPanel,
+                agentSupport: [
+                    { agent: 'Knowledge Base', ability: 'OMEYA measurement verification SOP, tolerance specifications' }
+                ]
+            }
         };
+        // Backward compat alias
+        const ZB_COMBINED_CONFIG = ZB_STEP_CONFIGS[1];
 
-        // Zip Blinds simplified 2-step workflow definition
+        // Zip Blinds 4-step workflow definition
         const ZB_WORKFLOW_STEPS = [
-            { step: 1, name: 'Measure & Quote', icon: 'fa-ruler-combined', color: 'blue', desc: 'Site measurement, pricing & quotation' },
-            { step: 2, name: 'Order & Install', icon: 'fa-truck', color: 'gray', desc: 'Coming soon — order, production, shipment, installation' }
+            { step: 1, name: 'Measurement', icon: 'fa-ruler-combined', color: 'blue', desc: 'Site measurement & data collection' },
+            { step: 2, name: 'Quotation', icon: 'fa-file-invoice-dollar', color: 'orange', desc: 'Product configuration, pricing & approval' },
+            { step: 3, name: 'Verification', icon: 'fa-check-double', color: 'purple', desc: 'Second measurement to verify & confirm' },
+            { step: 4, name: 'Order & Install', icon: 'fa-truck', color: 'gray', desc: 'Coming soon — order, production, installation' }
         ];
 
         // ===== Zip Blinds Tenant-Level Product Knowledge Base (Phase 1a) =====
@@ -10480,13 +10516,17 @@
                 });
             }
 
-            // Zip Blinds combined step — derive progress from original workflowStep
-            if (project.type === 'Zip Blinds' && useConfig === ZB_COMBINED_CONFIG) {
-                const ws = project.workflowStep; // original step (1-4)
-                if (ws >= 4) return { actionsCompleted: 4, actionTotal, deliverablesCompleted: 2, deliverableTotal, questionnaireCompleted: 0, questionnaireTotal: 0, paymentStatus: 'pending' };
-                if (ws >= 3) return { actionsCompleted: 3, actionTotal, deliverablesCompleted: 1, deliverableTotal, questionnaireCompleted: 0, questionnaireTotal: 0, paymentStatus: 'pending' };
-                if (ws >= 2) return { actionsCompleted: 2, actionTotal, deliverablesCompleted: 0, deliverableTotal, questionnaireCompleted: 0, questionnaireTotal: 0, paymentStatus: 'pending' };
-                return { actionsCompleted: 1, actionTotal, deliverablesCompleted: 0, deliverableTotal, questionnaireCompleted: 0, questionnaireTotal: 0, paymentStatus: 'pending' };
+            // Zip Blinds multi-step — derive progress from workflowStep vs stepNum
+            if (project.type === 'Zip Blinds' && ZB_STEP_CONFIGS[stepNum]) {
+                if (stepNum < project.workflowStep) {
+                    // Completed step
+                    return { actionsCompleted: actionTotal, actionTotal, deliverablesCompleted: deliverableTotal, deliverableTotal, questionnaireCompleted: 0, questionnaireTotal: 0, paymentStatus: 'paid' };
+                } else if (stepNum === project.workflowStep) {
+                    // Current active step — partially done
+                    return { actionsCompleted: 1, actionTotal, deliverablesCompleted: 0, deliverableTotal, questionnaireCompleted: 0, questionnaireTotal: 0, paymentStatus: 'pending' };
+                }
+                // Future step
+                return { actionsCompleted: 0, actionTotal, deliverablesCompleted: 0, deliverableTotal, questionnaireCompleted: 0, questionnaireTotal: 0, paymentStatus: 'not_started' };
             }
 
             // Simulate different completion states based on project progress
@@ -11241,7 +11281,7 @@
             const isZipBlinds = project && project.type === 'Zip Blinds';
 
             if (isZipBlinds) {
-                if (stepNum === 2) {
+                if (stepNum === 4) {
                     // "Order & Install" — placeholder
                     container.classList.remove('hidden');
                     container.innerHTML = `
@@ -11257,12 +11297,14 @@
                     container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                     return;
                 }
-                // Step 1: Measure & Quote — use combined config
-                const zbConfig = ZB_COMBINED_CONFIG;
+                // Steps 1-3: use ZB_STEP_CONFIGS
+                const zbConfig = ZB_STEP_CONFIGS[stepNum];
+                if (!zbConfig) return;
+                const zbStepDef = ZB_WORKFLOW_STEPS.find(s => s.step === stepNum);
+                const zbColor = zbStepDef ? zbStepDef.color : 'blue';
                 const zbStatus = getProjectStepStatus(project, stepNum, zbConfig);
-                const zbColor = 'blue';
                 container.classList.remove('hidden');
-                container.innerHTML = renderStepDetailHTML(zbConfig, zbStatus, 1, zbColor, project);
+                container.innerHTML = renderStepDetailHTML(zbConfig, zbStatus, stepNum, zbColor, project);
                 expandedStep = stepNum;
                 container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 return;
@@ -14284,27 +14326,37 @@
             const detailContainer = document.getElementById('projStepDetail');
             if (detailContainer) { detailContainer.classList.add('hidden'); detailContainer.innerHTML = ''; }
 
-            // ---- Zip Blinds: simplified 2-step workflow ----
+            // ---- Zip Blinds: 4-step workflow (Measurement → Quotation → Verification → Order & Install) ----
             if (isZipBlinds) {
                 container.innerHTML = ZB_WORKFLOW_STEPS.map((s, i) => {
-                    const isCurrent = s.step === 1; // Measure & Quote is always the active step
-                    const isFuture = s.step > 1;
-                    let classes = 'flex-1 flex flex-col items-center p-3 rounded-xl transition ';
-                    if (isCurrent) {
-                        classes += 'bg-blue-50 border-2 border-blue-300 cursor-pointer hover:shadow-md';
-                    } else {
-                        classes += 'opacity-40 cursor-default';
-                    }
-                    const icon = isCurrent ? s.icon + ' text-blue-500' : s.icon + ' text-gray-400';
+                    const isCompleted = s.step < project.workflowStep;
+                    const isCurrent = s.step === project.workflowStep;
+                    const isFuture = s.step > project.workflowStep;
+                    const isLocked = s.step === 4; // Order & Install always locked
+                    const baseColor = s.color;
 
-                    return `
-                        <div class="${classes}" ${isCurrent ? 'onclick="toggleStepDetail(' + s.step + ', currentDetailProject)"' : ''} title="${isCurrent ? 'Click to view Measure & Quote' : 'Coming Soon'}">
-                            <i class="fas ${icon} text-lg mb-1.5"></i>
-                            <span class="text-xs font-semibold text-gray-700">${s.name}</span>
-                            <span class="text-[10px] ${isCurrent ? 'text-blue-500 font-medium' : 'text-gray-400'} mt-0.5">${isFuture ? 'Coming Soon' : 'Active'}</span>
-                        </div>
-                        ${i < ZB_WORKFLOW_STEPS.length - 1 ? '<div class="flex items-center"><i class="fas fa-chevron-right text-gray-300 text-xs"></i></div>' : ''}
-                    `;
+                    let classes = 'flex-1 flex flex-col items-center p-3 rounded-xl transition ';
+                    if (isLocked) {
+                        classes += 'opacity-30 cursor-default';
+                    } else if (isCurrent) {
+                        classes += 'bg-' + baseColor + '-50 border-2 border-' + baseColor + '-300 cursor-pointer hover:shadow-md';
+                    } else if (isCompleted) {
+                        classes += 'bg-green-50/50 cursor-pointer hover:shadow-md hover:bg-green-50';
+                    } else {
+                        classes += 'opacity-40 cursor-pointer hover:opacity-60';
+                    }
+
+                    const icon = isCompleted ? 'fa-check-circle text-green-500' : isLocked ? s.icon + ' text-gray-400' : s.icon + ' text-' + baseColor + '-500';
+                    const statusLabel = isLocked ? 'Coming Soon' : isCompleted ? 'Completed' : isCurrent ? 'Active' : 'Pending';
+                    const statusClass = isLocked ? 'text-gray-400' : isCompleted ? 'text-green-500 font-medium' : isCurrent ? 'text-' + baseColor + '-500 font-medium' : 'text-gray-400';
+                    const clickable = !isLocked;
+
+                    return '<div class="' + classes + '" ' + (clickable ? 'onclick="toggleStepDetail(' + s.step + ', currentDetailProject)"' : '') + ' title="' + (isLocked ? 'Coming Soon' : s.desc) + '">' +
+                            '<i class="fas ' + icon + ' text-lg mb-1.5"></i>' +
+                            '<span class="text-xs font-semibold text-gray-700">' + s.name + '</span>' +
+                            '<span class="text-[10px] ' + statusClass + ' mt-0.5">' + statusLabel + '</span>' +
+                        '</div>' +
+                        (i < ZB_WORKFLOW_STEPS.length - 1 ? '<div class="flex items-center"><i class="fas fa-chevron-right text-gray-300 text-xs"></i></div>' : '');
                 }).join('');
                 return;
             }
