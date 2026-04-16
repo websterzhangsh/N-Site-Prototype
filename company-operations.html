@@ -9963,7 +9963,7 @@
                         ]},
                         { key: 'surveyor', label: 'Installer / Measurer', type: 'text', icon: 'fa-user-tie', placeholder: 'e.g. Tom Baker (#583041)' },
                         { key: 'date', label: 'Measurement Date', type: 'date', icon: 'fa-calendar' },
-                        { key: 'openings', label: 'Number of Openings', type: 'number', icon: 'fa-th-large', placeholder: 'e.g. 3' },
+                        { key: 'openings', label: 'Number of Openings', type: 'number', icon: 'fa-th-large', placeholder: 'e.g. 3', min: 1, step: 1, defaultValue: '1' },
                         { key: 'opening_width_in', label: 'Opening Width (inches)', type: 'number', icon: 'fa-arrows-alt-h', placeholder: 'e.g. 72' },
                         { key: 'opening_height_in', label: 'Opening Height (inches)', type: 'number', icon: 'fa-arrows-alt-v', placeholder: 'e.g. 96' },
                         { key: 'mounting', label: 'Mounting Type', type: 'select', icon: 'fa-wrench', options: [
@@ -11675,7 +11675,7 @@
 
                 // Build measurement form fields (product-type-aware)
                 const fieldRows = activeFields.map(mf => {
-                    const savedVal = step3State.measurementData[mf.key] || (mData[mf.key] !== undefined ? String(mData[mf.key]) : '') || '';
+                    const savedVal = step3State.measurementData[mf.key] || (mData[mf.key] !== undefined ? String(mData[mf.key]) : '') || mf.defaultValue || '';
                     let inputHTML = '';
                     if (mf.type === 'select') {
                         inputHTML = `<select id="step3_${mf.key}_${project.id}" class="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-purple-200 focus:border-purple-400 bg-white" onchange="updateStep3Field('${project.id}', '${mf.key}', this.value)">
@@ -11685,7 +11685,7 @@
                     } else if (mf.type === 'date') {
                         inputHTML = `<input type="date" id="step3_${mf.key}_${project.id}" value="${savedVal}" class="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-purple-200 focus:border-purple-400" onchange="updateStep3Field('${project.id}', '${mf.key}', this.value)">`;
                     } else {
-                        inputHTML = `<input type="${mf.type}" id="step3_${mf.key}_${project.id}" value="${savedVal}" class="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-purple-200 focus:border-purple-400" placeholder="${mf.placeholder || ''}" onchange="updateStep3Field('${project.id}', '${mf.key}', this.value)">`;
+                        inputHTML = `<input type="${mf.type}" id="step3_${mf.key}_${project.id}" value="${savedVal}" class="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-purple-200 focus:border-purple-400" placeholder="${mf.placeholder || ''}" ${mf.min !== undefined ? 'min="'+mf.min+'"' : ''} ${mf.step !== undefined ? 'step="'+mf.step+'"' : ''} onchange="updateStep3Field('${project.id}', '${mf.key}', this.value)">`;
                     }
                     return `<div class="space-y-1">
                         <label class="text-[10px] font-medium text-gray-500 flex items-center gap-1.5">
