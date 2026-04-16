@@ -4116,23 +4116,6 @@
                                 </div>
                             </div>
 
-                            <!-- Service Workflow Section -->
-                            <div class="bg-white rounded-xl border border-gray-200 mb-5 overflow-hidden">
-                                <div class="flex items-center gap-2 px-5 py-3 border-b border-gray-100 bg-gray-50/70">
-                                    <i class="fas fa-project-diagram text-blue-600 text-sm"></i>
-                                    <h3 class="text-sm font-semibold text-gray-700">Service Workflow</h3>
-                                    <span class="text-xs text-gray-400 ml-auto" id="projWorkflowHint">Click a step to view details</span>
-                                </div>
-                                <div class="p-5">
-                                    <div class="flex items-center justify-between gap-2" id="projWorkflowSteps">
-                                        <!-- 6-step pipeline rendered by JS -->
-                                    </div>
-                                </div>
-                                <!-- Step Detail Expansion -->
-                                <div id="projStepDetail" class="hidden border-t border-gray-100">
-                                </div>
-                            </div>
-
                             <!-- v1.2.0: Agent Toolbar (horizontal) -->
                             <div class="agent-toolbar" id="agentToolbar">
                                 <div class="agent-toolbar-card" data-agent="compliance-agent" onclick="toggleAgentPanel('compliance-agent')"
@@ -4161,6 +4144,22 @@
                                     <div id="agentPanelContent">
                                         <!-- Agent content loaded dynamically -->
                                     </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-xl border border-gray-200 mb-5 overflow-hidden">
+                                <div class="flex items-center gap-2 px-5 py-3 border-b border-gray-100 bg-gray-50/70">
+                                    <i class="fas fa-project-diagram text-blue-600 text-sm"></i>
+                                    <h3 class="text-sm font-semibold text-gray-700">Service Workflow</h3>
+                                    <span class="text-xs text-gray-400 ml-auto" id="projWorkflowHint">Click a step to view details</span>
+                                </div>
+                                <div class="p-5">
+                                    <div class="flex items-center justify-between gap-2" id="projWorkflowSteps">
+                                        <!-- 6-step pipeline rendered by JS -->
+                                    </div>
+                                </div>
+                                <!-- Step Detail Expansion -->
+                                <div id="projStepDetail" class="hidden border-t border-gray-100">
                                 </div>
                             </div>
 
