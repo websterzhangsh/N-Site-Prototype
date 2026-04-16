@@ -12085,18 +12085,33 @@
                             </div>
                         </div>
 
-                        <!-- Summary from measurement -->
+                        <!-- Summary from measurement (per-opening) -->
                         <div class="mb-4 p-3 bg-orange-50/50 rounded-lg border border-orange-100">
                             <div class="flex items-center gap-2 mb-2">
                                 <i class="fas fa-arrow-right text-orange-500 text-[10px]"></i>
                                 <span class="text-xs font-semibold text-orange-700">Inherited from Steps 1–3</span>
+                                <span class="text-[9px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full font-medium">${step4State.quantity} opening${step4State.quantity > 1 ? 's' : ''}</span>
                             </div>
+                            ${step4State.openings && step4State.openings.length > 1 ? `
+                            <div class="space-y-1.5">
+                                ${step4State.openings.map((op, idx) => `
+                                <div class="flex items-center gap-3 text-[10px]">
+                                    <span class="w-4 h-4 bg-indigo-100 rounded flex items-center justify-center text-[9px] font-bold text-indigo-600">${idx + 1}</span>
+                                    <span class="text-gray-600">${op.widthIn}" × ${op.heightIn}"</span>
+                                    <span class="text-orange-600 font-semibold">${op.area.toFixed(2)} sqm</span>
+                                </div>`).join('')}
+                                <div class="border-t border-orange-200 pt-1.5 mt-1 flex items-center gap-3 text-[10px]">
+                                    <span class="w-4 h-4"></span>
+                                    <span class="text-gray-700 font-semibold">Total Area</span>
+                                    <span class="text-orange-700 font-bold">${step4State.totalArea.toFixed(2)} sqm</span>
+                                </div>
+                            </div>` : `
                             <div class="grid grid-cols-4 gap-3 text-center">
-                                <div><div class="text-[10px] text-gray-500">Openings</div><div class="text-sm font-bold text-gray-800">${mData.openings || step4State.quantity}</div></div>
-                                <div><div class="text-[10px] text-gray-500">Width</div><div class="text-sm font-bold text-gray-800">${mData.opening_width_in || '72'}"</div></div>
-                                <div><div class="text-[10px] text-gray-500">Height</div><div class="text-sm font-bold text-gray-800">${mData.opening_height_in || '96'}"</div></div>
-                                <div><div class="text-[10px] text-gray-500">Area/unit</div><div class="text-sm font-bold text-orange-600">${step4State.unitArea.toFixed(2)} sqm</div></div>
-                            </div>
+                                <div><div class="text-[10px] text-gray-500">Openings</div><div class="text-sm font-bold text-gray-800">${step4State.quantity}</div></div>
+                                <div><div class="text-[10px] text-gray-500">Width</div><div class="text-sm font-bold text-gray-800">${step4State.openings ? step4State.openings[0].widthIn : '72'}"</div></div>
+                                <div><div class="text-[10px] text-gray-500">Height</div><div class="text-sm font-bold text-gray-800">${step4State.openings ? step4State.openings[0].heightIn : '96'}"</div></div>
+                                <div><div class="text-[10px] text-gray-500">Area</div><div class="text-sm font-bold text-orange-600">${step4State.unitArea.toFixed(2)} sqm</div></div>
+                            </div>`}
                         </div>
 
                         <!-- Expandable Quotation Panel -->
@@ -13494,15 +13509,30 @@
                 };
 
                 if (isZB) {
-                    // Auto-populate from Step 3 measurement data
-                    var wIn = Number(mData.opening_width_in) || 72;
-                    var hIn = Number(mData.opening_height_in) || 96;
-                    state.quantity = Number(mData.openings) || 3;
-                    state.widthM = wIn * 0.0254;  // inches to meters
-                    state.heightM = hIn * 0.0254;
-                    state.unitArea = state.widthM * state.heightM;
-                    state.fabric = mData.fabric || 'np4000';
-                    state.driveSystem = mData.motor === 'motorized_solar' ? 'solar-kit' : mData.motor === 'motorized_wired' ? 'electric-std' : mData.motor === 'manual_crank' ? 'bead-chain' : 'electric-std';
+                    // Auto-populate from Step 3 per-opening measurement data
+                    state.quantity = Number(mData.openings) || 1;
+                    state.openings = [];
+                    for (var oi = 1; oi <= state.quantity; oi++) {
+                        var oW = Number(mData['opening_' + oi + '_width_in']) || Number(mData.opening_width_in) || 72;
+                        var oH = Number(mData['opening_' + oi + '_height_in']) || Number(mData.opening_height_in) || 96;
+                        var oFab = mData['opening_' + oi + '_fabric'] || mData.fabric || 'np4000';
+                        var oMot = mData['opening_' + oi + '_motor'] || mData.motor || 'electric-std';
+                        var oMnt = mData['opening_' + oi + '_mounting'] || mData.mounting || '';
+                        state.openings.push({
+                            widthIn: oW, heightIn: oH,
+                            widthM: oW * 0.0254, heightM: oH * 0.0254,
+                            area: (oW * 0.0254) * (oH * 0.0254),
+                            fabric: oFab, motor: oMot, mounting: oMnt
+                        });
+                    }
+                    // Backward compat — widthM/heightM/unitArea from opening 1
+                    var first = state.openings[0];
+                    state.widthM = first.widthM;
+                    state.heightM = first.heightM;
+                    state.unitArea = first.area;
+                    state.totalArea = state.openings.reduce(function(s, o) { return s + o.area; }, 0);
+                    state.fabric = first.fabric;
+                    state.driveSystem = first.motor === 'motorized_solar' ? 'solar-kit' : first.motor === 'motorized_wired' ? 'electric-std' : first.motor === 'manual_crank' ? 'bead-chain' : 'electric-std';
                 } else {
                     // Sunroom / Pergola — from Step 3 dims
                     var dims = mData.dims || '';
@@ -13531,27 +13561,33 @@
             var cs = {};
 
             if (isZB) {
-                var area = state.unitArea;
-                var rawArea = area;
-                var effArea = area < 1 && area > 0 ? 1 : area;
                 var tierData = zbProductTiers[state.productTier];
                 cs.tierName = tierData ? tierData.name : state.productTier;
-                var tierRow = tierData ? tierData.tiers.find(function(t) { return effArea <= t.maxArea; }) || tierData.tiers[tierData.tiers.length - 1] : { retail: 52, wholesale: 43 };
-                var rate = tierRow[mode] || tierRow.retail;
-                cs.fabricCost = Math.round(rate * effArea * state.quantity);
                 var driveData = zbDriveSystems[state.driveSystem];
                 cs.driveName = driveData ? driveData.name : state.driveSystem;
-                cs.driveCost = Math.round((driveData ? (driveData[mode] || driveData.retail) : 68) * state.quantity);
-                var fabUpg = zbFabricUpgrades[state.fabric];
-                cs.fabricUpgrade = Math.round((fabUpg ? fabUpg.surcharge : 0) * effArea * state.quantity);
-                var hSur = getHeightSurcharge(state.heightM);
-                cs.heightSurcharge = Math.round((hSur ? hSur.surcharge : 0) * effArea * state.quantity);
-                // Min charge adjustment (Strategy 3) — separate line item matching Pricing Agent
-                var minChargeAdj = (rawArea < 1 && rawArea > 0) ? (1 - rawArea) : 0;
-                var firstTier = tierData ? tierData.tiers[0] : { retail: 52, wholesale: 43 };
-                cs.minChargeCost = minChargeAdj > 0 ? Math.round(minChargeAdj * (firstTier[mode] || firstTier.retail) * state.quantity) : 0;
-                cs.installCost = Math.round(45 * state.quantity);
-                cs.hardwareCost = Math.round(zbHardwareCostPerUnit * state.quantity);
+                // Per-opening cost aggregation
+                var openings = state.openings || [{ area: state.unitArea, heightM: state.heightM }];
+                var numO = openings.length || state.quantity || 1;
+                cs.fabricCost = 0; cs.driveCost = 0; cs.fabricUpgrade = 0;
+                cs.heightSurcharge = 0; cs.minChargeCost = 0;
+                for (var oi = 0; oi < numO; oi++) {
+                    var op = openings[oi] || openings[0];
+                    var rawArea = op.area;
+                    var effArea = rawArea < 1 && rawArea > 0 ? 1 : rawArea;
+                    var tierRow = tierData ? tierData.tiers.find(function(t) { return effArea <= t.maxArea; }) || tierData.tiers[tierData.tiers.length - 1] : { retail: 52, wholesale: 43 };
+                    var rate = tierRow[mode] || tierRow.retail;
+                    cs.fabricCost += Math.round(rate * effArea);
+                    cs.driveCost += Math.round(driveData ? (driveData[mode] || driveData.retail) : 68);
+                    var fabUpg = zbFabricUpgrades[state.fabric];
+                    cs.fabricUpgrade += Math.round((fabUpg ? fabUpg.surcharge : 0) * effArea);
+                    var hSur = getHeightSurcharge(op.heightM);
+                    cs.heightSurcharge += Math.round((hSur ? hSur.surcharge : 0) * effArea);
+                    var minAdj = (rawArea < 1 && rawArea > 0) ? (1 - rawArea) : 0;
+                    var fTier = tierData ? tierData.tiers[0] : { retail: 52, wholesale: 43 };
+                    cs.minChargeCost += minAdj > 0 ? Math.round(minAdj * (fTier[mode] || fTier.retail)) : 0;
+                }
+                cs.installCost = Math.round(45 * numO);
+                cs.hardwareCost = Math.round(zbHardwareCostPerUnit * numO);
                 var subtotal = cs.fabricCost + cs.driveCost + cs.fabricUpgrade + cs.heightSurcharge + cs.minChargeCost + cs.installCost + cs.hardwareCost;
                 cs.discountAmt = Math.round(subtotal * (state.discount / 100));
                 cs.totalCost = subtotal - cs.discountAmt;
@@ -15254,8 +15290,17 @@
             document.getElementById('quotClientPhone').value = project.phone || project.customerPhone || '';
             document.getElementById('quotCSRep').value = '';
 
-            // Reset line items with one default row
-            quotLineItemsData = [{ product: getQuotProductNames()[0], width: 3000, height: 2500, unitPrice: getQuotPriceLookup()[getQuotProductNames()[0]].defaultPrice, qty: 1 }];
+            // Populate line items from per-opening measurement data
+            var step4St = typeof getStep4State === 'function' ? getStep4State(projectId) : null;
+            if (step4St && step4St.openings && step4St.openings.length > 0 && quotProductType === 'zipblinds') {
+                quotLineItemsData = step4St.openings.map(function(op, idx) {
+                    var wMM = Math.round(op.widthIn * 25.4);   // inches to mm
+                    var hMM = Math.round(op.heightIn * 25.4);
+                    return { product: getQuotProductNames()[0], width: wMM, height: hMM, unitPrice: getQuotPriceLookup()[getQuotProductNames()[0]].defaultPrice, qty: 1 };
+                });
+            } else {
+                quotLineItemsData = [{ product: getQuotProductNames()[0], width: 3000, height: 2500, unitPrice: getQuotPriceLookup()[getQuotProductNames()[0]].defaultPrice, qty: 1 }];
+            }
             quotAccessoriesData = [];
             renderQuotLineItems();
             renderQuotAccessories();
