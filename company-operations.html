@@ -4685,11 +4685,18 @@
 
         // ===== Multi-Tenant Configuration =====
         const tenantConfigs = {
-            'default':      { name: 'Greenscape Builders', logo: 'images/partner-logo.png', language: 'en' },
-            'partner1':     { name: 'Greenscape Builders', logo: 'images/partner-logo.png', language: 'en' },
-            'omeya-sin':    { name: 'Omeya-SIN', logo: 'images/omeya-logo.png',             language: 'en' },
-            'nestopia-chn': { name: 'Nestopia-CHN', logo: 'images/nestopia-logo.png',        language: 'bilingual' }
+            'default':      { name: 'Greenscape Builders', logo: 'images/partner-logo.png', language: 'en',        unitSystem: 'imperial' },
+            'partner1':     { name: 'Greenscape Builders', logo: 'images/partner-logo.png', language: 'en',        unitSystem: 'imperial' },
+            'omeya-sin':    { name: 'Omeya-SIN', logo: 'images/omeya-logo.png',             language: 'en',        unitSystem: 'imperial' },
+            'nestopia-chn': { name: 'Nestopia-CHN', logo: 'images/nestopia-logo.png',        language: 'bilingual', unitSystem: 'metric' }
         };
+
+        /** Get tenant unit system — 'imperial' (inches/ft) or 'metric' (mm/cm/m) */
+        function getTenantUnitSystem() {
+            var slug = getCurrentTenantSlug();
+            var cfg = tenantConfigs[slug] || tenantConfigs['default'];
+            return cfg.unitSystem || 'imperial';
+        }
 
         // ===== Tenant Language Helpers =====
         function getTenantLanguage() {
