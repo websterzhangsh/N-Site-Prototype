@@ -14186,8 +14186,9 @@
                     var currentSlug = (typeof getCurrentTenantSlug === 'function') ? getCurrentTenantSlug() : 'default';
                     rows = rows.filter(function(row) {
                         var cfg = row.product_config || {};
-                        if (cfg.tenant_slug) return cfg.tenant_slug === currentSlug;
-                        return true;
+                        // Strict tenant isolation: only show projects tagged for this tenant
+                        if (!cfg.tenant_slug) return false;
+                        return cfg.tenant_slug === currentSlug;
                     });
                     // Build lookup of existing in-memory project IDs
                     var existingIds = {};
