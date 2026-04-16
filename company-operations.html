@@ -4116,7 +4116,23 @@
                                 </div>
                             </div>
 
-                            <!-- v1.2.0: Agent Toolbar (horizontal) -->
+                            <div class="bg-white rounded-xl border border-gray-200 mb-5 overflow-hidden">
+                                <div class="flex items-center gap-2 px-5 py-3 border-b border-gray-100 bg-gray-50/70">
+                                    <i class="fas fa-project-diagram text-blue-600 text-sm"></i>
+                                    <h3 class="text-sm font-semibold text-gray-700">Service Workflow</h3>
+                                    <span class="text-xs text-gray-400 ml-auto" id="projWorkflowHint">Click a step to view details</span>
+                                </div>
+                                <div class="p-5">
+                                    <div class="flex items-center justify-between gap-2" id="projWorkflowSteps">
+                                        <!-- 6-step pipeline rendered by JS -->
+                                    </div>
+                                </div>
+                                <!-- Step Detail Expansion -->
+                                <div id="projStepDetail" class="hidden border-t border-gray-100">
+                                </div>
+                            </div>
+
+                            <!-- v1.3.0: Agent Toolbar (moved below workflow) -->
                             <div class="agent-toolbar" id="agentToolbar">
                                 <div class="agent-toolbar-card" data-agent="compliance-agent" onclick="toggleAgentPanel('compliance-agent')"
                                      style="--agent-icon:#2563eb;--agent-bg:#eff6ff;--agent-border:#bfdbfe;">
@@ -4147,20 +4163,8 @@
                                 </div>
                             </div>
 
-                            <div class="bg-white rounded-xl border border-gray-200 mb-5 overflow-hidden">
-                                <div class="flex items-center gap-2 px-5 py-3 border-b border-gray-100 bg-gray-50/70">
-                                    <i class="fas fa-project-diagram text-blue-600 text-sm"></i>
-                                    <h3 class="text-sm font-semibold text-gray-700">Service Workflow</h3>
-                                    <span class="text-xs text-gray-400 ml-auto" id="projWorkflowHint">Click a step to view details</span>
-                                </div>
-                                <div class="p-5">
-                                    <div class="flex items-center justify-between gap-2" id="projWorkflowSteps">
-                                        <!-- 6-step pipeline rendered by JS -->
-                                    </div>
-                                </div>
-                                <!-- Step Detail Expansion -->
-                                <div id="projStepDetail" class="hidden border-t border-gray-100">
-                                </div>
+                            <!-- Core Actions + Key Deliverables (populated when step expanded) -->
+                            <div id="projCoreActionsPanel" class="hidden mb-5">
                             </div>
 
                             <!-- Risk List Section -->
@@ -11281,6 +11285,9 @@
                 container.classList.add('hidden');
                 container.innerHTML = '';
                 expandedStep = null;
+                // Also hide Core Actions panel
+                var caPanel = document.getElementById('projCoreActionsPanel');
+                if (caPanel) { caPanel.classList.add('hidden'); caPanel.innerHTML = ''; }
                 return;
             }
 
@@ -11301,6 +11308,9 @@
                             <span class="inline-block mt-3 text-xs font-medium text-gray-400 bg-gray-100 px-3 py-1 rounded-full">Coming Soon</span>
                         </div>`;
                     expandedStep = stepNum;
+                    // Hide Core Actions panel for placeholder step
+                    var caP = document.getElementById('projCoreActionsPanel');
+                    if (caP) { caP.classList.add('hidden'); caP.innerHTML = ''; }
                     container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                     return;
                 }
@@ -11313,6 +11323,7 @@
                 container.classList.remove('hidden');
                 container.innerHTML = renderStepDetailHTML(zbConfig, zbStatus, stepNum, zbColor, project);
                 expandedStep = stepNum;
+                _populateCoreActionsPanel(zbConfig, zbStatus, stepNum, zbColor);
                 container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 return;
             }
@@ -11366,9 +11377,53 @@
             container.classList.remove('hidden');
             container.innerHTML = renderStepDetailHTML(config, status, stepNum, color, project);
             expandedStep = stepNum;
+            _populateCoreActionsPanel(config, status, stepNum, color);
 
             // Smooth scroll to detail
             container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // v1.3.0: Populate external Core Actions + Key Deliverables panel
+        function _populateCoreActionsPanel(config, status, stepNum, color) {
+            var caPanel = document.getElementById('projCoreActionsPanel');
+            if (!caPanel) return;
+
+            // Build actions HTML
+            var actionsHTML = (config.coreActions || []).map(function(a, i) {
+                var done = i < status.actionsCompleted;
+                return '<div class="flex items-start gap-2 py-1.5 ' + (i > 0 ? 'border-t border-gray-50' : '') + '">' +
+                    '<div class="w-5 h-5 rounded-full flex items-center justify-center mt-0.5 flex-shrink-0 ' +
+                    (done ? 'bg-green-100' : 'bg-gray-100') + '">' +
+                    '<i class="fas ' + (done ? 'fa-check text-green-600' : 'fa-circle text-gray-300') + ' text-[8px]"></i></div>' +
+                    '<div><div class="text-xs font-medium text-gray-800">' + a.label + '</div>' +
+                    '<div class="text-[10px] text-gray-400 mt-0.5">' + a.desc + '</div></div></div>';
+            }).join('');
+
+            // Build deliverables HTML
+            var deliverablesHTML = (config.keyDeliverables || []).map(function(d, i) {
+                var done = i < status.deliverablesCompleted;
+                return '<div class="flex items-start gap-2 py-1.5 ' + (i > 0 ? 'border-t border-gray-50' : '') + '">' +
+                    '<div class="w-5 h-5 rounded-full flex items-center justify-center mt-0.5 flex-shrink-0 ' +
+                    (done ? 'bg-green-100' : 'bg-gray-100') + '">' +
+                    '<i class="fas ' + (done ? 'fa-check text-green-600' : 'fa-circle text-gray-300') + ' text-[8px]"></i></div>' +
+                    '<div><div class="text-xs font-medium text-gray-800">' + (d.icon ? '<i class="fas ' + d.icon + ' text-gray-400 mr-1.5"></i>' : '') + d.label + '</div>' +
+                    '<div class="text-[10px] text-gray-400 mt-0.5">' + d.desc + '</div></div></div>';
+            }).join('');
+
+            caPanel.innerHTML = '<div class="bg-white rounded-xl border border-gray-200 overflow-hidden">' +
+                '<div class="grid grid-cols-1 lg:grid-cols-2 gap-0 divide-y lg:divide-y-0 lg:divide-x divide-gray-100">' +
+                '<div class="p-4"><div class="flex items-center justify-between mb-3">' +
+                '<div class="flex items-center gap-2"><i class="fas fa-tasks text-' + color + '-500 text-sm"></i>' +
+                '<span class="text-sm font-semibold text-gray-700">Core Actions</span></div>' +
+                '<span class="text-xs text-gray-500">' + status.actionsCompleted + '/' + status.actionTotal + '</span></div>' +
+                actionsHTML + '</div>' +
+                '<div class="p-4"><div class="flex items-center justify-between mb-3">' +
+                '<div class="flex items-center gap-2"><i class="fas fa-file-alt text-' + color + '-500 text-sm"></i>' +
+                '<span class="text-sm font-semibold text-gray-700">Key Deliverables</span></div>' +
+                '<span class="text-xs text-gray-500">' + status.deliverablesCompleted + '/' + status.deliverableTotal + '</span></div>' +
+                deliverablesHTML + '</div>' +
+                '</div></div>';
+            caPanel.classList.remove('hidden');
         }
 
         function renderStepDetailHTML(config, status, stepNum, color, project) {
@@ -12408,32 +12463,6 @@
                             <button onclick="toggleStepDetail(${stepNum}, currentDetailProject)" class="w-7 h-7 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50">
                                 <i class="fas fa-times text-gray-400 text-xs"></i>
                             </button>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                        <!-- Left: Core Actions -->
-                        <div class="bg-white rounded-lg border border-gray-100 p-4">
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="flex items-center gap-2">
-                                    <i class="fas fa-tasks text-${color}-500 text-sm"></i>
-                                    <span class="text-sm font-semibold text-gray-700">Core Actions</span>
-                                </div>
-                                <span class="text-xs text-gray-500">${status.actionsCompleted}/${status.actionTotal}</span>
-                            </div>
-                            ${actionsHTML}
-                        </div>
-
-                        <!-- Right: Key Deliverables -->
-                        <div class="bg-white rounded-lg border border-gray-100 p-4">
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="flex items-center gap-2">
-                                    <i class="fas fa-file-alt text-${color}-500 text-sm"></i>
-                                    <span class="text-sm font-semibold text-gray-700">Key Deliverables</span>
-                                </div>
-                                <span class="text-xs text-gray-500">${status.deliverablesCompleted}/${status.deliverableTotal}</span>
-                            </div>
-                            ${deliverablesHTML}
                         </div>
                     </div>
 
