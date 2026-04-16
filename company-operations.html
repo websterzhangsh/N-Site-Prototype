@@ -9971,25 +9971,25 @@
                         { key: 'surveyor', label: 'Installer / Measurer', type: 'text', icon: 'fa-user-tie', placeholder: 'e.g. Tom Baker (#583041)' },
                         { key: 'date', label: 'Measurement Date', type: 'date', icon: 'fa-calendar' },
                         { key: 'openings', label: 'Number of Openings', type: 'number', icon: 'fa-th-large', placeholder: 'e.g. 3', min: 1, step: 1, defaultValue: '1' },
-                        { key: 'opening_width_in', label: 'Opening Width (inches)', type: 'number', icon: 'fa-arrows-alt-h', placeholder: 'e.g. 72' },
-                        { key: 'opening_height_in', label: 'Opening Height (inches)', type: 'number', icon: 'fa-arrows-alt-v', placeholder: 'e.g. 96' },
-                        { key: 'mounting', label: 'Mounting Type', type: 'select', icon: 'fa-wrench', options: [
+                        { key: 'width_in', label: 'Width (inches)', type: 'number', icon: 'fa-arrows-alt-h', placeholder: 'e.g. 72', perOpening: true },
+                        { key: 'height_in', label: 'Height (inches)', type: 'number', icon: 'fa-arrows-alt-v', placeholder: 'e.g. 96', perOpening: true },
+                        { key: 'mounting', label: 'Mounting Type', type: 'select', icon: 'fa-wrench', perOpening: true, options: [
                             { value: 'face_mount', label: 'Face Mount (Surface)' },
                             { value: 'recessed', label: 'Recessed Mount' },
                             { value: 'ceiling_mount', label: 'Ceiling Mount' }
                         ]},
-                        { key: 'guide', label: 'Guide / Track Type', type: 'select', icon: 'fa-grip-lines-vertical', options: [
+                        { key: 'guide', label: 'Guide / Track Type', type: 'select', icon: 'fa-grip-lines-vertical', perOpening: true, options: [
                             { value: 'zip_track', label: 'Zip Track (Sealed)' },
                             { value: 'cable_guide', label: 'Cable Guide' },
                             { value: 'side_channel', label: 'Side Channel' }
                         ]},
-                        { key: 'motor', label: 'Motor Type', type: 'select', icon: 'fa-cog', options: [
+                        { key: 'motor', label: 'Motor Type', type: 'select', icon: 'fa-cog', perOpening: true, options: [
                             { value: 'manual_crank', label: 'Manual Crank' },
                             { value: 'motorized_wired', label: 'Motorized (Hardwired)' },
                             { value: 'motorized_solar', label: 'Motorized (Solar)' },
                             { value: 'motorized_battery', label: 'Motorized (Battery)' }
                         ]},
-                        { key: 'fabric', label: 'Fabric / Screen Type', type: 'select', icon: 'fa-scroll', options: [
+                        { key: 'fabric', label: 'Fabric / Screen Type', type: 'select', icon: 'fa-scroll', perOpening: true, options: [
                             { value: 'mesh_5pct', label: 'Solar Mesh 5% Openness' },
                             { value: 'mesh_10pct', label: 'Solar Mesh 10% Openness' },
                             { value: 'blackout', label: 'Blackout Fabric' },
@@ -11722,27 +11722,57 @@
                     </div>`;
                 }).join('');
 
-                // Build measurement form fields (product-type-aware)
-                const fieldRows = activeFields.map(mf => {
-                    const savedVal = step3State.measurementData[mf.key] || (mData[mf.key] !== undefined ? String(mData[mf.key]) : '') || mf.defaultValue || '';
-                    let inputHTML = '';
+                // Build measurement form fields — split common vs per-opening (ZB only)
+                const commonFields = isZipBlinds ? activeFields.filter(mf => !mf.perOpening) : activeFields;
+                const perOpeningFieldDefs = isZipBlinds ? activeFields.filter(mf => mf.perOpening) : [];
+
+                function _renderMF(mf, fieldKey, savedVal, projId, extraOC) {
+                    const cls = 'w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-purple-200 focus:border-purple-400';
                     if (mf.type === 'select') {
-                        inputHTML = `<select id="step3_${mf.key}_${project.id}" class="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-purple-200 focus:border-purple-400 bg-white" onchange="updateStep3Field('${project.id}', '${mf.key}', this.value)">
+                        return `<select id="step3_${fieldKey}_${projId}" class="${cls} bg-white" onchange="updateStep3Field('${projId}', '${fieldKey}', this.value)${extraOC}">
                             <option value="">-- Select --</option>
                             ${mf.options.map(o => `<option value="${o.value}" ${savedVal === o.value ? 'selected' : ''}>${o.label}</option>`).join('')}
                         </select>`;
                     } else if (mf.type === 'date') {
-                        inputHTML = `<input type="date" id="step3_${mf.key}_${project.id}" value="${savedVal}" class="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-purple-200 focus:border-purple-400" onchange="updateStep3Field('${project.id}', '${mf.key}', this.value)">`;
+                        return `<input type="date" id="step3_${fieldKey}_${projId}" value="${savedVal}" class="${cls}" onchange="updateStep3Field('${projId}', '${fieldKey}', this.value)${extraOC}">`;
                     } else {
-                        inputHTML = `<input type="${mf.type}" id="step3_${mf.key}_${project.id}" value="${savedVal}" class="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-purple-200 focus:border-purple-400" placeholder="${mf.placeholder || ''}" ${mf.min !== undefined ? 'min="'+mf.min+'"' : ''} ${mf.step !== undefined ? 'step="'+mf.step+'"' : ''} onchange="updateStep3Field('${project.id}', '${mf.key}', this.value)">`;
+                        return `<input type="${mf.type}" id="step3_${fieldKey}_${projId}" value="${savedVal}" class="${cls}" placeholder="${mf.placeholder || ''}" ${mf.min !== undefined ? 'min="'+mf.min+'"' : ''} ${mf.step !== undefined ? 'step="'+mf.step+'"' : ''} onchange="updateStep3Field('${projId}', '${fieldKey}', this.value)${extraOC}">`;
                     }
+                }
+                function _renderMFWrap(mf, fieldKey, savedVal, projId, extraOC) {
                     return `<div class="space-y-1">
                         <label class="text-[10px] font-medium text-gray-500 flex items-center gap-1.5">
                             <i class="fas ${mf.icon} text-purple-400"></i>${mf.label}
                         </label>
-                        ${inputHTML}
+                        ${_renderMF(mf, fieldKey, savedVal, projId, extraOC)}
                     </div>`;
+                }
+
+                const fieldRows = commonFields.map(mf => {
+                    const savedVal = step3State.measurementData[mf.key] || (mData[mf.key] !== undefined ? String(mData[mf.key]) : '') || mf.defaultValue || '';
+                    const extraOC = (mf.key === 'openings') ? "; rebuildZBOpeningSections('" + project.id + "')" : '';
+                    return _renderMFWrap(mf, mf.key, savedVal, project.id, extraOC);
                 }).join('');
+
+                // Per-opening subsections (ZB only)
+                const numOpenings = isZipBlinds ? (parseInt(step3State.measurementData['openings'] || (mData['openings'] !== undefined ? String(mData['openings']) : '1')) || 1) : 0;
+                let openingSectionsHTML = '';
+                for (let oi = 1; oi <= numOpenings; oi++) {
+                    const openingRows = perOpeningFieldDefs.map(mf => {
+                        const perKey = 'opening_' + oi + '_' + mf.key;
+                        const savedVal = step3State.measurementData[perKey] || (mData[perKey] !== undefined ? String(mData[perKey]) : '') || '';
+                        return _renderMFWrap(mf, perKey, savedVal, project.id, '');
+                    }).join('');
+                    openingSectionsHTML += `<div class="mt-3 p-3 bg-indigo-50/30 rounded-lg border border-indigo-100">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-5 h-5 bg-indigo-100 rounded flex items-center justify-center">
+                                <span class="text-[10px] font-bold text-indigo-600">${oi}</span>
+                            </div>
+                            <span class="text-xs font-semibold text-indigo-700">Opening #${oi}</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2.5">${openingRows}</div>
+                    </div>`;
+                }
 
                 // Obstacle list
                 const obstacles = step3State.obstacles.length > 0 ? step3State.obstacles : (mData.obstacles || []);
@@ -11871,6 +11901,9 @@
                                     </div>
                                     <div class="grid grid-cols-2 gap-2.5">
                                         ${fieldRows}
+                                    </div>
+                                    <div id="zbOpeningSections_${project.id}">
+                                        ${openingSectionsHTML}
                                     </div>
                                 </div>
 
@@ -13116,7 +13149,7 @@
             var project = allProjectsData.find(p => p.id === projectId);
             var md = state.measurementData;
             if (project && project.type === 'Zip Blinds') {
-                state.measurementComplete = Boolean(md.method && md.surveyor && md.date && md.openings && md.opening_width_in && md.opening_height_in);
+                state.measurementComplete = Boolean(md.method && md.surveyor && md.date && md.openings && md.opening_1_width_in && md.opening_1_height_in);
             } else {
                 state.measurementComplete = Boolean(md.method && md.surveyor && md.date && md.length_ft && md.width_ft && md.height_ft);
             }
@@ -13132,6 +13165,46 @@
             }
         }
 
+        function rebuildZBOpeningSections(projectId) {
+            var container = document.getElementById('zbOpeningSections_' + projectId);
+            if (!container) return;
+            var state = getStep3State(projectId);
+            var openingsInput = document.getElementById('step3_openings_' + projectId);
+            var numOpenings = parseInt(openingsInput ? openingsInput.value : '1') || 1;
+            if (numOpenings < 1) numOpenings = 1;
+            if (numOpenings > 20) numOpenings = 20;
+            state.measurementData['openings'] = String(numOpenings);
+
+            var config = STEP_DETAIL_CONFIG[3];
+            if (!config || !config.measurementPanel || !config.measurementPanel.zipBlindsFields) return;
+            var perFields = config.measurementPanel.zipBlindsFields.filter(function(f) { return f.perOpening; });
+            if (perFields.length === 0) return;
+
+            var cls = 'w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-purple-200 focus:border-purple-400';
+            var html = '';
+            for (var oi = 1; oi <= numOpenings; oi++) {
+                var rows = perFields.map(function(mf) {
+                    var perKey = 'opening_' + oi + '_' + mf.key;
+                    var savedVal = state.measurementData[perKey] || '';
+                    var inp;
+                    if (mf.type === 'select') {
+                        inp = '<select id="step3_' + perKey + '_' + projectId + '" class="' + cls + ' bg-white" onchange="updateStep3Field(\x27' + projectId + '\x27, \x27' + perKey + '\x27, this.value)"><option value="">-- Select --</option>' +
+                            mf.options.map(function(o) { return '<option value="' + o.value + '"' + (savedVal === o.value ? ' selected' : '') + '>' + o.label + '</option>'; }).join('') + '</select>';
+                    } else {
+                        inp = '<input type="' + mf.type + '" id="step3_' + perKey + '_' + projectId + '" value="' + savedVal + '" class="' + cls + '" placeholder="' + (mf.placeholder || '') + '"' +
+                            (mf.min !== undefined ? ' min="' + mf.min + '"' : '') + (mf.step !== undefined ? ' step="' + mf.step + '"' : '') +
+                            ' onchange="updateStep3Field(\x27' + projectId + '\x27, \x27' + perKey + '\x27, this.value)">';
+                    }
+                    return '<div class="space-y-1"><label class="text-[10px] font-medium text-gray-500 flex items-center gap-1.5"><i class="fas ' + mf.icon + ' text-purple-400"></i>' + mf.label + '</label>' + inp + '</div>';
+                }).join('');
+                html += '<div class="mt-3 p-3 bg-indigo-50/30 rounded-lg border border-indigo-100">' +
+                    '<div class="flex items-center gap-2 mb-2"><div class="w-5 h-5 bg-indigo-100 rounded flex items-center justify-center"><span class="text-[10px] font-bold text-indigo-600">' + oi + '</span></div>' +
+                    '<span class="text-xs font-semibold text-indigo-700">Opening #' + oi + '</span></div>' +
+                    '<div class="grid grid-cols-2 gap-2.5">' + rows + '</div></div>';
+            }
+            container.innerHTML = html;
+        }
+
         function saveStep3Measurement(projectId) {
             var state = getStep3State(projectId);
             var project = allProjectsData.find(p => p.id === projectId);
@@ -13140,15 +13213,28 @@
             var config = STEP_DETAIL_CONFIG[3];
             if (config && config.measurementPanel) {
                 var fields = isZB && config.measurementPanel.zipBlindsFields ? config.measurementPanel.zipBlindsFields : config.measurementPanel.measurementFields;
-                fields.forEach(function(mf) {
+                var commonFields = fields.filter(function(f) { return !f.perOpening; });
+                commonFields.forEach(function(mf) {
                     var el = document.getElementById('step3_' + mf.key + '_' + projectId);
                     if (el) state.measurementData[mf.key] = el.value;
                 });
+                // Collect per-opening fields (ZB)
+                if (isZB) {
+                    var perFields = fields.filter(function(f) { return f.perOpening; });
+                    var numO = parseInt(state.measurementData['openings'] || '1') || 1;
+                    for (var oi = 1; oi <= numO; oi++) {
+                        perFields.forEach(function(mf) {
+                            var perKey = 'opening_' + oi + '_' + mf.key;
+                            var el = document.getElementById('step3_' + perKey + '_' + projectId);
+                            if (el) state.measurementData[perKey] = el.value;
+                        });
+                    }
+                }
             }
             // Update measurement completeness (product-type-aware)
             var md = state.measurementData;
             if (isZB) {
-                state.measurementComplete = Boolean(md.method && md.surveyor && md.date && md.openings && md.opening_width_in && md.opening_height_in);
+                state.measurementComplete = Boolean(md.method && md.surveyor && md.date && md.openings && md.opening_1_width_in && md.opening_1_height_in);
             } else {
                 state.measurementComplete = Boolean(md.method && md.surveyor && md.date && md.length_ft && md.width_ft && md.height_ft);
             }
