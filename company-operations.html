@@ -13935,6 +13935,7 @@
                 is_deleted: false,
                 created_by: 'e20592c6-57da-464a-aecf-0d9c65b36a42',
                 product_config: {
+                    tenant_slug: (typeof getCurrentTenantSlug === 'function') ? getCurrentTenantSlug() : 'default',
                     product_type: project.type,
                     stage: project.stage,
                     riskLevel: project.riskLevel,
@@ -13973,6 +13974,7 @@
                 .select('*')
                 .eq('tenant_id', tenantId)
                 .eq('is_deleted', false)
+                .not('project_number', 'is', null)
                 .order('created_at', { ascending: false })
                 .then(function(res) {
                     if (res.error) {
@@ -13981,6 +13983,13 @@
                         return;
                     }
                     var rows = res.data || [];
+                    // Filter by tenant slug — isolate sub-tenants sharing same tenant_id
+                    var currentSlug = (typeof getCurrentTenantSlug === 'function') ? getCurrentTenantSlug() : 'default';
+                    rows = rows.filter(function(row) {
+                        var cfg = row.product_config || {};
+                        if (cfg.tenant_slug) return cfg.tenant_slug === currentSlug;
+                        return true;
+                    });
                     // Build lookup of existing in-memory project IDs
                     var existingIds = {};
                     allProjectsData.forEach(function(p) { existingIds[p.id] = true; });
