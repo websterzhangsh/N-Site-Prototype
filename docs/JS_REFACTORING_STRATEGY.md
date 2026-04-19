@@ -763,7 +763,60 @@ Phase 0 ✅ → Phase 1 ✅ → Phase 2 ✅ → Phase 3 ✅ → Phase 4 ✅ → 
 **修改脚本**: `scripts/phase3_extract_modules.py`
 **关键修复**: Agent 创建文件时出现代码重复 — `overview.js` 3x (920→304行)、`products.js` 2x (1939→969行)，通过截断修复。
 
-### 9.6 当前脚本加载顺序
+### 9.6 Phase 4: 提取 Agent 和 Step 实现 ✅
+
+**完成日期**: 2026-04-19
+**Commit**: `666e34d`
+**HTML 行数**: 11,509 → 7,351 (-4,158 行)
+
+| 步骤 | 文件 | 行数 | 命名空间 | 状态 |
+|------|------|------|---------|------|
+| 4.1 | `js/agents/designer.js` | 739 | `Nestopia.agents.designer` | ✅ |
+| 4.2 | `js/agents/pricing.js` | 501 | `Nestopia.agents.pricing` | ✅ |
+| 4.3 | `js/agents/compliance.js` | 289 | `Nestopia.agents.compliance` | ✅ |
+| 4.4 | `js/agents/customer-service.js` | 339 | `Nestopia.agents.cs` | ✅ |
+| 4.5 | `js/steps/step2-design.js` | 536 | `Nestopia.steps.step2` | ✅ |
+| 4.6 | `js/steps/step3-measurement.js` | 541 | `Nestopia.steps.step3` | ✅ |
+| 4.7 | `js/steps/step4-quotation.js` | 493 | `Nestopia.steps.step4` | ✅ |
+| 4.8 | `js/utils/quotation-editor.js` | 716 | `Nestopia.utils.quotEditor` | ✅ |
+| 4.9 | `js/utils/chatbot.js` | 438 | `Nestopia.utils.chatbot` | ✅ |
+
+**修改脚本**: `scripts/phase4_extract_agents_steps.py`
+**关键改进**: 先收集所有行号范围再统一替换（修复了 Phase 3 中顺序替换导致标记消失的问题）。
+
+### 9.7 Phase 4B: onclick 迁移到命名空间 ✅
+
+**完成日期**: 2026-04-19
+**修改文件**: 13 个 (HTML + 12 个 JS 文件)
+
+| 指标 | 数值 |
+|------|------|
+| HTML onclick 总数 | 130 |
+| 已迁移到 `Nestopia.*` | 91 (70%) |
+| 未迁移（仍为内联函数/DOM API） | 39 |
+| JS 文件 onclick 迁移 | 41 (100%) |
+| 涉及的命名空间路径 | 67 个函数 |
+
+**迁移示例**:
+```html
+<!-- 之前 -->
+<button onclick="selectProject('PRJ-001')">View</button>
+<!-- 之后 -->
+<button onclick="Nestopia.modules.projects.selectProject('PRJ-001')">View</button>
+```
+
+**未迁移的 14 个函数**（仍为内联定义，Phase 5 可进一步提取）:
+`toggleAgentPanel`, `closeAgentPanel`, `goBackFromDesigner`, `goBackFromPricing`,
+`previewProjectFile`, `handleRemoveProjectFile`, `previewKBDocument`, `toggleStepDetail`,
+`openIntakeModule`, `closeIntakeModal`, `saveIntakeModule`, `removeUploadedFile`,
+`openAddMemberModal`, `viewMember`
+
+**全局别名保留**: 因 JS 模块间存在大量交叉引用（如 `showToast` 被 14 个文件调用），
+全局别名桥接暂保留。Phase 5 切换 ES Modules 后可通过 `import` 替代。
+
+**修改脚本**: `scripts/phase4b_onclick_namespace.py`
+
+### 9.8 当前脚本加载顺序（Phase 4 完成后）
 
 ```html
 <!-- 1. 命名空间 -->
@@ -792,23 +845,23 @@ Phase 0 ✅ → Phase 1 ✅ → Phase 2 ✅ → Phase 3 ✅ → Phase 4 ✅ → 
 <script src="js/modules/overview.js"></script>
 <script src="js/modules/projects.js"></script>
 <script src="js/modules/workflow.js"></script>
-<!-- 6. 内联主脚本 (~7,046 行, 待 Phase 4 提取) -->
+<!-- 6. Agent 模块 (Phase 4) -->
+<script src="js/agents/designer.js"></script>
+<script src="js/agents/pricing.js"></script>
+<script src="js/agents/compliance.js"></script>
+<script src="js/agents/customer-service.js"></script>
+<!-- 7. Step 实现 (Phase 4) -->
+<script src="js/steps/step2-design.js"></script>
+<script src="js/steps/step3-measurement.js"></script>
+<script src="js/steps/step4-quotation.js"></script>
+<!-- 8. 独立工具 (Phase 4) -->
+<script src="js/utils/quotation-editor.js"></script>
+<script src="js/utils/chatbot.js"></script>
 ```
 
-### 9.7 经验教训
+### 9.9 剩余内联代码分析
 
-| 问题 | 解决方案 | 预防措施 |
-|------|---------|---------|
-| Write tool 创建 0 字节文件 | 改用 bash heredoc | 创建后立即 `wc -l` 验证 |
-| Agent 重复复制代码 | 截断文件保留首份完整 IIFE | 创建后 grep 检查函数出现次数 |
-| 脚本加载顺序错误 | `fix_script_order.py` 统一整理 | `<script>` 标签集中管理 |
-| Python 脚本锚点匹配失败 | 手动 Edit 插入 | `find_line()` 改用 `strip()` |
-| 顺序替换导致中间标记消失 | 先收集所有行号再统一替换 | 替换前在原始文件上定位全部标记 |
-| Phase 4 chatbot.js / step4 又遇 0 字节 | Agent 内用 Bash 验证 `wc -l` | 创建后必须验证非空 |
-
-### 9.8 剩余内联代码分析（Phase 4 完成后）
-
-Phase 4 完成后，`company-operations.html` 内联 `<script>` 仍有约 2,986 行，分布如下：
+Phase 4 完成后，`company-operations.html` 内联 `<script>` 仍有约 2,986 行：
 
 | 区域 | 约行数 | 说明 |
 |------|-------|------|
@@ -821,33 +874,9 @@ Phase 4 完成后，`company-operations.html` 内联 `<script>` 仍有约 2,986 
 | Phase 2/3 占位注释 | ~20 | 已提取模块的注释标记 |
 | **合计** | **~2,870** | |
 
-这些代码可在后续 Phase 4B/5 中进一步提取。
-<script src="js/utils/quotation-editor.js"></script>
-<script src="js/utils/chatbot.js"></script>
-```
+这些代码可在后续 Phase 5 中进一步提取。
 
-### 9.6 Phase 4: 提取 Agent 和 Step 实现 ✅
-
-**完成日期**: 2026-04-19
-**Commit**: (本次提交)
-**HTML 行数**: 11,509 → 7,351 (-4,158 行)
-
-| 步骤 | 文件 | 行数 | 命名空间 | 状态 |
-|------|------|------|---------|------|
-| 4.1 | `js/agents/designer.js` | 739 | `Nestopia.agents.designer` | ✅ |
-| 4.2 | `js/agents/pricing.js` | 501 | `Nestopia.agents.pricing` | ✅ |
-| 4.3 | `js/agents/compliance.js` | 289 | `Nestopia.agents.compliance` | ✅ |
-| 4.4 | `js/agents/customer-service.js` | 339 | `Nestopia.agents.cs` | ✅ |
-| 4.5 | `js/steps/step2-design.js` | 536 | `Nestopia.steps.step2` | ✅ |
-| 4.6 | `js/steps/step3-measurement.js` | 541 | `Nestopia.steps.step3` | ✅ |
-| 4.7 | `js/steps/step4-quotation.js` | 493 | `Nestopia.steps.step4` | ✅ |
-| 4.8 | `js/utils/quotation-editor.js` | 716 | `Nestopia.utils.quotEditor` | ✅ |
-| 4.9 | `js/utils/chatbot.js` | 438 | `Nestopia.utils.chatbot` | ✅ |
-
-**修改脚本**: `scripts/phase4_extract_agents_steps.py`
-**关键改进**: 先收集所有行号范围再统一替换（修复了 Phase 3 中顺序替换导致标记消失的问题）。
-
-### 9.7 经验教训
+### 9.10 经验教训
 
 | 问题 | 解决方案 | 预防措施 |
 |------|---------|---------|
@@ -855,3 +884,7 @@ Phase 4 完成后，`company-operations.html` 内联 `<script>` 仍有约 2,986 
 | Agent 重复复制代码 | 截断文件保留首份完整 IIFE | 创建后 grep 检查函数出现次数 |
 | 脚本加载顺序错误 | `fix_script_order.py` 统一整理 | `<script>` 标签集中管理 |
 | Python 脚本锚点匹配失败 | 手动 Edit 插入 | `find_line()` 改用 `strip()` |
+| 顺序替换导致中间标记消失 | 先收集所有行号再统一替换 | 替换前在原始文件上定位全部标记 |
+| Phase 4 chatbot.js / step4 又遇 0 字节 | Agent 内用 Bash 验证 `wc -l` | 创建后必须验证非空 |
+
+*文档已审核通过。Phase 0-4B 已完成，Phase 5（构建工具整合）为独立里程碑。*
