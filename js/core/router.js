@@ -104,6 +104,24 @@
         }
     };
 
+    // ── 侧栏 nav-item 点击事件绑定 ──
+    // 为所有带 data-page 属性的 .nav-item 绑定 click → navigateToPage
+    function _bindNavItems() {
+        document.querySelectorAll('.nav-item[data-page]').forEach(function(item) {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                var pageName = this.getAttribute('data-page');
+                if (pageName) N.router.navigateToPage(pageName);
+            });
+        });
+    }
+    // DOM 可能已 ready（脚本在 body 尾部加载），也可能还没 ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', _bindNavItems);
+    } else {
+        _bindNavItems();
+    }
+
     // ── 全局别名桥接（onclick 兼容） ──
     window.navigateToPage = N.router.navigateToPage;
     window.navigateToProject = N.router.navigateToProject;
