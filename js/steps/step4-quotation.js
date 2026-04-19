@@ -15,6 +15,14 @@
     var _step4DbLoaded = {};  // 标记已从 DB 加载的项目
     var _quotDbLoaded = {};   // 报价列表已从 DB 加载的项目
 
+    // ── 定价数据本地引用（来自 pricing-data.js） ──
+    var _pricing = N.data && N.data.pricing ? N.data.pricing : {};
+    var zbProductTiers       = _pricing.zbProductTiers    || {};
+    var zbDriveSystems       = _pricing.zbDriveSystems    || {};
+    var zbFabricUpgrades     = _pricing.zbFabricUpgrades  || [];
+    var zbHeightSurcharges   = _pricing.zbHeightSurcharges || [];
+    var zbHardwareCostPerUnit = _pricing.zbHardwareCostPerUnit || 30;
+
     // ── Supabase Quotation 持久化 ──────────────────────────
     function loadStep4FromDB(projectId) {
         if (typeof NestopiaDB === 'undefined' || !NestopiaDB.isConnected()) return Promise.resolve(null);

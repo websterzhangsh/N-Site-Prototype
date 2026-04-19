@@ -63,5 +63,12 @@
         zbHardwareCostPerUnit: 30
     };
 
+    // ── 全局别名桥接（step4-quotation.js / inline script 兼容） ──
+    window.zbProductTiers    = N.data.pricing.zbProductTiers;
+    window.zbDriveSystems    = N.data.pricing.zbDriveSystems;
+    window.zbFabricUpgrades  = N.data.pricing.zbFabricUpgrades;
+    window.zbHeightSurcharges = N.data.pricing.zbHeightSurcharges;
+    window.zbHardwareCostPerUnit = N.data.pricing.zbHardwareCostPerUnit;
+
     console.log('[Nestopia] pricing-data.js loaded');
 })();
