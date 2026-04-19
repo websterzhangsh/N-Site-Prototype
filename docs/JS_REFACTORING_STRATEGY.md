@@ -672,4 +672,133 @@ Phase 0 --> Phase 1 --> Phase 2 --> Phase 3 --> Phase 4 --> [Phase 4B]
 
 ---
 
-*文档已审核通过。准备从 Phase 0 开始执行。*
+*文档已审核通过。Phase 0-3 已完成，Phase 4 待执行。*
+
+---
+
+## 9. 执行记录（Phase 0-3）
+
+> 更新日期: 2026-04-18
+
+### 9.1 总体进度
+
+| 指标 | 目标值 | 当前值 | 状态 |
+|------|-------|--------|------|
+| HTML 行数 | ≤ 5,000 | 11,510 | 🔄 进行中 (-30.7%) |
+| 已提取模块数 | 22 | 15 | 🔄 15/22 |
+| 功能回归通过 | 100% | Phase 0-3 均通过 | ✅ |
+| Console 零报错 | 无 | 通过 | ✅ |
+
+```
+Phase 0 ✅ → Phase 1 ✅ → Phase 2 ✅ → Phase 3 ✅ → Phase 4 ⬜ → [Phase 4B ⬜]
+16,605行       -980行         -482行         -3,635行      待执行
+```
+
+### 9.2 Phase 0: 基础设施准备 ✅
+
+**完成日期**: 2026-04-17
+**Commit**: `f361ec5`
+
+| 交付物 | 状态 |
+|--------|------|
+| 目录结构 `js/core/` `js/data/` `js/modules/` `js/agents/` `js/steps/` `js/utils/` | ✅ |
+| `js/core/namespace.js` (62 行) | ✅ |
+| `vite.config.js` build 脚本更新（cp js/ 到 dist/） | ✅ |
+| `_headers` 缓存策略 | ✅ |
+| 版本 hash 注入机制 (`?v=__HASH__`) | ✅ |
+
+### 9.3 Phase 1: 提取数据/配置层 ✅
+
+**完成日期**: 2026-04-18
+**Commit**: `c267841`
+**HTML 行数**: 16,604 → 15,624 (-980 行)
+
+| 步骤 | 文件 | 行数 | 命名空间 | 状态 |
+|------|------|------|---------|------|
+| 1.1 | `js/data/i18n-dict.js` | ~80 | `Nestopia.data.i18nDict` | ✅ |
+| 1.2 | `js/data/pricing-data.js` | ~60 | `Nestopia.data.pricing` | ✅ |
+| 1.3 | `js/data/product-catalog.js` | ~380 | `Nestopia.data.productCatalog` | ✅ |
+| 1.4 | `js/data/step-config.js` | ~750 | `Nestopia.data.stepConfig` | ✅ |
+| 1.5 | `js/data/intake-fields.js` | ~230 | `Nestopia.data.intakeFields` | ✅ |
+| 1.6 | `js/data/seed-projects.js` | ~1,700 | `Nestopia.data.seedProjects` | ✅ |
+
+**修改脚本**: `scripts/phase1_extract_data.py`
+
+### 9.4 Phase 2: 提取核心基础层 ✅
+
+**完成日期**: 2026-04-18
+**Commit**: `0ff7c6a`
+**HTML 行数**: 15,624 → 15,142 (-482 行)
+
+| 步骤 | 文件 | 行数 | 命名空间 | 状态 |
+|------|------|------|---------|------|
+| 2.1 | `js/core/supabase-config.js` | ~75 | `Nestopia.db` (+ `window.NestopiaDB`) | ✅ |
+| 2.2 | `js/core/supabase-storage.js` | ~243 | `Nestopia.storage` (+ `window.NestopiaStorage`) | ✅ |
+| 2.3 | `js/core/auth.js` | ~50 | `Nestopia.auth` | ✅ |
+| 2.4 | `js/core/tenant.js` | ~100 | `Nestopia.tenant` | ✅ |
+| 2.5 | `js/core/i18n.js` | ~40 | `Nestopia.i18n` | ✅ |
+| 2.6 | `js/core/router.js` | ~300 | `Nestopia.router` | ✅ |
+
+**修改脚本**: `scripts/phase2_extract_core.py` + `scripts/fix_script_order.py`
+**关键修复**: 发现并修复脚本加载顺序 bug — `namespace.js` 必须在所有模块之前加载。
+
+### 9.5 Phase 3: 提取功能模块 ✅
+
+**完成日期**: 2026-04-18
+**Commit**: `b1e11b3` (主提交) + `fd0e31c` (修复重复代码)
+**HTML 行数**: 15,145 → 11,510 (-3,635 行)
+
+| 步骤 | 文件 | 行数 | 命名空间 | 状态 |
+|------|------|------|---------|------|
+| 3.1 | `js/utils/helpers.js` | 84 | `Nestopia.utils` | ✅ |
+| 3.2 | `js/modules/orders.js` | 78 | `Nestopia.modules.orders` | ✅ |
+| 3.3 | `js/modules/customers.js` | 625 | `Nestopia.modules.customers` | ✅ |
+| 3.4 | `js/modules/knowledge-base.js` | 523 | `Nestopia.modules.knowledgeBase` | ✅ |
+| 3.5 | `js/modules/products.js` | 969 | `Nestopia.modules.products` | ✅ |
+| 3.6 | `js/modules/overview.js` | 304 | `Nestopia.modules.overview` | ✅ |
+| 3.7 | `js/modules/projects.js` | 950 | `Nestopia.modules.projects` | ✅ |
+| 3.8 | `js/modules/workflow.js` | 566 | `Nestopia.modules.workflow` | ✅ |
+
+**修改脚本**: `scripts/phase3_extract_modules.py`
+**关键修复**: Agent 创建文件时出现代码重复 — `overview.js` 3x (920→304行)、`products.js` 2x (1939→969行)，通过截断修复。
+
+### 9.6 当前脚本加载顺序
+
+```html
+<!-- 1. 命名空间 -->
+<script src="js/core/namespace.js"></script>
+<!-- 2. 核心基础层 (Phase 2) -->
+<script src="js/core/supabase-config.js"></script>
+<script src="js/core/supabase-storage.js"></script>
+<script src="js/core/auth.js"></script>
+<script src="js/core/tenant.js"></script>
+<script src="js/core/i18n.js"></script>
+<script src="js/core/router.js"></script>
+<!-- 3. 数据层 (Phase 1) -->
+<script src="js/data/i18n-dict.js"></script>
+<script src="js/data/pricing-data.js"></script>
+<script src="js/data/product-catalog.js"></script>
+<script src="js/data/step-config.js"></script>
+<script src="js/data/intake-fields.js"></script>
+<script src="js/data/seed-projects.js"></script>
+<!-- 4. 工具层 (Phase 3) -->
+<script src="js/utils/helpers.js"></script>
+<!-- 5. 功能模块 (Phase 3) -->
+<script src="js/modules/orders.js"></script>
+<script src="js/modules/customers.js"></script>
+<script src="js/modules/knowledge-base.js"></script>
+<script src="js/modules/products.js"></script>
+<script src="js/modules/overview.js"></script>
+<script src="js/modules/projects.js"></script>
+<script src="js/modules/workflow.js"></script>
+<!-- 6. 内联主脚本 (~7,046 行, 待 Phase 4 提取) -->
+```
+
+### 9.7 经验教训
+
+| 问题 | 解决方案 | 预防措施 |
+|------|---------|---------|
+| Write tool 创建 0 字节文件 | 改用 bash heredoc | 创建后立即 `wc -l` 验证 |
+| Agent 重复复制代码 | 截断文件保留首份完整 IIFE | 创建后 grep 检查函数出现次数 |
+| 脚本加载顺序错误 | `fix_script_order.py` 统一整理 | `<script>` 标签集中管理 |
+| Python 脚本锚点匹配失败 | 手动 Edit 插入 | `find_line()` 改用 `strip()` |
