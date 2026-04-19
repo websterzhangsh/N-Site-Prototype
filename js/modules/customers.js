@@ -188,7 +188,7 @@
             var initials = _getCustomerInitials(c.name);
             var isSelected = customersState.selectedCustomer === c.id;
             var selectedCls = isSelected ? ' bg-blue-50/50 border-l-4 border-blue-500' : '';
-            return '<div class="customer-item p-4 hover:bg-gray-50 cursor-pointer' + selectedCls + '" data-customer="' + c.id + '" onclick="selectCustomerItem(this)">' +
+            return '<div class="customer-item p-4 hover:bg-gray-50 cursor-pointer' + selectedCls + '" data-customer="' + c.id + '" onclick="Nestopia.modules.customers.selectCustomerItem(this)">' +
                 '<div class="flex items-start gap-3">' +
                 '<div class="w-10 h-10 ' + color + ' rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">' + initials + '</div>' +
                 '<div class="flex-1 min-w-0">' +
@@ -323,7 +323,7 @@
         overlay.innerHTML = '<div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">' +
             '<div class="flex items-center justify-between p-5 border-b border-gray-200">' +
             '<h2 class="text-lg font-bold text-gray-900">' + title + '</h2>' +
-            '<button onclick="closeCustomerModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 text-xl">&times;</button>' +
+            '<button onclick="Nestopia.modules.customers.closeCustomerModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 text-xl">&times;</button>' +
             '</div>' +
             '<div class="p-5 space-y-4">' +
             _custField('custForm_name', 'Client Name', 'text', true, customer ? customer.name : '', 'Full name') +
@@ -354,10 +354,10 @@
             '<textarea id="custForm_notes" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="3" placeholder="Add notes...">' + (customer && customer.notes ? customer.notes : '') + '</textarea></div>' +
             '</div>' +
             '<div class="flex items-center justify-between p-5 border-t border-gray-200">' +
-            (isEdit ? '<button onclick="confirmDeleteCustomer()" class="px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition"><i class="fas fa-trash-alt mr-1"></i>Delete</button>' : '<div></div>') +
+            (isEdit ? '<button onclick="Nestopia.modules.customers.confirmDeleteCustomer()" class="px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition"><i class="fas fa-trash-alt mr-1"></i>Delete</button>' : '<div></div>') +
             '<div class="flex gap-3">' +
-            '<button onclick="closeCustomerModal()" class="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition">Cancel</button>' +
-            '<button onclick="submitCustomerForm()" class="px-6 py-2 bg-gray-900 text-white text-sm rounded-lg hover:bg-gray-800 transition"><i class="fas fa-save mr-1"></i>Save</button>' +
+            '<button onclick="Nestopia.modules.customers.closeCustomerModal()" class="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition">Cancel</button>' +
+            '<button onclick="Nestopia.modules.customers.submitCustomerForm()" class="px-6 py-2 bg-gray-900 text-white text-sm rounded-lg hover:bg-gray-800 transition"><i class="fas fa-save mr-1"></i>Save</button>' +
             '</div></div></div>';
         overlay.dataset.editId = cid;
         document.body.appendChild(overlay);

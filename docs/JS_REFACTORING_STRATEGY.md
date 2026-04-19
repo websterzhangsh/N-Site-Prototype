@@ -1,11 +1,11 @@
 # JS 代码重构策略
 ## company-operations.html 模块化拆分方案
 
-> **文档版本**: v1.2
+> **文档版本**: v1.4
 > **创建日期**: 2026-04-17
-> **更新日期**: 2026-04-18
-> **状态**: ✅ Phase 0-3 已完成，Phase 4 待执行
-> **目标文件**: `company-operations.html`（起始 16,605 行 → 当前 11,510 行）
+> **更新日期**: 2026-04-19
+> **状态**: ✅ Phase 0-4B 已完成，Phase 5 待执行
+> **目标文件**: `company-operations.html`（起始 16,605 行 → 当前 7,351 行）
 
 ### 决策记录
 
@@ -678,20 +678,21 @@ Phase 0 --> Phase 1 --> Phase 2 --> Phase 3 --> Phase 4 --> [Phase 4B]
 
 ## 9. 执行记录（Phase 0-3）
 
-> 更新日期: 2026-04-18
+> 更新日期: 2026-04-19
 
 ### 9.1 总体进度
 
 | 指标 | 目标值 | 当前值 | 状态 |
 |------|-------|--------|------|
-| HTML 行数 | ≤ 5,000 | 11,510 | 🔄 进行中 (-30.7%) |
-| 已提取模块数 | 22 | 15 | 🔄 15/22 |
-| 功能回归通过 | 100% | Phase 0-3 均通过 | ✅ |
+| HTML 行数 | ≤ 5,000 | 7,351 | 🔄 进行中 (-55.7%) |
+| 已提取模块数 | 22 | 24 (30 文件) | ✅ 超额完成 |
+| onclick 命名空间覆盖率 | 100% | 70% (91/130) | 🔄 剩余为未提取的内联函数 |
+| 功能回归通过 | 100% | Phase 0-4B 均通过 | ✅ |
 | Console 零报错 | 无 | 通过 | ✅ |
 
 ```
-Phase 0 ✅ → Phase 1 ✅ → Phase 2 ✅ → Phase 3 ✅ → Phase 4 ⬜ → [Phase 4B ⬜]
-16,605行       -980行         -482行         -3,635行      待执行
+Phase 0 ✅ → Phase 1 ✅ → Phase 2 ✅ → Phase 3 ✅ → Phase 4 ✅ → Phase 4B ✅ → [Phase 5 ⬜]
+16,605行       -980行         -482行         -3,635行       -4,158行     onclick迁移
 ```
 
 ### 9.2 Phase 0: 基础设施准备 ✅
@@ -793,6 +794,58 @@ Phase 0 ✅ → Phase 1 ✅ → Phase 2 ✅ → Phase 3 ✅ → Phase 4 ⬜ → 
 <script src="js/modules/workflow.js"></script>
 <!-- 6. 内联主脚本 (~7,046 行, 待 Phase 4 提取) -->
 ```
+
+### 9.7 经验教训
+
+| 问题 | 解决方案 | 预防措施 |
+|------|---------|---------|
+| Write tool 创建 0 字节文件 | 改用 bash heredoc | 创建后立即 `wc -l` 验证 |
+| Agent 重复复制代码 | 截断文件保留首份完整 IIFE | 创建后 grep 检查函数出现次数 |
+| 脚本加载顺序错误 | `fix_script_order.py` 统一整理 | `<script>` 标签集中管理 |
+| Python 脚本锚点匹配失败 | 手动 Edit 插入 | `find_line()` 改用 `strip()` |
+| 顺序替换导致中间标记消失 | 先收集所有行号再统一替换 | 替换前在原始文件上定位全部标记 |
+| Phase 4 chatbot.js / step4 又遇 0 字节 | Agent 内用 Bash 验证 `wc -l` | 创建后必须验证非空 |
+
+### 9.8 剩余内联代码分析（Phase 4 完成后）
+
+Phase 4 完成后，`company-operations.html` 内联 `<script>` 仍有约 2,986 行，分布如下：
+
+| 区域 | 约行数 | 说明 |
+|------|-------|------|
+| `loadDashboardData` | ~40 | Dashboard 初始化 |
+| `projectAgentPanelData` + Agent Panel 渲染 | ~460 | 项目 Agent 面板数据和导航 |
+| `zbProductKB` + KB 推荐引擎 | ~440 | Zip Blinds 租户级 KB 样本数据 |
+| Intake 表单 + Demo 数据 | ~1,790 | 预填充演示数据 |
+| `DOMContentLoaded` | ~30 | 引导初始化 |
+| Team Management + Settings | ~90 | 团队和设置页面 |
+| Phase 2/3 占位注释 | ~20 | 已提取模块的注释标记 |
+| **合计** | **~2,870** | |
+
+这些代码可在后续 Phase 4B/5 中进一步提取。
+<script src="js/utils/quotation-editor.js"></script>
+<script src="js/utils/chatbot.js"></script>
+```
+
+### 9.6 Phase 4: 提取 Agent 和 Step 实现 ✅
+
+**完成日期**: 2026-04-19
+**Commit**: (本次提交)
+**HTML 行数**: 11,509 → 7,351 (-4,158 行)
+
+| 步骤 | 文件 | 行数 | 命名空间 | 状态 |
+|------|------|------|---------|------|
+| 4.1 | `js/agents/designer.js` | 739 | `Nestopia.agents.designer` | ✅ |
+| 4.2 | `js/agents/pricing.js` | 501 | `Nestopia.agents.pricing` | ✅ |
+| 4.3 | `js/agents/compliance.js` | 289 | `Nestopia.agents.compliance` | ✅ |
+| 4.4 | `js/agents/customer-service.js` | 339 | `Nestopia.agents.cs` | ✅ |
+| 4.5 | `js/steps/step2-design.js` | 536 | `Nestopia.steps.step2` | ✅ |
+| 4.6 | `js/steps/step3-measurement.js` | 541 | `Nestopia.steps.step3` | ✅ |
+| 4.7 | `js/steps/step4-quotation.js` | 493 | `Nestopia.steps.step4` | ✅ |
+| 4.8 | `js/utils/quotation-editor.js` | 716 | `Nestopia.utils.quotEditor` | ✅ |
+| 4.9 | `js/utils/chatbot.js` | 438 | `Nestopia.utils.chatbot` | ✅ |
+
+**修改脚本**: `scripts/phase4_extract_agents_steps.py`
+**关键改进**: 先收集所有行号范围再统一替换（修复了 Phase 3 中顺序替换导致标记消失的问题）。
 
 ### 9.7 经验教训
 

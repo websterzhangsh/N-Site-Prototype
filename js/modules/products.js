@@ -300,7 +300,7 @@
                 </div>\
                 <div class="flex items-center justify-between px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-2xl">\
                     <button onclick="document.getElementById(\'productCrudModal\').remove()" class="px-4 py-2 text-sm text-gray-500 hover:text-gray-700 transition">Cancel</button>\
-                    <button onclick="saveProductFromModal(\'' + mode + '\', \'' + (productKey || '') + '\')" class="px-5 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition shadow-sm flex items-center gap-2">\
+                    <button onclick="Nestopia.modules.products.saveProductFromModal(\'' + mode + '\', \'' + (productKey || '') + '\')" class="px-5 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition shadow-sm flex items-center gap-2">\
                         <i class="fas fa-save"></i> ' + (mode === 'edit' ? 'Update Product' : 'Create Product') + '\
                     </button>\
                 </div>\

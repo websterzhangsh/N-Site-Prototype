@@ -410,7 +410,7 @@
                 return '<div class="flex items-center gap-2 py-1.5 px-2 bg-amber-50/50 rounded-lg border border-amber-100">' +
                     '<i class="fas ' + ti.icon + ' text-amber-500 text-xs"></i>' +
                     '<span class="text-xs text-gray-700 flex-1">' + (obs.location || ti.label) + (obs.notes ? ' \u2014 ' + obs.notes : '') + '</span>' +
-                    '<button onclick="removeStep3Obstacle(\'' + projectId + '\', ' + i + ')" class="text-red-400 hover:text-red-600 text-xs"><i class="fas fa-times"></i></button>' +
+                    '<button onclick="Nestopia.steps.step3.removeStep3Obstacle(\'' + projectId + '\', ' + i + ')" class="text-red-400 hover:text-red-600 text-xs"><i class="fas fa-times"></i></button>' +
                 '</div>';
             }).join('');
             listEl.innerHTML = itemHTML;
@@ -438,7 +438,7 @@
                     return '<div class="flex items-center gap-2 py-1.5 px-2 bg-amber-50/50 rounded-lg border border-amber-100">' +
                         '<i class="fas ' + ti.icon + ' text-amber-500 text-xs"></i>' +
                         '<span class="text-xs text-gray-700 flex-1">' + (obs.location || ti.label) + (obs.notes ? ' \u2014 ' + obs.notes : '') + '</span>' +
-                        '<button onclick="removeStep3Obstacle(\'' + projectId + '\', ' + i + ')" class="text-red-400 hover:text-red-600 text-xs"><i class="fas fa-times"></i></button>' +
+                        '<button onclick="Nestopia.steps.step3.removeStep3Obstacle(\'' + projectId + '\', ' + i + ')" class="text-red-400 hover:text-red-600 text-xs"><i class="fas fa-times"></i></button>' +
                     '</div>';
                 }).join('');
                 listEl.innerHTML = itemHTML;

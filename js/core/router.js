@@ -88,7 +88,7 @@
                 var isSelected = p.id === _currentSelectedProjectId;
                 var isZB = p.type === 'Zip Blinds';
                 var stageDisplay = isZB ? 'Measure & Quote' : (stageLabels[p.stage] || 'Step ' + p.workflowStep);
-                return '<div class="sidebar-project-item ' + (isSelected ? 'selected' : '') + '" onclick="navigateToProject(\'' + p.id + '\')">' +
+                return '<div class="sidebar-project-item ' + (isSelected ? 'selected' : '') + '" onclick="Nestopia.router.navigateToProject(\'' + p.id + '\')">' +
                     '<div class="proj-avatar" style="' + (isSelected ? 'background:#222;color:#fff;' : '') + '">' + initials + '</div>' +
                     '<div class="proj-info">' +
                         '<div class="proj-name">' + p.name + '</div>' +

@@ -627,7 +627,7 @@
                     <div class="sidebar-project-list" id="sidebarProjectList">
                         <!-- Populated by JS -->
                     </div>
-                    <div class="sidebar-new-project-btn" onclick="openCreateProjectModal()">
+                    <div class="sidebar-new-project-btn" onclick="Nestopia.modules.projects.openCreateProjectModal()">
                         <i class="fas fa-plus" style="font-size:11px;"></i>
                         <span>New Project</span>
                     </div>
@@ -666,7 +666,7 @@
                         <i class="fas fa-bell"></i>
                         <span class="notification-badge"></span>
                     </button>
-                    <div class="user-menu" id="userMenu" style="cursor:pointer;position:relative;" onclick="toggleUserDropdown(event)">
+                    <div class="user-menu" id="userMenu" style="cursor:pointer;position:relative;" onclick="Nestopia.auth.toggleUserDropdown(event)">
                         <div class="user-avatar" id="userAvatar">U</div>
                         <div class="user-info">
                             <div class="user-name" id="userName">User</div>
@@ -679,7 +679,7 @@
                                 <div style="font-size:13px;font-weight:500;color:#222;" id="dropdownUserName"></div>
                                 <div style="font-size:12px;color:#888;margin-top:2px;" id="dropdownUserEmail"></div>
                             </div>
-                            <a href="#" onclick="event.preventDefault();event.stopPropagation();logout();" style="display:flex;align-items:center;gap:10px;padding:12px 16px;font-size:13px;color:#dc2626;text-decoration:none;transition:background 0.15s;">
+                            <a href="#" onclick="event.preventDefault();event.stopPropagation();Nestopia.auth.logout();" style="display:flex;align-items:center;gap:10px;padding:12px 16px;font-size:13px;color:#dc2626;text-decoration:none;transition:background 0.15s;">
                                 <i class="fas fa-sign-out-alt"></i>
                                 <span>Sign Out</span>
                             </a>
@@ -698,7 +698,7 @@
                         <!-- Summary Cards Row -->
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
                             <!-- Orders Card -->
-                            <div class="overview-card bg-white rounded-xl border-2 border-gray-200 p-5 cursor-pointer hover:border-blue-400 hover:shadow-lg transition-all duration-200" data-section="orders" onclick="toggleOverviewSection('orders')">
+                            <div class="overview-card bg-white rounded-xl border-2 border-gray-200 p-5 cursor-pointer hover:border-blue-400 hover:shadow-lg transition-all duration-200" data-section="orders" onclick="Nestopia.modules.overview.toggleOverviewSection('orders')">
                                 <div class="flex items-center justify-between mb-3">
                                     <div class="w-11 h-11 bg-blue-50 rounded-xl flex items-center justify-center">
                                         <i class="fas fa-file-invoice text-blue-600 text-lg"></i>
@@ -714,7 +714,7 @@
                             </div>
 
                             <!-- Customers Card -->
-                            <div class="overview-card bg-white rounded-xl border-2 border-gray-200 p-5 cursor-pointer hover:border-green-400 hover:shadow-lg transition-all duration-200" data-section="customers" onclick="toggleOverviewSection('customers')">
+                            <div class="overview-card bg-white rounded-xl border-2 border-gray-200 p-5 cursor-pointer hover:border-green-400 hover:shadow-lg transition-all duration-200" data-section="customers" onclick="Nestopia.modules.overview.toggleOverviewSection('customers')">
                                 <div class="flex items-center justify-between mb-3">
                                     <div class="w-11 h-11 bg-green-50 rounded-xl flex items-center justify-center">
                                         <i class="fas fa-users text-green-600 text-lg"></i>
@@ -730,7 +730,7 @@
                             </div>
 
                             <!-- Products Card -->
-                            <div class="overview-card bg-white rounded-xl border-2 border-gray-200 p-5 cursor-pointer hover:border-purple-400 hover:shadow-lg transition-all duration-200" data-section="products" onclick="toggleOverviewSection('products')">
+                            <div class="overview-card bg-white rounded-xl border-2 border-gray-200 p-5 cursor-pointer hover:border-purple-400 hover:shadow-lg transition-all duration-200" data-section="products" onclick="Nestopia.modules.overview.toggleOverviewSection('products')">
                                 <div class="flex items-center justify-between mb-3">
                                     <div class="w-11 h-11 bg-purple-50 rounded-xl flex items-center justify-center">
                                         <i class="fas fa-box-open text-purple-600 text-lg"></i>
@@ -892,7 +892,7 @@
                         <h2 class="text-2xl font-bold text-gray-900">Service Workflow</h2>
                         <p class="text-gray-500 text-sm mt-1">6-Step Workflow Tracker &mdash; From Intent to Completion</p>
                     </div>
-                    <button onclick="openNewProjectModal()" class="px-6 py-3 bg-gray-900 text-white rounded-xl font-medium hover:bg-gray-800 transition flex items-center gap-2 self-start">
+                    <button onclick="Nestopia.modules.workflow.openNewProjectModal()" class="px-6 py-3 bg-gray-900 text-white rounded-xl font-medium hover:bg-gray-800 transition flex items-center gap-2 self-start">
                         <i class="fas fa-plus"></i>
                         <span>New Project</span>
                     </button>
@@ -1146,11 +1146,11 @@
                                     <div>
                                         <label class="text-sm font-medium text-gray-700 mb-2 block">Frame Color</label>
                                         <div class="flex gap-3">
-                                            <button onclick="selectDesignerColor('black')" class="designer-color-btn w-10 h-10 rounded-full bg-gray-800 ring-2 ring-offset-2 ring-indigo-500 transition hover:scale-110" data-color="black" title="Black"></button>
-                                            <button onclick="selectDesignerColor('white')" class="designer-color-btn w-10 h-10 rounded-full bg-white border-2 border-gray-300 transition hover:scale-110" data-color="white" title="White"></button>
-                                            <button onclick="selectDesignerColor('bronze')" class="designer-color-btn w-10 h-10 rounded-full bg-amber-700 transition hover:scale-110" data-color="bronze" title="Bronze"></button>
-                                            <button onclick="selectDesignerColor('gray')" class="designer-color-btn w-10 h-10 rounded-full bg-gray-400 transition hover:scale-110" data-color="gray" title="Gray"></button>
-                                            <button onclick="selectDesignerColor('forest')" class="designer-color-btn w-10 h-10 rounded-full bg-green-800 transition hover:scale-110" data-color="forest" title="Forest Green"></button>
+                                            <button onclick="Nestopia.agents.designer.selectDesignerColor('black')" class="designer-color-btn w-10 h-10 rounded-full bg-gray-800 ring-2 ring-offset-2 ring-indigo-500 transition hover:scale-110" data-color="black" title="Black"></button>
+                                            <button onclick="Nestopia.agents.designer.selectDesignerColor('white')" class="designer-color-btn w-10 h-10 rounded-full bg-white border-2 border-gray-300 transition hover:scale-110" data-color="white" title="White"></button>
+                                            <button onclick="Nestopia.agents.designer.selectDesignerColor('bronze')" class="designer-color-btn w-10 h-10 rounded-full bg-amber-700 transition hover:scale-110" data-color="bronze" title="Bronze"></button>
+                                            <button onclick="Nestopia.agents.designer.selectDesignerColor('gray')" class="designer-color-btn w-10 h-10 rounded-full bg-gray-400 transition hover:scale-110" data-color="gray" title="Gray"></button>
+                                            <button onclick="Nestopia.agents.designer.selectDesignerColor('forest')" class="designer-color-btn w-10 h-10 rounded-full bg-green-800 transition hover:scale-110" data-color="forest" title="Forest Green"></button>
                                         </div>
                                     </div>
 
@@ -1173,7 +1173,7 @@
                             </div>
 
                             <!-- Generate Button -->
-                            <button id="generateDesignBtn" onclick="handleGenerateDesign()" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl font-semibold text-lg hover:from-indigo-700 hover:to-violet-700 transition shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-3 disabled:opacity-40 disabled:cursor-not-allowed" disabled>
+                            <button id="generateDesignBtn" onclick="Nestopia.agents.designer.handleGenerateDesign()" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl font-semibold text-lg hover:from-indigo-700 hover:to-violet-700 transition shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-3 disabled:opacity-40 disabled:cursor-not-allowed" disabled>
                                 <i class="fas fa-magic"></i>
                                 <span>Generate AI Design</span>
                             </button>
@@ -1364,10 +1364,10 @@
                         <div class="flex gap-3">
                             <!-- Strategy 6: Retail / Wholesale Toggle (Dual Price List) -->
                             <div class="flex items-center bg-gray-100 rounded-lg p-1">
-                                <button id="priceModeRetail" class="px-4 py-2 text-sm font-medium rounded-md bg-white shadow text-gray-900 transition" onclick="setPricingMode('retail')">
+                                <button id="priceModeRetail" class="px-4 py-2 text-sm font-medium rounded-md bg-white shadow text-gray-900 transition" onclick="Nestopia.agents.pricing.setPricingMode('retail')">
                                     <i class="fas fa-store mr-1"></i>Retail
                                 </button>
-                                <button id="priceModeWholesale" class="px-4 py-2 text-sm font-medium rounded-md text-gray-500 transition" onclick="setPricingMode('wholesale')">
+                                <button id="priceModeWholesale" class="px-4 py-2 text-sm font-medium rounded-md text-gray-500 transition" onclick="Nestopia.agents.pricing.setPricingMode('wholesale')">
                                     <i class="fas fa-warehouse mr-1"></i>Wholesale
                                 </button>
                             </div>
@@ -1442,7 +1442,7 @@
 
                                 <div class="grid grid-cols-3 gap-3">
                                     <!-- Good -->
-                                    <div class="product-tier-card cursor-pointer" data-tier="good" onclick="selectProductTier('good')">
+                                    <div class="product-tier-card cursor-pointer" data-tier="good" onclick="Nestopia.agents.pricing.selectProductTier('good')">
                                         <div class="p-4 border-2 border-gray-200 rounded-xl hover:border-emerald-300 transition text-center">
                                             <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Good</div>
                                             <div class="text-sm font-semibold text-gray-900">ZB-100</div>
@@ -1452,7 +1452,7 @@
                                         </div>
                                     </div>
                                     <!-- Better (default) -->
-                                    <div class="product-tier-card cursor-pointer" data-tier="better" onclick="selectProductTier('better')">
+                                    <div class="product-tier-card cursor-pointer" data-tier="better" onclick="Nestopia.agents.pricing.selectProductTier('better')">
                                         <div class="p-4 border-2 border-emerald-500 bg-emerald-50 rounded-xl transition text-center relative">
                                             <span class="absolute -top-2 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-emerald-500 text-white text-[10px] font-bold rounded-full whitespace-nowrap">POPULAR</span>
                                             <div class="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-1">Better</div>
@@ -1463,7 +1463,7 @@
                                         </div>
                                     </div>
                                     <!-- Best -->
-                                    <div class="product-tier-card cursor-pointer" data-tier="best" onclick="selectProductTier('best')">
+                                    <div class="product-tier-card cursor-pointer" data-tier="best" onclick="Nestopia.agents.pricing.selectProductTier('best')">
                                         <div class="p-4 border-2 border-gray-200 rounded-xl hover:border-emerald-300 transition text-center">
                                             <div class="text-xs font-bold text-amber-500 uppercase tracking-wider mb-1">Best</div>
                                             <div class="text-sm font-semibold text-gray-900">ZB-300</div>
@@ -1511,11 +1511,11 @@
                                 <div class="mt-4">
                                     <label class="text-xs text-gray-500 mb-1 block">Number of Units</label>
                                     <div class="flex items-center gap-3">
-                                        <button class="w-10 h-10 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 flex items-center justify-center" onclick="adjustZbQty(-1)">
+                                        <button class="w-10 h-10 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 flex items-center justify-center" onclick="Nestopia.agents.pricing.adjustZbQty(-1)">
                                             <i class="fas fa-minus text-xs"></i>
                                         </button>
                                         <input type="number" id="zbQuantity" value="4" min="1" max="20" class="w-20 text-center px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 font-semibold" oninput="updateZbArea()">
-                                        <button class="w-10 h-10 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 flex items-center justify-center" onclick="adjustZbQty(1)">
+                                        <button class="w-10 h-10 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 flex items-center justify-center" onclick="Nestopia.agents.pricing.adjustZbQty(1)">
                                             <i class="fas fa-plus text-xs"></i>
                                         </button>
                                     </div>
@@ -2831,7 +2831,7 @@
                                         <button id="editProductBtn" class="px-3 py-1.5 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition">
                                             <i class="fas fa-edit mr-1"></i>Edit
                                         </button>
-                                        <button id="deleteProductBtn" onclick="deleteProduct(productsState.selectedProduct)" class="px-3 py-1.5 text-sm text-red-500 hover:bg-red-50 rounded-lg transition">
+                                        <button id="deleteProductBtn" onclick="Nestopia.modules.products.deleteProduct(productsState.selectedProduct)" class="px-3 py-1.5 text-sm text-red-500 hover:bg-red-50 rounded-lg transition">
                                             <i class="fas fa-trash-alt mr-1"></i>Delete
                                         </button>
                                     </div>
@@ -3016,7 +3016,7 @@
                                 </thead>
                                 <tbody class="divide-y divide-gray-200" id="ordersTableBody">
                                     <!-- Order Row 1 -->
-                                    <tr class="hover:bg-gray-50 cursor-pointer" onclick="showOrderDetail('ord-001')">
+                                    <tr class="hover:bg-gray-50 cursor-pointer" onclick="Nestopia.modules.orders.showOrderDetail('ord-001')">
                                         <td class="px-4 py-4">
                                             <div class="font-medium text-gray-900">#ORD-2024-0156</div>
                                         </td>
@@ -3523,7 +3523,7 @@
                                 <h2 class="text-2xl font-bold text-gray-900">Knowledge Base Builder</h2>
                                 <p class="text-gray-500 text-sm mt-1">Upload and manage private domain data for AI training, RAG retrieval, and fine-tuning</p>
                             </div>
-                            <button onclick="openKBUploadModal()" class="px-6 py-3 bg-gray-900 text-white rounded-xl font-medium hover:bg-gray-800 transition flex items-center gap-2 self-start">
+                            <button onclick="Nestopia.modules.knowledgeBase.openKBUploadModal()" class="px-6 py-3 bg-gray-900 text-white rounded-xl font-medium hover:bg-gray-800 transition flex items-center gap-2 self-start">
                                 <i class="fas fa-cloud-upload-alt"></i>
                                 <span>Upload Documents</span>
                             </button>
@@ -3646,11 +3646,11 @@
                         <div class="flex items-center justify-between mt-6">
                             <span class="text-sm text-gray-500" id="kbPagInfo">Showing 1-10 of 47 documents</span>
                             <div class="flex gap-2">
-                                <button class="px-3 py-1.5 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition" onclick="kbPrevPage()"><i class="fas fa-chevron-left"></i></button>
+                                <button class="px-3 py-1.5 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition" onclick="Nestopia.modules.knowledgeBase.kbPrevPage()"><i class="fas fa-chevron-left"></i></button>
                                 <button class="px-3 py-1.5 bg-gray-900 text-white rounded-lg text-sm">1</button>
                                 <button class="px-3 py-1.5 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition">2</button>
                                 <button class="px-3 py-1.5 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition">3</button>
-                                <button class="px-3 py-1.5 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition" onclick="kbNextPage()"><i class="fas fa-chevron-right"></i></button>
+                                <button class="px-3 py-1.5 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition" onclick="Nestopia.modules.knowledgeBase.kbNextPage()"><i class="fas fa-chevron-right"></i></button>
                             </div>
                         </div>
                     </div>
@@ -3665,7 +3665,7 @@
                                 <h3 class="text-lg font-bold text-gray-900">Upload to Knowledge Base</h3>
                                 <p class="text-sm text-gray-500">Add private domain documents for AI training</p>
                             </div>
-                            <button onclick="closeKBUploadModal()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition">
+                            <button onclick="Nestopia.modules.knowledgeBase.closeKBUploadModal()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition">
                                 <i class="fas fa-times text-gray-500"></i>
                             </button>
                         </div>
@@ -3735,20 +3735,20 @@
                                 <div class="flex flex-wrap gap-2 mb-2" id="kbTagsContainer"></div>
                                 <div class="flex gap-2">
                                     <input type="text" id="kbTagInput" placeholder="Add a tag and press Enter..." class="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-gray-300" onkeydown="if(event.key==='Enter'){event.preventDefault();addKBTag();}">
-                                    <button onclick="addKBTag()" class="px-4 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition">
+                                    <button onclick="Nestopia.modules.knowledgeBase.addKBTag()" class="px-4 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition">
                                         <i class="fas fa-plus"></i>
                                     </button>
                                 </div>
                                 <div class="mt-2 flex flex-wrap gap-1.5">
                                     <span class="text-xs text-gray-400">Suggested:</span>
-                                    <button onclick="addKBSuggestedTag('pergola')" class="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition">pergola</button>
-                                    <button onclick="addKBSuggestedTag('sunroom')" class="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition">sunroom</button>
-                                    <button onclick="addKBSuggestedTag('zip blinds')" class="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition">zip blinds</button>
-                                    <button onclick="addKBSuggestedTag('ADU')" class="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition">ADU</button>
-                                    <button onclick="addKBSuggestedTag('Maryland')" class="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition">Maryland</button>
-                                    <button onclick="addKBSuggestedTag('Florida')" class="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition">Florida</button>
-                                    <button onclick="addKBSuggestedTag('HOA')" class="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition">HOA</button>
-                                    <button onclick="addKBSuggestedTag('installation')" class="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition">installation</button>
+                                    <button onclick="Nestopia.modules.knowledgeBase.addKBSuggestedTag('pergola')" class="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition">pergola</button>
+                                    <button onclick="Nestopia.modules.knowledgeBase.addKBSuggestedTag('sunroom')" class="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition">sunroom</button>
+                                    <button onclick="Nestopia.modules.knowledgeBase.addKBSuggestedTag('zip blinds')" class="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition">zip blinds</button>
+                                    <button onclick="Nestopia.modules.knowledgeBase.addKBSuggestedTag('ADU')" class="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition">ADU</button>
+                                    <button onclick="Nestopia.modules.knowledgeBase.addKBSuggestedTag('Maryland')" class="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition">Maryland</button>
+                                    <button onclick="Nestopia.modules.knowledgeBase.addKBSuggestedTag('Florida')" class="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition">Florida</button>
+                                    <button onclick="Nestopia.modules.knowledgeBase.addKBSuggestedTag('HOA')" class="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition">HOA</button>
+                                    <button onclick="Nestopia.modules.knowledgeBase.addKBSuggestedTag('installation')" class="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition">installation</button>
                                 </div>
                             </div>
 
@@ -3761,8 +3761,8 @@
 
                         <!-- Modal Footer -->
                         <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
-                            <button onclick="closeKBUploadModal()" class="px-5 py-2.5 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100 transition">Cancel</button>
-                            <button onclick="submitKBUpload()" class="px-5 py-2.5 bg-gray-900 text-white rounded-xl text-sm font-medium hover:bg-gray-800 transition flex items-center gap-2">
+                            <button onclick="Nestopia.modules.knowledgeBase.closeKBUploadModal()" class="px-5 py-2.5 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100 transition">Cancel</button>
+                            <button onclick="Nestopia.modules.knowledgeBase.submitKBUpload()" class="px-5 py-2.5 bg-gray-900 text-white rounded-xl text-sm font-medium hover:bg-gray-800 transition flex items-center gap-2">
                                 <i class="fas fa-cloud-upload-alt"></i>
                                 Upload & Index
                             </button>
@@ -3779,7 +3779,7 @@
                             <i class="fas fa-folder-open text-6xl mb-4" style="color:#d1d5db;"></i>
                             <p class="text-lg font-medium">Select a project to get started</p>
                             <p class="text-sm mt-1">Choose from the sidebar or create a new project.</p>
-                            <button onclick="openCreateProjectModal()" class="mt-5 px-5 py-2.5 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition">
+                            <button onclick="Nestopia.modules.projects.openCreateProjectModal()" class="mt-5 px-5 py-2.5 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition">
                                 <i class="fas fa-plus mr-2 text-xs"></i>New Project
                             </button>
                         </div>
@@ -3922,7 +3922,7 @@
                         <!-- Session Sidebar -->
                         <div class="chat-sessions-sidebar">
                             <div class="chat-sessions-header">
-                                <button onclick="b2bChat.createSession()" class="w-full px-4 py-2.5 bg-gray-900 text-white rounded-xl text-sm font-medium hover:bg-gray-800 transition flex items-center justify-center gap-2">
+                                <button onclick="Nestopia.utils.chatbot.b2bChat.createSession()" class="w-full px-4 py-2.5 bg-gray-900 text-white rounded-xl text-sm font-medium hover:bg-gray-800 transition flex items-center justify-center gap-2">
                                     <i class="fas fa-plus text-xs"></i>
                                     New Chat
                                 </button>
@@ -3942,7 +3942,7 @@
                                         <span class="w-2 h-2 bg-green-500 rounded-full"></span>
                                         <span class="text-xs text-gray-500">5 Agents Online</span>
                                     </div>
-                                    <button onclick="b2bChat.clearCurrentSession()" class="px-3 py-1.5 text-xs text-gray-500 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+                                    <button onclick="Nestopia.utils.chatbot.b2bChat.clearCurrentSession()" class="px-3 py-1.5 text-xs text-gray-500 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
                                         <i class="fas fa-trash-alt mr-1"></i> Clear
                                     </button>
                                 </div>
@@ -3956,16 +3956,16 @@
                                     <input type="file" id="fullChatImageInput" accept="image/*" style="display:none" onchange="b2bChat.handleImageUpload(this, 'full')">
                                     <input type="text" id="fullChatInput" placeholder="Ask about design, pricing, compliance, customers, products..."
                                         onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();b2bChat.send('full')}">
-                                    <button class="ib-send" onclick="b2bChat.send('full')">
+                                    <button class="ib-send" onclick="Nestopia.utils.chatbot.b2bChat.send('full')">
                                         <i class="fas fa-paper-plane"></i>
                                     </button>
                                 </div>
                                 <div class="b2b-quick-actions" id="fullQuickActions">
-                                    <button class="b2b-quick-chip" onclick="b2bChat.quickAction('design')"><i class="fas fa-palette" style="color:#7c3aed"></i> Design</button>
-                                    <button class="b2b-quick-chip" onclick="b2bChat.quickAction('quote')"><i class="fas fa-calculator" style="color:#059669"></i> Quote</button>
-                                    <button class="b2b-quick-chip" onclick="b2bChat.quickAction('compliance')"><i class="fas fa-shield-alt" style="color:#2563eb"></i> Compliance</button>
-                                    <button class="b2b-quick-chip" onclick="b2bChat.quickAction('customer')"><i class="fas fa-users" style="color:#d97706"></i> Customer</button>
-                                    <button class="b2b-quick-chip" onclick="b2bChat.quickAction('product')"><i class="fas fa-box" style="color:#6b7280"></i> Product Info</button>
+                                    <button class="b2b-quick-chip" onclick="Nestopia.utils.chatbot.b2bChat.quickAction('design')"><i class="fas fa-palette" style="color:#7c3aed"></i> Design</button>
+                                    <button class="b2b-quick-chip" onclick="Nestopia.utils.chatbot.b2bChat.quickAction('quote')"><i class="fas fa-calculator" style="color:#059669"></i> Quote</button>
+                                    <button class="b2b-quick-chip" onclick="Nestopia.utils.chatbot.b2bChat.quickAction('compliance')"><i class="fas fa-shield-alt" style="color:#2563eb"></i> Compliance</button>
+                                    <button class="b2b-quick-chip" onclick="Nestopia.utils.chatbot.b2bChat.quickAction('customer')"><i class="fas fa-users" style="color:#d97706"></i> Customer</button>
+                                    <button class="b2b-quick-chip" onclick="Nestopia.utils.chatbot.b2bChat.quickAction('product')"><i class="fas fa-box" style="color:#6b7280"></i> Product Info</button>
                                 </div>
                             </div>
                         </div>
@@ -4292,8 +4292,8 @@
                     </div>
                 </div>
                 <div class="ph-actions">
-                    <button title="Open full page" onclick="b2bChat.expandToFullPage()"><i class="fas fa-expand-alt"></i></button>
-                    <button title="Close" onclick="b2bChat.toggleFloating()"><i class="fas fa-times"></i></button>
+                    <button title="Open full page" onclick="Nestopia.utils.chatbot.b2bChat.expandToFullPage()"><i class="fas fa-expand-alt"></i></button>
+                    <button title="Close" onclick="Nestopia.utils.chatbot.b2bChat.toggleFloating()"><i class="fas fa-times"></i></button>
                 </div>
             </div>
             <div class="b2b-chat-messages" id="floatChatMessages"></div>
@@ -4305,18 +4305,18 @@
                     <input type="file" id="floatChatImageInput" accept="image/*" style="display:none" onchange="b2bChat.handleImageUpload(this, 'float')">
                     <input type="text" id="floatChatInput" placeholder="Ask anything..."
                         onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();b2bChat.send('float')}">
-                    <button class="ib-send" onclick="b2bChat.send('float')">
+                    <button class="ib-send" onclick="Nestopia.utils.chatbot.b2bChat.send('float')">
                         <i class="fas fa-paper-plane"></i>
                     </button>
                 </div>
                 <div class="b2b-quick-actions" id="floatQuickActions">
-                    <button class="b2b-quick-chip" onclick="b2bChat.quickAction('design')"><i class="fas fa-palette" style="color:#7c3aed"></i> Design</button>
-                    <button class="b2b-quick-chip" onclick="b2bChat.quickAction('quote')"><i class="fas fa-calculator" style="color:#059669"></i> Quote</button>
-                    <button class="b2b-quick-chip" onclick="b2bChat.quickAction('compliance')"><i class="fas fa-shield-alt" style="color:#2563eb"></i> Compliance</button>
+                    <button class="b2b-quick-chip" onclick="Nestopia.utils.chatbot.b2bChat.quickAction('design')"><i class="fas fa-palette" style="color:#7c3aed"></i> Design</button>
+                    <button class="b2b-quick-chip" onclick="Nestopia.utils.chatbot.b2bChat.quickAction('quote')"><i class="fas fa-calculator" style="color:#059669"></i> Quote</button>
+                    <button class="b2b-quick-chip" onclick="Nestopia.utils.chatbot.b2bChat.quickAction('compliance')"><i class="fas fa-shield-alt" style="color:#2563eb"></i> Compliance</button>
                 </div>
             </div>
         </div>
-        <button id="b2bChatFab" class="b2b-chat-fab" onclick="b2bChat.toggleFloating()">
+        <button id="b2bChatFab" class="b2b-chat-fab" onclick="Nestopia.utils.chatbot.b2bChat.toggleFloating()">
             <i class="fas fa-robot"></i>
             <i class="fas fa-times"></i>
         </button>
@@ -6176,7 +6176,7 @@
                     const prod = productCatalog[s.value];
                     const iconSrc = productIcons[s.value] || '';
                     const priceRange = prod && prod.price && prod.price.tiers && prod.price.tiers.length > 0 ? (prod.price.mode === 'strategy' ? ('$' + prod.price.tiers[0].retail[0] + '-' + prod.price.tiers[0].retail[1] + '/' + prod.price.unit) : ('$' + prod.price.tiers[0].retail[0] + '-' + prod.price.tiers[0].retail[1] + '/' + prod.price.unit)) : '';
-                    return `<div class="step2-product-card flex flex-col items-center gap-1 p-2.5 rounded-lg border border-gray-100 hover:border-indigo-300 hover:bg-indigo-50/30 cursor-pointer transition" data-catalog-id="${s.value}" onclick="selectStep2Product('${project.id}', '${s.value}', this)">
+                    return `<div class="step2-product-card flex flex-col items-center gap-1 p-2.5 rounded-lg border border-gray-100 hover:border-indigo-300 hover:bg-indigo-50/30 cursor-pointer transition" data-catalog-id="${s.value}" onclick="Nestopia.steps.step2.selectStep2Product('${project.id}', '${s.value}', this)">
                         <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-gray-50">
                             ${iconSrc ? '<img src="' + iconSrc + '" alt="' + s.label + '" class="w-8 h-8 object-contain">' : '<i class="fas ' + s.icon + ' text-sm text-gray-400"></i>'}
                         </div>
@@ -6199,7 +6199,7 @@
                                 <span class="text-[10px] text-indigo-500 ml-2 font-medium">Concept Phase</span>
                             </div>
                         </div>
-                        <button id="step2LaunchBtn_${project.id}" onclick="toggleStep2Designer('${project.id}')" class="px-3 py-1.5 bg-indigo-600 text-white text-xs font-semibold rounded-lg hover:bg-indigo-700 transition flex items-center gap-1.5 shadow-sm">
+                        <button id="step2LaunchBtn_${project.id}" onclick="Nestopia.steps.step2.toggleStep2Designer('${project.id}')" class="px-3 py-1.5 bg-indigo-600 text-white text-xs font-semibold rounded-lg hover:bg-indigo-700 transition flex items-center gap-1.5 shadow-sm">
                             <i class="fas fa-rocket text-[10px]"></i> Launch Designer
                         </button>
                     </div>
@@ -6226,20 +6226,20 @@
                                         <span id="step2PhotoCount_${project.id}" class="text-[10px] text-gray-400">0/3 uploaded</span>
                                     </div>
                                     <div class="flex gap-2">
-                                        <div id="step2PhotoSlot0_${project.id}" class="flex-1 border-2 border-dashed border-gray-200 bg-gray-50/50 rounded-xl text-center cursor-pointer hover:border-indigo-300 hover:bg-indigo-50/40 transition aspect-[4/3] flex items-center justify-center relative overflow-hidden" onclick="triggerStep2PhotoUpload('${project.id}', 0)">
+                                        <div id="step2PhotoSlot0_${project.id}" class="flex-1 border-2 border-dashed border-gray-200 bg-gray-50/50 rounded-xl text-center cursor-pointer hover:border-indigo-300 hover:bg-indigo-50/40 transition aspect-[4/3] flex items-center justify-center relative overflow-hidden" onclick="Nestopia.steps.step2.triggerStep2PhotoUpload('${project.id}', 0)">
                                             <div class="step2-photo-placeholder"><i class="fas fa-cloud-upload-alt text-2xl text-gray-300 mb-1"></i><p class="text-[10px] text-gray-400">Main photo</p></div>
                                             <img class="step2-photo-img absolute inset-0 w-full h-full object-cover hidden rounded-xl">
-                                            <button class="step2-photo-remove absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full text-[9px] hidden hover:bg-red-600 z-10" onclick="event.stopPropagation(); clearStep2Photo('${project.id}', 0)"><i class="fas fa-times"></i></button>
+                                            <button class="step2-photo-remove absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full text-[9px] hidden hover:bg-red-600 z-10" onclick="event.stopPropagation(); Nestopia.steps.step2.clearStep2Photo('${project.id}', 0)"><i class="fas fa-times"></i></button>
                                         </div>
-                                        <div id="step2PhotoSlot1_${project.id}" class="w-20 border-2 border-dashed border-gray-200 bg-gray-50/50 rounded-xl text-center cursor-pointer hover:border-indigo-300 transition aspect-[3/4] flex items-center justify-center relative overflow-hidden" onclick="triggerStep2PhotoUpload('${project.id}', 1)">
+                                        <div id="step2PhotoSlot1_${project.id}" class="w-20 border-2 border-dashed border-gray-200 bg-gray-50/50 rounded-xl text-center cursor-pointer hover:border-indigo-300 transition aspect-[3/4] flex items-center justify-center relative overflow-hidden" onclick="Nestopia.steps.step2.triggerStep2PhotoUpload('${project.id}', 1)">
                                             <div class="step2-photo-placeholder"><i class="fas fa-plus text-gray-300"></i></div>
                                             <img class="step2-photo-img absolute inset-0 w-full h-full object-cover hidden rounded-xl">
-                                            <button class="step2-photo-remove absolute top-1 right-1 w-4 h-4 bg-red-500 text-white rounded-full text-[8px] hidden hover:bg-red-600 z-10" onclick="event.stopPropagation(); clearStep2Photo('${project.id}', 1)"><i class="fas fa-times"></i></button>
+                                            <button class="step2-photo-remove absolute top-1 right-1 w-4 h-4 bg-red-500 text-white rounded-full text-[8px] hidden hover:bg-red-600 z-10" onclick="event.stopPropagation(); Nestopia.steps.step2.clearStep2Photo('${project.id}', 1)"><i class="fas fa-times"></i></button>
                                         </div>
-                                        <div id="step2PhotoSlot2_${project.id}" class="w-20 border-2 border-dashed border-gray-200 bg-gray-50/50 rounded-xl text-center cursor-pointer hover:border-indigo-300 transition aspect-[3/4] flex items-center justify-center relative overflow-hidden" onclick="triggerStep2PhotoUpload('${project.id}', 2)">
+                                        <div id="step2PhotoSlot2_${project.id}" class="w-20 border-2 border-dashed border-gray-200 bg-gray-50/50 rounded-xl text-center cursor-pointer hover:border-indigo-300 transition aspect-[3/4] flex items-center justify-center relative overflow-hidden" onclick="Nestopia.steps.step2.triggerStep2PhotoUpload('${project.id}', 2)">
                                             <div class="step2-photo-placeholder"><i class="fas fa-plus text-gray-300"></i></div>
                                             <img class="step2-photo-img absolute inset-0 w-full h-full object-cover hidden rounded-xl">
-                                            <button class="step2-photo-remove absolute top-1 right-1 w-4 h-4 bg-red-500 text-white rounded-full text-[8px] hidden hover:bg-red-600 z-10" onclick="event.stopPropagation(); clearStep2Photo('${project.id}', 2)"><i class="fas fa-times"></i></button>
+                                            <button class="step2-photo-remove absolute top-1 right-1 w-4 h-4 bg-red-500 text-white rounded-full text-[8px] hidden hover:bg-red-600 z-10" onclick="event.stopPropagation(); Nestopia.steps.step2.clearStep2Photo('${project.id}', 2)"><i class="fas fa-times"></i></button>
                                         </div>
                                     </div>
                                     <p class="text-[10px] text-gray-400 mt-1.5"><i class="fas fa-lightbulb text-amber-400 mr-1"></i>Tip: Upload 1–3 photos. Main photo is used for AI rendering. Others are reference angles.</p>
@@ -6266,7 +6266,7 @@
                                 </div>
 
                                 <!-- Generate Button -->
-                                <button id="step2GenerateBtn_${project.id}" onclick="generateStep2Design('${project.id}')" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl font-semibold text-sm hover:from-indigo-700 hover:to-violet-700 transition shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed" disabled>
+                                <button id="step2GenerateBtn_${project.id}" onclick="Nestopia.steps.step2.generateStep2Design('${project.id}')" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl font-semibold text-sm hover:from-indigo-700 hover:to-violet-700 transition shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed" disabled>
                                     <i class="fas fa-wand-magic-sparkles"></i> Generate Design
                                 </button>
                             </div>
@@ -6300,10 +6300,10 @@
                                 <div id="step2PostGenActions_${project.id}" class="hidden space-y-3">
                                     <!-- Save + Refine buttons -->
                                     <div class="flex gap-2">
-                                        <button onclick="downloadStep2Design('${project.id}')" class="flex-1 py-2 bg-green-600 text-white rounded-lg text-xs font-semibold hover:bg-green-700 transition flex items-center justify-center gap-1.5">
+                                        <button onclick="Nestopia.steps.step2.downloadStep2Design('${project.id}')" class="flex-1 py-2 bg-green-600 text-white rounded-lg text-xs font-semibold hover:bg-green-700 transition flex items-center justify-center gap-1.5">
                                             <i class="fas fa-download text-[10px]"></i> Save Design
                                         </button>
-                                        <button onclick="openStep2IterateDialog('${project.id}')" id="step2IterateBtn_${project.id}" class="flex-1 py-2 bg-violet-600 text-white rounded-lg text-xs font-semibold hover:bg-violet-700 transition flex items-center justify-center gap-1.5">
+                                        <button onclick="Nestopia.steps.step2.openStep2IterateDialog('${project.id}')" id="step2IterateBtn_${project.id}" class="flex-1 py-2 bg-violet-600 text-white rounded-lg text-xs font-semibold hover:bg-violet-700 transition flex items-center justify-center gap-1.5">
                                             <i class="fas fa-redo text-[10px]"></i> Refine (<span id="step2IterRemaining_${project.id}">2</span> left)
                                         </button>
                                     </div>
@@ -6315,7 +6315,7 @@
                                         </div>
                                         <textarea id="step2IterPromptInput_${project.id}" maxlength="800" rows="2" oninput="updateStep2IterCharCount('${project.id}')" class="w-full text-xs border border-violet-200 rounded-lg p-2 resize-none focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-400 transition" placeholder="e.g. Move the sunroom 2 feet to the left, change roof angle to match house..."></textarea>
                                         <div class="flex gap-2 mt-2">
-                                            <button onclick="executeStep2Iterate('${project.id}')" class="flex-1 py-2 bg-violet-600 text-white rounded-lg text-xs font-semibold hover:bg-violet-700 transition flex items-center justify-center gap-1.5">
+                                            <button onclick="Nestopia.steps.step2.executeStep2Iterate('${project.id}')" class="flex-1 py-2 bg-violet-600 text-white rounded-lg text-xs font-semibold hover:bg-violet-700 transition flex items-center justify-center gap-1.5">
                                                 <i class="fas fa-wand-magic-sparkles text-[10px]"></i> Apply Refinement
                                             </button>
                                             <button onclick="document.getElementById('step2IteratePanel_${project.id}').classList.add('hidden')" class="px-3 py-2 text-violet-600 border border-violet-200 rounded-lg text-xs font-medium hover:bg-violet-50 transition">Cancel</button>
@@ -6466,7 +6466,7 @@
                     return `<div class="flex items-center gap-2 py-1.5 px-2 bg-amber-50/50 rounded-lg border border-amber-100">
                         <i class="fas ${typeInfo.icon} text-amber-500 text-xs"></i>
                         <span class="text-xs text-gray-700 flex-1">${obsObj.location || typeInfo.label}${obsObj.notes ? ' — ' + obsObj.notes : ''}</span>
-                        <button onclick="removeStep3Obstacle('${project.id}', ${i})" class="text-red-400 hover:text-red-600 text-xs"><i class="fas fa-times"></i></button>
+                        <button onclick="Nestopia.steps.step3.removeStep3Obstacle('${project.id}', ${i})" class="text-red-400 hover:text-red-600 text-xs"><i class="fas fa-times"></i></button>
                     </div>`;
                 }).join('');
 
@@ -6531,7 +6531,7 @@
                                 <span class="text-[10px] text-purple-500 ml-2 font-medium">${isZipBlinds ? 'Opening Specs' : 'Detailed Phase'}</span>
                             </div>
                         </div>
-                        <button id="step3LaunchBtn_${project.id}" onclick="toggleStep3Panel('${project.id}')" class="px-3 py-1.5 bg-purple-600 text-white text-xs font-semibold rounded-lg hover:bg-purple-700 transition flex items-center gap-1.5 shadow-sm">
+                        <button id="step3LaunchBtn_${project.id}" onclick="Nestopia.steps.step3.toggleStep3Panel('${project.id}')" class="px-3 py-1.5 bg-purple-600 text-white text-xs font-semibold rounded-lg hover:bg-purple-700 transition flex items-center gap-1.5 shadow-sm">
                             <i class="fas fa-clipboard-check text-[10px]"></i> Open Measurement
                         </button>
                     </div>
@@ -6572,7 +6572,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <button onclick="scheduleStep3Appointment('${project.id}')" class="mt-2 w-full py-1.5 text-xs font-medium rounded-lg transition ${step3State.appointmentScheduled ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-blue-600 text-white hover:bg-blue-700'}">
+                                    <button onclick="Nestopia.steps.step3.scheduleStep3Appointment('${project.id}')" class="mt-2 w-full py-1.5 text-xs font-medium rounded-lg transition ${step3State.appointmentScheduled ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-blue-600 text-white hover:bg-blue-700'}">
                                         ${step3State.appointmentScheduled ? '<i class="fas fa-check mr-1"></i>Appointment Confirmed' : '<i class="fas fa-paper-plane mr-1"></i>Schedule Measurement'}
                                     </button>
                                 </div>
@@ -6581,7 +6581,7 @@
                                 <div>
                                     <div class="flex items-center justify-between mb-2">
                                         <span class="text-xs font-semibold text-gray-700"><i class="fas ${isZipBlinds ? 'fa-window-maximize' : 'fa-ruler-combined'} text-purple-400 mr-1.5"></i>${isZipBlinds ? 'Opening & Product Specs' : 'Measurement Data'}</span>
-                                        <button onclick="saveStep3Measurement('${project.id}')" class="text-[10px] text-purple-600 font-medium hover:text-purple-800 transition"><i class="fas fa-save mr-1"></i>Save</button>
+                                        <button onclick="Nestopia.steps.step3.saveStep3Measurement('${project.id}')" class="text-[10px] text-purple-600 font-medium hover:text-purple-800 transition"><i class="fas fa-save mr-1"></i>Save</button>
                                     </div>
                                     <div class="grid grid-cols-2 gap-2.5">
                                         ${fieldRows}
@@ -6606,7 +6606,7 @@
                                             ${activeObstacles.map(o => `<option value="${o.value}">${o.label}</option>`).join('')}
                                         </select>
                                         <input type="text" id="step3ObstacleLocation_${project.id}" class="flex-1 px-2 py-1.5 border border-gray-200 rounded-lg text-xs" placeholder="Location & notes...">
-                                        <button onclick="addStep3Obstacle('${project.id}')" class="px-2.5 py-1.5 bg-amber-500 text-white rounded-lg text-xs font-medium hover:bg-amber-600 transition"><i class="fas fa-plus"></i></button>
+                                        <button onclick="Nestopia.steps.step3.addStep3Obstacle('${project.id}')" class="px-2.5 py-1.5 bg-amber-500 text-white rounded-lg text-xs font-medium hover:bg-amber-600 transition"><i class="fas fa-plus"></i></button>
                                     </div>
                                 </div>
                             </div>
@@ -6692,7 +6692,7 @@
                                 ${isZipBlinds ? '<div data-project-files="' + project.id + '" class="mt-3">' + renderProjectFilesHTML(project.id) + '</div>' : ''}
 
                                 <!-- Generate Design / Order Button -->
-                                <button id="step3GenerateDesignBtn_${project.id}" onclick="generateStep3DetailedDesign('${project.id}')" class="w-full py-3 bg-gradient-to-r from-purple-600 to-violet-600 text-white rounded-xl font-semibold text-sm hover:from-purple-700 hover:to-violet-700 transition shadow-lg shadow-purple-500/25 flex items-center justify-center gap-2 ${step3State.measurementComplete ? '' : 'opacity-40 cursor-not-allowed'}" ${step3State.measurementComplete ? '' : 'disabled'}>
+                                <button id="step3GenerateDesignBtn_${project.id}" onclick="Nestopia.steps.step3.generateStep3DetailedDesign('${project.id}')" class="w-full py-3 bg-gradient-to-r from-purple-600 to-violet-600 text-white rounded-xl font-semibold text-sm hover:from-purple-700 hover:to-violet-700 transition shadow-lg shadow-purple-500/25 flex items-center justify-center gap-2 ${step3State.measurementComplete ? '' : 'opacity-40 cursor-not-allowed'}" ${step3State.measurementComplete ? '' : 'disabled'}>
                                     <i class="fas ${isZipBlinds ? 'fa-check-double' : 'fa-drafting-compass'}"></i> ${isZipBlinds ? 'Generate Installation Package' : 'Generate Detailed Design Package'}
                                 </button>
                                 <p class="text-[10px] text-gray-400 text-center -mt-2"><i class="fas fa-info-circle mr-1"></i>${isZipBlinds ? 'Complete opening specs to generate installation package' : 'Complete measurement data to enable design generation'}</p>
@@ -6719,7 +6719,7 @@
                     ];
                     const tierCards = tiers.map(t => {
                         const sel = step4State.productTier === t.id;
-                        return `<div onclick="selectStep4Tier('${project.id}','${t.id}')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center relative ${sel ? 'border-orange-500 bg-orange-50 shadow-sm' : 'border-gray-200 hover:border-orange-300 bg-white'}">
+                        return `<div onclick="Nestopia.steps.step4.selectTier('${project.id}','${t.id}')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center relative ${sel ? 'border-orange-500 bg-orange-50 shadow-sm' : 'border-gray-200 hover:border-orange-300 bg-white'}">
                             ${t.popular ? '<div class="absolute -top-2 left-1/2 -translate-x-1/2 text-[8px] font-bold bg-orange-500 text-white px-2 py-0.5 rounded-full">POPULAR</div>' : ''}
                             <div class="text-[10px] font-bold text-gray-800">${t.name}</div>
                             <div class="text-[9px] text-gray-500">${t.spec}</div>
@@ -6760,10 +6760,10 @@
                                 </div>
                             </div>
                             <div class="flex items-center gap-2">
-                                <button onclick="toggleStep4Mode('${project.id}')" class="px-2 py-1 text-[10px] font-medium rounded-md border ${step4State.pricingMode === 'wholesale' ? 'bg-emerald-50 border-emerald-300 text-emerald-700' : 'bg-white border-gray-200 text-gray-600'} hover:bg-gray-50 transition">
+                                <button onclick="Nestopia.steps.step4.toggleMode('${project.id}')" class="px-2 py-1 text-[10px] font-medium rounded-md border ${step4State.pricingMode === 'wholesale' ? 'bg-emerald-50 border-emerald-300 text-emerald-700' : 'bg-white border-gray-200 text-gray-600'} hover:bg-gray-50 transition">
                                     ${step4State.pricingMode === 'retail' ? '🏷 Retail' : '🏭 Wholesale'}
                                 </button>
-                                <button id="step4LaunchBtn_${project.id}" onclick="toggleStep4Panel('${project.id}')" class="px-3 py-1.5 bg-orange-600 text-white text-xs font-semibold rounded-lg hover:bg-orange-700 transition flex items-center gap-1.5 shadow-sm">
+                                <button id="step4LaunchBtn_${project.id}" onclick="Nestopia.steps.step4.togglePanel('${project.id}')" class="px-3 py-1.5 bg-orange-600 text-white text-xs font-semibold rounded-lg hover:bg-orange-700 transition flex items-center gap-1.5 shadow-sm">
                                     <i class="fas fa-calculator text-[10px]"></i> Open Quotation
                                 </button>
                             </div>
@@ -6833,9 +6833,9 @@
                                         <div class="space-y-1">
                                             <label class="text-[10px] font-medium text-gray-500"><i class="fas fa-th-large text-orange-400 mr-1"></i>Quantity</label>
                                             <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden">
-                                                <button onclick="adjustStep4Qty('${project.id}',-1)" class="px-2.5 py-1.5 bg-gray-50 hover:bg-gray-100 text-gray-600 text-xs font-bold">−</button>
+                                                <button onclick="Nestopia.steps.step4.adjustQty('${project.id}',-1)" class="px-2.5 py-1.5 bg-gray-50 hover:bg-gray-100 text-gray-600 text-xs font-bold">−</button>
                                                 <span id="step4Qty_${project.id}" class="flex-1 text-center text-xs font-bold text-gray-800">${step4State.quantity}</span>
-                                                <button onclick="adjustStep4Qty('${project.id}',1)" class="px-2.5 py-1.5 bg-gray-50 hover:bg-gray-100 text-gray-600 text-xs font-bold">+</button>
+                                                <button onclick="Nestopia.steps.step4.adjustQty('${project.id}',1)" class="px-2.5 py-1.5 bg-gray-50 hover:bg-gray-100 text-gray-600 text-xs font-bold">+</button>
                                             </div>
                                         </div>
                                         <div class="space-y-1">
@@ -6866,7 +6866,7 @@
                                     <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">
                                         <div class="flex items-center justify-between mb-2">
                                             <span class="text-xs font-semibold text-gray-700"><i class="fas fa-receipt text-orange-500 mr-1.5"></i>Cost Breakdown</span>
-                                            <button onclick="calculateStep4Pricing('${project.id}')" class="text-[10px] text-orange-600 font-medium hover:text-orange-800"><i class="fas fa-sync-alt mr-1"></i>Recalculate</button>
+                                            <button onclick="Nestopia.steps.step4.calculatePricing('${project.id}')" class="text-[10px] text-orange-600 font-medium hover:text-orange-800"><i class="fas fa-sync-alt mr-1"></i>Recalculate</button>
                                         </div>
                                         <div class="space-y-1.5" id="step4CostBreakdown_${project.id}">
                                             <div class="flex justify-between text-[10px]"><span class="text-gray-600">Fabric (${cs.tierName})</span><span class="font-medium text-gray-800">$${cs.fabricCost}</span></div>
@@ -6887,18 +6887,18 @@
                                             <span class="text-xs font-semibold text-gray-700"><i class="fas fa-tags text-orange-400 mr-1.5"></i>Smart Quote Options</span>
                                         </div>
                                         <div class="grid grid-cols-3 gap-2" id="step4QuoteCards_${project.id}">
-                                            <div onclick="selectStep4Quote('${project.id}','conservative')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center ${step4State.selectedQuote === 'conservative' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-blue-300'}">
+                                            <div onclick="Nestopia.steps.step4.selectQuote('${project.id}','conservative')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center ${step4State.selectedQuote === 'conservative' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-blue-300'}">
                                                 <div class="text-[9px] text-gray-500 font-medium">Conservative</div>
                                                 <div class="text-sm font-bold ${step4State.selectedQuote === 'conservative' ? 'text-blue-700' : 'text-gray-800'}">$${cs.quoteConservative}</div>
                                                 <div class="text-[9px] text-gray-400">10% margin</div>
                                             </div>
-                                            <div onclick="selectStep4Quote('${project.id}','recommended')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center relative ${step4State.selectedQuote === 'recommended' ? 'border-orange-500 bg-orange-50 shadow-sm' : 'border-gray-200 hover:border-orange-300'}">
+                                            <div onclick="Nestopia.steps.step4.selectQuote('${project.id}','recommended')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center relative ${step4State.selectedQuote === 'recommended' ? 'border-orange-500 bg-orange-50 shadow-sm' : 'border-gray-200 hover:border-orange-300'}">
                                                 <div class="absolute -top-2 left-1/2 -translate-x-1/2 text-[8px] font-bold bg-orange-500 text-white px-2 py-0.5 rounded-full">BEST</div>
                                                 <div class="text-[9px] text-gray-500 font-medium">Recommended</div>
                                                 <div class="text-sm font-bold ${step4State.selectedQuote === 'recommended' ? 'text-orange-700' : 'text-gray-800'}">$${cs.quoteRecommended}</div>
                                                 <div class="text-[9px] text-gray-400">18% margin</div>
                                             </div>
-                                            <div onclick="selectStep4Quote('${project.id}','premium')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center ${step4State.selectedQuote === 'premium' ? 'border-emerald-500 bg-emerald-50' : 'border-gray-200 hover:border-emerald-300'}">
+                                            <div onclick="Nestopia.steps.step4.selectQuote('${project.id}','premium')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center ${step4State.selectedQuote === 'premium' ? 'border-emerald-500 bg-emerald-50' : 'border-gray-200 hover:border-emerald-300'}">
                                                 <div class="text-[9px] text-gray-500 font-medium">Premium</div>
                                                 <div class="text-sm font-bold ${step4State.selectedQuote === 'premium' ? 'text-emerald-700' : 'text-gray-800'}">$${cs.quotePremium}</div>
                                                 <div class="text-[9px] text-gray-400">35% margin</div>
@@ -6924,7 +6924,7 @@
                                     ${renderKBQuickRefHTML('quotation', project.id)}
 
                                     <!-- Action Button -->
-                                    <button onclick="openQuotationEditor('${project.id}')" class="w-full py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold text-xs hover:from-blue-700 hover:to-blue-800 transition shadow-md flex items-center justify-center gap-1.5">
+                                    <button onclick="Nestopia.utils.quotEditor.openQuotationEditor('${project.id}')" class="w-full py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold text-xs hover:from-blue-700 hover:to-blue-800 transition shadow-md flex items-center justify-center gap-1.5">
                                         <i class="fas fa-file-invoice-dollar"></i> Generate Quotation
                                     </button>
                                 </div>
@@ -6940,7 +6940,7 @@
                     : [{ id: 'classic', label: 'Classic', from: '$45/sqft' }, { id: 'modern', label: 'Modern', from: '$62/sqft', popular: true }, { id: 'premium', label: 'Premium', from: '$85/sqft' }];
                 const tierCardsSP = baseTiers.map(t => {
                     const sel = step4State.productTier === t.id;
-                    return `<div onclick="selectStep4Tier('${project.id}','${t.id}')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center relative ${sel ? 'border-orange-500 bg-orange-50 shadow-sm' : 'border-gray-200 hover:border-orange-300 bg-white'}">
+                    return `<div onclick="Nestopia.steps.step4.selectTier('${project.id}','${t.id}')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center relative ${sel ? 'border-orange-500 bg-orange-50 shadow-sm' : 'border-gray-200 hover:border-orange-300 bg-white'}">
                         ${t.popular ? '<div class="absolute -top-2 left-1/2 -translate-x-1/2 text-[8px] font-bold bg-orange-500 text-white px-2 py-0.5 rounded-full">POPULAR</div>' : ''}
                         <div class="text-[10px] font-bold text-gray-800">${t.label}</div>
                         <div class="text-xs font-semibold ${sel ? 'text-orange-600' : 'text-gray-600'} mt-1">${t.from}</div>
@@ -6963,7 +6963,7 @@
                                 <span class="text-[10px] text-orange-500 ml-2 font-medium">${prodLabel} Estimator</span>
                             </div>
                         </div>
-                        <button id="step4LaunchBtn_${project.id}" onclick="toggleStep4Panel('${project.id}')" class="px-3 py-1.5 bg-orange-600 text-white text-xs font-semibold rounded-lg hover:bg-orange-700 transition flex items-center gap-1.5 shadow-sm">
+                        <button id="step4LaunchBtn_${project.id}" onclick="Nestopia.steps.step4.togglePanel('${project.id}')" class="px-3 py-1.5 bg-orange-600 text-white text-xs font-semibold rounded-lg hover:bg-orange-700 transition flex items-center gap-1.5 shadow-sm">
                             <i class="fas fa-calculator text-[10px]"></i> Open Quotation
                         </button>
                     </div>
@@ -7009,7 +7009,7 @@
                                 <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">
                                     <div class="flex items-center justify-between mb-2">
                                         <span class="text-xs font-semibold text-gray-700"><i class="fas fa-receipt text-orange-500 mr-1.5"></i>Cost Breakdown</span>
-                                        <button onclick="calculateStep4Pricing('${project.id}')" class="text-[10px] text-orange-600 font-medium hover:text-orange-800"><i class="fas fa-sync-alt mr-1"></i>Recalculate</button>
+                                        <button onclick="Nestopia.steps.step4.calculatePricing('${project.id}')" class="text-[10px] text-orange-600 font-medium hover:text-orange-800"><i class="fas fa-sync-alt mr-1"></i>Recalculate</button>
                                     </div>
                                     <div class="space-y-1.5" id="step4CostBreakdown_${project.id}">
                                         <div class="flex justify-between text-[10px]"><span class="text-gray-600">Materials (${cs.tierName})</span><span class="font-medium text-gray-800">$${cs.materialCost}</span></div>
@@ -7023,18 +7023,18 @@
                                 <div>
                                     <span class="text-xs font-semibold text-gray-700 mb-2 block"><i class="fas fa-tags text-orange-400 mr-1.5"></i>Smart Quote Options</span>
                                     <div class="grid grid-cols-3 gap-2" id="step4QuoteCards_${project.id}">
-                                        <div onclick="selectStep4Quote('${project.id}','conservative')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center ${step4State.selectedQuote === 'conservative' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-blue-300'}">
+                                        <div onclick="Nestopia.steps.step4.selectQuote('${project.id}','conservative')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center ${step4State.selectedQuote === 'conservative' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-blue-300'}">
                                             <div class="text-[9px] text-gray-500">Conservative</div>
                                             <div class="text-sm font-bold">${'$' + cs.quoteConservative}</div>
                                             <div class="text-[9px] text-gray-400">10% margin</div>
                                         </div>
-                                        <div onclick="selectStep4Quote('${project.id}','recommended')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center relative ${step4State.selectedQuote === 'recommended' ? 'border-orange-500 bg-orange-50 shadow-sm' : 'border-gray-200 hover:border-orange-300'}">
+                                        <div onclick="Nestopia.steps.step4.selectQuote('${project.id}','recommended')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center relative ${step4State.selectedQuote === 'recommended' ? 'border-orange-500 bg-orange-50 shadow-sm' : 'border-gray-200 hover:border-orange-300'}">
                                             <div class="absolute -top-2 left-1/2 -translate-x-1/2 text-[8px] font-bold bg-orange-500 text-white px-2 py-0.5 rounded-full">BEST</div>
                                             <div class="text-[9px] text-gray-500">Recommended</div>
                                             <div class="text-sm font-bold">${'$' + cs.quoteRecommended}</div>
                                             <div class="text-[9px] text-gray-400">18% margin</div>
                                         </div>
-                                        <div onclick="selectStep4Quote('${project.id}','premium')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center ${step4State.selectedQuote === 'premium' ? 'border-emerald-500 bg-emerald-50' : 'border-gray-200 hover:border-blue-300'}">
+                                        <div onclick="Nestopia.steps.step4.selectQuote('${project.id}','premium')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center ${step4State.selectedQuote === 'premium' ? 'border-emerald-500 bg-emerald-50' : 'border-gray-200 hover:border-blue-300'}">
                                             <div class="text-[9px] text-gray-500">Premium</div>
                                             <div class="text-sm font-bold">${'$' + cs.quotePremium}</div>
                                             <div class="text-[9px] text-gray-400">35% margin</div>
@@ -7050,7 +7050,7 @@
                                         <span class="text-[10px] font-bold ${cs.marginPct >= 15 ? 'text-green-700' : 'text-amber-700'}">$${cs.profit} net</span>
                                     </div>
                                 </div>
-                                <button onclick="openQuotationEditor('${project.id}')" class="w-full py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold text-xs hover:from-blue-700 hover:to-blue-800 transition shadow-md flex items-center justify-center gap-1.5"><i class="fas fa-file-invoice-dollar"></i> Generate Quotation</button>
+                                <button onclick="Nestopia.utils.quotEditor.openQuotationEditor('${project.id}')" class="w-full py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold text-xs hover:from-blue-700 hover:to-blue-800 transition shadow-md flex items-center justify-center gap-1.5"><i class="fas fa-file-invoice-dollar"></i> Generate Quotation</button>
                             </div>
                         </div>
                     </div>
@@ -7249,7 +7249,7 @@
                         <p class="text-sm text-gray-500 mt-1" id="quotProjectRef"></p>
                     </div>
                     <div class="relative">
-                        <button onclick="toggleQuotLoadDropdown()" class="px-3 py-1.5 text-xs font-medium border border-gray-300 rounded-lg hover:bg-gray-50 transition flex items-center gap-1.5 text-gray-600">
+                        <button onclick="Nestopia.utils.quotEditor.toggleQuotLoadDropdown()" class="px-3 py-1.5 text-xs font-medium border border-gray-300 rounded-lg hover:bg-gray-50 transition flex items-center gap-1.5 text-gray-600">
                             <i class="fas fa-history"></i> Load Saved
                             <span id="quotSavedCount" class="inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold bg-blue-100 text-blue-700 rounded-full" style="display:none">0</span>
                         </button>
@@ -7259,7 +7259,7 @@
                         </div>
                     </div>
                 </div>
-                <button onclick="closeQuotationEditor()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition"><i class="fas fa-times text-gray-500"></i></button>
+                <button onclick="Nestopia.utils.quotEditor.closeQuotationEditor()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition"><i class="fas fa-times text-gray-500"></i></button>
             </div>
             <div class="p-6 space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -7275,7 +7275,7 @@
                 <div>
                     <div class="flex items-center justify-between mb-2">
                         <label id="quotLabelProductItems" class="text-xs font-semibold text-gray-500 uppercase">Product Items</label>
-                        <button onclick="addQuotLineItem()" class="px-3 py-1.5 text-xs font-medium bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition flex items-center gap-1"><i class="fas fa-plus"></i> <span id="quotBtnAddRow">Add Row</span></button>
+                        <button onclick="Nestopia.utils.quotEditor.addQuotLineItem()" class="px-3 py-1.5 text-xs font-medium bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition flex items-center gap-1"><i class="fas fa-plus"></i> <span id="quotBtnAddRow">Add Row</span></button>
                     </div>
                     <div class="border border-gray-200 rounded-xl overflow-x-auto">
                         <table class="w-full text-sm"><thead><tr class="bg-gray-50 text-gray-600 text-xs uppercase">
@@ -7294,7 +7294,7 @@
                 <div>
                     <div class="flex items-center justify-between mb-2">
                         <label id="quotLabelAccessories" class="text-xs font-semibold text-gray-500 uppercase">Accessories</label>
-                        <button onclick="addQuotAccessory()" class="px-3 py-1.5 text-xs font-medium bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition flex items-center gap-1"><i class="fas fa-plus"></i> <span id="quotBtnAddAccessory">Add Accessory</span></button>
+                        <button onclick="Nestopia.utils.quotEditor.addQuotAccessory()" class="px-3 py-1.5 text-xs font-medium bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition flex items-center gap-1"><i class="fas fa-plus"></i> <span id="quotBtnAddAccessory">Add Accessory</span></button>
                     </div>
                     <div class="border border-gray-200 rounded-xl overflow-x-auto">
                         <table class="w-full text-sm"><thead><tr class="bg-gray-50 text-gray-600 text-xs uppercase">
@@ -7339,9 +7339,9 @@
             <div class="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
                 <div id="quotFooterNote" class="text-sm text-gray-500">Quotation will open as a printable HTML page</div>
                 <div class="flex items-center gap-3">
-                    <button onclick="closeQuotationEditor()" class="px-4 py-2.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-100 transition">Cancel</button>
-                    <button onclick="saveQuotation()" class="px-5 py-2.5 text-sm bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition font-medium flex items-center gap-2"><i class="fas fa-save"></i> Save</button>
-                    <button onclick="previewQuotation()" class="px-6 py-2.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium flex items-center gap-2"><i class="fas fa-print"></i> Preview & Print</button>
+                    <button onclick="Nestopia.utils.quotEditor.closeQuotationEditor()" class="px-4 py-2.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-100 transition">Cancel</button>
+                    <button onclick="Nestopia.utils.quotEditor.saveQuotation()" class="px-5 py-2.5 text-sm bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition font-medium flex items-center gap-2"><i class="fas fa-save"></i> Save</button>
+                    <button onclick="Nestopia.utils.quotEditor.previewQuotation()" class="px-6 py-2.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium flex items-center gap-2"><i class="fas fa-print"></i> Preview & Print</button>
                 </div>
             </div>
         </div>

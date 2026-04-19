@@ -413,7 +413,7 @@
             quoteEl.innerHTML = qKeys.map(function(key) {
                 var s = qStyles[key]; var v = qValues[key]; var sel = qSel === key;
                 var extra = key === 'recommended' ? '<div class="absolute -top-2 left-1/2 -translate-x-1/2 text-[8px] font-bold bg-orange-500 text-white px-2 py-0.5 rounded-full">BEST</div>' : '';
-                return '<div onclick="selectStep4Quote(\'' + projectId + '\',\'' + key + '\')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center ' + (key === 'recommended' ? 'relative ' : '') + (sel ? s.border + ' ' + s.bg + ' shadow-sm' : 'border-gray-200 ' + s.off) + '">' +
+                return '<div onclick="Nestopia.steps.step4.selectQuote(\'' + projectId + '\',\'' + key + '\')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center ' + (key === 'recommended' ? 'relative ' : '') + (sel ? s.border + ' ' + s.bg + ' shadow-sm' : 'border-gray-200 ' + s.off) + '">' +
                     extra +
                     '<div class="text-[9px] text-gray-500 font-medium">' + v.label + '</div>' +
                     '<div class="text-sm font-bold ' + (sel ? s.text : 'text-gray-800') + '">' + v.amount + '</div>' +

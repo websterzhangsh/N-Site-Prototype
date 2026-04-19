@@ -31,7 +31,7 @@
                         <h3 class="text-lg font-bold text-gray-900">Create New Project</h3>
                         <p class="text-xs text-gray-500 mt-0.5">New project starts at Step 1 — Intent</p>
                     </div>
-                    <button onclick="closeCreateProjectModal()" class="w-8 h-8 rounded-full hover:bg-gray-200 flex items-center justify-center transition">
+                    <button onclick="Nestopia.modules.projects.closeCreateProjectModal()" class="w-8 h-8 rounded-full hover:bg-gray-200 flex items-center justify-center transition">
                         <i class="fas fa-times text-gray-400"></i>
                     </button>
                 </div>
@@ -129,8 +129,8 @@
                         <span>Initializes Step 1 checklist, questionnaire & payment tracking</span>
                     </div>
                     <div class="flex gap-2">
-                        <button onclick="closeCreateProjectModal()" class="px-3 py-1.5 text-xs font-medium text-gray-600 border border-gray-200 rounded-md hover:bg-gray-100 transition">Cancel</button>
-                        <button onclick="submitCreateProject()" class="px-3 py-1.5 text-xs font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 transition shadow-sm">
+                        <button onclick="Nestopia.modules.projects.closeCreateProjectModal()" class="px-3 py-1.5 text-xs font-medium text-gray-600 border border-gray-200 rounded-md hover:bg-gray-100 transition">Cancel</button>
+                        <button onclick="Nestopia.modules.projects.submitCreateProject()" class="px-3 py-1.5 text-xs font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 transition shadow-sm">
                             <i class="fas fa-plus mr-1"></i>Create Project
                         </button>
                     </div>
@@ -404,7 +404,7 @@
             const progressPct = isZB ? 50 : Math.round((p.workflowStep / 6) * 100);
             const stepLabel = isZB ? 'Measure & Quote' : 'Step ' + p.workflowStep + '/6';
             return `
-            <div class="project-list-item p-4 border-b border-gray-100 hover:bg-blue-50/40 cursor-pointer transition" data-project-id="${p.id}" onclick="selectProject('${p.id}')">
+            <div class="project-list-item p-4 border-b border-gray-100 hover:bg-blue-50/40 cursor-pointer transition" data-project-id="${p.id}" onclick="Nestopia.modules.projects.selectProject('${p.id}')">
                 <div class="flex items-start justify-between mb-1.5">
                     <div class="font-medium text-sm text-gray-900 leading-tight">${p.name}</div>
                     <div class="w-2 h-2 rounded-full bg-${riskColors[p.riskLevel]}-500 flex-shrink-0 mt-1.5 ml-2"></div>
@@ -489,7 +489,7 @@
             const isSelected = p.id === selectedId;
             const ringClass = isSelected ? `ring-2 ring-blue-500 bg-blue-100 text-blue-700` : `bg-gray-100 text-gray-600 hover:bg-gray-200`;
             return `
-                <div class="flex flex-col items-center py-2 cursor-pointer transition-all" onclick="selectProject('${p.id}')" title="${p.name}\n${p.customer}">
+                <div class="flex flex-col items-center py-2 cursor-pointer transition-all" onclick="Nestopia.modules.projects.selectProject('${p.id}')" title="${p.name}\n${p.customer}">
                     <div class="relative">
                         <div class="w-9 h-9 rounded-full ${ringClass} flex items-center justify-center text-xs font-bold transition-all">
                             ${initials}
@@ -805,7 +805,7 @@
                 <td class="py-3 px-4 text-sm font-medium text-gray-900">$${project.budget.toLocaleString()}</td>
                 <td class="py-3 px-4 text-sm text-gray-700">${project.timeline}</td>
                 <td class="py-3 px-4">${getRiskBadge(project.riskLevel)}</td>
-                <td class="py-3 px-4"><button class="text-gray-400 hover:text-gray-600 transition" onclick="viewProject('${project.id}')"><i class="fas fa-ellipsis-v"></i></button></td>
+                <td class="py-3 px-4"><button class="text-gray-400 hover:text-gray-600 transition" onclick="Nestopia.modules.projects.viewProject('${project.id}')"><i class="fas fa-ellipsis-v"></i></button></td>
             </tr>
         `).join('');
     }
@@ -822,7 +822,7 @@
                 <td class="py-3 px-4">${getIssuStatusBadge(issue.status)}</td>
                 <td class="py-3 px-4 text-sm text-gray-700">${issue.assignedTo}</td>
                 <td class="py-3 px-4 text-sm text-gray-700">${issue.dueDate}</td>
-                <td class="py-3 px-4"><button class="text-gray-400 hover:text-gray-600 transition" onclick="viewIssue('${issue.id}')"><i class="fas fa-edit"></i></button></td>
+                <td class="py-3 px-4"><button class="text-gray-400 hover:text-gray-600 transition" onclick="Nestopia.modules.projects.viewIssue('${issue.id}')"><i class="fas fa-edit"></i></button></td>
             </tr>
         `).join('');
     }

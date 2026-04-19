@@ -219,7 +219,7 @@
             el.innerHTML = this.sessions.map(s => {
                 const a = s.agentUsed ? this.agents[s.agentUsed] : null;
                 const active = s.id === this.currentSessionId;
-                return `<div class="chat-session-item ${active ? 'active' : ''}" onclick="b2bChat.switchSession('${s.id}')">
+                return `<div class="chat-session-item ${active ? 'active' : ''}" onclick="Nestopia.utils.chatbot.b2bChat.switchSession('${s.id}')">
                     <div class="si-title">${this.esc(s.title)}</div>
                     <div class="si-meta">
                         ${a ? '<span><i class="fas ' + a.icon + '" style="font-size:10px"></i> ' + a.name + '</span>' : ''}

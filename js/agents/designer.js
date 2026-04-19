@@ -119,7 +119,7 @@
             var controlIcon = p.control === 'Manual' ? 'fa-hand-paper' : p.control === 'Motorized' ? 'fa-cog' : 'fa-solar-panel';
             var controlColor = p.control === 'Manual' ? 'text-gray-500' : p.control === 'Motorized' ? 'text-blue-500' : 'text-amber-500';
 
-            html += '<div class="designer-product-card cursor-pointer" data-catalog-id="' + key + '" onclick="selectDesignerProduct(\'' + key + '\')">';
+            html += '<div class="designer-product-card cursor-pointer" data-catalog-id="' + key + '" onclick="Nestopia.agents.designer.selectDesignerProduct(\'' + key + '\')">';
             html += '<div class="p-4 border-2 border-gray-200 rounded-xl hover:border-indigo-300 hover:bg-indigo-50/30 transition-all">';
             html += '<div class="flex items-start justify-between mb-2">';
             html += '<div class="flex-1 min-w-0">';
@@ -186,7 +186,7 @@
             var cls = isSelected
                 ? 'px-2 py-2 bg-indigo-600 text-white rounded-lg text-xs font-medium cursor-pointer text-center'
                 : 'px-2 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg text-xs font-medium cursor-pointer text-center hover:bg-gray-50';
-            spanHTML += '<button onclick="selectDesignerSpan(\'' + span + '\')" class="' + cls + '">' + span + '<br><span class="' + (isSelected ? 'text-indigo-200' : 'text-gray-400') + ' text-[10px]">' + priceLabel + '</span></button>';
+            spanHTML += '<button onclick="Nestopia.agents.designer.selectDesignerSpan(\'' + span + '\')" class="' + cls + '">' + span + '<br><span class="' + (isSelected ? 'text-indigo-200' : 'text-gray-400') + ' text-[10px]">' + priceLabel + '</span></button>';
         });
         spanGrid.innerHTML = spanHTML;
         // Auto-select first span
@@ -236,7 +236,7 @@
                 var cls = isSelected
                     ? 'px-2 py-2 bg-indigo-600 text-white rounded-lg text-xs font-medium cursor-pointer text-center'
                     : 'px-2 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg text-xs font-medium cursor-pointer text-center hover:bg-gray-50';
-                spanHTML += '<button onclick="selectDesignerSpan(\'' + s + '\')" class="' + cls + '">' + s + '<br><span class="' + (isSelected ? 'text-indigo-200' : 'text-gray-400') + ' text-[10px]">' + priceLabel + '</span></button>';
+                spanHTML += '<button onclick="Nestopia.agents.designer.selectDesignerSpan(\'' + s + '\')" class="' + cls + '">' + s + '<br><span class="' + (isSelected ? 'text-indigo-200' : 'text-gray-400') + ' text-[10px]">' + priceLabel + '</span></button>';
             });
             spanGrid.innerHTML = spanHTML;
 

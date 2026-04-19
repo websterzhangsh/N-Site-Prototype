@@ -260,7 +260,7 @@
             var count = workflowProjects.filter(function(p) { return p.workflowStep === ws.step; }).length;
             var cm = { blue:{ bg:'bg-blue-50',border:'border-blue-200',text:'text-blue-700',dot:'bg-blue-500',num:'text-blue-600' }, indigo:{ bg:'bg-indigo-50',border:'border-indigo-200',text:'text-indigo-700',dot:'bg-indigo-500',num:'text-indigo-600' }, purple:{ bg:'bg-purple-50',border:'border-purple-200',text:'text-purple-700',dot:'bg-purple-500',num:'text-purple-600' }, orange:{ bg:'bg-orange-50',border:'border-orange-200',text:'text-orange-700',dot:'bg-orange-500',num:'text-orange-600' }, yellow:{ bg:'bg-yellow-50',border:'border-yellow-200',text:'text-yellow-700',dot:'bg-yellow-500',num:'text-yellow-600' }, green:{ bg:'bg-green-50',border:'border-green-200',text:'text-green-700',dot:'bg-green-500',num:'text-green-600' } };
             var c = cm[ws.color];
-            return '<div class="' + c.bg + ' ' + c.border + ' border rounded-xl p-3 cursor-pointer hover:shadow-md transition" onclick="document.getElementById(\'wfStepFilter\').value=\'' + ws.step + '\';filterWorkflowProjects()">' +
+            return '<div class="' + c.bg + ' ' + c.border + ' border rounded-xl p-3 cursor-pointer hover:shadow-md transition" onclick="document.getElementById(\'wfStepFilter\').value=\'' + ws.step + '\';Nestopia.modules.workflow.filterWorkflowProjects()">' +
                 '<div class="flex items-center gap-2 mb-1"><div class="w-6 h-6 ' + c.dot + ' rounded-full flex items-center justify-center"><span class="text-white text-xs font-bold">' + ws.step + '</span></div><span class="' + c.text + ' text-xs font-semibold">' + ws.name + '</span></div>' +
                 '<div class="' + c.num + ' text-2xl font-bold">' + count + '</div>' +
                 '<div class="text-gray-500 text-[0.65rem] mt-0.5">' + ws.payment + '</div></div>';
@@ -320,7 +320,7 @@
                     (ws.step < 6 ? '<div class="flex-1 h-0.5 ' + lineColor + ' mx-1"></div>' : '') + '</div>';
             }).join('');
 
-            return '<div class="bg-white rounded-xl border border-gray-200 hover:shadow-lg transition-all duration-200 cursor-pointer" onclick="openProjectDetail(\'' + project.id + '\')">' +
+            return '<div class="bg-white rounded-xl border border-gray-200 hover:shadow-lg transition-all duration-200 cursor-pointer" onclick="Nestopia.modules.workflow.openProjectDetail(\'' + project.id + '\')">' +
                 '<div class="p-5">' +
                 '<div class="flex items-start justify-between mb-4"><div class="flex-1 min-w-0">' +
                 '<div class="flex items-center gap-2 flex-wrap"><h3 class="text-base font-bold text-gray-900 truncate">' + project.name + '</h3>' + getStepBadgeHTML(project.workflowStep, 'sm') + '</div>' +
@@ -355,7 +355,7 @@
             return '<div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-dashed border-gray-300 hover:border-gray-400 transition group">' +
                 '<div class="flex items-center gap-3"><div class="w-8 h-8 bg-white rounded-lg border border-gray-200 flex items-center justify-center group-hover:bg-blue-50"><i class="fas ' + u.icon + ' text-gray-400 group-hover:text-blue-500 text-sm"></i></div>' +
                 '<div><div class="text-sm font-medium text-gray-700">' + u.label + '</div><div class="text-[0.65rem] text-gray-400">' + (u.required ? 'Required' : 'Optional') + '</div></div></div>' +
-                '<button class="px-3 py-1.5 text-xs font-medium bg-white border border-gray-300 rounded-lg hover:bg-gray-100 transition flex items-center gap-1" onclick="event.stopPropagation();handleStepFileUpload(\'' + project.id + '\',\'' + u.key + '\')"><i class="fas fa-cloud-upload-alt"></i> Upload</button></div>';
+                '<button class="px-3 py-1.5 text-xs font-medium bg-white border border-gray-300 rounded-lg hover:bg-gray-100 transition flex items-center gap-1" onclick="event.stopPropagation();Nestopia.modules.workflow.handleStepFileUpload(\'' + project.id + '\',\'' + u.key + '\')"><i class="fas fa-cloud-upload-alt"></i> Upload</button></div>';
         }).join('');
 
         var paymentPhases = [
@@ -424,7 +424,7 @@
         content.innerHTML = '<div class="flex items-start justify-between p-6 border-b border-gray-200"><div>' +
             '<div class="flex items-center gap-3 flex-wrap"><h2 class="text-xl font-bold text-gray-900">' + project.name + '</h2>' + getStepBadgeHTML(project.workflowStep, 'lg') + '</div>' +
             '<div class="flex items-center gap-4 mt-2 text-sm text-gray-500"><span><i class="fas fa-user mr-1"></i>' + project.customer + '</span><span><i class="fas fa-phone mr-1"></i>' + project.phone + '</span><span><i class="fas fa-map-marker-alt mr-1"></i>' + project.address + '</span></div>' +
-            '</div><button onclick="closeProjectDetail()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition"><i class="fas fa-times text-gray-500"></i></button></div>' +
+            '</div><button onclick="Nestopia.modules.workflow.closeProjectDetail()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition"><i class="fas fa-times text-gray-500"></i></button></div>' +
             '<div class="p-6 grid md:grid-cols-2 gap-6"><div>' +
             '<div class="mb-6"><h4 class="text-sm font-semibold text-gray-900 mb-3">Project Info</h4>' +
             '<div class="grid grid-cols-2 gap-3 text-sm">' +
@@ -443,9 +443,9 @@
             '<div class="mt-6"><h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2"><i class="fas fa-tasks text-purple-500"></i> Checklist Progress</h4><div class="space-y-2">' + checklistHTML + '</div></div>' +
             '</div></div>' +
             '<div class="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50 rounded-b-2xl"><div class="text-sm text-gray-500">' + meta.desc + '</div>' +
-            '<div class="flex items-center gap-3"><button onclick="closeProjectDetail()" class="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-100 transition">Close</button>' +
-            '<button class="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition" onclick="openQuotationEditor(\'' + project.id + '\')"><i class="fas fa-file-invoice-dollar mr-1"></i>Generate Quotation</button>' +
-            (project.workflowStep < 6 ? '<button class="px-4 py-2 text-sm bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition" onclick="advanceStep(\'' + project.id + '\')"><i class="fas fa-arrow-right mr-1"></i>Advance to Step ' + (project.workflowStep + 1) + '</button>' : '') +
+            '<div class="flex items-center gap-3"><button onclick="Nestopia.modules.workflow.closeProjectDetail()" class="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-100 transition">Close</button>' +
+            '<button class="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition" onclick="Nestopia.utils.quotEditor.openQuotationEditor(\'' + project.id + '\')"><i class="fas fa-file-invoice-dollar mr-1"></i>Generate Quotation</button>' +
+            (project.workflowStep < 6 ? '<button class="px-4 py-2 text-sm bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition" onclick="Nestopia.modules.workflow.advanceStep(\'' + project.id + '\')"><i class="fas fa-arrow-right mr-1"></i>Advance to Step ' + (project.workflowStep + 1) + '</button>' : '') +
             '</div></div>';
 
         modal.classList.remove('hidden');

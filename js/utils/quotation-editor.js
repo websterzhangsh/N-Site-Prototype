@@ -337,11 +337,11 @@
             if (q.accessories) q.accessories.forEach(function(a) { total += a.unitPrice * a.qty; });
             total = total * (1 - (q.discount || 0) / 100);
             html += '<div class="flex items-center justify-between px-4 py-2.5 hover:bg-blue-50 transition group">' +
-                '<button onclick="loadQuotation(\'' + q.id + '\'); toggleQuotLoadDropdown();" class="flex-1 text-left">' +
+                '<button onclick="Nestopia.utils.quotEditor.loadQuotation(\'' + q.id + '\'); Nestopia.utils.quotEditor.toggleQuotLoadDropdown();" class="flex-1 text-left">' +
                     '<div class="text-sm font-medium text-gray-800">' + dateStr + '</div>' +
                     '<div class="text-xs text-gray-500">' + itemCount + (q.clientName ? ' &middot; ' + q.clientName : '') + ' &middot; &yen;' + total.toFixed(0) + (q.discount > 0 ? ' (' + q.discount + '% off)' : '') + '</div>' +
                 '</button>' +
-                '<button onclick="event.stopPropagation(); deleteQuotation(\'' + q.id + '\');" class="opacity-0 group-hover:opacity-100 ml-2 w-6 h-6 flex items-center justify-center text-red-400 hover:text-red-600 hover:bg-red-50 rounded transition" title="Delete"><i class="fas fa-trash-alt text-xs"></i></button>' +
+                '<button onclick="event.stopPropagation(); Nestopia.utils.quotEditor.deleteQuotation(\'' + q.id + '\');" class="opacity-0 group-hover:opacity-100 ml-2 w-6 h-6 flex items-center justify-center text-red-400 hover:text-red-600 hover:bg-red-50 rounded transition" title="Delete"><i class="fas fa-trash-alt text-xs"></i></button>' +
             '</div>';
         });
         container.innerHTML = html;
@@ -396,7 +396,7 @@
                 '<td class="py-2 px-3"><input type="number" value="' + item.unitPrice + '" step="1" onchange="quotLineItemsData[' + i + '].unitPrice=Number(this.value);renderQuotLineItems();updateQuotTotals();" class="w-full px-2 py-1.5 border border-gray-200 rounded text-xs text-center focus:ring-1 focus:ring-blue-400"></td>' +
                 '<td class="py-2 px-3"><input type="number" value="' + item.qty + '" min="1" onchange="quotLineItemsData[' + i + '].qty=Number(this.value);renderQuotLineItems();updateQuotTotals();" class="w-full px-2 py-1.5 border border-gray-200 rounded text-xs text-center focus:ring-1 focus:ring-blue-400"></td>' +
                 '<td class="py-2 px-3 text-right text-xs font-semibold text-gray-900">' + amount.toFixed(2) + '</td>' +
-                '<td class="py-2 px-3"><button onclick="removeQuotLineItem(' + i + ')" class="text-red-400 hover:text-red-600 transition"><i class="fas fa-trash-alt text-xs"></i></button></td></tr>';
+                '<td class="py-2 px-3"><button onclick="Nestopia.utils.quotEditor.removeQuotLineItem(' + i + ')" class="text-red-400 hover:text-red-600 transition"><i class="fas fa-trash-alt text-xs"></i></button></td></tr>';
         }).join('');
     }
 
@@ -414,7 +414,7 @@
                 '<td class="py-2 px-3"><input type="number" value="' + item.unitPrice + '" step="1" onchange="quotAccessoriesData[' + i + '].unitPrice=Number(this.value);renderQuotAccessories();updateQuotTotals();" class="w-full px-2 py-1.5 border border-gray-200 rounded text-xs text-center focus:ring-1 focus:ring-blue-400"></td>' +
                 '<td class="py-2 px-3"><input type="number" value="' + item.qty + '" min="1" onchange="quotAccessoriesData[' + i + '].qty=Number(this.value);renderQuotAccessories();updateQuotTotals();" class="w-full px-2 py-1.5 border border-gray-200 rounded text-xs text-center focus:ring-1 focus:ring-blue-400"></td>' +
                 '<td class="py-2 px-3 text-right text-xs font-semibold text-gray-900">' + amount.toFixed(2) + '</td>' +
-                '<td class="py-2 px-3"><button onclick="removeQuotAccessory(' + i + ')" class="text-red-400 hover:text-red-600 transition"><i class="fas fa-trash-alt text-xs"></i></button></td></tr>';
+                '<td class="py-2 px-3"><button onclick="Nestopia.utils.quotEditor.removeQuotAccessory(' + i + ')" class="text-red-400 hover:text-red-600 transition"><i class="fas fa-trash-alt text-xs"></i></button></td></tr>';
         }).join('');
     }
 

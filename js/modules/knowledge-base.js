@@ -186,10 +186,10 @@
                     </td>
                     <td class="px-5 py-3 text-right">
                         <div class="flex items-center justify-end gap-1">
-                            <button onclick="viewKBDoc('${doc.id}')" class="w-7 h-7 rounded-md hover:bg-gray-100 flex items-center justify-center transition" title="View">
+                            <button onclick="Nestopia.modules.knowledgeBase.viewKBDoc('${doc.id}')" class="w-7 h-7 rounded-md hover:bg-gray-100 flex items-center justify-center transition" title="View">
                                 <i class="fas fa-eye text-gray-400 text-xs"></i>
                             </button>
-                            <button onclick="deleteKBDoc('${doc.id}')" class="w-7 h-7 rounded-md hover:bg-red-50 flex items-center justify-center transition" title="Delete">
+                            <button onclick="Nestopia.modules.knowledgeBase.deleteKBDoc('${doc.id}')" class="w-7 h-7 rounded-md hover:bg-red-50 flex items-center justify-center transition" title="Delete">
                                 <i class="fas fa-trash text-gray-400 text-xs hover:text-red-500"></i>
                             </button>
                         </div>
@@ -258,7 +258,7 @@
                         <span class="text-sm text-gray-700 truncate">${f.name}</span>
                         <span class="text-xs text-gray-400">${formatFileSize(f.size)}</span>
                     </div>
-                    <button onclick="removeKBFile(${i})" class="text-gray-400 hover:text-red-500 transition"><i class="fas fa-times text-xs"></i></button>
+                    <button onclick="Nestopia.modules.knowledgeBase.removeKBFile(${i})" class="text-gray-400 hover:text-red-500 transition"><i class="fas fa-times text-xs"></i></button>
                 </div>
             `).join('');
         } else {
@@ -276,7 +276,7 @@
                     <span class="text-sm text-gray-700 truncate">${f.name}</span>
                     <span class="text-xs text-gray-400">${formatFileSize(f.size)}</span>
                 </div>
-                <button onclick="removeKBFile(${i})" class="text-gray-400 hover:text-red-500 transition"><i class="fas fa-times text-xs"></i></button>
+                <button onclick="Nestopia.modules.knowledgeBase.removeKBFile(${i})" class="text-gray-400 hover:text-red-500 transition"><i class="fas fa-times text-xs"></i></button>
             </div>
         `).join('');
         if (kbState.selectedFiles.length === 0) {
@@ -312,7 +312,7 @@
         container.innerHTML = kbState.uploadTags.map(tag =>
             `<span class="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 rounded-full text-xs text-gray-700">
                 ${tag}
-                <button onclick="removeKBTag('${tag}')" class="text-gray-400 hover:text-red-500"><i class="fas fa-times text-[10px]"></i></button>
+                <button onclick="Nestopia.modules.knowledgeBase.removeKBTag('${tag}')" class="text-gray-400 hover:text-red-500"><i class="fas fa-times text-[10px]"></i></button>
             </span>`
         ).join('');
     }
