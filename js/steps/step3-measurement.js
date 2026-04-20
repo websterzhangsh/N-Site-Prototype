@@ -207,11 +207,8 @@
                         if (dbData.appointmentTime) state.appointmentTime = dbData.appointmentTime;
                         if (dbData.measurementComplete !== undefined) state.measurementComplete = dbData.measurementComplete;
                         console.log('[Measurement] Loaded from Supabase for', projectId);
-                        // 重新渲染面板
-                        if (expandedStep === 3 && currentDetailProject) {
-                            toggleStepDetail(expandedStep, currentDetailProject);
-                            toggleStepDetail(expandedStep, currentDetailProject);
-                        }
+                        // 直接更新 DOM 字段值（避免 toggle-toggle 导致面板收起）
+                        _populateStep3FieldsFromState(projectId, state);
                     }
                 });
             }
@@ -493,9 +490,9 @@
             setTimeout(function() {
                 state.designMatrix[key] = 'done';
                 // Re-render the step detail to reflect progress
-                if (expandedStep === 3 && currentDetailProject) {
-                    toggleStepDetail(3, currentDetailProject);
-                    toggleStepDetail(3, currentDetailProject);
+                if (expandedStep && currentDetailProject) {
+                    toggleStepDetail(expandedStep, currentDetailProject);
+                    toggleStepDetail(expandedStep, currentDetailProject);
                 }
                 currentIndex++;
                 processNext();
@@ -504,6 +501,63 @@
 
         // Start processing with initial delay
         setTimeout(processNext, 500);
+    }
+
+    /**
+     * DB 加载后直接填充 DOM 字段（不需要重新渲染面板）
+     * 支持 ZB（per-opening）和 Sunroom/Pergola
+     */
+    function _populateStep3FieldsFromState(projectId, state) {
+        var project = allProjectsData.find(function(p) { return p.id === projectId; });
+        var isZB = project && project.type === 'Zip Blinds';
+        var config = STEP_DETAIL_CONFIG[3];
+        if (!config || !config.measurementPanel) return;
+
+        var fields = isZB && config.measurementPanel.zipBlindsFields
+            ? config.measurementPanel.zipBlindsFields
+            : config.measurementPanel.measurementFields;
+
+        // 1. 通用字段（method, surveyor, date, openings...）
+        fields.filter(function(f) { return !f.perOpening; }).forEach(function(mf) {
+            var el = document.getElementById('step3_' + mf.key + '_' + projectId);
+            if (el && state.measurementData[mf.key] !== undefined) {
+                el.value = state.measurementData[mf.key];
+            }
+        });
+
+        // 2. ZB per-opening 字段 — 先重建 opening sections，再填值
+        if (isZB) {
+            var numO = parseInt(state.measurementData['openings'] || '1') || 1;
+            var openingsEl = document.getElementById('step3_openings_' + projectId);
+            if (openingsEl) openingsEl.value = String(numO);
+            rebuildZBOpeningSections(projectId);
+        }
+
+        // 3. 预约字段
+        var apptDateEl = document.getElementById('step3ApptDate_' + projectId);
+        if (apptDateEl && state.appointmentDate) apptDateEl.value = state.appointmentDate;
+        var apptTimeEl = document.getElementById('step3ApptTime_' + projectId);
+        if (apptTimeEl && state.appointmentTime) apptTimeEl.value = state.appointmentTime;
+
+        // 4. 预约状态
+        var statusEl = document.getElementById('step3ApptStatus_' + projectId);
+        if (statusEl && state.appointmentScheduled) {
+            statusEl.textContent = '\u2713 Scheduled';
+            statusEl.classList.remove('text-amber-600');
+            statusEl.classList.add('text-green-600');
+        }
+
+        // 5. Generate 按钮状态
+        var genBtn = document.getElementById('step3GenerateDesignBtn_' + projectId);
+        if (genBtn) {
+            if (state.measurementComplete) {
+                genBtn.disabled = false;
+                genBtn.classList.remove('opacity-40', 'cursor-not-allowed');
+            } else {
+                genBtn.disabled = true;
+                genBtn.classList.add('opacity-40', 'cursor-not-allowed');
+            }
+        }
     }
 
     // ── 命名空间导出 ──────────────────────────────────────────
