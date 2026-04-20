@@ -4358,6 +4358,7 @@
     <!-- 7. Step 实现 (Phase 4) -->
     <script src="js/steps/step2-design.js?v=e99f627"></script>
     <script src="js/steps/step3-measurement.js?v=e99f627"></script>
+    <script src="js/steps/zb-verification.js?v=e99f627"></script>
     <script src="js/steps/step4-quotation.js?v=e99f627"></script>
     <!-- 8. 独立工具 (Phase 4) -->
     <script src="js/utils/quotation-editor.js?v=e99f627"></script>
@@ -6702,6 +6703,194 @@
                 </div>`;
             })() : '';
 
+            // Verification Panel (ZB Step 3 specific) — cross-check initial vs verified measurements
+            const verificationPanelHTML = config.verificationPanel ? (() => {
+                const step3State = getStep3State(project.id);
+                const initialData = step3State.measurementData;
+                const numOpenings = parseInt(initialData.openings || '1') || 1;
+                const mpConfig = STEP_DETAIL_CONFIG[3].measurementPanel;
+                const perFieldDefs = mpConfig.zipBlindsFields.filter(mf => mf.perOpening);
+                const verState = Nestopia.steps.zbVerification.getVerificationState(project.id);
+
+                const cls = 'w-full px-2 py-1.5 border border-gray-200 rounded-lg text-xs text-center focus:ring-2 focus:ring-purple-200 focus:border-purple-400';
+
+                // Check if Step 1 has measurement data
+                const hasInitialData = Boolean(initialData.opening_1_width_in || initialData.opening_1_height_in);
+
+                // Build initial measurement summary (always visible)
+                let initialSummaryRows = '';
+                if (hasInitialData) {
+                    for (let i = 1; i <= numOpenings; i++) {
+                        const w = initialData['opening_' + i + '_width_in'] || '\u2014';
+                        const h = initialData['opening_' + i + '_height_in'] || '\u2014';
+                        const m = initialData['opening_' + i + '_mounting'] || '';
+                        const mLabel = m ? m.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) : '\u2014';
+                        initialSummaryRows += `
+                            <div class="flex items-center gap-3 text-[10px]">
+                                <span class="w-4 h-4 bg-purple-100 rounded flex items-center justify-center text-[9px] font-bold text-purple-600">${i}</span>
+                                <span class="text-gray-600">${w}" \u00d7 ${h}"</span>
+                                <span class="text-purple-600 font-medium">${mLabel}</span>
+                            </div>`;
+                    }
+                } else {
+                    initialSummaryRows = '<div class="text-xs text-gray-400 text-center py-2"><i class="fas fa-info-circle mr-1"></i>No initial measurement data from Step 1 yet</div>';
+                }
+
+                // Build per-opening comparison sections
+                let openingComparisonHTML = '';
+                for (let oi = 1; oi <= numOpenings; oi++) {
+                    let rows = perFieldDefs.map(mf => {
+                        const perKey = 'opening_' + oi + '_' + mf.key;
+                        const initialVal = initialData[perKey] || '';
+                        const verifiedVal = verState.verifiedData[perKey] || '';
+
+                        // Initial value display
+                        let initialDisplay = '\u2014';
+                        if (initialVal) {
+                            if (mf.type === 'select') {
+                                const opt = mf.options.find(o => o.value === initialVal);
+                                initialDisplay = opt ? opt.label : initialVal;
+                            } else {
+                                initialDisplay = initialVal + (mf.key.includes('_in') ? '"' : '');
+                            }
+                        }
+
+                        // Verified field input
+                        let verifiedInput;
+                        if (mf.type === 'select') {
+                            verifiedInput = `<select id="zv_${perKey}_${project.id}" class="${cls} bg-white" onchange="updateVerificationField('${project.id}', '${perKey}', this.value)">
+                                <option value="">--</option>
+                                ${mf.options.map(o => `<option value="${o.value}" ${verifiedVal === o.value ? 'selected' : ''}>${o.label}</option>`).join('')}
+                            </select>`;
+                        } else {
+                            verifiedInput = `<input type="${mf.type}" id="zv_${perKey}_${project.id}" value="${verifiedVal}" class="${cls}" placeholder="${initialVal || mf.placeholder || ''}" ${mf.min !== undefined ? 'min="' + mf.min + '"' : ''} ${mf.step !== undefined ? 'step="' + mf.step + '"' : ''} onchange="updateVerificationField('${project.id}', '${perKey}', this.value)">`;
+                        }
+
+                        return `<tr class="border-t border-gray-100">
+                            <td class="py-2 text-[11px] text-gray-600 pr-2"><i class="fas ${mf.icon} text-purple-400 text-[9px] mr-1"></i>${mf.label}</td>
+                            <td class="py-2 text-center text-[11px] text-gray-700 font-medium px-1">${initialDisplay}</td>
+                            <td class="py-2 text-center px-1" style="min-width:80px">${verifiedInput}</td>
+                            <td class="py-2 text-center px-1" id="vdelta_${perKey}_${project.id}"><span class="text-gray-300 text-[10px]">\u2014</span></td>
+                        </tr>`;
+                    }).join('');
+
+                    openingComparisonHTML += `
+                    <div class="mt-3 p-3 bg-indigo-50/30 rounded-lg border border-indigo-100">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-5 h-5 bg-indigo-100 rounded flex items-center justify-center">
+                                <span class="text-[10px] font-bold text-indigo-600">${oi}</span>
+                            </div>
+                            <span class="text-xs font-semibold text-indigo-700">Opening #${oi}</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="text-[9px] text-gray-400 uppercase tracking-wider">
+                                        <th class="text-left py-1 font-medium w-[28%]">Field</th>
+                                        <th class="text-center py-1 font-medium w-[22%]">Initial</th>
+                                        <th class="text-center py-1 font-medium w-[28%]">Verified</th>
+                                        <th class="text-center py-1 font-medium w-[22%]">Delta</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${rows}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>`;
+                }
+
+                return `
+                <div class="bg-white rounded-lg border border-gray-100 p-4">
+                    <!-- Header -->
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-check-double text-purple-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <span class="text-sm font-semibold text-gray-700">Measurement Verification</span>
+                                <span class="text-[10px] text-purple-500 ml-2 font-medium">Cross-check & Confirm</span>
+                            </div>
+                        </div>
+                        <button id="zbVerifToggleBtn_${project.id}" onclick="toggleVerificationPanel('${project.id}')" class="px-3 py-1.5 bg-purple-600 text-white text-xs font-semibold rounded-lg hover:bg-purple-700 transition flex items-center gap-1.5 shadow-sm">
+                            <i class="fas fa-check-double text-[10px]"></i> Open Verification
+                        </button>
+                    </div>
+
+                    <!-- Initial Measurement Summary (always visible) -->
+                    <div class="mb-4 p-3 bg-purple-50/50 rounded-lg border border-purple-100">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fas fa-ruler-combined text-purple-500 text-[10px]"></i>
+                            <span class="text-xs font-semibold text-purple-700">Initial Measurement (Step 1)</span>
+                            <span class="text-[9px] bg-purple-100 text-purple-600 px-1.5 py-0.5 rounded-full font-medium">${numOpenings} opening${numOpenings > 1 ? 's' : ''}</span>
+                        </div>
+                        <div class="space-y-1.5">
+                            ${initialSummaryRows}
+                        </div>
+                    </div>
+
+                    <!-- Expandable Verification Panel -->
+                    <div id="zbVerifPanel_${project.id}" class="hidden" style="animation: fadeInSlide 0.3s ease">
+                        <!-- Verifier Info -->
+                        <div class="mb-4 p-3 bg-blue-50/50 rounded-lg border border-blue-100">
+                            <div class="flex items-center gap-2 mb-2">
+                                <i class="fas fa-user-check text-blue-500 text-[10px]"></i>
+                                <span class="text-xs font-semibold text-blue-700">Verification Details</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div class="space-y-1">
+                                    <label class="text-[10px] text-gray-500">Verifier / Inspector</label>
+                                    <input type="text" id="zv_verifierName_${project.id}" value="${verState.verifierName}" class="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-200 focus:border-blue-400" placeholder="e.g. Tom Baker (#583041)" onchange="updateVerificationField('${project.id}', '_verifierName', this.value)">
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="text-[10px] text-gray-500">Verification Date</label>
+                                    <input type="date" id="zv_verificationDate_${project.id}" value="${verState.verificationDate}" class="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-200 focus:border-blue-400" onchange="updateVerificationField('${project.id}', '_verificationDate', this.value)">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tolerance Legend -->
+                        <div class="mb-3 flex items-center gap-4 text-[9px] text-gray-400">
+                            <span><i class="fas fa-check-circle text-green-500 mr-0.5"></i> Within 3mm (0.12")</span>
+                            <span><i class="fas fa-exclamation-triangle text-amber-500 mr-0.5"></i> 3\u20135mm (0.12"\u20130.20")</span>
+                            <span><i class="fas fa-times-circle text-red-500 mr-0.5"></i> &gt; 5mm (0.20")</span>
+                        </div>
+
+                        <!-- Per-Opening Comparison Tables -->
+                        ${openingComparisonHTML}
+
+                        <!-- Verification Summary -->
+                        <div class="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                            <div class="flex items-center gap-2 mb-2">
+                                <i class="fas fa-clipboard-check text-gray-500 text-[10px]"></i>
+                                <span class="text-xs font-semibold text-gray-700">Verification Summary</span>
+                            </div>
+                            <div id="zbVerifSummary_${project.id}" class="space-y-0.5">
+                                <div class="flex items-center justify-between text-[10px] py-1">
+                                    <span class="text-gray-500">Openings Verified</span>
+                                    <span class="font-medium text-gray-400">0 / ${numOpenings}</span>
+                                </div>
+                                <div class="flex items-center justify-between text-[10px] py-1">
+                                    <span class="text-gray-500">Discrepancies Found</span>
+                                    <span class="font-medium text-gray-400">\u2014</span>
+                                </div>
+                                <div class="flex items-center justify-between text-[10px] py-1">
+                                    <span class="text-gray-500">Status</span>
+                                    <span class="font-medium text-gray-400">\u25CB In Progress</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Save Button -->
+                        <button id="zbVerifySaveBtn_${project.id}" onclick="saveZBVerification('${project.id}')" class="mt-4 w-full py-3 bg-gradient-to-r from-purple-600 to-violet-600 text-white rounded-xl font-semibold text-sm hover:from-purple-700 hover:to-violet-700 transition shadow-lg shadow-purple-500/25 flex items-center justify-center gap-2 opacity-40 cursor-not-allowed" disabled>
+                            <i class="fas fa-save"></i> Save Verified Measurements
+                        </button>
+                        <p class="text-[10px] text-gray-400 text-center mt-1"><i class="fas fa-info-circle mr-1"></i>Verify all opening dimensions and enter verifier details to save</p>
+                    </div>
+                </div>`;
+            })() : '';
+
             // Quotation Panel (Step 4 specific) — pricing calculator + quote generation
             const quotationPanelHTML = config.quotationPanel ? (() => {
                 const mData = project.measurement || {};
@@ -7100,6 +7289,8 @@
                     ${aiDesignerHTML ? `<div class="mt-4">${aiDesignerHTML}</div>` : ''}
 
                     ${measurementPanelHTML ? `<div class="mt-4">${measurementPanelHTML}</div>` : ''}
+
+                    ${verificationPanelHTML ? `<div class="mt-4">${verificationPanelHTML}</div>` : ''}
 
                     ${quotationPanelHTML ? `<div class="mt-4">${quotationPanelHTML}</div>` : ''}
 

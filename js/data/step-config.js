@@ -310,7 +310,7 @@
                 { id: 'v_d1', label: 'Verified Measurement Report', desc: 'Confirmed dimensions with comparison to initial measurement', icon: 'fa-file-circle-check', required: true },
                 { id: 'v_d2', label: 'Installation Readiness', desc: 'Site confirmed ready for installation — no obstructions, wiring in place', icon: 'fa-thumbs-up', required: true }
             ],
-            measurementPanel: STEP_DETAIL_CONFIG[3].measurementPanel,
+            verificationPanel: true,
             agentSupport: [
                 { agent: 'Knowledge Base', ability: 'OMEYA measurement verification SOP, tolerance specifications' }
             ]

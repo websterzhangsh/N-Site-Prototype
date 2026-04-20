@@ -26,21 +26,21 @@
 /*.webp
   Cache-Control: public, max-age=300, must-revalidate
 
-# JS modules — versioned via ?v=hash, moderate cache
+# JS modules — versioned via ?v=hash, cache with revalidation
 /js/core/*
-  Cache-Control: public, max-age=3600, must-revalidate
+  Cache-Control: public, max-age=600, must-revalidate
 
 /js/data/*
-  Cache-Control: public, max-age=86400
+  Cache-Control: public, max-age=600, must-revalidate
 
 /js/modules/*
-  Cache-Control: public, max-age=3600, must-revalidate
+  Cache-Control: public, max-age=600, must-revalidate
 
 /js/agents/*
-  Cache-Control: public, max-age=3600, must-revalidate
+  Cache-Control: public, max-age=600, must-revalidate
 
 /js/steps/*
-  Cache-Control: public, max-age=3600, must-revalidate
+  Cache-Control: public, max-age=600, must-revalidate
 
 /js/utils/*
-  Cache-Control: public, max-age=3600, must-revalidate
+  Cache-Control: public, max-age=600, must-revalidate
