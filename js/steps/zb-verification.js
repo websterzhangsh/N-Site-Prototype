@@ -71,6 +71,8 @@
                 btn.classList.remove('bg-purple-600', 'hover:bg-purple-700');
                 btn.classList.add('bg-gray-600', 'hover:bg-gray-700');
             }
+            // ★ 每次展开都从内存重新填充 DOM（修复 step re-render 后 delta 丢失）
+            _populateVerificationDOM(projectId);
         } else {
             panel.classList.add('hidden');
             if (btn) {
@@ -79,6 +81,34 @@
                 btn.classList.add('bg-purple-600', 'hover:bg-purple-700');
             }
         }
+    }
+
+    /**
+     * 从内存状态重新填充验证面板 DOM
+     * 解决 step HTML 被 toggleStepDetail 重新生成后，verified 字段值有但 delta 显示丢失的问题
+     */
+    function _populateVerificationDOM(projectId) {
+        var state = getVerificationState(projectId);
+
+        // 刷新 initialData（Step 1 数据可能在本次会话中从 DB 更新过）
+        var latestInitial = getInitialMeasurement(projectId);
+        state.initialData = JSON.parse(JSON.stringify(latestInitial));
+
+        // 1. 回填 verified 字段值并重新计算每个 delta
+        Object.keys(state.verifiedData).forEach(function(k) {
+            var el = document.getElementById('zv_' + k + '_' + projectId);
+            if (el) el.value = state.verifiedData[k];
+            updateDeltaDisplay(projectId, k);
+        });
+
+        // 2. 回填 verifier 信息
+        var nameEl = document.getElementById('zv_verifierName_' + projectId);
+        if (nameEl && state.verifierName) nameEl.value = state.verifierName;
+        var dateEl = document.getElementById('zv_verificationDate_' + projectId);
+        if (dateEl && state.verificationDate) dateEl.value = state.verificationDate;
+
+        // 3. 更新完成度和摘要
+        checkVerificationComplete(projectId);
     }
 
     // ── 字段更新与 Delta 计算 ─────────────────────────────
