@@ -4325,44 +4325,44 @@
 
     <!-- JS 模块化文件 — 按依赖顺序加载 -->
     <!-- 1. 命名空间 -->
-    <script src="js/core/namespace.js?v=9b452e3"></script>
+    <script src="js/core/namespace.js?v=88fd51b"></script>
     <!-- 2. 核心基础层 (Phase 2) -->
-    <script src="js/core/supabase-config.js?v=9b452e3"></script>
-    <script src="js/core/supabase-storage.js?v=9b452e3"></script>
-    <script src="js/core/auth.js?v=9b452e3"></script>
-    <script src="js/core/tenant.js?v=9b452e3"></script>
-    <script src="js/core/i18n.js?v=9b452e3"></script>
-    <script src="js/core/router.js?v=9b452e3"></script>
+    <script src="js/core/supabase-config.js?v=88fd51b"></script>
+    <script src="js/core/supabase-storage.js?v=88fd51b"></script>
+    <script src="js/core/auth.js?v=88fd51b"></script>
+    <script src="js/core/tenant.js?v=88fd51b"></script>
+    <script src="js/core/i18n.js?v=88fd51b"></script>
+    <script src="js/core/router.js?v=88fd51b"></script>
     <!-- 3. 数据层 (Phase 1) -->
-    <script src="js/data/i18n-dict.js?v=9b452e3"></script>
-    <script src="js/data/pricing-data.js?v=9b452e3"></script>
-    <script src="js/data/product-catalog.js?v=9b452e3"></script>
-    <script src="js/data/step-config.js?v=9b452e3"></script>
-    <script src="js/data/intake-fields.js?v=9b452e3"></script>
-    <script src="js/data/seed-projects.js?v=9b452e3"></script>
+    <script src="js/data/i18n-dict.js?v=88fd51b"></script>
+    <script src="js/data/pricing-data.js?v=88fd51b"></script>
+    <script src="js/data/product-catalog.js?v=88fd51b"></script>
+    <script src="js/data/step-config.js?v=88fd51b"></script>
+    <script src="js/data/intake-fields.js?v=88fd51b"></script>
+    <script src="js/data/seed-projects.js?v=88fd51b"></script>
     <!-- 4. 工具层 (Phase 3) -->
-    <script src="js/utils/helpers.js?v=9b452e3"></script>
+    <script src="js/utils/helpers.js?v=88fd51b"></script>
     <!-- 5. 功能模块 (Phase 3) -->
-    <script src="js/modules/orders.js?v=9b452e3"></script>
-    <script src="js/modules/customers.js?v=9b452e3"></script>
-    <script src="js/modules/knowledge-base.js?v=9b452e3"></script>
-    <script src="js/modules/products.js?v=9b452e3"></script>
-    <script src="js/modules/overview.js?v=9b452e3"></script>
-    <script src="js/modules/projects.js?v=9b452e3"></script>
-    <script src="js/modules/workflow.js?v=9b452e3"></script>
+    <script src="js/modules/orders.js?v=88fd51b"></script>
+    <script src="js/modules/customers.js?v=88fd51b"></script>
+    <script src="js/modules/knowledge-base.js?v=88fd51b"></script>
+    <script src="js/modules/products.js?v=88fd51b"></script>
+    <script src="js/modules/overview.js?v=88fd51b"></script>
+    <script src="js/modules/projects.js?v=88fd51b"></script>
+    <script src="js/modules/workflow.js?v=88fd51b"></script>
     <!-- 6. Agent 模块 (Phase 4) -->
-    <script src="js/agents/designer.js?v=9b452e3"></script>
-    <script src="js/agents/pricing.js?v=9b452e3"></script>
-    <script src="js/agents/compliance.js?v=9b452e3"></script>
-    <script src="js/agents/customer-service.js?v=9b452e3"></script>
+    <script src="js/agents/designer.js?v=88fd51b"></script>
+    <script src="js/agents/pricing.js?v=88fd51b"></script>
+    <script src="js/agents/compliance.js?v=88fd51b"></script>
+    <script src="js/agents/customer-service.js?v=88fd51b"></script>
     <!-- 7. Step 实现 (Phase 4) -->
-    <script src="js/steps/step2-design.js?v=9b452e3"></script>
-    <script src="js/steps/step3-measurement.js?v=9b452e3"></script>
-    <script src="js/steps/zb-verification.js?v=9b452e3"></script>
-    <script src="js/steps/step4-quotation.js?v=9b452e3"></script>
+    <script src="js/steps/step2-design.js?v=88fd51b"></script>
+    <script src="js/steps/step3-measurement.js?v=88fd51b"></script>
+    <script src="js/steps/zb-verification.js?v=88fd51b"></script>
+    <script src="js/steps/step4-quotation.js?v=88fd51b"></script>
     <!-- 8. 独立工具 (Phase 4) -->
-    <script src="js/utils/quotation-editor.js?v=9b452e3"></script>
-    <script src="js/utils/chatbot.js?v=9b452e3"></script>
+    <script src="js/utils/quotation-editor.js?v=88fd51b"></script>
+    <script src="js/utils/chatbot.js?v=88fd51b"></script>
     <script>
         // ===== Authentication (→ js/core/auth.js) =====
 
@@ -6220,30 +6220,35 @@
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
                             <!-- Left Column: Yard Photos + Product Selection + Prompt + Generate -->
                             <div class="space-y-5">
-                                <!-- Yard Photo Upload (up to 3) -->
+                                <!-- Photo Upload: Backyard + Product Reference (Sunroom/Pergola) -->
                                 <div>
                                     <div class="flex items-center justify-between mb-2">
-                                        <span class="text-xs font-semibold text-gray-700"><i class="fas fa-camera text-indigo-400 mr-1.5"></i>Upload Yard Photos</span>
-                                        <span id="step2PhotoCount_${project.id}" class="text-[10px] text-gray-400">0/3 uploaded</span>
+                                        <span class="text-xs font-semibold text-gray-700"><i class="fas fa-camera text-indigo-400 mr-1.5"></i>Upload Photos</span>
+                                        <span id="step2PhotoCount_${project.id}" class="text-[10px] text-gray-400">0 uploaded</span>
                                     </div>
-                                    <div class="flex gap-2">
-                                        <div id="step2PhotoSlot0_${project.id}" class="flex-1 border-2 border-dashed border-gray-200 bg-gray-50/50 rounded-xl text-center cursor-pointer hover:border-indigo-300 hover:bg-indigo-50/40 transition aspect-[4/3] flex items-center justify-center relative overflow-hidden" onclick="Nestopia.steps.step2.triggerStep2PhotoUpload('${project.id}', 0)">
-                                            <div class="step2-photo-placeholder"><i class="fas fa-cloud-upload-alt text-2xl text-gray-300 mb-1"></i><p class="text-[10px] text-gray-400">Main photo</p></div>
-                                            <img class="step2-photo-img absolute inset-0 w-full h-full object-cover hidden rounded-xl">
-                                            <button class="step2-photo-remove absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full text-[9px] hidden hover:bg-red-600 z-10" onclick="event.stopPropagation(); Nestopia.steps.step2.clearStep2Photo('${project.id}', 0)"><i class="fas fa-times"></i></button>
+                                    <div class="flex gap-3">
+                                        <!-- Slot 0: Backyard Photo (always visible) -->
+                                        <div class="flex-1">
+                                            <div class="text-[10px] font-medium text-gray-500 mb-1"><i class="fas fa-home text-indigo-400 mr-1"></i>Backyard Photo</div>
+                                            <div id="step2PhotoSlot0_${project.id}" class="border-2 border-dashed border-gray-200 bg-gray-50/50 rounded-xl text-center cursor-pointer hover:border-indigo-300 hover:bg-indigo-50/40 transition aspect-[4/3] flex items-center justify-center relative overflow-hidden" onclick="Nestopia.steps.step2.triggerStep2PhotoUpload('${project.id}', 0)">
+                                                <div class="step2-photo-placeholder"><i class="fas fa-cloud-upload-alt text-2xl text-gray-300 mb-1"></i><p class="text-[10px] text-gray-400">Upload backyard</p></div>
+                                                <img class="step2-photo-img absolute inset-0 w-full h-full object-cover hidden rounded-xl">
+                                                <button class="step2-photo-remove absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full text-[9px] hidden hover:bg-red-600 z-10" onclick="event.stopPropagation(); Nestopia.steps.step2.clearStep2Photo('${project.id}', 0)"><i class="fas fa-times"></i></button>
+                                            </div>
                                         </div>
-                                        <div id="step2PhotoSlot1_${project.id}" class="w-20 border-2 border-dashed border-gray-200 bg-gray-50/50 rounded-xl text-center cursor-pointer hover:border-indigo-300 transition aspect-[3/4] flex items-center justify-center relative overflow-hidden" onclick="Nestopia.steps.step2.triggerStep2PhotoUpload('${project.id}', 1)">
-                                            <div class="step2-photo-placeholder"><i class="fas fa-plus text-gray-300"></i></div>
-                                            <img class="step2-photo-img absolute inset-0 w-full h-full object-cover hidden rounded-xl">
-                                            <button class="step2-photo-remove absolute top-1 right-1 w-4 h-4 bg-red-500 text-white rounded-full text-[8px] hidden hover:bg-red-600 z-10" onclick="event.stopPropagation(); Nestopia.steps.step2.clearStep2Photo('${project.id}', 1)"><i class="fas fa-times"></i></button>
+                                        ${(project.type === 'Sunroom' || project.type === 'Pergola') ? `
+                                        <!-- Product Reference Photo (Sunroom/Pergola only, uploaded by tech sales) -->
+                                        <div class="flex-1">
+                                            <div class="text-[10px] font-medium text-gray-500 mb-1"><i class="fas fa-cubes text-purple-400 mr-1"></i>Product Reference <span class="text-purple-400">(by Tech Sales)</span></div>
+                                            <div id="step2ProductRefSlot_${project.id}" class="border-2 border-dashed border-purple-200 bg-purple-50/30 rounded-xl text-center cursor-pointer hover:border-purple-400 hover:bg-purple-50/60 transition aspect-[4/3] flex items-center justify-center relative overflow-hidden" onclick="Nestopia.steps.step2.triggerProductRefUpload('${project.id}')">
+                                                <div class="step2-photo-placeholder"><i class="fas fa-cloud-upload-alt text-2xl text-purple-300 mb-1"></i><p class="text-[10px] text-purple-400">Upload product photo</p><p class="text-[9px] text-purple-300 mt-0.5">Used as foreground for AI</p></div>
+                                                <img class="step2-photo-img absolute inset-0 w-full h-full object-cover hidden rounded-xl">
+                                                <button class="step2-photo-remove absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full text-[9px] hidden hover:bg-red-600 z-10" onclick="event.stopPropagation(); Nestopia.steps.step2.clearProductRefPhoto('${project.id}')"><i class="fas fa-times"></i></button>
+                                            </div>
                                         </div>
-                                        <div id="step2PhotoSlot2_${project.id}" class="w-20 border-2 border-dashed border-gray-200 bg-gray-50/50 rounded-xl text-center cursor-pointer hover:border-indigo-300 transition aspect-[3/4] flex items-center justify-center relative overflow-hidden" onclick="Nestopia.steps.step2.triggerStep2PhotoUpload('${project.id}', 2)">
-                                            <div class="step2-photo-placeholder"><i class="fas fa-plus text-gray-300"></i></div>
-                                            <img class="step2-photo-img absolute inset-0 w-full h-full object-cover hidden rounded-xl">
-                                            <button class="step2-photo-remove absolute top-1 right-1 w-4 h-4 bg-red-500 text-white rounded-full text-[8px] hidden hover:bg-red-600 z-10" onclick="event.stopPropagation(); Nestopia.steps.step2.clearStep2Photo('${project.id}', 2)"><i class="fas fa-times"></i></button>
-                                        </div>
+                                        ` : ''}
                                     </div>
-                                    <p class="text-[10px] text-gray-400 mt-1.5"><i class="fas fa-lightbulb text-amber-400 mr-1"></i>Tip: Upload 1–3 photos. Main photo is used for AI rendering. Others are reference angles.</p>
+                                    <p class="text-[10px] text-gray-400 mt-1.5"><i class="fas fa-lightbulb text-amber-400 mr-1"></i>${(project.type === 'Sunroom' || project.type === 'Pergola') ? 'Upload a backyard photo and a product reference photo. Both are used for AI rendering.' : 'Upload a backyard photo. It will be used as the background for AI rendering.'}</p>
                                 </div>
 
                                 <!-- Product Selection -->

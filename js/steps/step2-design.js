@@ -49,7 +49,7 @@
     }
 
     // ===== Step 2 Inline AI Designer Functions =====
-    // State: { photos: [base64|null x3], selectedProduct, generated, lastResultImage, currentIteration, maxIterations }
+    // State: { photos: [base64|null x3], productRefPhoto, selectedProduct, generated, lastResultImage, currentIteration, maxIterations }
     var step2DesignerState = {};
     var _designerDbLoaded = {};  // 标记已从 DB 加载的项目
 
@@ -78,6 +78,7 @@
             project_key: projectId,
             designer_data: JSON.parse(JSON.stringify({
                 photos: state.photos,
+                productRefPhoto: state.productRefPhoto,
                 selectedProduct: state.selectedProduct,
                 generated: state.generated,
                 lastResultImage: state.lastResultImage,
@@ -102,6 +103,7 @@
         if (!step2DesignerState[projectId]) {
             step2DesignerState[projectId] = {
                 photos: [null, null, null],
+                productRefPhoto: null,   // 由 tech sales 手动上传的产品参考图（Sunroom/Pergola）
                 selectedProduct: null,
                 generated: false,
                 lastResultImage: null,
@@ -132,6 +134,7 @@
                     if (dbData && typeof dbData === 'object') {
                         var state = getStep2State(projectId);
                         if (dbData.photos && Array.isArray(dbData.photos)) state.photos = dbData.photos;
+                        if (dbData.productRefPhoto) state.productRefPhoto = dbData.productRefPhoto;
                         if (dbData.selectedProduct) state.selectedProduct = dbData.selectedProduct;
                         if (dbData.generated !== undefined) state.generated = dbData.generated;
                         if (dbData.lastResultImage) state.lastResultImage = dbData.lastResultImage;
@@ -213,11 +216,61 @@
         saveDesignerToDB(projectId);
     }
 
+    // --- Product Reference Photo Upload (Sunroom/Pergola — tech sales 手动上传) ---
+    function triggerProductRefUpload(projectId) {
+        var input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.style.display = 'none';
+        input.onchange = function(e) {
+            var file = e.target.files[0];
+            if (!file) { input.remove(); return; }
+            var reader = new FileReader();
+            reader.onload = function(ev) {
+                var state = getStep2State(projectId);
+                state.productRefPhoto = ev.target.result;
+                // Update slot UI
+                var slot = document.getElementById('step2ProductRefSlot_' + projectId);
+                if (slot) {
+                    var placeholder = slot.querySelector('.step2-photo-placeholder');
+                    var img = slot.querySelector('.step2-photo-img');
+                    var removeBtn = slot.querySelector('.step2-photo-remove');
+                    if (placeholder) placeholder.classList.add('hidden');
+                    if (img) { img.src = ev.target.result; img.classList.remove('hidden'); }
+                    if (removeBtn) removeBtn.classList.remove('hidden');
+                }
+                updateStep2GenerateBtn(projectId);
+                saveDesignerToDB(projectId);
+            };
+            reader.readAsDataURL(file);
+            input.remove();
+        };
+        document.body.appendChild(input);
+        input.click();
+    }
+
+    function clearProductRefPhoto(projectId) {
+        var state = getStep2State(projectId);
+        state.productRefPhoto = null;
+        var slot = document.getElementById('step2ProductRefSlot_' + projectId);
+        if (slot) {
+            var placeholder = slot.querySelector('.step2-photo-placeholder');
+            var img = slot.querySelector('.step2-photo-img');
+            var removeBtn = slot.querySelector('.step2-photo-remove');
+            if (placeholder) placeholder.classList.remove('hidden');
+            if (img) { img.classList.add('hidden'); img.src = ''; }
+            if (removeBtn) removeBtn.classList.add('hidden');
+        }
+        updateStep2GenerateBtn(projectId);
+        saveDesignerToDB(projectId);
+    }
+
     function updateStep2PhotoCount(projectId) {
         var state = getStep2State(projectId);
         var count = state.photos.filter(function(p) { return !!p; }).length;
+        if (state.productRefPhoto) count++;
         var el = document.getElementById('step2PhotoCount_' + projectId);
-        if (el) el.textContent = count + '/3 uploaded';
+        if (el) el.textContent = count + ' uploaded';
     }
 
     // --- Character Count (Design Prompt & Iteration Prompt, 800 char limit) ---
@@ -273,7 +326,14 @@
         var state = getStep2State(projectId);
         // Require at least main photo (slot 0) and a product selected
         var hasMainPhoto = !!state.photos[0];
-        btn.disabled = !(hasMainPhoto && state.selectedProduct);
+        // Sunroom/Pergola: also require product reference photo (tech sales upload)
+        var project = allProjectsData.find(function(p) { return p.id === projectId; });
+        var needsRefPhoto = project && (project.type === 'Sunroom' || project.type === 'Pergola');
+        if (needsRefPhoto) {
+            btn.disabled = !(hasMainPhoto && state.selectedProduct && state.productRefPhoto);
+        } else {
+            btn.disabled = !(hasMainPhoto && state.selectedProduct);
+        }
     }
 
     // --- Download / Save Generated Design ---
@@ -424,17 +484,16 @@
         var iterPanel = document.getElementById('step2IteratePanel_' + projectId);
         if (iterPanel) iterPanel.classList.add('hidden');
 
-        // Fetch product image as base64, then call SSE API
-        fetchImageAsBase64(product.image, function(productBase64) {
-            if (!productBase64) {
-                showToast('Failed to load product image', 'error');
-                loading.classList.add('hidden');
-                if (btn) btn.disabled = false;
-                return;
-            }
+        // Determine foreground image source:
+        // Sunroom/Pergola → use manually uploaded product reference photo
+        // Others (ZB etc.) → use pre-stored catalog image
+        var project = allProjectsData.find(function(p) { return p.id === projectId; });
+        var needsRefPhoto = project && (project.type === 'Sunroom' || project.type === 'Pergola');
+
+        function _sendGenRequest(foregroundBase64) {
             var body = {
                 background_image: state.photos[0],
-                foreground_image: productBase64,
+                foreground_image: foregroundBase64,
                 is_iteration: false
             };
             if (promptText) body.prompt = promptText;
@@ -483,7 +542,23 @@
                     showToast('Generation failed: ' + msg, 'error');
                 }
             });
-        });
+        }
+
+        if (needsRefPhoto && state.productRefPhoto) {
+            // Sunroom/Pergola: use the manually uploaded product reference photo
+            _sendGenRequest(state.productRefPhoto);
+        } else {
+            // Other product types: fetch pre-stored catalog image as base64
+            fetchImageAsBase64(product.image, function(productBase64) {
+                if (!productBase64) {
+                    showToast('Failed to load product image', 'error');
+                    loading.classList.add('hidden');
+                    if (btn) btn.disabled = false;
+                    return;
+                }
+                _sendGenRequest(productBase64);
+            });
+        }
     }
 
     // ===== 命名空间导出 =====
@@ -500,6 +575,8 @@
         toggleStep2Designer: toggleStep2Designer,
         triggerStep2PhotoUpload: triggerStep2PhotoUpload,
         clearStep2Photo: clearStep2Photo,
+        triggerProductRefUpload: triggerProductRefUpload,
+        clearProductRefPhoto: clearProductRefPhoto,
         updateStep2PhotoCount: updateStep2PhotoCount,
         updateStep2CharCount: updateStep2CharCount,
         updateStep2IterCharCount: updateStep2IterCharCount,
@@ -524,6 +601,8 @@
     window.toggleStep2Designer = toggleStep2Designer;
     window.triggerStep2PhotoUpload = triggerStep2PhotoUpload;
     window.clearStep2Photo = clearStep2Photo;
+    window.triggerProductRefUpload = triggerProductRefUpload;
+    window.clearProductRefPhoto = clearProductRefPhoto;
     window.updateStep2PhotoCount = updateStep2PhotoCount;
     window.updateStep2CharCount = updateStep2CharCount;
     window.updateStep2IterCharCount = updateStep2IterCharCount;
