@@ -237,6 +237,10 @@
                 if (inp) { inp.value = ''; }
                 return;
             }
+            // ★ 单位转换：如果当前是 mm 模式，将输入的 mm 转为 inch 存储
+            if (window.unitConverter && window.unitConverter.getUnitMode() === 'mm') {
+                value = window.unitConverter.toInch(value);
+            }
         }
         var state = getStep3State(projectId);
         if (key.startsWith('_appt')) {
@@ -281,6 +285,7 @@
         if (perFields.length === 0) return;
 
         var cls = 'w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-purple-200 focus:border-purple-400';
+        var uc = window.unitConverter;
         var html = '';
         for (var oi = 1; oi <= numOpenings; oi++) {
             var rows = perFields.map(function(mf) {
@@ -291,11 +296,23 @@
                     inp = '<select id="step3_' + perKey + '_' + projectId + '" class="' + cls + ' bg-white" onchange="updateStep3Field(\x27' + projectId + '\x27, \x27' + perKey + '\x27, this.value)"><option value="">-- Select --</option>' +
                         mf.options.map(function(o) { return '<option value="' + o.value + '"' + (savedVal === o.value ? ' selected' : '') + '>' + o.label + '</option>'; }).join('') + '</select>';
                 } else {
-                    inp = '<input type="' + mf.type + '" id="step3_' + perKey + '_' + projectId + '" value="' + savedVal + '" class="' + cls + '" placeholder="' + (mf.placeholder || '') + '"' +
+                    // ★ 单位转换：width/height 字段 — 显示当前单位的值和标签
+                    var isDim = (mf.key === 'width_in' || mf.key === 'height_in');
+                    var displayVal = (isDim && uc) ? uc.toDisplay(savedVal) : savedVal;
+                    var placeholder = (isDim && uc) ? uc.unitPlaceholder(mf.key) : (mf.placeholder || '');
+                    inp = '<input type="' + mf.type + '" id="step3_' + perKey + '_' + projectId + '" value="' + displayVal + '" class="' + cls + '" placeholder="' + placeholder + '"' +
                         (mf.min !== undefined ? ' min="' + mf.min + '"' : '') + (mf.step !== undefined ? ' step="' + mf.step + '"' : '') +
                         ' onchange="updateStep3Field(\x27' + projectId + '\x27, \x27' + perKey + '\x27, this.value)">';
                 }
-                return '<div class="space-y-1"><label class="text-[10px] font-medium text-gray-500 flex items-center gap-1.5"><i class="fas ' + mf.icon + ' text-purple-400"></i>' + mf.label + '</label>' + inp + '</div>';
+                // ★ 动态标签：dimension 字段显示当前单位
+                var labelText = mf.label;
+                var dataUnitAttr = '';
+                if ((mf.key === 'width_in' || mf.key === 'height_in') && uc) {
+                    var baseName = mf.key === 'width_in' ? 'Width' : 'Height';
+                    labelText = baseName + ' (' + uc.unitLabel() + ')';
+                    dataUnitAttr = ' data-unit-label="' + baseName + '"';
+                }
+                return '<div class="space-y-1"><label class="text-[10px] font-medium text-gray-500 flex items-center gap-1.5"' + dataUnitAttr + '><i class="fas ' + mf.icon + ' text-purple-400"></i>' + labelText + '</label>' + inp + '</div>';
             }).join('');
             html += '<div class="mt-3 p-3 bg-indigo-50/30 rounded-lg border border-indigo-100">' +
                 '<div class="flex items-center gap-2 mb-2"><div class="w-5 h-5 bg-indigo-100 rounded flex items-center justify-center"><span class="text-[10px] font-bold text-indigo-600">' + oi + '</span></div>' +
@@ -322,11 +339,19 @@
             if (isZB) {
                 var perFields = fields.filter(function(f) { return f.perOpening; });
                 var numO = parseInt(state.measurementData['openings'] || '1') || 1;
+                var uc = window.unitConverter;
                 for (var oi = 1; oi <= numO; oi++) {
                     perFields.forEach(function(mf) {
                         var perKey = 'opening_' + oi + '_' + mf.key;
                         var el = document.getElementById('step3_' + perKey + '_' + projectId);
-                        if (el) state.measurementData[perKey] = el.value;
+                        if (el) {
+                            var val = el.value;
+                            // ★ 保存时确保 width/height 以 inch 存储
+                            if ((mf.key === 'width_in' || mf.key === 'height_in') && uc && uc.getUnitMode() === 'mm' && val !== '') {
+                                val = uc.toInch(val);
+                            }
+                            state.measurementData[perKey] = val;
+                        }
                     });
                 }
             }

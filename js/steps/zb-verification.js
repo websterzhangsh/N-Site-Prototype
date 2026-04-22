@@ -89,6 +89,7 @@
      */
     function _populateVerificationDOM(projectId) {
         var state = getVerificationState(projectId);
+        var uc = window.unitConverter;
 
         // 刷新 initialData（Step 1 数据可能在本次会话中从 DB 更新过）
         var latestInitial = getInitialMeasurement(projectId);
@@ -97,7 +98,14 @@
         // 1. 回填 verified 字段值并重新计算每个 delta
         Object.keys(state.verifiedData).forEach(function(k) {
             var el = document.getElementById('zv_' + k + '_' + projectId);
-            if (el) el.value = state.verifiedData[k];
+            if (el) {
+                // ★ 单位转换：width/height 的 verified 值显示当前单位
+                var isDim = (k.indexOf('width_in') >= 0 || k.indexOf('height_in') >= 0);
+                el.value = (isDim && uc) ? uc.toDisplay(state.verifiedData[k]) : state.verifiedData[k];
+                if (isDim && uc) {
+                    el.placeholder = uc.unitPlaceholder(k.indexOf('width') >= 0 ? 'width_in' : 'height_in');
+                }
+            }
             updateDeltaDisplay(projectId, k);
         });
 
@@ -107,7 +115,24 @@
         var dateEl = document.getElementById('zv_verificationDate_' + projectId);
         if (dateEl && state.verificationDate) dateEl.value = state.verificationDate;
 
-        // 3. 更新完成度和摘要
+        // 3. ★ 刷新 Initial 列的单位显示
+        if (uc) {
+            var numOpenings = parseInt(state.initialData.openings || '1') || 1;
+            for (var oi = 1; oi <= numOpenings; oi++) {
+                ['width_in', 'height_in'].forEach(function(suffix) {
+                    var perKey = 'opening_' + oi + '_' + suffix;
+                    var initEl = document.getElementById('vinit_' + perKey + '_' + projectId);
+                    if (initEl) {
+                        var storedInitial = state.initialData[perKey];
+                        if (storedInitial !== undefined && storedInitial !== '') {
+                            initEl.textContent = uc.toDisplay(storedInitial) + ' ' + uc.unitShort();
+                        }
+                    }
+                });
+            }
+        }
+
+        // 4. 更新完成度和摘要
         checkVerificationComplete(projectId);
     }
 
@@ -124,6 +149,10 @@
                 var inp = document.getElementById('zv_' + key + '_' + projectId);
                 if (inp) inp.value = '';
                 return;
+            }
+            // ★ 单位转换：如果当前是 mm 模式，将输入的 mm 转为 inch 存储
+            if (window.unitConverter && window.unitConverter.getUnitMode() === 'mm') {
+                value = window.unitConverter.toInch(value);
             }
         }
 

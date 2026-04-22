@@ -4325,44 +4325,45 @@
 
     <!-- JS 模块化文件 — 按依赖顺序加载 -->
     <!-- 1. 命名空间 -->
-    <script src="js/core/namespace.js?v=88fd51b"></script>
+    <script src="js/core/namespace.js?v=f5bb651"></script>
     <!-- 2. 核心基础层 (Phase 2) -->
-    <script src="js/core/supabase-config.js?v=88fd51b"></script>
-    <script src="js/core/supabase-storage.js?v=88fd51b"></script>
-    <script src="js/core/auth.js?v=88fd51b"></script>
-    <script src="js/core/tenant.js?v=88fd51b"></script>
-    <script src="js/core/i18n.js?v=88fd51b"></script>
-    <script src="js/core/router.js?v=88fd51b"></script>
+    <script src="js/core/supabase-config.js?v=f5bb651"></script>
+    <script src="js/core/supabase-storage.js?v=f5bb651"></script>
+    <script src="js/core/auth.js?v=f5bb651"></script>
+    <script src="js/core/tenant.js?v=f5bb651"></script>
+    <script src="js/core/i18n.js?v=f5bb651"></script>
+    <script src="js/core/router.js?v=f5bb651"></script>
     <!-- 3. 数据层 (Phase 1) -->
-    <script src="js/data/i18n-dict.js?v=88fd51b"></script>
-    <script src="js/data/pricing-data.js?v=88fd51b"></script>
-    <script src="js/data/product-catalog.js?v=88fd51b"></script>
-    <script src="js/data/step-config.js?v=88fd51b"></script>
-    <script src="js/data/intake-fields.js?v=88fd51b"></script>
-    <script src="js/data/seed-projects.js?v=88fd51b"></script>
+    <script src="js/data/i18n-dict.js?v=f5bb651"></script>
+    <script src="js/data/pricing-data.js?v=f5bb651"></script>
+    <script src="js/data/product-catalog.js?v=f5bb651"></script>
+    <script src="js/data/step-config.js?v=f5bb651"></script>
+    <script src="js/data/intake-fields.js?v=f5bb651"></script>
+    <script src="js/data/seed-projects.js?v=f5bb651"></script>
     <!-- 4. 工具层 (Phase 3) -->
-    <script src="js/utils/helpers.js?v=88fd51b"></script>
+    <script src="js/utils/helpers.js?v=f5bb651"></script>
+    <script src="js/utils/unit-converter.js?v=f5bb651"></script>
     <!-- 5. 功能模块 (Phase 3) -->
-    <script src="js/modules/orders.js?v=88fd51b"></script>
-    <script src="js/modules/customers.js?v=88fd51b"></script>
-    <script src="js/modules/knowledge-base.js?v=88fd51b"></script>
-    <script src="js/modules/products.js?v=88fd51b"></script>
-    <script src="js/modules/overview.js?v=88fd51b"></script>
-    <script src="js/modules/projects.js?v=88fd51b"></script>
-    <script src="js/modules/workflow.js?v=88fd51b"></script>
+    <script src="js/modules/orders.js?v=f5bb651"></script>
+    <script src="js/modules/customers.js?v=f5bb651"></script>
+    <script src="js/modules/knowledge-base.js?v=f5bb651"></script>
+    <script src="js/modules/products.js?v=f5bb651"></script>
+    <script src="js/modules/overview.js?v=f5bb651"></script>
+    <script src="js/modules/projects.js?v=f5bb651"></script>
+    <script src="js/modules/workflow.js?v=f5bb651"></script>
     <!-- 6. Agent 模块 (Phase 4) -->
-    <script src="js/agents/designer.js?v=88fd51b"></script>
-    <script src="js/agents/pricing.js?v=88fd51b"></script>
-    <script src="js/agents/compliance.js?v=88fd51b"></script>
-    <script src="js/agents/customer-service.js?v=88fd51b"></script>
+    <script src="js/agents/designer.js?v=f5bb651"></script>
+    <script src="js/agents/pricing.js?v=f5bb651"></script>
+    <script src="js/agents/compliance.js?v=f5bb651"></script>
+    <script src="js/agents/customer-service.js?v=f5bb651"></script>
     <!-- 7. Step 实现 (Phase 4) -->
-    <script src="js/steps/step2-design.js?v=88fd51b"></script>
-    <script src="js/steps/step3-measurement.js?v=88fd51b"></script>
-    <script src="js/steps/zb-verification.js?v=88fd51b"></script>
-    <script src="js/steps/step4-quotation.js?v=88fd51b"></script>
+    <script src="js/steps/step2-design.js?v=f5bb651"></script>
+    <script src="js/steps/step3-measurement.js?v=f5bb651"></script>
+    <script src="js/steps/zb-verification.js?v=f5bb651"></script>
+    <script src="js/steps/step4-quotation.js?v=f5bb651"></script>
     <!-- 8. 独立工具 (Phase 4) -->
-    <script src="js/utils/quotation-editor.js?v=88fd51b"></script>
-    <script src="js/utils/chatbot.js?v=88fd51b"></script>
+    <script src="js/utils/quotation-editor.js?v=f5bb651"></script>
+    <script src="js/utils/chatbot.js?v=f5bb651"></script>
     <script>
         // ===== Authentication (→ js/core/auth.js) =====
 
@@ -6587,7 +6588,13 @@
                                 <div>
                                     <div class="flex items-center justify-between mb-2">
                                         <span class="text-xs font-semibold text-gray-700"><i class="fas ${isZipBlinds ? 'fa-window-maximize' : 'fa-ruler-combined'} text-purple-400 mr-1.5"></i>${isZipBlinds ? 'Opening & Product Specs' : 'Measurement Data'}</span>
-                                        <button onclick="Nestopia.steps.step3.saveStep3Measurement('${project.id}')" class="text-[10px] text-purple-600 font-medium hover:text-purple-800 transition"><i class="fas fa-save mr-1"></i>Save</button>
+                                        <div class="flex items-center gap-2">
+                                            ${isZipBlinds ? `<div class="inline-flex items-center bg-gray-100 rounded-lg p-0.5 text-[10px] font-semibold">
+                                                <button id="unitBtnInch_meas_${project.id}" onclick="toggleZBUnit('${project.id}')" class="px-2.5 py-1 rounded-md transition-all bg-purple-600 text-white shadow-sm">in</button>
+                                                <button id="unitBtnMM_meas_${project.id}" onclick="toggleZBUnit('${project.id}')" class="px-2.5 py-1 rounded-md transition-all text-gray-500 hover:text-gray-700">mm</button>
+                                            </div>` : ''}
+                                            <button onclick="Nestopia.steps.step3.saveStep3Measurement('${project.id}')" class="text-[10px] text-purple-600 font-medium hover:text-purple-800 transition"><i class="fas fa-save mr-1"></i>Save</button>
+                                        </div>
                                     </div>
                                     <div class="grid grid-cols-2 gap-2.5">
                                         ${fieldRows}
@@ -6756,7 +6763,11 @@
                                 const opt = mf.options.find(o => o.value === initialVal);
                                 initialDisplay = opt ? opt.label : initialVal;
                             } else {
-                                initialDisplay = initialVal + (mf.key.includes('_in') ? '"' : '');
+                                if (mf.key === 'width_in' || mf.key === 'height_in') {
+                                    initialDisplay = `<span id="vinit_${perKey}_${project.id}">${initialVal}"</span>`;
+                                } else {
+                                    initialDisplay = initialVal;
+                                }
                             }
                         }
 
@@ -6772,7 +6783,7 @@
                         }
 
                         return `<tr class="border-t border-gray-100">
-                            <td class="py-2 text-[11px] text-gray-600 pr-2"><i class="fas ${mf.icon} text-purple-400 text-[9px] mr-1"></i>${mf.label}</td>
+                            <td class="py-2 text-[11px] text-gray-600 pr-2" ${(mf.key === 'width_in' || mf.key === 'height_in') ? 'data-unit-label="' + (mf.key === 'width_in' ? 'Width' : 'Height') + '"' : ''}><i class="fas ${mf.icon} text-purple-400 text-[9px] mr-1"></i>${mf.label}</td>
                             <td class="py-2 text-center text-[11px] text-gray-700 font-medium px-1">${initialDisplay}</td>
                             <td class="py-2 text-center px-1" style="min-width:80px">${verifiedInput}</td>
                             <td class="py-2 text-center px-1" id="vdelta_${perKey}_${project.id}"><span class="text-gray-300 text-[10px]">\u2014</span></td>
@@ -6855,11 +6866,17 @@
                             </div>
                         </div>
 
-                        <!-- Tolerance Legend -->
-                        <div class="mb-3 flex items-center gap-4 text-[9px] text-gray-400">
-                            <span><i class="fas fa-check-circle text-green-500 mr-0.5"></i> Within 3mm (0.12")</span>
+                        <!-- Unit Toggle (Verification) -->
+                        <div class="mb-3 flex items-center justify-between">
+                            <div class="flex items-center gap-4 text-[9px] text-gray-400">
+                                <span><i class="fas fa-check-circle text-green-500 mr-0.5"></i> Within 3mm (0.12")</span>
                             <span><i class="fas fa-exclamation-triangle text-amber-500 mr-0.5"></i> 3\u20135mm (0.12"\u20130.20")</span>
                             <span><i class="fas fa-times-circle text-red-500 mr-0.5"></i> &gt; 5mm (0.20")</span>
+                            </div>
+                            <div class="inline-flex items-center bg-gray-100 rounded-lg p-0.5 text-[10px] font-semibold">
+                                <button id="unitBtnInch_verif_${project.id}" onclick="toggleZBUnit('${project.id}')" class="px-2.5 py-1 rounded-md transition-all bg-purple-600 text-white shadow-sm">in</button>
+                                <button id="unitBtnMM_verif_${project.id}" onclick="toggleZBUnit('${project.id}')" class="px-2.5 py-1 rounded-md transition-all text-gray-500 hover:text-gray-700">mm</button>
+                            </div>
                         </div>
 
                         <!-- Per-Opening Comparison Tables -->
