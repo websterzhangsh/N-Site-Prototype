@@ -293,8 +293,9 @@
                 var savedVal = state.measurementData[perKey] || '';
                 var inp;
                 if (mf.type === 'select') {
+                    var effectiveVal = savedVal || mf.defaultValue || '';
                     inp = '<select id="step3_' + perKey + '_' + projectId + '" class="' + cls + ' bg-white" onchange="updateStep3Field(\x27' + projectId + '\x27, \x27' + perKey + '\x27, this.value)"><option value="">-- Select --</option>' +
-                        mf.options.map(function(o) { return '<option value="' + o.value + '"' + (savedVal === o.value ? ' selected' : '') + '>' + o.label + '</option>'; }).join('') + '</select>';
+                        mf.options.map(function(o) { return '<option value="' + o.value + '"' + (effectiveVal === o.value ? ' selected' : '') + (o.disabled ? ' disabled style="color:#aaa"' : '') + '>' + o.label + (o.disabled ? ' (Coming Soon)' : '') + '</option>'; }).join('') + '</select>';
                 } else {
                     // ★ 单位转换：width/height 字段 — 显示当前单位的值和标签
                     var isDim = (mf.key === 'width_in' || mf.key === 'height_in');

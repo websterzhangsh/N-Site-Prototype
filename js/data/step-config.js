@@ -184,21 +184,15 @@
                     { key: 'openings', label: 'Number of Openings', type: 'number', icon: 'fa-th-large', placeholder: 'e.g. 3', min: 1, step: 1, defaultValue: '1' },
                     { key: 'width_in', label: 'Width (inches)', type: 'number', icon: 'fa-arrows-alt-h', placeholder: 'e.g. 72', perOpening: true, min: 0.01, step: 'any' },
                     { key: 'height_in', label: 'Height (inches)', type: 'number', icon: 'fa-arrows-alt-v', placeholder: 'e.g. 96', perOpening: true, min: 0.01, step: 'any' },
-                    { key: 'mounting', label: 'Mounting Type', type: 'select', icon: 'fa-wrench', perOpening: true, options: [
+                    { key: 'mounting', label: 'Mounting Type', type: 'select', icon: 'fa-wrench', perOpening: true, defaultValue: 'recessed', options: [
                         { value: 'face_mount', label: 'Face Mount (Surface)' },
-                        { value: 'recessed', label: 'Recessed Mount' },
-                        { value: 'ceiling_mount', label: 'Ceiling Mount' }
+                        { value: 'recessed', label: 'Recessed Mount' }
                     ]},
-                    { key: 'guide', label: 'Guide / Track Type', type: 'select', icon: 'fa-grip-lines-vertical', perOpening: true, options: [
-                        { value: 'zip_track', label: 'Zip Track (Sealed)' },
-                        { value: 'cable_guide', label: 'Cable Guide' },
-                        { value: 'side_channel', label: 'Side Channel' }
-                    ]},
-                    { key: 'motor', label: 'Motor Type', type: 'select', icon: 'fa-cog', perOpening: true, options: [
-                        { value: 'manual_crank', label: 'Manual Crank' },
-                        { value: 'motorized_wired', label: 'Motorized (Hardwired)' },
-                        { value: 'motorized_solar', label: 'Motorized (Solar)' },
-                        { value: 'motorized_battery', label: 'Motorized (Battery)' }
+                    { key: 'motor', label: 'Motor Type', type: 'select', icon: 'fa-cog', perOpening: true, defaultValue: 'motorized_wired', options: [
+                        { value: 'motorized_wired', label: 'Motorized' },
+                        { value: 'manual_crank', label: 'Manual' },
+                        { value: 'motorized_solar', label: 'Solar', disabled: true },
+                        { value: 'motorized_battery', label: 'Battery', disabled: true }
                     ]},
                     { key: 'fabric', label: 'Fabric / Screen Type', type: 'select', icon: 'fa-scroll', perOpening: true, options: [
                         { value: 'mesh_5pct', label: 'Solar Mesh 5% Openness' },

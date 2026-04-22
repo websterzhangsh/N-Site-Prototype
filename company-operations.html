@@ -4353,45 +4353,45 @@
 
     <!-- JS 模块化文件 — 按依赖顺序加载 -->
     <!-- 1. 命名空间 -->
-    <script src="js/core/namespace.js?v=352c971"></script>
+    <script src="js/core/namespace.js?v=27b2afb"></script>
     <!-- 2. 核心基础层 (Phase 2) -->
-    <script src="js/core/supabase-config.js?v=352c971"></script>
-    <script src="js/core/supabase-storage.js?v=352c971"></script>
-    <script src="js/core/auth.js?v=352c971"></script>
-    <script src="js/core/tenant.js?v=352c971"></script>
-    <script src="js/core/i18n.js?v=352c971"></script>
-    <script src="js/core/router.js?v=352c971"></script>
+    <script src="js/core/supabase-config.js?v=27b2afb"></script>
+    <script src="js/core/supabase-storage.js?v=27b2afb"></script>
+    <script src="js/core/auth.js?v=27b2afb"></script>
+    <script src="js/core/tenant.js?v=27b2afb"></script>
+    <script src="js/core/i18n.js?v=27b2afb"></script>
+    <script src="js/core/router.js?v=27b2afb"></script>
     <!-- 3. 数据层 (Phase 1) -->
-    <script src="js/data/i18n-dict.js?v=352c971"></script>
-    <script src="js/data/pricing-data.js?v=352c971"></script>
-    <script src="js/data/product-catalog.js?v=352c971"></script>
-    <script src="js/data/step-config.js?v=352c971"></script>
-    <script src="js/data/intake-fields.js?v=352c971"></script>
-    <script src="js/data/seed-projects.js?v=352c971"></script>
+    <script src="js/data/i18n-dict.js?v=27b2afb"></script>
+    <script src="js/data/pricing-data.js?v=27b2afb"></script>
+    <script src="js/data/product-catalog.js?v=27b2afb"></script>
+    <script src="js/data/step-config.js?v=27b2afb"></script>
+    <script src="js/data/intake-fields.js?v=27b2afb"></script>
+    <script src="js/data/seed-projects.js?v=27b2afb"></script>
     <!-- 4. 工具层 (Phase 3) -->
-    <script src="js/utils/helpers.js?v=352c971"></script>
-    <script src="js/utils/unit-converter.js?v=352c971"></script>
+    <script src="js/utils/helpers.js?v=27b2afb"></script>
+    <script src="js/utils/unit-converter.js?v=27b2afb"></script>
     <!-- 5. 功能模块 (Phase 3) -->
-    <script src="js/modules/orders.js?v=352c971"></script>
-    <script src="js/modules/customers.js?v=352c971"></script>
-    <script src="js/modules/knowledge-base.js?v=352c971"></script>
-    <script src="js/modules/products.js?v=352c971"></script>
-    <script src="js/modules/overview.js?v=352c971"></script>
-    <script src="js/modules/projects.js?v=352c971"></script>
-    <script src="js/modules/workflow.js?v=352c971"></script>
+    <script src="js/modules/orders.js?v=27b2afb"></script>
+    <script src="js/modules/customers.js?v=27b2afb"></script>
+    <script src="js/modules/knowledge-base.js?v=27b2afb"></script>
+    <script src="js/modules/products.js?v=27b2afb"></script>
+    <script src="js/modules/overview.js?v=27b2afb"></script>
+    <script src="js/modules/projects.js?v=27b2afb"></script>
+    <script src="js/modules/workflow.js?v=27b2afb"></script>
     <!-- 6. Agent 模块 (Phase 4) -->
-    <script src="js/agents/designer.js?v=352c971"></script>
-    <script src="js/agents/pricing.js?v=352c971"></script>
-    <script src="js/agents/compliance.js?v=352c971"></script>
-    <script src="js/agents/customer-service.js?v=352c971"></script>
+    <script src="js/agents/designer.js?v=27b2afb"></script>
+    <script src="js/agents/pricing.js?v=27b2afb"></script>
+    <script src="js/agents/compliance.js?v=27b2afb"></script>
+    <script src="js/agents/customer-service.js?v=27b2afb"></script>
     <!-- 7. Step 实现 (Phase 4) -->
-    <script src="js/steps/step2-design.js?v=352c971"></script>
-    <script src="js/steps/step3-measurement.js?v=352c971"></script>
-    <script src="js/steps/zb-verification.js?v=352c971"></script>
-    <script src="js/steps/step4-quotation.js?v=352c971"></script>
+    <script src="js/steps/step2-design.js?v=27b2afb"></script>
+    <script src="js/steps/step3-measurement.js?v=27b2afb"></script>
+    <script src="js/steps/zb-verification.js?v=27b2afb"></script>
+    <script src="js/steps/step4-quotation.js?v=27b2afb"></script>
     <!-- 8. 独立工具 (Phase 4) -->
-    <script src="js/utils/quotation-editor.js?v=352c971"></script>
-    <script src="js/utils/chatbot.js?v=352c971"></script>
+    <script src="js/utils/quotation-editor.js?v=27b2afb"></script>
+    <script src="js/utils/chatbot.js?v=27b2afb"></script>
     <script>
         // ===== Authentication (→ js/core/auth.js) =====
 
@@ -6450,7 +6450,7 @@
                     if (mf.type === 'select') {
                         return `<select id="step3_${fieldKey}_${projId}" class="${cls} bg-white" onchange="updateStep3Field('${projId}', '${fieldKey}', this.value)${extraOC}">
                             <option value="">-- Select --</option>
-                            ${mf.options.map(o => `<option value="${o.value}" ${savedVal === o.value ? 'selected' : ''}>${o.label}</option>`).join('')}
+                            ${mf.options.map(o => `<option value="${o.value}" ${(savedVal || mf.defaultValue || '') === o.value ? 'selected' : ''} ${o.disabled ? 'disabled style="color:#aaa"' : ''}>${o.label}${o.disabled ? ' (Coming Soon)' : ''}</option>`).join('')}
                         </select>`;
                     } else if (mf.type === 'date') {
                         return `<input type="date" id="step3_${fieldKey}_${projId}" value="${savedVal}" class="${cls}" onchange="updateStep3Field('${projId}', '${fieldKey}', this.value)${extraOC}">`;
@@ -6805,7 +6805,7 @@
                         if (mf.type === 'select') {
                             verifiedInput = `<select id="zv_${perKey}_${project.id}" class="${cls} bg-white" onchange="updateVerificationField('${project.id}', '${perKey}', this.value)">
                                 <option value="">--</option>
-                                ${mf.options.map(o => `<option value="${o.value}" ${verifiedVal === o.value ? 'selected' : ''}>${o.label}</option>`).join('')}
+                                ${mf.options.map(o => `<option value="${o.value}" ${verifiedVal === o.value ? 'selected' : ''} ${o.disabled ? 'disabled style="color:#aaa"' : ''}>${o.label}${o.disabled ? ' (Coming Soon)' : ''}</option>`).join('')}
                             </select>`;
                         } else {
                             verifiedInput = `<input type="${mf.type}" id="zv_${perKey}_${project.id}" value="${verifiedVal}" class="${cls}" placeholder="${initialVal || mf.placeholder || ''}" ${mf.min !== undefined ? 'min="' + mf.min + '"' : ''} ${mf.step !== undefined ? 'step="' + mf.step + '"' : ''} onchange="updateVerificationField('${project.id}', '${perKey}', this.value)">`;
