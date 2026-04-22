@@ -362,7 +362,18 @@
         },
 
         // ---- Fallback responses ----
+        // Compliance Pre-check 和 KB Quick Reference 已从 Step 3 侧栏移入此处
         fallback(msg, agent) {
+            // 动态 Compliance 上下文（原 Step 3 侧栏 Compliance Pre-Check）
+            if (agent === 'compliance') {
+                var cc = this._buildComplianceContext();
+                if (cc) return cc;
+            }
+            // 动态 KB 上下文（原 Step 3 侧栏 KB Quick Reference）
+            if (agent === 'knowledge-base') {
+                var kb = this._buildKBContext();
+                if (kb) return kb;
+            }
             const map = {
                 'designer': 'I\'d love to help with your design! To generate a scene-rendered proposal, I\'ll need:\n\n1. 📸 A photo of the yard/site\n2. 🏠 Product type (Sunroom / Pergola / ADU / Zip Blinds)\n3. 🎨 Style preference (Modern / Traditional / Mediterranean)\n\nPlease upload a site photo and I\'ll have the **AI Designer** create a rendering for you.',
                 'pricing': 'Let me help you with pricing! To generate an accurate quote, I need:\n\n1. 📐 Approximate dimensions (width × depth)\n2. 🏷️ Product type and tier\n3. 📍 Installation location (for logistics)\n\nOnce I have these, the **Pricing Agent** will prepare a 3-tier quote with margin analysis.',
@@ -372,6 +383,65 @@
             };
             if (agent && map[agent]) return map[agent];
             return 'Thank you for your question! Here\'s how I can help:\n\n🎨 **Design** — "Show me a sunroom design for this yard"\n💰 **Pricing** — "How much for a 300 sqft pergola?"\n📋 **Compliance** — "What permits for a sunroom in Irvine, CA?"\n👥 **Customers** — "Show me Mr. Johnson\'s project history"\n📚 **Products** — "What\'s the max span for our pergola?"\n\nTry asking something specific and I\'ll route it to the right agent!';
+        },
+
+        // 构建动态 Compliance Pre-Check 上下文（从当前项目的 Step 3 状态拉取）
+        _buildComplianceContext() {
+            try {
+                var projectId = typeof currentSelectedProjectId !== 'undefined' ? currentSelectedProjectId : null;
+                if (!projectId || typeof getStep3State !== 'function') return null;
+                var state = getStep3State(projectId);
+                if (!state || !state.complianceChecks || !state.complianceChecks.length) return null;
+
+                var checks = state.complianceChecks;
+                var passed = checks.filter(function(c) { return c.status === 'pass'; }).length;
+                var total = checks.length;
+
+                // 获取项目名称
+                var project = (typeof allProjectsData !== 'undefined') ? allProjectsData.find(function(p) { return p.id === projectId; }) : null;
+                var projectName = project ? (project.name || project.client || projectId) : projectId;
+
+                // 格式化检查项
+                var lines = checks.map(function(c) {
+                    var icon = c.status === 'pass' ? '✅' : c.status === 'warn' ? '⚠️' : c.status === 'fail' ? '❌' : '⏳';
+                    var detail = c.detail || (c.status === 'pass' ? 'OK' : c.status === 'warn' ? 'Review Needed' : c.status === 'fail' ? 'Failed' : 'Pending');
+                    return icon + ' **' + c.label + '** — ' + detail;
+                });
+
+                var statusIcon = passed === total ? '✅' : '⚠️';
+                return '📋 **Compliance Pre-Check** — ' + projectName + '\n\n'
+                    + lines.join('\n') + '\n\n'
+                    + statusIcon + ' **Status:** ' + passed + '/' + total + ' Passed\n\n'
+                    + 'Need a deeper review? Provide the **installation address** and **HOA details** for full regulatory analysis including permits, setbacks, and building codes.';
+            } catch(e) { return null; }
+        },
+
+        // 构建动态 KB Quick Reference 上下文（根据工作流阶段推荐相关文档）
+        _buildKBContext() {
+            try {
+                if (typeof getKBRecommendations !== 'function') return null;
+
+                // 根据当前项目所处阶段确定上下文
+                var projectId = typeof currentSelectedProjectId !== 'undefined' ? currentSelectedProjectId : null;
+                var project = (typeof allProjectsData !== 'undefined' && projectId) ? allProjectsData.find(function(p) { return p.id === projectId; }) : null;
+                var context = (project && project.workflowStep >= 4) ? 'quotation' : 'measurement';
+                var docs = getKBRecommendations(context);
+                if (!docs || !docs.length) return null;
+
+                var contextLabel = context === 'measurement' ? 'Measurement Guides' : 'Pricing & Sales';
+                var items = docs.map(function(d, i) {
+                    var icon = d.type === 'video' ? '🎬' : '📄';
+                    var extra = d.type === 'video' ? ' (' + d.duration + ')' : '';
+                    return (i + 1) + '. ' + icon + ' **' + d.title + '**' + extra + ' — ' + d.size;
+                });
+
+                var projectName = project ? (project.name || project.client || '') : '';
+                var header = projectName ? '📚 **KB Quick Reference** — ' + projectName + ' (' + contextLabel + ')' : '📚 **KB Quick Reference** — ' + contextLabel;
+
+                return header + '\n\n'
+                    + items.join('\n') + '\n\n'
+                    + '📖 ' + docs.length + ' documents available. Access the full **Knowledge Base** page for detailed specs, SOPs, and training materials.';
+            } catch(e) { return null; }
         },
 
         // ---- Quick actions ----

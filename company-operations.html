@@ -4353,45 +4353,45 @@
 
     <!-- JS 模块化文件 — 按依赖顺序加载 -->
     <!-- 1. 命名空间 -->
-    <script src="js/core/namespace.js?v=27b2afb"></script>
+    <script src="js/core/namespace.js?v=ccc9cef"></script>
     <!-- 2. 核心基础层 (Phase 2) -->
-    <script src="js/core/supabase-config.js?v=27b2afb"></script>
-    <script src="js/core/supabase-storage.js?v=27b2afb"></script>
-    <script src="js/core/auth.js?v=27b2afb"></script>
-    <script src="js/core/tenant.js?v=27b2afb"></script>
-    <script src="js/core/i18n.js?v=27b2afb"></script>
-    <script src="js/core/router.js?v=27b2afb"></script>
+    <script src="js/core/supabase-config.js?v=ccc9cef"></script>
+    <script src="js/core/supabase-storage.js?v=ccc9cef"></script>
+    <script src="js/core/auth.js?v=ccc9cef"></script>
+    <script src="js/core/tenant.js?v=ccc9cef"></script>
+    <script src="js/core/i18n.js?v=ccc9cef"></script>
+    <script src="js/core/router.js?v=ccc9cef"></script>
     <!-- 3. 数据层 (Phase 1) -->
-    <script src="js/data/i18n-dict.js?v=27b2afb"></script>
-    <script src="js/data/pricing-data.js?v=27b2afb"></script>
-    <script src="js/data/product-catalog.js?v=27b2afb"></script>
-    <script src="js/data/step-config.js?v=27b2afb"></script>
-    <script src="js/data/intake-fields.js?v=27b2afb"></script>
-    <script src="js/data/seed-projects.js?v=27b2afb"></script>
+    <script src="js/data/i18n-dict.js?v=ccc9cef"></script>
+    <script src="js/data/pricing-data.js?v=ccc9cef"></script>
+    <script src="js/data/product-catalog.js?v=ccc9cef"></script>
+    <script src="js/data/step-config.js?v=ccc9cef"></script>
+    <script src="js/data/intake-fields.js?v=ccc9cef"></script>
+    <script src="js/data/seed-projects.js?v=ccc9cef"></script>
     <!-- 4. 工具层 (Phase 3) -->
-    <script src="js/utils/helpers.js?v=27b2afb"></script>
-    <script src="js/utils/unit-converter.js?v=27b2afb"></script>
+    <script src="js/utils/helpers.js?v=ccc9cef"></script>
+    <script src="js/utils/unit-converter.js?v=ccc9cef"></script>
     <!-- 5. 功能模块 (Phase 3) -->
-    <script src="js/modules/orders.js?v=27b2afb"></script>
-    <script src="js/modules/customers.js?v=27b2afb"></script>
-    <script src="js/modules/knowledge-base.js?v=27b2afb"></script>
-    <script src="js/modules/products.js?v=27b2afb"></script>
-    <script src="js/modules/overview.js?v=27b2afb"></script>
-    <script src="js/modules/projects.js?v=27b2afb"></script>
-    <script src="js/modules/workflow.js?v=27b2afb"></script>
+    <script src="js/modules/orders.js?v=ccc9cef"></script>
+    <script src="js/modules/customers.js?v=ccc9cef"></script>
+    <script src="js/modules/knowledge-base.js?v=ccc9cef"></script>
+    <script src="js/modules/products.js?v=ccc9cef"></script>
+    <script src="js/modules/overview.js?v=ccc9cef"></script>
+    <script src="js/modules/projects.js?v=ccc9cef"></script>
+    <script src="js/modules/workflow.js?v=ccc9cef"></script>
     <!-- 6. Agent 模块 (Phase 4) -->
-    <script src="js/agents/designer.js?v=27b2afb"></script>
-    <script src="js/agents/pricing.js?v=27b2afb"></script>
-    <script src="js/agents/compliance.js?v=27b2afb"></script>
-    <script src="js/agents/customer-service.js?v=27b2afb"></script>
+    <script src="js/agents/designer.js?v=ccc9cef"></script>
+    <script src="js/agents/pricing.js?v=ccc9cef"></script>
+    <script src="js/agents/compliance.js?v=ccc9cef"></script>
+    <script src="js/agents/customer-service.js?v=ccc9cef"></script>
     <!-- 7. Step 实现 (Phase 4) -->
-    <script src="js/steps/step2-design.js?v=27b2afb"></script>
-    <script src="js/steps/step3-measurement.js?v=27b2afb"></script>
-    <script src="js/steps/zb-verification.js?v=27b2afb"></script>
-    <script src="js/steps/step4-quotation.js?v=27b2afb"></script>
+    <script src="js/steps/step2-design.js?v=ccc9cef"></script>
+    <script src="js/steps/step3-measurement.js?v=ccc9cef"></script>
+    <script src="js/steps/zb-verification.js?v=ccc9cef"></script>
+    <script src="js/steps/step4-quotation.js?v=ccc9cef"></script>
     <!-- 8. 独立工具 (Phase 4) -->
-    <script src="js/utils/quotation-editor.js?v=27b2afb"></script>
-    <script src="js/utils/chatbot.js?v=27b2afb"></script>
+    <script src="js/utils/quotation-editor.js?v=ccc9cef"></script>
+    <script src="js/utils/chatbot.js?v=ccc9cef"></script>
     <script>
         // ===== Authentication (→ js/core/auth.js) =====
 
@@ -6505,21 +6505,6 @@
                     </div>`;
                 }).join('');
 
-                // Compliance pre-check items
-                const complianceChecks = step3State.complianceChecks;
-                const passedCount = complianceChecks.filter(c => c.status === 'pass').length;
-                const totalChecks = complianceChecks.length;
-                const complianceItems = complianceChecks.map(c => {
-                    const iconCls = c.status === 'pass' ? 'fa-check-circle text-green-500' : c.status === 'warn' ? 'fa-exclamation-triangle text-amber-500' : c.status === 'fail' ? 'fa-times-circle text-red-500' : 'fa-circle text-gray-300';
-                    const statusCls = c.status === 'pass' ? 'text-green-600' : c.status === 'warn' ? 'text-amber-600' : c.status === 'fail' ? 'text-red-600' : 'text-gray-400';
-                    const statusLabel = c.status === 'pass' ? 'OK' : c.status === 'warn' ? 'Review' : c.status === 'fail' ? 'Fail' : 'Pending';
-                    return `<div class="flex items-center gap-2 text-[10px]">
-                        <i class="fas ${iconCls}"></i>
-                        <span class="text-gray-600 flex-1">${c.label}</span>
-                        <span class="font-medium ${statusCls}">${c.detail || statusLabel}</span>
-                    </div>`;
-                }).join('');
-
                 // Design enablement matrix (product-type-aware)
                 const designMatrix = isZipBlinds ? [
                     { label: 'Product Visualization', desc: 'Blind renderings', icon: 'fa-images', status: step3State.designMatrix.renderings },
@@ -6655,17 +6640,6 @@
 
                             <!-- Right Column: Compliance + Design Matrix + Structural Summary -->
                             <div class="space-y-4">
-                                <!-- Compliance Pre-Check -->
-                                <div class="p-3 rounded-lg border ${passedCount === totalChecks ? 'bg-green-50/50 border-green-100' : 'bg-amber-50/50 border-amber-100'}">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <span class="text-xs font-semibold ${passedCount === totalChecks ? 'text-green-700' : 'text-amber-700'}"><i class="fas fa-shield-alt mr-1.5"></i>Compliance Pre-Check</span>
-                                        <span class="text-[10px] font-medium ${passedCount === totalChecks ? 'text-green-600' : 'text-amber-600'}">${passedCount}/${totalChecks} Passed</span>
-                                    </div>
-                                    <div class="space-y-1.5">
-                                        ${complianceItems}
-                                    </div>
-                                </div>
-
                                 <!-- Design Enablement Matrix -->
                                 <div>
                                     <div class="flex items-center justify-between mb-2">
@@ -6730,7 +6704,6 @@
                                 </div>
                                 `}
 
-                                ${isZipBlinds ? renderKBQuickRefHTML('measurement', project.id) : ''}
                                 ${isZipBlinds ? '<div data-project-files="' + project.id + '" class="mt-3">' + renderProjectFilesHTML(project.id) + '</div>' : ''}
 
                                 <!-- Generate Design / Order Button -->
