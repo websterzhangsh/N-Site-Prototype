@@ -14,6 +14,37 @@
         'nestopia-chn': { name: 'Nestopia-CHN', logo: 'images/nestopia-logo.png',        language: 'bilingual', unitSystem: 'metric' }
     };
 
+    // ── 租户级显示偏好（默认值） ─────────────────────────────
+    // 所有租户共享同一份默认值；个别租户可通过 System Settings 覆盖（存 localStorage）
+    var _displayDefaults = {
+        showInheritedMeasurementData: false   // Step 3 "Inherited from Steps 1–2" 区域
+    };
+
+    /**
+     * 获取显示偏好值
+     * 优先级: localStorage (用户在 Settings 中手动设置) > _displayDefaults
+     * @param {string} key — 如 'showInheritedMeasurementData'
+     * @returns {boolean}
+     */
+    function getDisplaySetting(key) {
+        var slug = N.tenant.getCurrentSlug();
+        var lsKey = 'nestopia_display_' + slug + '_' + key;
+        var stored = localStorage.getItem(lsKey);
+        if (stored !== null) return stored === 'true';
+        return _displayDefaults[key] !== undefined ? _displayDefaults[key] : false;
+    }
+
+    /**
+     * 设置显示偏好值（存入 localStorage）
+     * @param {string} key
+     * @param {boolean} value
+     */
+    function setDisplaySetting(key, value) {
+        var slug = N.tenant.getCurrentSlug();
+        var lsKey = 'nestopia_display_' + slug + '_' + key;
+        localStorage.setItem(lsKey, String(!!value));
+    }
+
     N.tenant = {
         configs: tenantConfigs,
 
@@ -40,7 +71,10 @@
                 return parts.length > 1 ? parts[parts.length - 1] : bilingualName;
             }
             return bilingualName;
-        }
+        },
+
+        getDisplaySetting: getDisplaySetting,
+        setDisplaySetting: setDisplaySetting
     };
 
     // ── 全局别名桥接（原始函数名兼容） ──
@@ -49,6 +83,8 @@
     window.getTenantUnitSystem = N.tenant.getUnitSystem;
     window.getTenantLanguage = N.tenant.getLanguage;
     window.getLocalizedName = N.tenant.getLocalizedName;
+    window.getDisplaySetting = getDisplaySetting;
+    window.setDisplaySetting = setDisplaySetting;
 
     console.log('[Nestopia] tenant.js loaded');
 })();

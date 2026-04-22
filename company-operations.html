@@ -4088,6 +4088,7 @@
                 <!-- Settings Tabs -->
                 <div class="flex gap-2 mb-6 border-b border-gray-200">
                     <button class="settings-tab px-4 py-2 text-sm font-medium border-b-2 border-gray-900 text-gray-900" data-tab="company">Company</button>
+                    <button class="settings-tab px-4 py-2 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-tab="display">Display</button>
                     <button class="settings-tab px-4 py-2 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-tab="integrations">Integrations</button>
                     <button class="settings-tab px-4 py-2 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-tab="notifications">Notifications</button>
                     <button class="settings-tab px-4 py-2 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-tab="billing">Billing</button>
@@ -4131,6 +4132,33 @@
                             <button class="px-6 py-2.5 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition">Save Changes</button>
                         </div>
                     </div>
+                </div>
+
+                <!-- Display Preferences (hidden by default) -->
+                <div class="settings-content bg-white rounded-xl border border-gray-200 p-6 hidden" id="content-display">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Display Preferences</h3>
+                    <p class="text-sm text-gray-500 mb-6">Control which UI sections are visible in the project workflow.</p>
+
+                    <div class="space-y-4">
+                        <!-- Toggle: Show Inherited Measurement Data -->
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-arrow-right text-purple-600"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-gray-900">Show Inherited Data in Measurement</div>
+                                    <div class="text-sm text-gray-500">Display the &ldquo;Inherited from Steps 1&ndash;2&rdquo; section in Step 3 (Zip Blinds)</div>
+                                </div>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="toggleInheritedMeasurement" class="sr-only peer" onchange="setDisplaySetting('showInheritedMeasurementData', this.checked); showToast(this.checked ? 'Inherited section enabled' : 'Inherited section hidden', 'success')">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-gray-400 mt-6"><i class="fas fa-info-circle mr-1"></i>These preferences are saved per tenant and take effect immediately.</p>
                 </div>
 
                 <!-- Integrations (hidden by default) -->
@@ -4325,45 +4353,45 @@
 
     <!-- JS 模块化文件 — 按依赖顺序加载 -->
     <!-- 1. 命名空间 -->
-    <script src="js/core/namespace.js?v=f5bb651"></script>
+    <script src="js/core/namespace.js?v=352c971"></script>
     <!-- 2. 核心基础层 (Phase 2) -->
-    <script src="js/core/supabase-config.js?v=f5bb651"></script>
-    <script src="js/core/supabase-storage.js?v=f5bb651"></script>
-    <script src="js/core/auth.js?v=f5bb651"></script>
-    <script src="js/core/tenant.js?v=f5bb651"></script>
-    <script src="js/core/i18n.js?v=f5bb651"></script>
-    <script src="js/core/router.js?v=f5bb651"></script>
+    <script src="js/core/supabase-config.js?v=352c971"></script>
+    <script src="js/core/supabase-storage.js?v=352c971"></script>
+    <script src="js/core/auth.js?v=352c971"></script>
+    <script src="js/core/tenant.js?v=352c971"></script>
+    <script src="js/core/i18n.js?v=352c971"></script>
+    <script src="js/core/router.js?v=352c971"></script>
     <!-- 3. 数据层 (Phase 1) -->
-    <script src="js/data/i18n-dict.js?v=f5bb651"></script>
-    <script src="js/data/pricing-data.js?v=f5bb651"></script>
-    <script src="js/data/product-catalog.js?v=f5bb651"></script>
-    <script src="js/data/step-config.js?v=f5bb651"></script>
-    <script src="js/data/intake-fields.js?v=f5bb651"></script>
-    <script src="js/data/seed-projects.js?v=f5bb651"></script>
+    <script src="js/data/i18n-dict.js?v=352c971"></script>
+    <script src="js/data/pricing-data.js?v=352c971"></script>
+    <script src="js/data/product-catalog.js?v=352c971"></script>
+    <script src="js/data/step-config.js?v=352c971"></script>
+    <script src="js/data/intake-fields.js?v=352c971"></script>
+    <script src="js/data/seed-projects.js?v=352c971"></script>
     <!-- 4. 工具层 (Phase 3) -->
-    <script src="js/utils/helpers.js?v=f5bb651"></script>
-    <script src="js/utils/unit-converter.js?v=f5bb651"></script>
+    <script src="js/utils/helpers.js?v=352c971"></script>
+    <script src="js/utils/unit-converter.js?v=352c971"></script>
     <!-- 5. 功能模块 (Phase 3) -->
-    <script src="js/modules/orders.js?v=f5bb651"></script>
-    <script src="js/modules/customers.js?v=f5bb651"></script>
-    <script src="js/modules/knowledge-base.js?v=f5bb651"></script>
-    <script src="js/modules/products.js?v=f5bb651"></script>
-    <script src="js/modules/overview.js?v=f5bb651"></script>
-    <script src="js/modules/projects.js?v=f5bb651"></script>
-    <script src="js/modules/workflow.js?v=f5bb651"></script>
+    <script src="js/modules/orders.js?v=352c971"></script>
+    <script src="js/modules/customers.js?v=352c971"></script>
+    <script src="js/modules/knowledge-base.js?v=352c971"></script>
+    <script src="js/modules/products.js?v=352c971"></script>
+    <script src="js/modules/overview.js?v=352c971"></script>
+    <script src="js/modules/projects.js?v=352c971"></script>
+    <script src="js/modules/workflow.js?v=352c971"></script>
     <!-- 6. Agent 模块 (Phase 4) -->
-    <script src="js/agents/designer.js?v=f5bb651"></script>
-    <script src="js/agents/pricing.js?v=f5bb651"></script>
-    <script src="js/agents/compliance.js?v=f5bb651"></script>
-    <script src="js/agents/customer-service.js?v=f5bb651"></script>
+    <script src="js/agents/designer.js?v=352c971"></script>
+    <script src="js/agents/pricing.js?v=352c971"></script>
+    <script src="js/agents/compliance.js?v=352c971"></script>
+    <script src="js/agents/customer-service.js?v=352c971"></script>
     <!-- 7. Step 实现 (Phase 4) -->
-    <script src="js/steps/step2-design.js?v=f5bb651"></script>
-    <script src="js/steps/step3-measurement.js?v=f5bb651"></script>
-    <script src="js/steps/zb-verification.js?v=f5bb651"></script>
-    <script src="js/steps/step4-quotation.js?v=f5bb651"></script>
+    <script src="js/steps/step2-design.js?v=352c971"></script>
+    <script src="js/steps/step3-measurement.js?v=352c971"></script>
+    <script src="js/steps/zb-verification.js?v=352c971"></script>
+    <script src="js/steps/step4-quotation.js?v=352c971"></script>
     <!-- 8. 独立工具 (Phase 4) -->
-    <script src="js/utils/quotation-editor.js?v=f5bb651"></script>
-    <script src="js/utils/chatbot.js?v=f5bb651"></script>
+    <script src="js/utils/quotation-editor.js?v=352c971"></script>
+    <script src="js/utils/chatbot.js?v=352c971"></script>
     <script>
         // ===== Authentication (→ js/core/auth.js) =====
 
@@ -6543,7 +6571,8 @@
                         </button>
                     </div>
 
-                    <!-- Inherited Data from Steps 1-2 -->
+                    <!-- Inherited Data from Steps 1-2 (tenant-configurable) -->
+                    ${(typeof getDisplaySetting === 'function' && getDisplaySetting('showInheritedMeasurementData')) ? `
                     <div class="mb-4 p-3 bg-purple-50/50 rounded-lg border border-purple-100">
                         <div class="flex items-center gap-2 mb-2">
                             <i class="fas fa-arrow-right text-purple-500 text-[10px]"></i>
@@ -6551,7 +6580,7 @@
                             <span class="text-[9px] text-purple-400 ml-auto">Auto-populated from intake & design</span>
                         </div>
                         ${inheritedRows}
-                    </div>
+                    </div>` : ''}
 
                     <!-- Expandable Measurement Panel (hidden by default) -->
                     <div id="step3MeasurementPanel_${project.id}" class="hidden" style="animation: fadeInSlide 0.3s ease">
@@ -7427,6 +7456,12 @@
         }
 
         function initSettingsPage() {
+            // Initialize Display Preferences toggles from saved state
+            var inheritToggle = document.getElementById('toggleInheritedMeasurement');
+            if (inheritToggle && typeof getDisplaySetting === 'function') {
+                inheritToggle.checked = getDisplaySetting('showInheritedMeasurementData');
+            }
+
             // Settings tab switching
             document.querySelectorAll('.settings-tab').forEach(tab => {
                 tab.addEventListener('click', function() {
