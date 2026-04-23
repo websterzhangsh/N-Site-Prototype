@@ -397,19 +397,17 @@
                 var passed = checks.filter(function(c) { return c.status === 'pass'; }).length;
                 var total = checks.length;
 
-                // 获取项目名称
                 var project = (typeof allProjectsData !== 'undefined') ? allProjectsData.find(function(p) { return p.id === projectId; }) : null;
                 var projectName = project ? (project.name || project.client || projectId) : projectId;
 
-                // 格式化检查项
                 var lines = checks.map(function(c) {
-                    var icon = c.status === 'pass' ? '✅' : c.status === 'warn' ? '⚠️' : c.status === 'fail' ? '❌' : '⏳';
+                    var icon = c.status === 'pass' ? '\u2705' : c.status === 'warn' ? '\u26a0\ufe0f' : c.status === 'fail' ? '\u274c' : '\u23f3';
                     var detail = c.detail || (c.status === 'pass' ? 'OK' : c.status === 'warn' ? 'Review Needed' : c.status === 'fail' ? 'Failed' : 'Pending');
-                    return icon + ' **' + c.label + '** — ' + detail;
+                    return icon + ' **' + c.label + '** \u2014 ' + detail;
                 });
 
-                var statusIcon = passed === total ? '✅' : '⚠️';
-                return '📋 **Compliance Pre-Check** — ' + projectName + '\n\n'
+                var statusIcon = passed === total ? '\u2705' : '\u26a0\ufe0f';
+                return '\ud83d\udccb **Compliance Pre-Check** \u2014 ' + projectName + '\n\n'
                     + lines.join('\n') + '\n\n'
                     + statusIcon + ' **Status:** ' + passed + '/' + total + ' Passed\n\n'
                     + 'Need a deeper review? Provide the **installation address** and **HOA details** for full regulatory analysis including permits, setbacks, and building codes.';
@@ -421,7 +419,6 @@
             try {
                 if (typeof getKBRecommendations !== 'function') return null;
 
-                // 根据当前项目所处阶段确定上下文
                 var projectId = typeof currentSelectedProjectId !== 'undefined' ? currentSelectedProjectId : null;
                 var project = (typeof allProjectsData !== 'undefined' && projectId) ? allProjectsData.find(function(p) { return p.id === projectId; }) : null;
                 var context = (project && project.workflowStep >= 4) ? 'quotation' : 'measurement';
@@ -430,17 +427,19 @@
 
                 var contextLabel = context === 'measurement' ? 'Measurement Guides' : 'Pricing & Sales';
                 var items = docs.map(function(d, i) {
-                    var icon = d.type === 'video' ? '🎬' : '📄';
+                    var icon = d.type === 'video' ? '\ud83c\udfac' : '\ud83d\udcc4';
                     var extra = d.type === 'video' ? ' (' + d.duration + ')' : '';
-                    return (i + 1) + '. ' + icon + ' **' + d.title + '**' + extra + ' — ' + d.size;
+                    return (i + 1) + '. ' + icon + ' **' + d.title + '**' + extra + ' \u2014 ' + d.size;
                 });
 
                 var projectName = project ? (project.name || project.client || '') : '';
-                var header = projectName ? '📚 **KB Quick Reference** — ' + projectName + ' (' + contextLabel + ')' : '📚 **KB Quick Reference** — ' + contextLabel;
+                var header = projectName
+                    ? '\ud83d\udcda **KB Quick Reference** \u2014 ' + projectName + ' (' + contextLabel + ')'
+                    : '\ud83d\udcda **KB Quick Reference** \u2014 ' + contextLabel;
 
                 return header + '\n\n'
                     + items.join('\n') + '\n\n'
-                    + '📖 ' + docs.length + ' documents available. Access the full **Knowledge Base** page for detailed specs, SOPs, and training materials.';
+                    + '\ud83d\udcd6 ' + docs.length + ' documents available. Access the full **Knowledge Base** page for detailed specs, SOPs, and training materials.';
             } catch(e) { return null; }
         },
 

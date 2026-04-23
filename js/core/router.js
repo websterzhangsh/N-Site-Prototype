@@ -52,6 +52,16 @@
             if (pageName === 'ai-designer') {
                 if (typeof initDesignerProjects === 'function') initDesignerProjects();
             }
+
+            // Compliance Agent: 渲染 Compliance Pre-Check 摘要面板
+            if (pageName === 'compliance-agent') {
+                if (typeof renderCompliancePreCheckPanel === 'function') renderCompliancePreCheckPanel();
+            }
+
+            // Knowledge Base: 渲染 KB Quick Reference 摘要面板
+            if (pageName === 'knowledge-base') {
+                if (typeof renderKBQuickRefPanel === 'function') renderKBQuickRefPanel();
+            }
         },
 
         navigateToProject: function(projectId) {
