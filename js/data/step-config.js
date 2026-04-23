@@ -199,7 +199,8 @@
                     { key: 'fabric_openness', label: 'Openness (%)', type: 'text', icon: 'fa-sun', perOpening: true, placeholder: 'e.g. 5%' },
                     { key: 'fabric_color', label: 'Fabric Color', type: 'text', icon: 'fa-tint', perOpening: true, placeholder: 'e.g. White' },
                     { key: 'fabric_sample', label: 'Fabric Sample Photo', type: 'image_upload', icon: 'fa-camera', perOpening: true, accept: 'image/*', colSpan: 2 },
-                    { key: 'frame_color', label: 'Frame Color', type: 'select', icon: 'fa-palette', perOpening: true, options: [
+                    // Frame Color — 项目级公共字段（所有 opening 共用），默认 Brown
+                    { key: 'frame_color', label: 'Frame Color', type: 'select', icon: 'fa-palette', defaultValue: 'brown', options: [
                         { value: 'brown', label: 'Brown' },
                         { value: 'grey', label: 'Grey' },
                         { value: 'white', label: 'White' }

@@ -294,6 +294,10 @@
                 var inp;
                 if (mf.type === 'select') {
                     var effectiveVal = savedVal || mf.defaultValue || '';
+                    // ★ 将默认值写入 state，确保 Installation Summary 等功能能读取
+                    if (!savedVal && mf.defaultValue) {
+                        state.measurementData[perKey] = mf.defaultValue;
+                    }
                     inp = '<select id="step3_' + perKey + '_' + projectId + '" class="' + cls + ' bg-white" onchange="updateStep3Field(\x27' + projectId + '\x27, \x27' + perKey + '\x27, this.value)"><option value="">-- Select --</option>' +
                         mf.options.map(function(o) { return '<option value="' + o.value + '"' + (effectiveVal === o.value ? ' selected' : '') + (o.disabled ? ' disabled style="color:#aaa"' : '') + '>' + o.label + (o.disabled ? ' (Coming Soon)' : '') + '</option>'; }).join('') + '</select>';
                 } else if (mf.type === 'image_upload') {

@@ -277,8 +277,8 @@
                 }
             });
 
-            // 检查选择字段差异
-            ['mounting', 'motor', 'fabric_sku', 'fabric_openness', 'fabric_color', 'frame_color'].forEach(function(f) {
+            // 检查选择字段差异（仅限 per-opening 字段；frame_color 已改为项目级公共字段）
+            ['mounting', 'motor', 'fabric_sku', 'fabric_openness', 'fabric_color'].forEach(function(f) {
                 var sk = 'opening_' + i + '_' + f;
                 if (state.verifiedData[sk] && state.initialData[sk] && state.verifiedData[sk] !== state.initialData[sk]) {
                     discrepancyCount++;

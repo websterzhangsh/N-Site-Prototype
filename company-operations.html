@@ -4379,45 +4379,45 @@
 
     <!-- JS 模块化文件 — 按依赖顺序加载 -->
     <!-- 1. 命名空间 -->
-    <script src="js/core/namespace.js?v=8ec9f36"></script>
+    <script src="js/core/namespace.js?v=2b9d04f"></script>
     <!-- 2. 核心基础层 (Phase 2) -->
-    <script src="js/core/supabase-config.js?v=8ec9f36"></script>
-    <script src="js/core/supabase-storage.js?v=8ec9f36"></script>
-    <script src="js/core/auth.js?v=8ec9f36"></script>
-    <script src="js/core/tenant.js?v=8ec9f36"></script>
-    <script src="js/core/i18n.js?v=8ec9f36"></script>
-    <script src="js/core/router.js?v=8ec9f36"></script>
+    <script src="js/core/supabase-config.js?v=2b9d04f"></script>
+    <script src="js/core/supabase-storage.js?v=2b9d04f"></script>
+    <script src="js/core/auth.js?v=2b9d04f"></script>
+    <script src="js/core/tenant.js?v=2b9d04f"></script>
+    <script src="js/core/i18n.js?v=2b9d04f"></script>
+    <script src="js/core/router.js?v=2b9d04f"></script>
     <!-- 3. 数据层 (Phase 1) -->
-    <script src="js/data/i18n-dict.js?v=8ec9f36"></script>
-    <script src="js/data/pricing-data.js?v=8ec9f36"></script>
-    <script src="js/data/product-catalog.js?v=8ec9f36"></script>
-    <script src="js/data/step-config.js?v=8ec9f36"></script>
-    <script src="js/data/intake-fields.js?v=8ec9f36"></script>
-    <script src="js/data/seed-projects.js?v=8ec9f36"></script>
+    <script src="js/data/i18n-dict.js?v=2b9d04f"></script>
+    <script src="js/data/pricing-data.js?v=2b9d04f"></script>
+    <script src="js/data/product-catalog.js?v=2b9d04f"></script>
+    <script src="js/data/step-config.js?v=2b9d04f"></script>
+    <script src="js/data/intake-fields.js?v=2b9d04f"></script>
+    <script src="js/data/seed-projects.js?v=2b9d04f"></script>
     <!-- 4. 工具层 (Phase 3) -->
-    <script src="js/utils/helpers.js?v=8ec9f36"></script>
-    <script src="js/utils/unit-converter.js?v=8ec9f36"></script>
+    <script src="js/utils/helpers.js?v=2b9d04f"></script>
+    <script src="js/utils/unit-converter.js?v=2b9d04f"></script>
     <!-- 5. 功能模块 (Phase 3) -->
-    <script src="js/modules/orders.js?v=8ec9f36"></script>
-    <script src="js/modules/customers.js?v=8ec9f36"></script>
-    <script src="js/modules/knowledge-base.js?v=8ec9f36"></script>
-    <script src="js/modules/products.js?v=8ec9f36"></script>
-    <script src="js/modules/overview.js?v=8ec9f36"></script>
-    <script src="js/modules/projects.js?v=8ec9f36"></script>
-    <script src="js/modules/workflow.js?v=8ec9f36"></script>
+    <script src="js/modules/orders.js?v=2b9d04f"></script>
+    <script src="js/modules/customers.js?v=2b9d04f"></script>
+    <script src="js/modules/knowledge-base.js?v=2b9d04f"></script>
+    <script src="js/modules/products.js?v=2b9d04f"></script>
+    <script src="js/modules/overview.js?v=2b9d04f"></script>
+    <script src="js/modules/projects.js?v=2b9d04f"></script>
+    <script src="js/modules/workflow.js?v=2b9d04f"></script>
     <!-- 6. Agent 模块 (Phase 4) -->
-    <script src="js/agents/designer.js?v=8ec9f36"></script>
-    <script src="js/agents/pricing.js?v=8ec9f36"></script>
-    <script src="js/agents/compliance.js?v=8ec9f36"></script>
-    <script src="js/agents/customer-service.js?v=8ec9f36"></script>
+    <script src="js/agents/designer.js?v=2b9d04f"></script>
+    <script src="js/agents/pricing.js?v=2b9d04f"></script>
+    <script src="js/agents/compliance.js?v=2b9d04f"></script>
+    <script src="js/agents/customer-service.js?v=2b9d04f"></script>
     <!-- 7. Step 实现 (Phase 4) -->
-    <script src="js/steps/step2-design.js?v=8ec9f36"></script>
-    <script src="js/steps/step3-measurement.js?v=8ec9f36"></script>
-    <script src="js/steps/zb-verification.js?v=8ec9f36"></script>
-    <script src="js/steps/step4-quotation.js?v=8ec9f36"></script>
+    <script src="js/steps/step2-design.js?v=2b9d04f"></script>
+    <script src="js/steps/step3-measurement.js?v=2b9d04f"></script>
+    <script src="js/steps/zb-verification.js?v=2b9d04f"></script>
+    <script src="js/steps/step4-quotation.js?v=2b9d04f"></script>
     <!-- 8. 独立工具 (Phase 4) -->
-    <script src="js/utils/quotation-editor.js?v=8ec9f36"></script>
-    <script src="js/utils/chatbot.js?v=8ec9f36"></script>
+    <script src="js/utils/quotation-editor.js?v=2b9d04f"></script>
+    <script src="js/utils/chatbot.js?v=2b9d04f"></script>
     <script>
         // ===== Authentication (→ js/core/auth.js) =====
 
@@ -6587,6 +6587,10 @@
 
                 const fieldRows = commonFields.map(mf => {
                     const savedVal = step3State.measurementData[mf.key] || (mData[mf.key] !== undefined ? String(mData[mf.key]) : '') || mf.defaultValue || '';
+                    // ★ 将默认值写入 state（确保 Installation Summary 等功能可读取）
+                    if (!step3State.measurementData[mf.key] && mf.defaultValue) {
+                        step3State.measurementData[mf.key] = mf.defaultValue;
+                    }
                     const extraOC = (mf.key === 'openings') ? "; rebuildZBOpeningSections('" + project.id + "')" : '';
                     return _renderMFWrap(mf, mf.key, savedVal, project.id, extraOC);
                 }).join('');
@@ -6802,7 +6806,7 @@
                                             const row = (icon, label, val) => `<div class="flex items-center justify-between text-[10px]"><span class="text-gray-500"><i class="fas ${icon} text-gray-400 mr-1 w-3 text-center"></i>${label}</span><span class="font-medium text-gray-700">${val}</span></div>`;
                                             return row('fa-th-large', 'Total Openings', (md.openings || '—') + ' units')
                                                 + row('fa-wrench', 'Mounting Type', agg('mounting'))
-                                                + row('fa-palette', 'Frame Color', agg('frame_color'))
+                                                + row('fa-palette', 'Frame Color', fmt(md.frame_color || '') || '\u2014')
                                                 + row('fa-cog', 'Motor Type', agg('motor'))
                                                 + row('fa-scroll', 'Fabric', fabricSummary);
                                         })()}
