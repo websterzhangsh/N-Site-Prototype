@@ -4379,45 +4379,45 @@
 
     <!-- JS 模块化文件 — 按依赖顺序加载 -->
     <!-- 1. 命名空间 -->
-    <script src="js/core/namespace.js?v=4d2a529"></script>
+    <script src="js/core/namespace.js?v=4e05282"></script>
     <!-- 2. 核心基础层 (Phase 2) -->
-    <script src="js/core/supabase-config.js?v=4d2a529"></script>
-    <script src="js/core/supabase-storage.js?v=4d2a529"></script>
-    <script src="js/core/auth.js?v=4d2a529"></script>
-    <script src="js/core/tenant.js?v=4d2a529"></script>
-    <script src="js/core/i18n.js?v=4d2a529"></script>
-    <script src="js/core/router.js?v=4d2a529"></script>
+    <script src="js/core/supabase-config.js?v=4e05282"></script>
+    <script src="js/core/supabase-storage.js?v=4e05282"></script>
+    <script src="js/core/auth.js?v=4e05282"></script>
+    <script src="js/core/tenant.js?v=4e05282"></script>
+    <script src="js/core/i18n.js?v=4e05282"></script>
+    <script src="js/core/router.js?v=4e05282"></script>
     <!-- 3. 数据层 (Phase 1) -->
-    <script src="js/data/i18n-dict.js?v=4d2a529"></script>
-    <script src="js/data/pricing-data.js?v=4d2a529"></script>
-    <script src="js/data/product-catalog.js?v=4d2a529"></script>
-    <script src="js/data/step-config.js?v=4d2a529"></script>
-    <script src="js/data/intake-fields.js?v=4d2a529"></script>
-    <script src="js/data/seed-projects.js?v=4d2a529"></script>
+    <script src="js/data/i18n-dict.js?v=4e05282"></script>
+    <script src="js/data/pricing-data.js?v=4e05282"></script>
+    <script src="js/data/product-catalog.js?v=4e05282"></script>
+    <script src="js/data/step-config.js?v=4e05282"></script>
+    <script src="js/data/intake-fields.js?v=4e05282"></script>
+    <script src="js/data/seed-projects.js?v=4e05282"></script>
     <!-- 4. 工具层 (Phase 3) -->
-    <script src="js/utils/helpers.js?v=4d2a529"></script>
-    <script src="js/utils/unit-converter.js?v=4d2a529"></script>
+    <script src="js/utils/helpers.js?v=4e05282"></script>
+    <script src="js/utils/unit-converter.js?v=4e05282"></script>
     <!-- 5. 功能模块 (Phase 3) -->
-    <script src="js/modules/orders.js?v=4d2a529"></script>
-    <script src="js/modules/customers.js?v=4d2a529"></script>
-    <script src="js/modules/knowledge-base.js?v=4d2a529"></script>
-    <script src="js/modules/products.js?v=4d2a529"></script>
-    <script src="js/modules/overview.js?v=4d2a529"></script>
-    <script src="js/modules/projects.js?v=4d2a529"></script>
-    <script src="js/modules/workflow.js?v=4d2a529"></script>
+    <script src="js/modules/orders.js?v=4e05282"></script>
+    <script src="js/modules/customers.js?v=4e05282"></script>
+    <script src="js/modules/knowledge-base.js?v=4e05282"></script>
+    <script src="js/modules/products.js?v=4e05282"></script>
+    <script src="js/modules/overview.js?v=4e05282"></script>
+    <script src="js/modules/projects.js?v=4e05282"></script>
+    <script src="js/modules/workflow.js?v=4e05282"></script>
     <!-- 6. Agent 模块 (Phase 4) -->
-    <script src="js/agents/designer.js?v=4d2a529"></script>
-    <script src="js/agents/pricing.js?v=4d2a529"></script>
-    <script src="js/agents/compliance.js?v=4d2a529"></script>
-    <script src="js/agents/customer-service.js?v=4d2a529"></script>
+    <script src="js/agents/designer.js?v=4e05282"></script>
+    <script src="js/agents/pricing.js?v=4e05282"></script>
+    <script src="js/agents/compliance.js?v=4e05282"></script>
+    <script src="js/agents/customer-service.js?v=4e05282"></script>
     <!-- 7. Step 实现 (Phase 4) -->
-    <script src="js/steps/step2-design.js?v=4d2a529"></script>
-    <script src="js/steps/step3-measurement.js?v=4d2a529"></script>
-    <script src="js/steps/zb-verification.js?v=4d2a529"></script>
-    <script src="js/steps/step4-quotation.js?v=4d2a529"></script>
+    <script src="js/steps/step2-design.js?v=4e05282"></script>
+    <script src="js/steps/step3-measurement.js?v=4e05282"></script>
+    <script src="js/steps/zb-verification.js?v=4e05282"></script>
+    <script src="js/steps/step4-quotation.js?v=4e05282"></script>
     <!-- 8. 独立工具 (Phase 4) -->
-    <script src="js/utils/quotation-editor.js?v=4d2a529"></script>
-    <script src="js/utils/chatbot.js?v=4d2a529"></script>
+    <script src="js/utils/quotation-editor.js?v=4e05282"></script>
+    <script src="js/utils/chatbot.js?v=4e05282"></script>
     <script>
         // ===== Authentication (→ js/core/auth.js) =====
 
@@ -6559,12 +6559,25 @@
                         </select>`;
                     } else if (mf.type === 'date') {
                         return `<input type="date" id="step3_${fieldKey}_${projId}" value="${savedVal}" class="${cls}" onchange="updateStep3Field('${projId}', '${fieldKey}', this.value)${extraOC}">`;
+                    } else if (mf.type === 'image_upload') {
+                        const hasImg = savedVal && savedVal.startsWith('data:');
+                        const rmBtn = hasImg ? `<button onclick="event.stopPropagation(); removeFabricSample('${projId}', '${fieldKey}')" class="fabric-sample-remove-btn absolute top-1 right-1 w-4 h-4 bg-red-500 text-white rounded-full text-[8px] flex items-center justify-center hover:bg-red-600"><i class="fas fa-times"></i></button>` : '';
+                        return `<div id="step3_${fieldKey}_${projId}_wrap" class="relative border-2 border-dashed border-gray-200 rounded-lg p-2 text-center cursor-pointer hover:border-purple-300 hover:bg-purple-50/20 transition" onclick="document.getElementById('step3_${fieldKey}_${projId}_input').click()">
+                            <input type="file" id="step3_${fieldKey}_${projId}_input" accept="${mf.accept || 'image/*'}" class="hidden" onchange="handleFabricSampleUpload('${projId}', '${fieldKey}', this)">
+                            <div id="step3_${fieldKey}_${projId}_placeholder" class="${hasImg ? 'hidden ' : ''}py-1">
+                                <i class="fas fa-cloud-upload-alt text-gray-300 text-base"></i>
+                                <p class="text-[10px] text-gray-400 mt-0.5">Click to upload sample</p>
+                            </div>
+                            <img id="step3_${fieldKey}_${projId}_preview" class="${hasImg ? '' : 'hidden '}max-h-16 mx-auto rounded" src="${hasImg ? savedVal : ''}" alt="Sample">
+                            ${rmBtn}
+                        </div>`;
                     } else {
                         return `<input type="${mf.type}" id="step3_${fieldKey}_${projId}" value="${savedVal}" class="${cls}" placeholder="${mf.placeholder || ''}" ${mf.min !== undefined ? 'min="'+mf.min+'"' : ''} ${mf.step !== undefined ? 'step="'+mf.step+'"' : ''} onchange="updateStep3Field('${projId}', '${fieldKey}', this.value)${extraOC}">`;
                     }
                 }
                 function _renderMFWrap(mf, fieldKey, savedVal, projId, extraOC) {
-                    return `<div class="space-y-1">
+                    const spanCls = mf.colSpan === 2 ? ' col-span-2' : '';
+                    return `<div class="space-y-1${spanCls}">
                         <label class="text-[10px] font-medium text-gray-500 flex items-center gap-1.5">
                             <i class="fas ${mf.icon} text-purple-400"></i>${mf.label}
                         </label>

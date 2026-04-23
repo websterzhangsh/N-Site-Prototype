@@ -296,6 +296,17 @@
                     var effectiveVal = savedVal || mf.defaultValue || '';
                     inp = '<select id="step3_' + perKey + '_' + projectId + '" class="' + cls + ' bg-white" onchange="updateStep3Field(\x27' + projectId + '\x27, \x27' + perKey + '\x27, this.value)"><option value="">-- Select --</option>' +
                         mf.options.map(function(o) { return '<option value="' + o.value + '"' + (effectiveVal === o.value ? ' selected' : '') + (o.disabled ? ' disabled style="color:#aaa"' : '') + '>' + o.label + (o.disabled ? ' (Coming Soon)' : '') + '</option>'; }).join('') + '</select>';
+                } else if (mf.type === 'image_upload') {
+                    // ★ 面料样品图片上传字段
+                    var hasImg = savedVal && savedVal.indexOf('data:') === 0;
+                    inp = '<div id="step3_' + perKey + '_' + projectId + '_wrap" class="relative border-2 border-dashed border-gray-200 rounded-lg p-2 text-center cursor-pointer hover:border-purple-300 hover:bg-purple-50/20 transition" onclick="document.getElementById(\x27step3_' + perKey + '_' + projectId + '_input\x27).click()">' +
+                        '<input type="file" id="step3_' + perKey + '_' + projectId + '_input" accept="' + (mf.accept || 'image/*') + '" class="hidden" onchange="handleFabricSampleUpload(\x27' + projectId + '\x27, \x27' + perKey + '\x27, this)">' +
+                        '<div id="step3_' + perKey + '_' + projectId + '_placeholder" class="' + (hasImg ? 'hidden ' : '') + 'py-1">' +
+                        '<i class="fas fa-cloud-upload-alt text-gray-300 text-base"></i>' +
+                        '<p class="text-[10px] text-gray-400 mt-0.5">Click to upload sample</p></div>' +
+                        '<img id="step3_' + perKey + '_' + projectId + '_preview" class="' + (hasImg ? '' : 'hidden ') + 'max-h-16 mx-auto rounded" src="' + (hasImg ? savedVal : '') + '" alt="Sample">' +
+                        (hasImg ? '<button onclick="event.stopPropagation(); removeFabricSample(\x27' + projectId + '\x27, \x27' + perKey + '\x27)" class="fabric-sample-remove-btn absolute top-1 right-1 w-4 h-4 bg-red-500 text-white rounded-full text-[8px] flex items-center justify-center hover:bg-red-600"><i class="fas fa-times"></i></button>' : '') +
+                        '</div>';
                 } else {
                     // ★ 单位转换：width/height 字段 — 显示当前单位的值和标签
                     var isDim = (mf.key === 'width_in' || mf.key === 'height_in');
@@ -313,7 +324,8 @@
                     labelText = baseName + ' (' + uc.unitLabel() + ')';
                     dataUnitAttr = ' data-unit-label="' + baseName + '"';
                 }
-                return '<div class="space-y-1"><label class="text-[10px] font-medium text-gray-500 flex items-center gap-1.5"' + dataUnitAttr + '><i class="fas ' + mf.icon + ' text-purple-400"></i>' + labelText + '</label>' + inp + '</div>';
+                var colSpanCls = mf.colSpan === 2 ? ' col-span-2' : '';
+                return '<div class="space-y-1' + colSpanCls + '"><label class="text-[10px] font-medium text-gray-500 flex items-center gap-1.5"' + dataUnitAttr + '><i class="fas ' + mf.icon + ' text-purple-400"></i>' + labelText + '</label>' + inp + '</div>';
             }).join('');
             html += '<div class="mt-3 p-3 bg-indigo-50/30 rounded-lg border border-indigo-100">' +
                 '<div class="flex items-center gap-2 mb-2"><div class="w-5 h-5 bg-indigo-100 rounded flex items-center justify-center"><span class="text-[10px] font-bold text-indigo-600">' + oi + '</span></div>' +
@@ -343,6 +355,7 @@
                 var uc = window.unitConverter;
                 for (var oi = 1; oi <= numO; oi++) {
                     perFields.forEach(function(mf) {
+                        if (mf.type === 'image_upload') return; // 图片已由 handler 直接存入 state
                         var perKey = 'opening_' + oi + '_' + mf.key;
                         var el = document.getElementById('step3_' + perKey + '_' + projectId);
                         if (el) {
@@ -468,6 +481,57 @@
             }
         }
         showToast('Obstacle removed', 'info');
+    }
+
+    // ── Fabric Sample Photo 上传/删除 ────────────────────────
+    function handleFabricSampleUpload(projectId, fieldKey, input) {
+        var file = input.files[0];
+        if (!file) return;
+        // 限制文件大小 5MB
+        if (file.size > 5 * 1024 * 1024) {
+            showToast('Image too large (max 5MB)', 'error');
+            input.value = '';
+            return;
+        }
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var dataUrl = e.target.result;
+            var state = getStep3State(projectId);
+            state.measurementData[fieldKey] = dataUrl;
+            // 更新预览
+            var preview = document.getElementById('step3_' + fieldKey + '_' + projectId + '_preview');
+            var placeholder = document.getElementById('step3_' + fieldKey + '_' + projectId + '_placeholder');
+            var wrap = document.getElementById('step3_' + fieldKey + '_' + projectId + '_wrap');
+            if (preview) { preview.src = dataUrl; preview.classList.remove('hidden'); }
+            if (placeholder) placeholder.classList.add('hidden');
+            // 添加删除按钮
+            if (wrap && !wrap.querySelector('.fabric-sample-remove-btn')) {
+                var removeBtn = document.createElement('button');
+                removeBtn.className = 'fabric-sample-remove-btn absolute top-1 right-1 w-4 h-4 bg-red-500 text-white rounded-full text-[8px] flex items-center justify-center hover:bg-red-600';
+                removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+                removeBtn.onclick = function(ev) { ev.stopPropagation(); removeFabricSample(projectId, fieldKey); };
+                wrap.appendChild(removeBtn);
+            }
+            showToast('Fabric sample uploaded', 'success');
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function removeFabricSample(projectId, fieldKey) {
+        var state = getStep3State(projectId);
+        state.measurementData[fieldKey] = '';
+        var preview = document.getElementById('step3_' + fieldKey + '_' + projectId + '_preview');
+        var placeholder = document.getElementById('step3_' + fieldKey + '_' + projectId + '_placeholder');
+        var wrap = document.getElementById('step3_' + fieldKey + '_' + projectId + '_wrap');
+        if (preview) { preview.src = ''; preview.classList.add('hidden'); }
+        if (placeholder) placeholder.classList.remove('hidden');
+        if (wrap) {
+            var btn = wrap.querySelector('.fabric-sample-remove-btn');
+            if (btn) btn.remove();
+        }
+        var input = document.getElementById('step3_' + fieldKey + '_' + projectId + '_input');
+        if (input) input.value = '';
+        showToast('Fabric sample removed', 'info');
     }
 
     function generateStep3DetailedDesign(projectId) {
@@ -600,7 +664,9 @@
         scheduleStep3Appointment: scheduleStep3Appointment,
         addStep3Obstacle: addStep3Obstacle,
         removeStep3Obstacle: removeStep3Obstacle,
-        generateStep3DetailedDesign: generateStep3DetailedDesign
+        generateStep3DetailedDesign: generateStep3DetailedDesign,
+        handleFabricSampleUpload: handleFabricSampleUpload,
+        removeFabricSample: removeFabricSample
     };
 
     // ── 全局别名（保持向后兼容） ─────────────────────────────
@@ -617,5 +683,7 @@
     window.addStep3Obstacle = addStep3Obstacle;
     window.removeStep3Obstacle = removeStep3Obstacle;
     window.generateStep3DetailedDesign = generateStep3DetailedDesign;
+    window.handleFabricSampleUpload = handleFabricSampleUpload;
+    window.removeFabricSample = removeFabricSample;
 
 })();

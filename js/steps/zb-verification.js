@@ -278,7 +278,7 @@
             });
 
             // 检查选择字段差异
-            ['mounting', 'motor', 'fabric'].forEach(function(f) {
+            ['mounting', 'motor', 'fabric_sku', 'fabric_openness', 'fabric_color', 'frame_color'].forEach(function(f) {
                 var sk = 'opening_' + i + '_' + f;
                 if (state.verifiedData[sk] && state.initialData[sk] && state.verifiedData[sk] !== state.initialData[sk]) {
                     discrepancyCount++;

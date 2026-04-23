@@ -194,12 +194,11 @@
                         { value: 'motorized_solar', label: 'Solar', disabled: true },
                         { value: 'motorized_battery', label: 'Battery', disabled: true }
                     ]},
-                    { key: 'fabric', label: 'Fabric / Screen Type', type: 'select', icon: 'fa-scroll', perOpening: true, options: [
-                        { value: 'mesh_5pct', label: 'Solar Mesh 5% Openness' },
-                        { value: 'mesh_10pct', label: 'Solar Mesh 10% Openness' },
-                        { value: 'blackout', label: 'Blackout Fabric' },
-                        { value: 'clear_pvc', label: 'Clear PVC' }
-                    ]},
+                    // Fabric Info Group — 面料信息（SKU / 开孔率 / 颜色 / 样品照片）
+                    { key: 'fabric_sku', label: 'Fabric SKU', type: 'text', icon: 'fa-barcode', perOpening: true, placeholder: 'e.g. NP33051010SP' },
+                    { key: 'fabric_openness', label: 'Openness (%)', type: 'text', icon: 'fa-sun', perOpening: true, placeholder: 'e.g. 5%' },
+                    { key: 'fabric_color', label: 'Fabric Color', type: 'text', icon: 'fa-tint', perOpening: true, placeholder: 'e.g. White' },
+                    { key: 'fabric_sample', label: 'Fabric Sample Photo', type: 'image_upload', icon: 'fa-camera', perOpening: true, accept: 'image/*', colSpan: 2 },
                     { key: 'frame_color', label: 'Frame Color', type: 'select', icon: 'fa-palette', perOpening: true, options: [
                         { value: 'brown', label: 'Brown' },
                         { value: 'grey', label: 'Grey' },
