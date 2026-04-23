@@ -199,11 +199,14 @@
                     { key: 'fabric_openness', label: 'Openness (%)', type: 'text', icon: 'fa-sun', perOpening: true, placeholder: 'e.g. 5%' },
                     { key: 'fabric_color', label: 'Fabric Color', type: 'text', icon: 'fa-tint', perOpening: true, placeholder: 'e.g. White' },
                     { key: 'fabric_sample', label: 'Fabric Sample Photo', type: 'image_upload', icon: 'fa-camera', perOpening: true, accept: 'image/*', colSpan: 2 },
-                    // Frame Color — 项目级公共字段（所有 opening 共用），默认 Brown
-                    { key: 'frame_color', label: 'Frame Color', type: 'select', icon: 'fa-palette', defaultValue: 'brown', options: [
-                        { value: 'brown', label: 'Brown' },
-                        { value: 'grey', label: 'Grey' },
-                        { value: 'white', label: 'White' }
+                    // Frame Color — 项目级公共字段（所有 opening 共用），默认 Coffee Brown
+                    // 颜色样板来源：铝合金型材实物色卡（WR 系列）
+                    { key: 'frame_color', label: 'Frame Color', type: 'select', icon: 'fa-palette', defaultValue: 'coffee_brown', options: [
+                        { value: 'coffee_brown', label: 'Coffee Brown' },
+                        { value: 'iron_black', label: 'Iron Black' },
+                        { value: 'matte_white', label: 'Matte White' },
+                        { value: 'iron_grey', label: 'Iron Grey' },
+                        { value: 'matte_black', label: 'Matte Black' }
                     ]}
                 ],
                 zipBlindsObstacles: [
