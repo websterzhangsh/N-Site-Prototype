@@ -267,6 +267,8 @@
                 genBtn.classList.add('opacity-40', 'cursor-not-allowed');
             }
         }
+        // ★ 实时刷新 Installation Summary（字段值变更后立即反映）
+        updateInstallationSummary(projectId);
     }
 
     function rebuildZBOpeningSections(projectId) {
@@ -337,6 +339,8 @@
                 '<div class="grid grid-cols-2 gap-2.5">' + rows + '</div></div>';
         }
         container.innerHTML = html;
+        // ★ 重建 opening 后刷新 Installation Summary
+        updateInstallationSummary(projectId);
     }
 
     function saveStep3Measurement(projectId) {
@@ -654,6 +658,43 @@
         }
     }
 
+    // ── Installation Summary 实时刷新 ─────────────────────────
+    // 当字段值变更或 opening 数量变化时，重新渲染 Installation Summary 内容
+    function updateInstallationSummary(projectId) {
+        var el = document.getElementById('installSummaryContent_' + projectId);
+        if (!el) return;
+        var state = getStep3State(projectId);
+        var md = state.measurementData;
+        var numO = parseInt(md.openings || '1') || 1;
+        var fmt = function(v) { return v ? v.replace(/_/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); }) : ''; };
+        function agg(field) {
+            var vals = [];
+            for (var i = 1; i <= numO; i++) { var v = md['opening_' + i + '_' + field]; if (v) vals.push(v); }
+            if (!vals.length) return '\u2014';
+            var u = vals.filter(function(v, idx, a) { return a.indexOf(v) === idx; });
+            return u.length === 1 ? fmt(u[0]) : 'Mixed (' + u.length + ' types)';
+        }
+        var fabricEntries = [];
+        for (var fi = 1; fi <= numO; fi++) {
+            var fc = md['opening_' + fi + '_fabric_color'] || '';
+            var fo = md['opening_' + fi + '_fabric_openness'] || '';
+            if (fc || fo) fabricEntries.push((fc || '?') + ', ' + (fo || '?'));
+        }
+        var fabricSummary = '\u2014';
+        if (fabricEntries.length) {
+            var uFab = fabricEntries.filter(function(v, idx, a) { return a.indexOf(v) === idx; });
+            fabricSummary = uFab.length === 1 ? uFab[0] : 'Mixed (' + uFab.length + ' types)';
+        }
+        function row(icon, label, val) {
+            return '<div class="flex items-center justify-between text-[10px]"><span class="text-gray-500"><i class="fas ' + icon + ' text-gray-400 mr-1 w-3 text-center"></i>' + label + '</span><span class="font-medium text-gray-700">' + val + '</span></div>';
+        }
+        el.innerHTML = row('fa-th-large', 'Total Openings', (md.openings || '\u2014') + ' units')
+            + row('fa-wrench', 'Mounting Type', agg('mounting'))
+            + row('fa-palette', 'Frame Color', fmt(md.frame_color || '') || '\u2014')
+            + row('fa-cog', 'Motor Type', agg('motor'))
+            + row('fa-scroll', 'Fabric', fabricSummary);
+    }
+
     // ── 命名空间导出 ──────────────────────────────────────────
     N.steps.step3 = {
         step3MeasurementState: step3MeasurementState,
@@ -670,7 +711,8 @@
         removeStep3Obstacle: removeStep3Obstacle,
         generateStep3DetailedDesign: generateStep3DetailedDesign,
         handleFabricSampleUpload: handleFabricSampleUpload,
-        removeFabricSample: removeFabricSample
+        removeFabricSample: removeFabricSample,
+        updateInstallationSummary: updateInstallationSummary
     };
 
     // ── 全局别名（保持向后兼容） ─────────────────────────────
@@ -689,5 +731,6 @@
     window.generateStep3DetailedDesign = generateStep3DetailedDesign;
     window.handleFabricSampleUpload = handleFabricSampleUpload;
     window.removeFabricSample = removeFabricSample;
+    window.updateInstallationSummary = updateInstallationSummary;
 
 })();
