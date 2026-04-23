@@ -199,6 +199,11 @@
                         { value: 'mesh_10pct', label: 'Solar Mesh 10% Openness' },
                         { value: 'blackout', label: 'Blackout Fabric' },
                         { value: 'clear_pvc', label: 'Clear PVC' }
+                    ]},
+                    { key: 'frame_color', label: 'Frame Color', type: 'select', icon: 'fa-palette', perOpening: true, options: [
+                        { value: 'brown', label: 'Brown' },
+                        { value: 'grey', label: 'Grey' },
+                        { value: 'white', label: 'White' }
                     ]}
                 ],
                 zipBlindsObstacles: [
