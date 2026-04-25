@@ -4379,45 +4379,45 @@
 
     <!-- JS 模块化文件 — 按依赖顺序加载 -->
     <!-- 1. 命名空间 -->
-    <script src="js/core/namespace.js?v=58c301d"></script>
+    <script src="js/core/namespace.js?v=8ec78ae"></script>
     <!-- 2. 核心基础层 (Phase 2) -->
-    <script src="js/core/supabase-config.js?v=58c301d"></script>
-    <script src="js/core/supabase-storage.js?v=58c301d"></script>
-    <script src="js/core/auth.js?v=58c301d"></script>
-    <script src="js/core/tenant.js?v=58c301d"></script>
-    <script src="js/core/i18n.js?v=58c301d"></script>
-    <script src="js/core/router.js?v=58c301d"></script>
+    <script src="js/core/supabase-config.js?v=8ec78ae"></script>
+    <script src="js/core/supabase-storage.js?v=8ec78ae"></script>
+    <script src="js/core/auth.js?v=8ec78ae"></script>
+    <script src="js/core/tenant.js?v=8ec78ae"></script>
+    <script src="js/core/i18n.js?v=8ec78ae"></script>
+    <script src="js/core/router.js?v=8ec78ae"></script>
     <!-- 3. 数据层 (Phase 1) -->
-    <script src="js/data/i18n-dict.js?v=58c301d"></script>
-    <script src="js/data/pricing-data.js?v=58c301d"></script>
-    <script src="js/data/product-catalog.js?v=58c301d"></script>
-    <script src="js/data/step-config.js?v=58c301d"></script>
-    <script src="js/data/intake-fields.js?v=58c301d"></script>
-    <script src="js/data/seed-projects.js?v=58c301d"></script>
+    <script src="js/data/i18n-dict.js?v=8ec78ae"></script>
+    <script src="js/data/pricing-data.js?v=8ec78ae"></script>
+    <script src="js/data/product-catalog.js?v=8ec78ae"></script>
+    <script src="js/data/step-config.js?v=8ec78ae"></script>
+    <script src="js/data/intake-fields.js?v=8ec78ae"></script>
+    <script src="js/data/seed-projects.js?v=8ec78ae"></script>
     <!-- 4. 工具层 (Phase 3) -->
-    <script src="js/utils/helpers.js?v=58c301d"></script>
-    <script src="js/utils/unit-converter.js?v=58c301d"></script>
+    <script src="js/utils/helpers.js?v=8ec78ae"></script>
+    <script src="js/utils/unit-converter.js?v=8ec78ae"></script>
     <!-- 5. 功能模块 (Phase 3) -->
-    <script src="js/modules/orders.js?v=58c301d"></script>
-    <script src="js/modules/customers.js?v=58c301d"></script>
-    <script src="js/modules/knowledge-base.js?v=58c301d"></script>
-    <script src="js/modules/products.js?v=58c301d"></script>
-    <script src="js/modules/overview.js?v=58c301d"></script>
-    <script src="js/modules/projects.js?v=58c301d"></script>
-    <script src="js/modules/workflow.js?v=58c301d"></script>
+    <script src="js/modules/orders.js?v=8ec78ae"></script>
+    <script src="js/modules/customers.js?v=8ec78ae"></script>
+    <script src="js/modules/knowledge-base.js?v=8ec78ae"></script>
+    <script src="js/modules/products.js?v=8ec78ae"></script>
+    <script src="js/modules/overview.js?v=8ec78ae"></script>
+    <script src="js/modules/projects.js?v=8ec78ae"></script>
+    <script src="js/modules/workflow.js?v=8ec78ae"></script>
     <!-- 6. Agent 模块 (Phase 4) -->
-    <script src="js/agents/designer.js?v=58c301d"></script>
-    <script src="js/agents/pricing.js?v=58c301d"></script>
-    <script src="js/agents/compliance.js?v=58c301d"></script>
-    <script src="js/agents/customer-service.js?v=58c301d"></script>
+    <script src="js/agents/designer.js?v=8ec78ae"></script>
+    <script src="js/agents/pricing.js?v=8ec78ae"></script>
+    <script src="js/agents/compliance.js?v=8ec78ae"></script>
+    <script src="js/agents/customer-service.js?v=8ec78ae"></script>
     <!-- 7. Step 实现 (Phase 4) -->
-    <script src="js/steps/step2-design.js?v=58c301d"></script>
-    <script src="js/steps/step3-measurement.js?v=58c301d"></script>
-    <script src="js/steps/zb-verification.js?v=58c301d"></script>
-    <script src="js/steps/step4-quotation.js?v=58c301d"></script>
+    <script src="js/steps/step2-design.js?v=8ec78ae"></script>
+    <script src="js/steps/step3-measurement.js?v=8ec78ae"></script>
+    <script src="js/steps/zb-verification.js?v=8ec78ae"></script>
+    <script src="js/steps/step4-quotation.js?v=8ec78ae"></script>
     <!-- 8. 独立工具 (Phase 4) -->
-    <script src="js/utils/quotation-editor.js?v=58c301d"></script>
-    <script src="js/utils/chatbot.js?v=58c301d"></script>
+    <script src="js/utils/quotation-editor.js?v=8ec78ae"></script>
+    <script src="js/utils/chatbot.js?v=8ec78ae"></script>
     <script>
         // ===== Authentication (→ js/core/auth.js) =====
 
@@ -6981,9 +6981,9 @@
                         <div class="flex items-center gap-2 mb-2">
                             <i class="fas fa-ruler-combined text-purple-500 text-[10px]"></i>
                             <span class="text-xs font-semibold text-purple-700">Initial Measurement (Step 1)</span>
-                            <span class="text-[9px] bg-purple-100 text-purple-600 px-1.5 py-0.5 rounded-full font-medium">${numOpenings} opening${numOpenings > 1 ? 's' : ''}</span>
+                            <span id="zbVerifOpeningCount_${project.id}" class="text-[9px] bg-purple-100 text-purple-600 px-1.5 py-0.5 rounded-full font-medium">${numOpenings} opening${numOpenings > 1 ? 's' : ''}</span>
                         </div>
-                        <div class="space-y-1.5">
+                        <div id="zbVerifInitSummary_${project.id}" class="space-y-1.5">
                             ${initialSummaryRows}
                         </div>
                     </div>
@@ -7022,7 +7022,7 @@
                         </div>
 
                         <!-- Per-Opening Comparison Tables -->
-                        ${openingComparisonHTML}
+                        <div id="zbVerifOpenings_${project.id}">${openingComparisonHTML}</div>
 
                         <!-- Verification Summary -->
                         <div class="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200">

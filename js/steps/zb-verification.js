@@ -85,55 +85,161 @@
 
     /**
      * 从内存状态重新填充验证面板 DOM
-     * 解决 step HTML 被 toggleStepDetail 重新生成后，verified 字段值有但 delta 显示丢失的问题
+     * ★ 核心修复：每次打开面板时从最新 step3State 动态重建，解决：
+     *   1. Initial 数据丢失（DB 异步加载后模板 HTML 已生成）
+     *   2. Delta 全显示 "New"（因 initial 为空）
+     *   3. Opening 数量错误（numOpenings 在模板时间 = 1）
      */
     function _populateVerificationDOM(projectId) {
         var state = getVerificationState(projectId);
-        var uc = window.unitConverter;
 
-        // 刷新 initialData（Step 1 数据可能在本次会话中从 DB 更新过）
+        // 刷新 initialData 快照（Step 1 数据可能在本次会话中从 DB 更新过）
         var latestInitial = getInitialMeasurement(projectId);
         state.initialData = JSON.parse(JSON.stringify(latestInitial));
 
-        // 1. 回填 verified 字段值并重新计算每个 delta
-        Object.keys(state.verifiedData).forEach(function(k) {
-            var el = document.getElementById('zv_' + k + '_' + projectId);
-            if (el) {
-                // ★ 单位转换：width/height 的 verified 值显示当前单位
-                var isDim = (k.indexOf('width_in') >= 0 || k.indexOf('height_in') >= 0);
-                el.value = (isDim && uc) ? uc.toDisplay(state.verifiedData[k]) : state.verifiedData[k];
-                if (isDim && uc) {
-                    el.placeholder = uc.unitPlaceholder(k.indexOf('width') >= 0 ? 'width_in' : 'height_in');
-                }
-            }
-            updateDeltaDisplay(projectId, k);
-        });
+        // ★ 动态重建 Initial Summary + Per-Opening 比较表
+        rebuildVerificationContent(projectId);
 
-        // 2. 回填 verifier 信息
+        // 回填 verifier 信息
         var nameEl = document.getElementById('zv_verifierName_' + projectId);
         if (nameEl && state.verifierName) nameEl.value = state.verifierName;
         var dateEl = document.getElementById('zv_verificationDate_' + projectId);
         if (dateEl && state.verificationDate) dateEl.value = state.verificationDate;
 
-        // 3. ★ 刷新 Initial 列的单位显示
-        if (uc) {
-            var numOpenings = parseInt(state.initialData.openings || '1') || 1;
-            for (var oi = 1; oi <= numOpenings; oi++) {
-                ['width_in', 'height_in'].forEach(function(suffix) {
-                    var perKey = 'opening_' + oi + '_' + suffix;
-                    var initEl = document.getElementById('vinit_' + perKey + '_' + projectId);
-                    if (initEl) {
-                        var storedInitial = state.initialData[perKey];
-                        if (storedInitial !== undefined && storedInitial !== '') {
-                            initEl.textContent = uc.toDisplay(storedInitial) + ' ' + uc.unitShort();
-                        }
-                    }
-                });
+        checkVerificationComplete(projectId);
+    }
+
+    /**
+     * 动态重建 Verification 面板的 Initial Summary 和 Per-Opening 比较表
+     * 从最新 step3State 读取，确保 DB 异步加载完成后数据正确
+     */
+    function rebuildVerificationContent(projectId) {
+        var state = getVerificationState(projectId);
+        var initialData = state.initialData;
+        var numOpenings = parseInt(initialData.openings || '1') || 1;
+        var mpConfig = STEP_DETAIL_CONFIG[3].measurementPanel;
+        var perFieldDefs = mpConfig.zipBlindsFields.filter(function(mf) {
+            return mf.perOpening && mf.type !== 'image_upload';
+        });
+        var cls = 'w-full px-2 py-1.5 border border-gray-200 rounded-lg text-xs text-center focus:ring-2 focus:ring-purple-200 focus:border-purple-400';
+        var uc = window.unitConverter;
+
+        // ── 1. 重建 Initial Summary ──────────────────────────
+        var summaryEl = document.getElementById('zbVerifInitSummary_' + projectId);
+        if (summaryEl) {
+            var hasData = Boolean(initialData.opening_1_width_in || initialData.opening_1_height_in);
+            var summaryHTML = '';
+            if (hasData) {
+                for (var si = 1; si <= numOpenings; si++) {
+                    var sw = initialData['opening_' + si + '_width_in'] || '\u2014';
+                    var sh = initialData['opening_' + si + '_height_in'] || '\u2014';
+                    var sm = initialData['opening_' + si + '_mounting'] || '';
+                    var smLabel = sm ? sm.replace(/_/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); }) : '\u2014';
+                    var dispW = (uc && sw !== '\u2014') ? uc.toDisplay(sw) : sw;
+                    var dispH = (uc && sh !== '\u2014') ? uc.toDisplay(sh) : sh;
+                    var dimUnit = uc ? uc.unitShort() : '"';
+                    summaryHTML += '<div class="flex items-center gap-3 text-[10px]">' +
+                        '<span class="w-4 h-4 bg-purple-100 rounded flex items-center justify-center text-[9px] font-bold text-purple-600">' + si + '</span>' +
+                        '<span class="text-gray-600">' + dispW + dimUnit + ' \u00d7 ' + dispH + dimUnit + '</span>' +
+                        '<span class="text-purple-600 font-medium">' + smLabel + '</span></div>';
+                }
+            } else {
+                summaryHTML = '<div class="text-xs text-gray-400 text-center py-2"><i class="fas fa-info-circle mr-1"></i>No initial measurement data from Step 1 yet</div>';
             }
+            summaryEl.innerHTML = summaryHTML;
+
+            // 更新 opening 计数徽标
+            var countBadge = document.getElementById('zbVerifOpeningCount_' + projectId);
+            if (countBadge) countBadge.textContent = numOpenings + ' opening' + (numOpenings > 1 ? 's' : '');
         }
 
-        // 4. 更新完成度和摘要
-        checkVerificationComplete(projectId);
+        // ── 2. 重建 Per-Opening Comparison 表 ────────────────
+        var openingsEl = document.getElementById('zbVerifOpenings_' + projectId);
+        if (!openingsEl) return;
+
+        var html = '';
+        for (var oi = 1; oi <= numOpenings; oi++) {
+            var rows = '';
+            for (var fi = 0; fi < perFieldDefs.length; fi++) {
+                var mf = perFieldDefs[fi];
+                var perKey = 'opening_' + oi + '_' + mf.key;
+                var initialVal = initialData[perKey] || '';
+                var verifiedVal = state.verifiedData[perKey] || '';
+
+                // Initial value display
+                var initialDisplay = '\u2014';
+                if (initialVal) {
+                    if (mf.type === 'select') {
+                        var opt = null;
+                        for (var opi = 0; opi < mf.options.length; opi++) {
+                            if (mf.options[opi].value === initialVal) { opt = mf.options[opi]; break; }
+                        }
+                        initialDisplay = opt ? opt.label : initialVal.replace(/_/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+                    } else if (mf.key === 'width_in' || mf.key === 'height_in') {
+                        var dv = uc ? uc.toDisplay(initialVal) : initialVal;
+                        var du = uc ? uc.unitShort() : '"';
+                        initialDisplay = '<span id="vinit_' + perKey + '_' + projectId + '">' + dv + du + '</span>';
+                    } else {
+                        initialDisplay = initialVal;
+                    }
+                }
+
+                // Verified field input
+                var verifiedInput;
+                if (mf.type === 'select') {
+                    var opts = '<option value="">--</option>';
+                    for (var soi = 0; soi < mf.options.length; soi++) {
+                        var o = mf.options[soi];
+                        opts += '<option value="' + o.value + '"' + (verifiedVal === o.value ? ' selected' : '') +
+                            (o.disabled ? ' disabled style="color:#aaa"' : '') + '>' + o.label +
+                            (o.disabled ? ' (Coming Soon)' : '') + '</option>';
+                    }
+                    verifiedInput = '<select id="zv_' + perKey + '_' + projectId + '" class="' + cls + ' bg-white" onchange="updateVerificationField(\x27' + projectId + '\x27, \x27' + perKey + '\x27, this.value)">' + opts + '</select>';
+                } else {
+                    var dispVerif = (uc && (mf.key === 'width_in' || mf.key === 'height_in')) ? uc.toDisplay(verifiedVal) : verifiedVal;
+                    var ph = initialVal || mf.placeholder || '';
+                    verifiedInput = '<input type="' + mf.type + '" id="zv_' + perKey + '_' + projectId + '" value="' + dispVerif + '" class="' + cls + '" placeholder="' + ph + '"' +
+                        (mf.min !== undefined ? ' min="' + mf.min + '"' : '') + (mf.step !== undefined ? ' step="' + mf.step + '"' : '') +
+                        ' onchange="updateVerificationField(\x27' + projectId + '\x27, \x27' + perKey + '\x27, this.value)">';
+                }
+
+                // Label
+                var labelText = mf.label;
+                var dataAttr = '';
+                if ((mf.key === 'width_in' || mf.key === 'height_in') && uc) {
+                    var baseName = mf.key === 'width_in' ? 'Width' : 'Height';
+                    labelText = baseName + ' (' + uc.unitLabel() + ')';
+                    dataAttr = ' data-unit-label="' + baseName + '"';
+                }
+
+                rows += '<tr class="border-t border-gray-100">' +
+                    '<td class="py-2 text-[11px] text-gray-600 pr-2"' + dataAttr + '><i class="fas ' + mf.icon + ' text-purple-400 text-[9px] mr-1"></i>' + labelText + '</td>' +
+                    '<td class="py-2 text-center text-[11px] text-gray-700 font-medium px-1">' + initialDisplay + '</td>' +
+                    '<td class="py-2 text-center px-1" style="min-width:80px">' + verifiedInput + '</td>' +
+                    '<td class="py-2 text-center px-1" id="vdelta_' + perKey + '_' + projectId + '"><span class="text-gray-300 text-[10px]">\u2014</span></td>' +
+                '</tr>';
+            }
+
+            html += '<div class="mt-3 p-3 bg-indigo-50/30 rounded-lg border border-indigo-100">' +
+                '<div class="flex items-center gap-2 mb-2">' +
+                    '<div class="w-5 h-5 bg-indigo-100 rounded flex items-center justify-center">' +
+                        '<span class="text-[10px] font-bold text-indigo-600">' + oi + '</span></div>' +
+                    '<span class="text-xs font-semibold text-indigo-700">Opening #' + oi + '</span></div>' +
+                '<div class="overflow-x-auto"><table class="w-full">' +
+                    '<thead><tr class="text-[9px] text-gray-400 uppercase tracking-wider">' +
+                        '<th class="text-left py-1 font-medium w-[28%]">Field</th>' +
+                        '<th class="text-center py-1 font-medium w-[22%]">Initial</th>' +
+                        '<th class="text-center py-1 font-medium w-[28%]">Verified</th>' +
+                        '<th class="text-center py-1 font-medium w-[22%]">Delta</th>' +
+                    '</tr></thead><tbody>' + rows + '</tbody></table></div></div>';
+        }
+
+        openingsEl.innerHTML = html;
+
+        // 重新计算已有 verified 数据的 delta
+        Object.keys(state.verifiedData).forEach(function(k) {
+            updateDeltaDisplay(projectId, k);
+        });
     }
 
     // ── 字段更新与 Delta 计算 ─────────────────────────────
@@ -391,6 +497,7 @@
         updateDeltaDisplay: updateDeltaDisplay,
         checkVerificationComplete: checkVerificationComplete,
         updateVerificationSummary: updateVerificationSummary,
+        rebuildVerificationContent: rebuildVerificationContent,
         saveVerification: saveVerification,
         loadVerificationFromDB: loadVerificationFromDB,
         TOLERANCE_OK: TOLERANCE_OK,
