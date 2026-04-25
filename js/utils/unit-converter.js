@@ -194,9 +194,21 @@
         var newMode = _unitMode === 'inch' ? 'mm' : 'inch';
         setUnitMode(newMode);
 
-        // 刷新面板显示
+        // 刷新 Measurement 面板输入框
         refreshMeasurementPanel(projectId);
-        refreshVerificationPanel(projectId);
+
+        // ★ 使用 rebuildVerificationContent 同时刷新 Initial Summary（始终可见）
+        //   和 Per-Opening 比较表（如已展开）；若不可用则回退旧逻辑
+        if (N.steps && N.steps.zbVerification && N.steps.zbVerification.rebuildVerificationContent) {
+            N.steps.zbVerification.rebuildVerificationContent(projectId);
+        } else {
+            refreshVerificationPanel(projectId);
+        }
+
+        // ★ 同步刷新 Installation Summary（如已打开 Step 3）
+        if (window.updateInstallationSummary) {
+            window.updateInstallationSummary(projectId);
+        }
 
         // 更新切换按钮 UI
         _updateToggleButtons(projectId);

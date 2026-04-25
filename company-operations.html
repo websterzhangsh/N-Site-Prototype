@@ -4379,45 +4379,45 @@
 
     <!-- JS 模块化文件 — 按依赖顺序加载 -->
     <!-- 1. 命名空间 -->
-    <script src="js/core/namespace.js?v=8ec78ae"></script>
+    <script src="js/core/namespace.js?v=b7a3e00"></script>
     <!-- 2. 核心基础层 (Phase 2) -->
-    <script src="js/core/supabase-config.js?v=8ec78ae"></script>
-    <script src="js/core/supabase-storage.js?v=8ec78ae"></script>
-    <script src="js/core/auth.js?v=8ec78ae"></script>
-    <script src="js/core/tenant.js?v=8ec78ae"></script>
-    <script src="js/core/i18n.js?v=8ec78ae"></script>
-    <script src="js/core/router.js?v=8ec78ae"></script>
+    <script src="js/core/supabase-config.js?v=b7a3e00"></script>
+    <script src="js/core/supabase-storage.js?v=b7a3e00"></script>
+    <script src="js/core/auth.js?v=b7a3e00"></script>
+    <script src="js/core/tenant.js?v=b7a3e00"></script>
+    <script src="js/core/i18n.js?v=b7a3e00"></script>
+    <script src="js/core/router.js?v=b7a3e00"></script>
     <!-- 3. 数据层 (Phase 1) -->
-    <script src="js/data/i18n-dict.js?v=8ec78ae"></script>
-    <script src="js/data/pricing-data.js?v=8ec78ae"></script>
-    <script src="js/data/product-catalog.js?v=8ec78ae"></script>
-    <script src="js/data/step-config.js?v=8ec78ae"></script>
-    <script src="js/data/intake-fields.js?v=8ec78ae"></script>
-    <script src="js/data/seed-projects.js?v=8ec78ae"></script>
+    <script src="js/data/i18n-dict.js?v=b7a3e00"></script>
+    <script src="js/data/pricing-data.js?v=b7a3e00"></script>
+    <script src="js/data/product-catalog.js?v=b7a3e00"></script>
+    <script src="js/data/step-config.js?v=b7a3e00"></script>
+    <script src="js/data/intake-fields.js?v=b7a3e00"></script>
+    <script src="js/data/seed-projects.js?v=b7a3e00"></script>
     <!-- 4. 工具层 (Phase 3) -->
-    <script src="js/utils/helpers.js?v=8ec78ae"></script>
-    <script src="js/utils/unit-converter.js?v=8ec78ae"></script>
+    <script src="js/utils/helpers.js?v=b7a3e00"></script>
+    <script src="js/utils/unit-converter.js?v=b7a3e00"></script>
     <!-- 5. 功能模块 (Phase 3) -->
-    <script src="js/modules/orders.js?v=8ec78ae"></script>
-    <script src="js/modules/customers.js?v=8ec78ae"></script>
-    <script src="js/modules/knowledge-base.js?v=8ec78ae"></script>
-    <script src="js/modules/products.js?v=8ec78ae"></script>
-    <script src="js/modules/overview.js?v=8ec78ae"></script>
-    <script src="js/modules/projects.js?v=8ec78ae"></script>
-    <script src="js/modules/workflow.js?v=8ec78ae"></script>
+    <script src="js/modules/orders.js?v=b7a3e00"></script>
+    <script src="js/modules/customers.js?v=b7a3e00"></script>
+    <script src="js/modules/knowledge-base.js?v=b7a3e00"></script>
+    <script src="js/modules/products.js?v=b7a3e00"></script>
+    <script src="js/modules/overview.js?v=b7a3e00"></script>
+    <script src="js/modules/projects.js?v=b7a3e00"></script>
+    <script src="js/modules/workflow.js?v=b7a3e00"></script>
     <!-- 6. Agent 模块 (Phase 4) -->
-    <script src="js/agents/designer.js?v=8ec78ae"></script>
-    <script src="js/agents/pricing.js?v=8ec78ae"></script>
-    <script src="js/agents/compliance.js?v=8ec78ae"></script>
-    <script src="js/agents/customer-service.js?v=8ec78ae"></script>
+    <script src="js/agents/designer.js?v=b7a3e00"></script>
+    <script src="js/agents/pricing.js?v=b7a3e00"></script>
+    <script src="js/agents/compliance.js?v=b7a3e00"></script>
+    <script src="js/agents/customer-service.js?v=b7a3e00"></script>
     <!-- 7. Step 实现 (Phase 4) -->
-    <script src="js/steps/step2-design.js?v=8ec78ae"></script>
-    <script src="js/steps/step3-measurement.js?v=8ec78ae"></script>
-    <script src="js/steps/zb-verification.js?v=8ec78ae"></script>
-    <script src="js/steps/step4-quotation.js?v=8ec78ae"></script>
+    <script src="js/steps/step2-design.js?v=b7a3e00"></script>
+    <script src="js/steps/step3-measurement.js?v=b7a3e00"></script>
+    <script src="js/steps/zb-verification.js?v=b7a3e00"></script>
+    <script src="js/steps/step4-quotation.js?v=b7a3e00"></script>
     <!-- 8. 独立工具 (Phase 4) -->
-    <script src="js/utils/quotation-editor.js?v=8ec78ae"></script>
-    <script src="js/utils/chatbot.js?v=8ec78ae"></script>
+    <script src="js/utils/quotation-editor.js?v=b7a3e00"></script>
+    <script src="js/utils/chatbot.js?v=b7a3e00"></script>
     <script>
         // ===== Authentication (→ js/core/auth.js) =====
 
@@ -6971,9 +6971,15 @@
                                 <span class="text-[10px] text-purple-500 ml-2 font-medium">Cross-check & Confirm</span>
                             </div>
                         </div>
-                        <button id="zbVerifToggleBtn_${project.id}" onclick="toggleVerificationPanel('${project.id}')" class="px-3 py-1.5 bg-purple-600 text-white text-xs font-semibold rounded-lg hover:bg-purple-700 transition flex items-center gap-1.5 shadow-sm">
-                            <i class="fas fa-check-double text-[10px]"></i> Open Verification
-                        </button>
+                        <div class="flex items-center gap-2">
+                            <div class="inline-flex items-center bg-gray-100 rounded-lg p-0.5 text-[10px] font-semibold">
+                                <button id="unitBtnInch_verif_${project.id}" onclick="toggleZBUnit('${project.id}')" class="px-2.5 py-1 rounded-md transition-all bg-purple-600 text-white shadow-sm">in</button>
+                                <button id="unitBtnMM_verif_${project.id}" onclick="toggleZBUnit('${project.id}')" class="px-2.5 py-1 rounded-md transition-all text-gray-500 hover:text-gray-700">mm</button>
+                            </div>
+                            <button id="zbVerifToggleBtn_${project.id}" onclick="toggleVerificationPanel('${project.id}')" class="px-3 py-1.5 bg-purple-600 text-white text-xs font-semibold rounded-lg hover:bg-purple-700 transition flex items-center gap-1.5 shadow-sm">
+                                <i class="fas fa-check-double text-[10px]"></i> Open Verification
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Initial Measurement Summary (always visible) -->
@@ -7008,17 +7014,11 @@
                             </div>
                         </div>
 
-                        <!-- Unit Toggle (Verification) -->
-                        <div class="mb-3 flex items-center justify-between">
-                            <div class="flex items-center gap-4 text-[9px] text-gray-400">
-                                <span><i class="fas fa-check-circle text-green-500 mr-0.5"></i> Within 3mm (0.12")</span>
-                            <span><i class="fas fa-exclamation-triangle text-amber-500 mr-0.5"></i> 3\u20135mm (0.12"\u20130.20")</span>
-                            <span><i class="fas fa-times-circle text-red-500 mr-0.5"></i> &gt; 5mm (0.20")</span>
-                            </div>
-                            <div class="inline-flex items-center bg-gray-100 rounded-lg p-0.5 text-[10px] font-semibold">
-                                <button id="unitBtnInch_verif_${project.id}" onclick="toggleZBUnit('${project.id}')" class="px-2.5 py-1 rounded-md transition-all bg-purple-600 text-white shadow-sm">in</button>
-                                <button id="unitBtnMM_verif_${project.id}" onclick="toggleZBUnit('${project.id}')" class="px-2.5 py-1 rounded-md transition-all text-gray-500 hover:text-gray-700">mm</button>
-                            </div>
+                        <!-- Tolerance Legend -->
+                        <div class="mb-3 flex items-center gap-4 text-[9px] text-gray-400">
+                            <span><i class="fas fa-check-circle text-green-500 mr-0.5"></i> Within 3mm (0.12”)</span>
+                            <span><i class="fas fa-exclamation-triangle text-amber-500 mr-0.5"></i> 3–5mm (0.12”–0.20”)</span>
+                            <span><i class="fas fa-times-circle text-red-500 mr-0.5"></i> &gt; 5mm (0.20”)</span>
                         </div>
 
                         <!-- Per-Opening Comparison Tables -->
