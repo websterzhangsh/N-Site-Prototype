@@ -297,6 +297,9 @@
             // ★ 首次打开：先加载 measurement 数据，再加载 step4 配置
             if (!_step4DbLoaded[projectId]) {
                 _step4DbLoaded[projectId] = true;
+                // 立即显示 loading 指示器，避免用户看到 "1 opening → N openings" 闪烁
+                showInheritedLoading(projectId);
+                showPanelLoading(projectId);
                 // 链式加载: measurement → step4 state reset → step4 DB config → refresh
                 var loadMeas = (typeof ensureMeasurementLoaded === 'function')
                     ? ensureMeasurementLoaded(projectId)
@@ -570,6 +573,68 @@
         }
     }
 
+    // ── UI: Inherited Summary 加载指示器 ──────────────────────
+    // 在 DB 异步加载期间显示 skeleton 占位，避免用户看到 "1 opening → N openings" 闪烁
+    function showInheritedLoading(projectId) {
+        var summaryEl = document.getElementById('step4InheritedSummary_' + projectId);
+        if (!summaryEl) return;
+
+        var skeleton =
+            '<div class="flex items-center gap-2 mb-2">' +
+                '<i class="fas fa-arrow-right text-orange-500 text-[10px]"></i>' +
+                '<span class="text-xs font-semibold text-orange-700">Inherited from Measurement</span>' +
+                '<span class="text-[9px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full font-medium animate-pulse">' +
+                    '<i class="fas fa-spinner fa-spin mr-1"></i>Loading...' +
+                '</span>' +
+            '</div>' +
+            '<div class="space-y-2 animate-pulse">' +
+                '<div class="flex items-center gap-3">' +
+                    '<div class="w-4 h-4 bg-gray-200 rounded"></div>' +
+                    '<div class="h-3 bg-gray-200 rounded w-24"></div>' +
+                    '<div class="h-3 bg-gray-200 rounded w-20"></div>' +
+                    '<div class="h-3 bg-gray-200 rounded w-14"></div>' +
+                '</div>' +
+                '<div class="flex items-center gap-3">' +
+                    '<div class="w-4 h-4 bg-gray-200 rounded"></div>' +
+                    '<div class="h-3 bg-gray-200 rounded w-28"></div>' +
+                    '<div class="h-3 bg-gray-200 rounded w-16"></div>' +
+                    '<div class="h-3 bg-gray-200 rounded w-14"></div>' +
+                '</div>' +
+                '<div class="flex items-center gap-3">' +
+                    '<div class="w-4 h-4 bg-gray-200 rounded"></div>' +
+                    '<div class="h-3 bg-gray-200 rounded w-20"></div>' +
+                    '<div class="h-3 bg-gray-200 rounded w-24"></div>' +
+                    '<div class="h-3 bg-gray-200 rounded w-14"></div>' +
+                '</div>' +
+            '</div>';
+
+        summaryEl.innerHTML = skeleton;
+    }
+
+    // 在 Quotation Panel 展开区域显示 loading overlay
+    function showPanelLoading(projectId) {
+        var panel = document.getElementById('step4QuotationPanel_' + projectId);
+        if (!panel) return;
+        // 如果已有 overlay 则跳过
+        if (panel.querySelector('.step4-loading-overlay')) return;
+        var overlay = document.createElement('div');
+        overlay.className = 'step4-loading-overlay absolute inset-0 bg-white/80 backdrop-blur-[1px] rounded-lg flex items-center justify-center z-10';
+        overlay.innerHTML =
+            '<div class="flex items-center gap-2 text-xs text-gray-500">' +
+                '<i class="fas fa-spinner fa-spin text-orange-500"></i>' +
+                '<span>Loading measurement data...</span>' +
+            '</div>';
+        panel.style.position = 'relative';
+        panel.appendChild(overlay);
+    }
+
+    function hidePanelLoading(projectId) {
+        var panel = document.getElementById('step4QuotationPanel_' + projectId);
+        if (!panel) return;
+        var overlay = panel.querySelector('.step4-loading-overlay');
+        if (overlay) overlay.remove();
+    }
+
     // ── UI: 刷新 "Inherited from Measurement" 摘要区域 ──────
     // 当 measurement DB 数据异步加载完成后调用，更新 opening 数量/尺寸
     function refreshInheritedMeasurement(projectId) {
@@ -616,6 +681,8 @@
         }
 
         summaryEl.innerHTML = badge + body;
+        // ★ 加载完成，移除 panel 内的 loading overlay
+        hidePanelLoading(projectId);
         console.log('[Quotation] Inherited measurement refreshed:', state.quantity, 'openings');
     }
 
@@ -636,6 +703,9 @@
         calculatePricing:   calculateStep4Pricing,
         refreshPanel:       refreshStep4Panel,
         refreshInheritedMeasurement: refreshInheritedMeasurement,
+        showInheritedLoading: showInheritedLoading,
+        showPanelLoading:    showPanelLoading,
+        hidePanelLoading:    hidePanelLoading,
         // Legacy compat
         toggleMode:         toggleStep4Mode,
         selectTier:         selectStep4Tier,
@@ -661,4 +731,5 @@
     window.calculateStep4Pricing = calculateStep4Pricing;
     window.refreshStep4Panel     = refreshStep4Panel;
     window.refreshInheritedMeasurement = refreshInheritedMeasurement;
+    window.showInheritedLoading  = showInheritedLoading;
 })();

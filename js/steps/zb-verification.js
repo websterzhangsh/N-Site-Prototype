@@ -356,6 +356,18 @@
             }
         }
 
+        // 更新 Final Quotation 按钮状态
+        var fqBtn = document.getElementById('zbFinalQuoteBtn_' + projectId);
+        if (fqBtn) {
+            if (state.verificationComplete) {
+                fqBtn.disabled = false;
+                fqBtn.classList.remove('opacity-40', 'cursor-not-allowed');
+            } else {
+                fqBtn.disabled = true;
+                fqBtn.classList.add('opacity-40', 'cursor-not-allowed');
+            }
+        }
+
         updateVerificationSummary(projectId);
     }
 
@@ -789,5 +801,9 @@
     window.toggleVerificationPanel = toggleVerificationPanel;
     window.updateVerificationField = updateVerificationField;
     window.saveZBVerification = saveVerification;
+
+})();
+    window.generateFinalQuotation = generateFinalQuotation;
+    window.confirmFinalQuotation = confirmFinalQuotation;
 
 })();
