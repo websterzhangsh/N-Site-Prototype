@@ -2,8 +2,10 @@
  * Nestopia - Step 4: Quotation & Pricing
  * 命名空间: Nestopia.steps.step4
  *
- * 从 company-operations.html 提取的 Step 4 报价与定价面板功能。
- * 包含：状态管理、Supabase 持久化、定价计算、面板 UI 刷新。
+ * v2.0 重写 — 基于产品 SKU 目录价（RMB/m2）的统一定价引擎。
+ * 价格来源: zbSKUCatalog（与 quotation-editor.js 的 zbPriceLookup 一致）。
+ * 基础货币: RMB，支持 USD/SGD 汇率转换显示。
+ * Smart Quote: COGS x 利润率 (10%/18%/35%) — 内部定价参考工具。
  */
 (function() {
     'use strict';
@@ -12,16 +14,39 @@
 
     // ===== Step 4: Quotation & Pricing Panel Functions =====
     var step4QuotationState = {};
-    var _step4DbLoaded = {};  // 标记已从 DB 加载的项目
-    var _quotDbLoaded = {};   // 报价列表已从 DB 加载的项目
+    var _step4DbLoaded = {};
+    var _quotDbLoaded = {};
 
-    // ── 定价数据本地引用（来自 pricing-data.js） ──
+    // ── SKU 目录价数据源（来自 pricing-data.js） ──
     var _pricing = N.data && N.data.pricing ? N.data.pricing : {};
-    var zbProductTiers       = _pricing.zbProductTiers    || {};
-    var zbDriveSystems       = _pricing.zbDriveSystems    || {};
-    var zbFabricUpgrades     = _pricing.zbFabricUpgrades  || [];
-    var zbHeightSurcharges   = _pricing.zbHeightSurcharges || [];
-    var zbHardwareCostPerUnit = _pricing.zbHardwareCostPerUnit || 30;
+    var zbSKUCatalog = _pricing.zbSKUCatalog || {};
+    var SKU_KEYS = Object.keys(zbSKUCatalog);
+    var DEFAULT_SKU = SKU_KEYS[0] || 'WR110A-78';
+    var DEFAULT_RATES = _pricing.defaultExchangeRates || { USD: 7.25, SGD: 5.40 };
+
+    // Legacy Sunroom/Pergola 数据（保留向后兼容）
+    var zbProductTiers = _pricing.zbProductTiers || {};
+
+    // ── 辅助：根据 opening 电机类型和高度自动匹配最佳 SKU ──
+    function autoSelectSKU(heightMM, motor) {
+        var isMotorized = !motor || motor.indexOf('manual') < 0;
+        if (isMotorized) {
+            return heightMM <= 3800 ? 'WR110B-63' : 'WR110A-78';
+        } else {
+            return heightMM <= 3800 ? 'WR85-M38' : 'WR85-M55';
+        }
+    }
+
+    // ── 辅助：格式化 RMB ──
+    function fmtRMB(val) {
+        return '\u00a5' + Math.round(val).toLocaleString();
+    }
+
+    // ── 辅助：格式化外币 ──
+    function fmtForeign(val, currency) {
+        var sym = currency === 'SGD' ? 'S$' : '$';
+        return sym + val.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
 
     // ── Supabase Quotation 持久化 ──────────────────────────
     function loadStep4FromDB(projectId) {
@@ -46,16 +71,16 @@
             project_key: projectId,
             quotation_data: JSON.parse(JSON.stringify({
                 step4State: {
-                    pricingMode: stateObj.pricingMode,
-                    productTier: stateObj.productTier,
+                    selectedSKU: stateObj.selectedSKU,
                     selectedQuote: stateObj.selectedQuote,
                     discount: stateObj.discount,
                     quantity: stateObj.quantity,
-                    widthM: stateObj.widthM,
-                    heightM: stateObj.heightM,
-                    unitArea: stateObj.unitArea,
-                    fabric: stateObj.fabric,
-                    driveSystem: stateObj.driveSystem,
+                    currency: stateObj.currency,
+                    exchangeRate: stateObj.exchangeRate,
+                    // Legacy compat fields
+                    pricingMode: stateObj.pricingMode,
+                    productTier: stateObj.productTier,
+                    // Sunroom/Pergola
                     lengthFt: stateObj.lengthFt,
                     widthFt: stateObj.widthFt,
                     areaSqft: stateObj.areaSqft,
@@ -78,7 +103,6 @@
 
     function saveQuotListToDB(projectId, quotList) {
         if (typeof NestopiaDB === 'undefined' || !NestopiaDB.isConnected()) return Promise.resolve(false);
-        // 读取现有记录并合并 savedQuotations 字段
         return loadStep4FromDB(projectId).then(function(existing) {
             var data = (existing && typeof existing === 'object') ? existing : {};
             data.savedQuotations = quotList;
@@ -99,49 +123,58 @@
         }).catch(function(err) { console.warn('[Quotation] DB save list failed:', err.message); return false; });
     }
 
+    // ── 状态初始化 ──────────────────────────────────────────
     function getStep4State(projectId) {
         if (!step4QuotationState[projectId]) {
-            var project = allProjectsData.find(p => p.id === projectId);
-            // Read from Step 3 live state first, fallback to hardcoded seed data
+            var project = allProjectsData.find(function(p) { return p.id === projectId; });
             var step3St = (typeof step3MeasurementState !== 'undefined' && step3MeasurementState[projectId]) ? step3MeasurementState[projectId] : null;
             var mData = (step3St && step3St.measurementData) ? step3St.measurementData : (project && project.measurement ? project.measurement : {});
             var isZB = project && project.type === 'Zip Blinds';
             var isSR = project && project.type === 'Sunroom';
 
             var state = {
-                pricingMode: 'retail',
-                productTier: isZB ? 'better' : (isSR ? 'premium' : 'modern'),
                 selectedQuote: 'recommended',
-                discount: 5
+                discount: 0,
+                currency: 'RMB',
+                exchangeRate: DEFAULT_RATES.USD || 7.25,
+                // Legacy compat
+                pricingMode: 'retail',
+                productTier: isZB ? 'better' : (isSR ? 'premium' : 'modern')
             };
 
             if (isZB) {
-                // Auto-populate from Step 3 per-opening measurement data
+                // ★ v2.0: Per-opening SKU 选择
                 state.quantity = Number(mData.openings) || 1;
                 state.openings = [];
                 for (var oi = 1; oi <= state.quantity; oi++) {
                     var oW = Number(mData['opening_' + oi + '_width_in']) || Number(mData.opening_width_in) || 72;
                     var oH = Number(mData['opening_' + oi + '_height_in']) || Number(mData.opening_height_in) || 96;
-                    var oFab = mData['opening_' + oi + '_fabric'] || mData.fabric || 'np4000';
-                    var oMot = mData['opening_' + oi + '_motor'] || mData.motor || 'electric-std';
+                    var oMot = mData['opening_' + oi + '_motor'] || mData.motor || 'motorized_wired';
                     var oMnt = mData['opening_' + oi + '_mounting'] || mData.mounting || '';
+                    var widthMM = Math.round(oW * 25.4);
+                    var heightMM = Math.round(oH * 25.4);
+                    var bestSKU = autoSelectSKU(heightMM, oMot);
+                    var skuData = zbSKUCatalog[bestSKU] || zbSKUCatalog[DEFAULT_SKU];
                     state.openings.push({
                         widthIn: oW, heightIn: oH,
+                        widthMM: widthMM, heightMM: heightMM,
                         widthM: oW * 0.0254, heightM: oH * 0.0254,
                         area: (oW * 0.0254) * (oH * 0.0254),
-                        fabric: oFab, motor: oMot, mounting: oMnt
+                        motor: oMot, mounting: oMnt,
+                        sku: bestSKU,
+                        unitPrice: skuData.price
                     });
                 }
-                // Backward compat — widthM/heightM/unitArea from opening 1
+                // Global SKU: default to first opening's SKU
+                state.selectedSKU = state.openings[0].sku;
+                // Backward compat
                 var first = state.openings[0];
                 state.widthM = first.widthM;
                 state.heightM = first.heightM;
                 state.unitArea = first.area;
                 state.totalArea = state.openings.reduce(function(s, o) { return s + o.area; }, 0);
-                state.fabric = first.fabric;
-                state.driveSystem = first.motor === 'motorized_solar' ? 'solar-kit' : first.motor === 'motorized_wired' ? 'electric-std' : first.motor === 'manual_crank' ? 'bead-chain' : 'electric-std';
             } else {
-                // Sunroom / Pergola — from Step 3 dims
+                // Sunroom / Pergola — from Step 3 dims (legacy logic)
                 var dims = mData.dims || '';
                 var parts = dims.replace(/'/g, '').split(/\s*x\s*/i);
                 var lenFt = parts.length >= 1 ? parseFloat(parts[0]) || 20 : 20;
@@ -154,51 +187,50 @@
                 state.quantity = 1;
             }
 
-            // Calculate initial pricing
             state.costSummary = calcStep4Cost(project, state);
             step4QuotationState[projectId] = state;
         }
         return step4QuotationState[projectId];
     }
 
+    // ── 核心定价计算 ──────────────────────────────────────────
+    // ★ v2.0: 基于 SKU 目录价（RMB/m2），与 quotation-editor 一致
     function calcStep4Cost(project, state) {
         var isZB = project && project.type === 'Zip Blinds';
         var isSR = project && project.type === 'Sunroom';
-        var mode = state.pricingMode;
         var cs = {};
 
         if (isZB) {
-            var tierData = zbProductTiers[state.productTier];
-            cs.tierName = tierData ? tierData.name : state.productTier;
-            var driveData = zbDriveSystems[state.driveSystem];
-            cs.driveName = driveData ? driveData.name : state.driveSystem;
-            // Per-opening cost aggregation
-            var openings = state.openings || [{ area: state.unitArea, heightM: state.heightM }];
+            // Per-opening 成本聚合（RMB）
+            var openings = state.openings || [];
             var numO = openings.length || state.quantity || 1;
-            cs.fabricCost = 0; cs.driveCost = 0; cs.fabricUpgrade = 0;
-            cs.heightSurcharge = 0; cs.minChargeCost = 0;
+            cs.perOpeningCosts = [];
+            cs.productSubtotal = 0;
+
             for (var oi = 0; oi < numO; oi++) {
                 var op = openings[oi] || openings[0];
-                var rawArea = op.area;
-                var effArea = rawArea < 1 && rawArea > 0 ? 1 : rawArea;
-                var tierRow = tierData ? tierData.tiers.find(function(t) { return effArea <= t.maxArea; }) || tierData.tiers[tierData.tiers.length - 1] : { retail: 52, wholesale: 43 };
-                var rate = tierRow[mode] || tierRow.retail;
-                cs.fabricCost += Math.round(rate * effArea);
-                cs.driveCost += Math.round(driveData ? (driveData[mode] || driveData.retail) : 68);
-                var fabUpg = zbFabricUpgrades[state.fabric];
-                cs.fabricUpgrade += Math.round((fabUpg ? fabUpg.surcharge : 0) * effArea);
-                var hSur = getHeightSurcharge(op.heightM);
-                cs.heightSurcharge += Math.round((hSur ? hSur.surcharge : 0) * effArea);
-                var minAdj = (rawArea < 1 && rawArea > 0) ? (1 - rawArea) : 0;
-                var fTier = tierData ? tierData.tiers[0] : { retail: 52, wholesale: 43 };
-                cs.minChargeCost += minAdj > 0 ? Math.round(minAdj * (fTier[mode] || fTier.retail)) : 0;
+                var skuKey = op.sku || state.selectedSKU || DEFAULT_SKU;
+                var skuData = zbSKUCatalog[skuKey] || zbSKUCatalog[DEFAULT_SKU];
+                var area = op.area;
+                var amount = Math.round(area * skuData.price);
+                cs.perOpeningCosts.push({
+                    idx: oi + 1,
+                    sku: skuKey,
+                    skuName: skuData.nameShort,
+                    area: area,
+                    unitPrice: skuData.price,
+                    amount: amount
+                });
+                cs.productSubtotal += amount;
             }
-            cs.installCost = Math.round(45 * numO);
-            cs.hardwareCost = Math.round(zbHardwareCostPerUnit * numO);
-            var subtotal = cs.fabricCost + cs.driveCost + cs.fabricUpgrade + cs.heightSurcharge + cs.minChargeCost + cs.installCost + cs.hardwareCost;
-            cs.discountAmt = Math.round(subtotal * (state.discount / 100));
-            cs.totalCost = subtotal - cs.discountAmt;
+
+            // 折扣
+            cs.discountPct = state.discount || 0;
+            cs.discountAmt = Math.round(cs.productSubtotal * (cs.discountPct / 100));
+            cs.totalCostRMB = cs.productSubtotal - cs.discountAmt;
+
         } else {
+            // Sunroom / Pergola — legacy pricing (USD)
             var area = state.areaSqft || 320;
             var prices = isSR
                 ? { standard: 85, premium: 120, luxury: 165 }
@@ -214,61 +246,70 @@
             cs.laborCost = Math.round((isSR ? 25 : 15) * area);
             cs.equipmentCost = Math.round((isSR ? 8 : 5) * area);
             cs.permitCost = isSR ? 850 : 450;
-            cs.totalCost = cs.materialCost + cs.upgradeCost + cs.laborCost + cs.equipmentCost + cs.permitCost;
-            cs.fabricCost = 0; cs.driveCost = 0; cs.fabricUpgrade = 0; cs.heightSurcharge = 0; cs.installCost = 0; cs.hardwareCost = 0; cs.discountAmt = 0; cs.driveName = '';
+            cs.totalCostRMB = cs.materialCost + cs.upgradeCost + cs.laborCost + cs.equipmentCost + cs.permitCost;
+            cs.productSubtotal = cs.totalCostRMB;
+            cs.discountAmt = 0;
+            cs.discountPct = 0;
+            // Legacy compat
+            cs.totalCost = cs.totalCostRMB;
         }
 
-        // Quote options (margins synced with Pricing Agent)
-        cs.quoteConservative = Math.round(cs.totalCost * 1.10).toLocaleString();
-        cs.quoteRecommended = Math.round(cs.totalCost * 1.18).toLocaleString();
-        cs.quotePremium = Math.round(cs.totalCost * 1.35).toLocaleString();
+        // ── Smart Quote: COGS x 利润率 ──
+        var totalRMB = cs.totalCostRMB;
+        cs.quoteConservativeRaw = Math.round(totalRMB * 1.10);
+        cs.quoteRecommendedRaw  = Math.round(totalRMB * 1.18);
+        cs.quotePremiumRaw      = Math.round(totalRMB * 1.35);
 
-        // Selected quote profit
+        cs.quoteConservative = cs.quoteConservativeRaw.toLocaleString();
+        cs.quoteRecommended  = cs.quoteRecommendedRaw.toLocaleString();
+        cs.quotePremium      = cs.quotePremiumRaw.toLocaleString();
+
+        // 选中的利润
         var margins = { conservative: 0.10, recommended: 0.18, premium: 0.35 };
         var m = margins[state.selectedQuote] || 0.18;
-        cs.profit = Math.round(cs.totalCost * m).toLocaleString();
+        cs.profitRaw = Math.round(totalRMB * m);
+        cs.profit = cs.profitRaw.toLocaleString();
         cs.marginPct = Math.round(m * 100);
+
+        // Legacy compat
+        cs.totalCost = cs.totalCostRMB;
+        cs.fabricCost = 0; cs.driveCost = 0; cs.fabricUpgrade = 0;
+        cs.heightSurcharge = 0; cs.installCost = 0; cs.hardwareCost = 0;
+        cs.minChargeCost = 0; cs.driveName = '';
+        cs.tierName = cs.tierName || '';
 
         return cs;
     }
 
+    // ── UI: 面板 toggle ──────────────────────────────────────
     function toggleStep4Panel(projectId) {
         var panel = document.getElementById('step4QuotationPanel_' + projectId);
         var btn = document.getElementById('step4LaunchBtn_' + projectId);
         if (!panel) return;
         if (panel.classList.contains('hidden')) {
-            // Warn if project is at Step 5 or 6 — contract re-generation risk
             var project = allProjectsData.find(function(p) { return p.id === projectId; });
             if (project && project.workflowStep >= 5) {
                 var stepNames = { 5: 'Production', 6: 'Installation' };
-                if (!confirm('⚠️ This project is currently at Step ' + project.workflowStep + ' (' + (stepNames[project.workflowStep] || '') + ').\n\nRe-opening the Quotation panel at this stage may trigger Contract Re-generation, which could affect production schedules, material orders, and existing agreements.\n\nAre you sure you want to proceed?')) {
+                if (!confirm('\u26a0\ufe0f This project is currently at Step ' + project.workflowStep + ' (' + (stepNames[project.workflowStep] || '') + ').\n\nRe-opening the Quotation panel at this stage may trigger Contract Re-generation.\n\nAre you sure you want to proceed?')) {
                     return;
                 }
             }
-            // 打开前先从 Supabase 加载最新 Step4 状态（仅首次）
+            // 首次打开：从 Supabase 加载
             if (!_step4DbLoaded[projectId] && typeof NestopiaDB !== 'undefined' && NestopiaDB.isConnected()) {
                 _step4DbLoaded[projectId] = true;
                 loadStep4FromDB(projectId).then(function(dbData) {
                     if (dbData && dbData.step4State && typeof dbData.step4State === 'object') {
                         var state = getStep4State(projectId);
                         var s4 = dbData.step4State;
-                        // 合并 DB 数据到内存（DB 优先）
-                        if (s4.pricingMode) state.pricingMode = s4.pricingMode;
-                        if (s4.productTier) state.productTier = s4.productTier;
+                        if (s4.selectedSKU) state.selectedSKU = s4.selectedSKU;
                         if (s4.selectedQuote) state.selectedQuote = s4.selectedQuote;
                         if (s4.discount !== undefined) state.discount = s4.discount;
-                        if (s4.quantity !== undefined) state.quantity = s4.quantity;
-                        if (s4.widthM !== undefined) state.widthM = s4.widthM;
-                        if (s4.heightM !== undefined) state.heightM = s4.heightM;
-                        if (s4.unitArea !== undefined) state.unitArea = s4.unitArea;
-                        if (s4.fabric) state.fabric = s4.fabric;
-                        if (s4.driveSystem) state.driveSystem = s4.driveSystem;
-                        if (s4.lengthFt !== undefined) state.lengthFt = s4.lengthFt;
-                        if (s4.widthFt !== undefined) state.widthFt = s4.widthFt;
-                        if (s4.areaSqft !== undefined) state.areaSqft = s4.areaSqft;
+                        if (s4.currency) state.currency = s4.currency;
+                        if (s4.exchangeRate) state.exchangeRate = s4.exchangeRate;
+                        // Sunroom/Pergola legacy
+                        if (s4.productTier) state.productTier = s4.productTier;
                         if (s4.glassType) state.glassType = s4.glassType;
                         if (s4.louverType) state.louverType = s4.louverType;
-                        // 重新计算定价
                         var proj = allProjectsData.find(function(p) { return p.id === projectId; });
                         state.costSummary = calcStep4Cost(proj, state);
                         console.log('[Quotation] Step4 state loaded from Supabase for', projectId);
@@ -284,46 +325,45 @@
         }
     }
 
-    function toggleStep4Mode(projectId) {
+    // ── UI: 选择 SKU（所有 opening 统一切换） ──
+    function selectStep4SKU(projectId, skuKey) {
         var state = getStep4State(projectId);
-        state.pricingMode = state.pricingMode === 'retail' ? 'wholesale' : 'retail';
-        state.costSummary = calcStep4Cost(allProjectsData.find(p => p.id === projectId), state);
+        state.selectedSKU = skuKey;
+        var skuData = zbSKUCatalog[skuKey] || zbSKUCatalog[DEFAULT_SKU];
+        // 更新所有 opening 的 SKU 和单价
+        if (state.openings) {
+            for (var i = 0; i < state.openings.length; i++) {
+                state.openings[i].sku = skuKey;
+                state.openings[i].unitPrice = skuData.price;
+            }
+        }
+        state.costSummary = calcStep4Cost(allProjectsData.find(function(p) { return p.id === projectId; }), state);
         refreshStep4Panel(projectId);
+        saveStep4ToDBAuto(projectId, state);
     }
 
-    function selectStep4Tier(projectId, tier) {
-        var state = getStep4State(projectId);
-        state.productTier = tier;
-        state.costSummary = calcStep4Cost(allProjectsData.find(p => p.id === projectId), state);
-        refreshStep4Panel(projectId);
-    }
-
+    // ── UI: 选择 Smart Quote ──
     function selectStep4Quote(projectId, level) {
         var state = getStep4State(projectId);
         state.selectedQuote = level;
-        state.costSummary = calcStep4Cost(allProjectsData.find(p => p.id === projectId), state);
+        state.costSummary = calcStep4Cost(allProjectsData.find(function(p) { return p.id === projectId; }), state);
         refreshStep4Panel(projectId);
     }
 
-    function adjustStep4Qty(projectId, delta) {
-        var state = getStep4State(projectId);
-        state.quantity = Math.max(1, state.quantity + delta);
-        state.costSummary = calcStep4Cost(allProjectsData.find(p => p.id === projectId), state);
-        refreshStep4Panel(projectId);
-    }
-
+    // ── UI: 更新配置（折扣、货币、汇率） ──
     function updateStep4Config(projectId) {
         var state = getStep4State(projectId);
-        var project = allProjectsData.find(p => p.id === projectId);
+        var project = allProjectsData.find(function(p) { return p.id === projectId; });
         var isZB = project && project.type === 'Zip Blinds';
         var isSR = project && project.type === 'Sunroom';
+
         if (isZB) {
-            var fabEl = document.getElementById('step4Fabric_' + projectId);
-            var driveEl = document.getElementById('step4Drive_' + projectId);
             var discEl = document.getElementById('step4Discount_' + projectId);
-            if (fabEl) state.fabric = fabEl.value;
-            if (driveEl) state.driveSystem = driveEl.value;
+            var currEl = document.getElementById('step4Currency_' + projectId);
+            var rateEl = document.getElementById('step4ExRate_' + projectId);
             if (discEl) state.discount = parseInt(discEl.value) || 0;
+            if (currEl) state.currency = currEl.value;
+            if (rateEl) state.exchangeRate = parseFloat(rateEl.value) || DEFAULT_RATES.USD;
         } else if (isSR) {
             var glassEl = document.getElementById('step4Glass_' + projectId);
             if (glassEl) state.glassType = glassEl.value;
@@ -333,19 +373,40 @@
         }
         state.costSummary = calcStep4Cost(project, state);
         refreshStep4Panel(projectId);
-        // 自动同步到 Supabase
         saveStep4ToDBAuto(projectId, state);
     }
 
     function calculateStep4Pricing(projectId) {
         var state = getStep4State(projectId);
-        state.costSummary = calcStep4Cost(allProjectsData.find(p => p.id === projectId), state);
+        state.costSummary = calcStep4Cost(allProjectsData.find(function(p) { return p.id === projectId; }), state);
         refreshStep4Panel(projectId);
         showToast('Pricing recalculated', 'success');
     }
 
+    // ── Legacy compat: selectTier / toggleMode（Sunroom/Pergola 使用） ──
+    function selectStep4Tier(projectId, tier) {
+        var state = getStep4State(projectId);
+        state.productTier = tier;
+        state.costSummary = calcStep4Cost(allProjectsData.find(function(p) { return p.id === projectId; }), state);
+        refreshStep4Panel(projectId);
+    }
+
+    function toggleStep4Mode(projectId) {
+        var state = getStep4State(projectId);
+        state.pricingMode = state.pricingMode === 'retail' ? 'wholesale' : 'retail';
+        state.costSummary = calcStep4Cost(allProjectsData.find(function(p) { return p.id === projectId; }), state);
+        refreshStep4Panel(projectId);
+    }
+
+    function adjustStep4Qty(projectId, delta) {
+        var state = getStep4State(projectId);
+        state.quantity = Math.max(1, state.quantity + delta);
+        state.costSummary = calcStep4Cost(allProjectsData.find(function(p) { return p.id === projectId; }), state);
+        refreshStep4Panel(projectId);
+    }
+
+    // ── UI: 刷新面板 DOM（不重新渲染整体布局） ──────────────
     function refreshStep4Panel(projectId) {
-        // Targeted DOM updates — no full re-render, no scroll jump
         var state = step4QuotationState[projectId];
         if (!state || !state.costSummary) return;
         var cs = state.costSummary;
@@ -354,44 +415,66 @@
         var isZB = project.type === 'Zip Blinds';
         var isSR = project.type === 'Sunroom';
 
-        // 1) Update tier card selection styling
-        var tierEl = document.getElementById('step4TierCards_' + projectId);
-        if (tierEl) {
-            var cards = tierEl.children;
+        // 汇率显示辅助
+        var curr = state.currency || 'RMB';
+        var rate = state.exchangeRate || DEFAULT_RATES.USD;
+        var showForeign = curr !== 'RMB';
+        function toForeign(rmb) { return showForeign ? rmb / rate : rmb; }
+        function fmtVal(rmb) {
+            if (showForeign) return fmtForeign(rmb / rate, curr);
+            return fmtRMB(rmb);
+        }
+
+        // 1) 更新 SKU 选择卡片样式（ZB）
+        var skuEl = document.getElementById('step4SKUCards_' + projectId);
+        if (skuEl && isZB) {
+            var cards = skuEl.children;
             for (var i = 0; i < cards.length; i++) {
                 var card = cards[i];
-                var cardTier = card.getAttribute('onclick') || '';
-                var isSelected = cardTier.indexOf("'" + state.productTier + "'") !== -1;
-                card.className = card.className
-                    .replace(/border-(orange|gray)-\d+/g, isSelected ? 'border-orange-500' : 'border-gray-200')
-                    .replace(/bg-(orange|white)-?\d*\/?\d*/g, isSelected ? 'bg-orange-50' : 'bg-white')
-                    .replace(/shadow-sm/g, '');
-                if (isSelected) card.className += ' shadow-sm';
-                // Update price text color
-                var priceDiv = card.querySelector('.text-xs.font-semibold');
-                if (priceDiv) priceDiv.className = priceDiv.className.replace(/text-(orange|gray)-\d+/g, isSelected ? 'text-orange-600' : 'text-gray-600');
+                var cardSKU = card.getAttribute('data-sku');
+                var sel = cardSKU === state.selectedSKU;
+                card.className = 'cursor-pointer p-2.5 rounded-lg border-2 transition text-center relative ' +
+                    (sel ? 'border-orange-500 bg-orange-50 shadow-sm' : 'border-gray-200 hover:border-orange-300 bg-white');
+                var priceSpan = card.querySelector('.sku-price');
+                if (priceSpan) priceSpan.className = 'sku-price text-xs font-semibold mt-1 ' + (sel ? 'text-orange-600' : 'text-gray-600');
             }
         }
 
-        // 2) Update quantity display (ZB only)
+        // 2) 更新数量（ZB）
         var qtyEl = document.getElementById('step4Qty_' + projectId);
         if (qtyEl) qtyEl.textContent = state.quantity;
 
-        // 3) Update cost breakdown
+        // 3) 更新成本明细（ZB: SKU 目录价 RMB）
         var costEl = document.getElementById('step4CostBreakdown_' + projectId);
         if (costEl) {
             if (isZB) {
-                costEl.innerHTML =
-                    '<div class="flex justify-between text-[10px]"><span class="text-gray-600">Fabric (' + cs.tierName + ')</span><span class="font-medium text-gray-800">$' + cs.fabricCost + '</span></div>' +
-                    '<div class="flex justify-between text-[10px]"><span class="text-gray-600">Drive System (' + cs.driveName + ')</span><span class="font-medium text-gray-800">$' + cs.driveCost + '</span></div>' +
-                    (cs.fabricUpgrade > 0 ? '<div class="flex justify-between text-[10px]"><span class="text-gray-600">Fabric Upgrade</span><span class="font-medium text-amber-600">+$' + cs.fabricUpgrade + '</span></div>' : '') +
-                    (cs.heightSurcharge > 0 ? '<div class="flex justify-between text-[10px]"><span class="text-gray-600">Height Surcharge</span><span class="font-medium text-amber-600">+$' + cs.heightSurcharge + '</span></div>' : '') +
-                    (cs.minChargeCost > 0 ? '<div class="flex justify-between text-[10px]"><span class="text-red-600">Min Charge Adj.</span><span class="font-medium text-red-600">+$' + cs.minChargeCost + '</span></div>' : '') +
-                    '<div class="flex justify-between text-[10px]"><span class="text-gray-600">Installation</span><span class="font-medium text-gray-800">$' + cs.installCost + '</span></div>' +
-                    '<div class="flex justify-between text-[10px]"><span class="text-gray-600">Hardware</span><span class="font-medium text-gray-800">$' + cs.hardwareCost + '</span></div>' +
-                    (cs.discountAmt > 0 ? '<div class="flex justify-between text-[10px]"><span class="text-green-600">Dealer Discount (' + state.discount + '%)</span><span class="font-medium text-green-600">-$' + cs.discountAmt + '</span></div>' : '') +
-                    '<div class="border-t border-gray-300 pt-1.5 mt-1.5 flex justify-between text-xs"><span class="font-bold text-gray-800">Total Cost (COGS)</span><span class="font-bold text-orange-600">$' + cs.totalCost + '</span></div>';
+                var html = '';
+                // Per-opening 明细
+                if (cs.perOpeningCosts && cs.perOpeningCosts.length > 0) {
+                    for (var ci = 0; ci < cs.perOpeningCosts.length; ci++) {
+                        var poc = cs.perOpeningCosts[ci];
+                        html += '<div class="flex justify-between text-[10px]">' +
+                            '<span class="text-gray-600">#' + poc.idx + ' ' + poc.skuName + ' (' + poc.area.toFixed(2) + 'm\u00b2)</span>' +
+                            '<span class="font-medium text-gray-800">' + fmtRMB(poc.amount) + '</span></div>';
+                    }
+                }
+                html += '<div class="border-t border-gray-200 pt-1 mt-1 flex justify-between text-[10px]">' +
+                    '<span class="text-gray-600 font-medium">Product Subtotal</span>' +
+                    '<span class="font-medium text-gray-800">' + fmtRMB(cs.productSubtotal) + '</span></div>';
+                if (cs.discountAmt > 0) {
+                    html += '<div class="flex justify-between text-[10px]"><span class="text-green-600">Discount (' + cs.discountPct + '%)</span><span class="font-medium text-green-600">-' + fmtRMB(cs.discountAmt) + '</span></div>';
+                }
+                html += '<div class="border-t border-gray-300 pt-1.5 mt-1.5 flex justify-between text-xs">' +
+                    '<span class="font-bold text-gray-800">Total COGS</span>' +
+                    '<span class="font-bold text-orange-600">' + fmtRMB(cs.totalCostRMB) + '</span></div>';
+                if (showForeign) {
+                    html += '<div class="flex justify-between text-[10px] mt-1">' +
+                        '<span class="text-gray-400">= ' + curr + ' (' + rate + ')</span>' +
+                        '<span class="font-medium text-gray-500">' + fmtForeign(cs.totalCostRMB / rate, curr) + '</span></div>';
+                }
+                costEl.innerHTML = html;
             } else {
+                // Sunroom/Pergola legacy
                 var upgLabel = isSR ? 'Glass Upgrade' : 'Louver Upgrade';
                 costEl.innerHTML =
                     '<div class="flex justify-between text-[10px]"><span class="text-gray-600">Materials (' + cs.tierName + ')</span><span class="font-medium text-gray-800">$' + cs.materialCost + '</span></div>' +
@@ -399,23 +482,29 @@
                     '<div class="flex justify-between text-[10px]"><span class="text-gray-600">Labor</span><span class="font-medium text-gray-800">$' + cs.laborCost + '</span></div>' +
                     '<div class="flex justify-between text-[10px]"><span class="text-gray-600">Equipment</span><span class="font-medium text-gray-800">$' + cs.equipmentCost + '</span></div>' +
                     '<div class="flex justify-between text-[10px]"><span class="text-gray-600">Permits</span><span class="font-medium text-gray-800">$' + cs.permitCost + '</span></div>' +
-                    '<div class="border-t border-gray-300 pt-1.5 mt-1.5 flex justify-between text-xs"><span class="font-bold text-gray-800">Total Cost (COGS)</span><span class="font-bold text-orange-600">$' + cs.totalCost + '</span></div>';
+                    '<div class="border-t border-gray-300 pt-1.5 mt-1.5 flex justify-between text-xs"><span class="font-bold text-gray-800">Total Cost (COGS)</span><span class="font-bold text-orange-600">$' + cs.totalCostRMB + '</span></div>';
             }
         }
 
-        // 4) Update quote cards (values + selection styling)
+        // 4) 更新 Smart Quote 卡片
         var quoteEl = document.getElementById('step4QuoteCards_' + projectId);
         if (quoteEl) {
             var qSel = state.selectedQuote;
             var qStyles = {
                 conservative: { border: 'border-blue-500', bg: 'bg-blue-50', text: 'text-blue-700', off: 'hover:border-blue-300' },
-                recommended: { border: 'border-orange-500', bg: 'bg-orange-50', text: 'text-orange-700', off: 'hover:border-orange-300' },
-                premium: { border: 'border-emerald-500', bg: 'bg-emerald-50', text: 'text-emerald-700', off: 'hover:border-emerald-300' }
+                recommended:  { border: 'border-orange-500', bg: 'bg-orange-50', text: 'text-orange-700', off: 'hover:border-orange-300' },
+                premium:      { border: 'border-emerald-500', bg: 'bg-emerald-50', text: 'text-emerald-700', off: 'hover:border-emerald-300' }
             };
+            // 显示 RMB + 可选外币
+            function quoteDisplay(rawRMB) {
+                var s = fmtRMB(rawRMB);
+                if (showForeign) s += '<div class="text-[8px] text-gray-400 mt-0.5">' + fmtForeign(rawRMB / rate, curr) + '</div>';
+                return s;
+            }
             var qValues = {
-                conservative: { label: 'Conservative', amount: '$' + cs.quoteConservative, margin: '10% margin' },
-                recommended: { label: 'Recommended', amount: '$' + cs.quoteRecommended, margin: '18% margin' },
-                premium: { label: 'Premium', amount: '$' + cs.quotePremium, margin: '35% margin' }
+                conservative: { label: 'Conservative', amount: quoteDisplay(cs.quoteConservativeRaw), margin: '10% margin' },
+                recommended:  { label: 'Recommended',  amount: quoteDisplay(cs.quoteRecommendedRaw),  margin: '18% margin' },
+                premium:      { label: 'Premium',      amount: quoteDisplay(cs.quotePremiumRaw),      margin: '35% margin' }
             };
             var qKeys = ['conservative', 'recommended', 'premium'];
             quoteEl.innerHTML = qKeys.map(function(key) {
@@ -430,10 +519,12 @@
             }).join('');
         }
 
-        // 5) Update profit analysis bar
+        // 5) 更新 Profit Analysis
         var profitEl = document.getElementById('step4ProfitBar_' + projectId);
         if (profitEl) {
             var pColor = cs.marginPct >= 15 ? 'green' : cs.marginPct >= 10 ? 'amber' : 'red';
+            var profitDisplay = fmtRMB(cs.profitRaw);
+            if (showForeign) profitDisplay += ' (' + fmtForeign(cs.profitRaw / rate, curr) + ')';
             profitEl.className = 'p-3 rounded-lg border bg-' + pColor + '-50/50 border-' + pColor + '-200';
             profitEl.innerHTML =
                 '<div class="flex items-center justify-between text-[10px] mb-1.5">' +
@@ -442,22 +533,26 @@
                 '</div>' +
                 '<div class="flex items-center gap-2">' +
                     '<div class="flex-1 bg-gray-200 rounded-full h-2"><div class="h-2 rounded-full transition-all bg-' + pColor + '-500" style="width:' + Math.min(cs.marginPct * 2.5, 100) + '%"></div></div>' +
-                    '<span class="text-[10px] font-bold text-' + pColor + '-700">$' + cs.profit + ' net</span>' +
+                    '<span class="text-[10px] font-bold text-' + pColor + '-700">' + profitDisplay + ' net</span>' +
                 '</div>';
         }
 
-        // 6) Update strategy badges (ZB only)
-        var stratEl = document.getElementById('step4Strategies_' + projectId);
-        if (stratEl && isZB) {
-            var minActive = state.unitArea < 1;
-            var hActive = cs.heightSurcharge > 0;
-            stratEl.innerHTML =
-                '<span class="text-[9px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200"><i class="fas fa-puzzle-piece mr-1"></i>Modular</span>' +
-                '<span class="text-[9px] px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200"><i class="fas fa-layer-group mr-1"></i>Volume Tier</span>' +
-                '<span class="text-[9px] px-2 py-0.5 rounded-full ' + (minActive ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-gray-50 text-gray-400 border border-gray-200') + '"><i class="fas fa-arrow-down mr-1"></i>Min Charge</span>' +
-                '<span class="text-[9px] px-2 py-0.5 rounded-full ' + (hActive ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-gray-50 text-gray-400 border border-gray-200') + '"><i class="fas fa-arrows-alt-v mr-1"></i>Height +</span>' +
-                '<span class="text-[9px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200"><i class="fas fa-star mr-1"></i>Product Tier</span>' +
-                '<span class="text-[9px] px-2 py-0.5 rounded-full bg-orange-50 text-orange-700 border border-orange-200"><i class="fas fa-tags mr-1"></i>' + (state.pricingMode === 'retail' ? 'Retail' : 'Wholesale') + '</span>';
+        // 6) 更新 Tier 卡片（Sunroom/Pergola only — legacy）
+        var tierEl = document.getElementById('step4TierCards_' + projectId);
+        if (tierEl && !isZB) {
+            var cards = tierEl.children;
+            for (var ti = 0; ti < cards.length; ti++) {
+                var card = cards[ti];
+                var cardTier = card.getAttribute('onclick') || '';
+                var isSelected = cardTier.indexOf("'" + state.productTier + "'") !== -1;
+                card.className = card.className
+                    .replace(/border-(orange|gray)-\d+/g, isSelected ? 'border-orange-500' : 'border-gray-200')
+                    .replace(/bg-(orange|white)-?\d*\/?\d*/g, isSelected ? 'bg-orange-50' : 'bg-white')
+                    .replace(/shadow-sm/g, '');
+                if (isSelected) card.className += ' shadow-sm';
+                var priceDiv = card.querySelector('.text-xs.font-semibold');
+                if (priceDiv) priceDiv.className = priceDiv.className.replace(/text-(orange|gray)-\d+/g, isSelected ? 'text-orange-600' : 'text-gray-600');
+            }
         }
     }
 
@@ -472,16 +567,18 @@
         getState:           getStep4State,
         calcCost:           calcStep4Cost,
         togglePanel:        toggleStep4Panel,
-        toggleMode:         toggleStep4Mode,
-        selectTier:         selectStep4Tier,
+        selectSKU:          selectStep4SKU,
         selectQuote:        selectStep4Quote,
-        adjustQty:          adjustStep4Qty,
         updateConfig:       updateStep4Config,
         calculatePricing:   calculateStep4Pricing,
-        refreshPanel:       refreshStep4Panel
+        refreshPanel:       refreshStep4Panel,
+        // Legacy compat
+        toggleMode:         toggleStep4Mode,
+        selectTier:         selectStep4Tier,
+        adjustQty:          adjustStep4Qty
     };
 
-    // ── 全局别名（向后兼容 HTML onclick 等调用） ──────────────────────────
+    // ── 全局别名（向后兼容 HTML onclick 等调用） ──
     window.step4QuotationState   = step4QuotationState;
     window._step4DbLoaded        = _step4DbLoaded;
     window._quotDbLoaded         = _quotDbLoaded;
@@ -493,6 +590,7 @@
     window.toggleStep4Panel      = toggleStep4Panel;
     window.toggleStep4Mode       = toggleStep4Mode;
     window.selectStep4Tier       = selectStep4Tier;
+    window.selectStep4SKU        = selectStep4SKU;
     window.selectStep4Quote      = selectStep4Quote;
     window.adjustStep4Qty        = adjustStep4Qty;
     window.updateStep4Config     = updateStep4Config;

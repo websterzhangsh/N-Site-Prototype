@@ -4379,45 +4379,45 @@
 
     <!-- JS 模块化文件 — 按依赖顺序加载 -->
     <!-- 1. 命名空间 -->
-    <script src="js/core/namespace.js?v=5b7b06a"></script>
+    <script src="js/core/namespace.js?v=ca78544"></script>
     <!-- 2. 核心基础层 (Phase 2) -->
-    <script src="js/core/supabase-config.js?v=5b7b06a"></script>
-    <script src="js/core/supabase-storage.js?v=5b7b06a"></script>
-    <script src="js/core/auth.js?v=5b7b06a"></script>
-    <script src="js/core/tenant.js?v=5b7b06a"></script>
-    <script src="js/core/i18n.js?v=5b7b06a"></script>
-    <script src="js/core/router.js?v=5b7b06a"></script>
+    <script src="js/core/supabase-config.js?v=ca78544"></script>
+    <script src="js/core/supabase-storage.js?v=ca78544"></script>
+    <script src="js/core/auth.js?v=ca78544"></script>
+    <script src="js/core/tenant.js?v=ca78544"></script>
+    <script src="js/core/i18n.js?v=ca78544"></script>
+    <script src="js/core/router.js?v=ca78544"></script>
     <!-- 3. 数据层 (Phase 1) -->
-    <script src="js/data/i18n-dict.js?v=5b7b06a"></script>
-    <script src="js/data/pricing-data.js?v=5b7b06a"></script>
-    <script src="js/data/product-catalog.js?v=5b7b06a"></script>
-    <script src="js/data/step-config.js?v=5b7b06a"></script>
-    <script src="js/data/intake-fields.js?v=5b7b06a"></script>
-    <script src="js/data/seed-projects.js?v=5b7b06a"></script>
+    <script src="js/data/i18n-dict.js?v=ca78544"></script>
+    <script src="js/data/pricing-data.js?v=ca78544"></script>
+    <script src="js/data/product-catalog.js?v=ca78544"></script>
+    <script src="js/data/step-config.js?v=ca78544"></script>
+    <script src="js/data/intake-fields.js?v=ca78544"></script>
+    <script src="js/data/seed-projects.js?v=ca78544"></script>
     <!-- 4. 工具层 (Phase 3) -->
-    <script src="js/utils/helpers.js?v=5b7b06a"></script>
-    <script src="js/utils/unit-converter.js?v=5b7b06a"></script>
+    <script src="js/utils/helpers.js?v=ca78544"></script>
+    <script src="js/utils/unit-converter.js?v=ca78544"></script>
     <!-- 5. 功能模块 (Phase 3) -->
-    <script src="js/modules/orders.js?v=5b7b06a"></script>
-    <script src="js/modules/customers.js?v=5b7b06a"></script>
-    <script src="js/modules/knowledge-base.js?v=5b7b06a"></script>
-    <script src="js/modules/products.js?v=5b7b06a"></script>
-    <script src="js/modules/overview.js?v=5b7b06a"></script>
-    <script src="js/modules/projects.js?v=5b7b06a"></script>
-    <script src="js/modules/workflow.js?v=5b7b06a"></script>
+    <script src="js/modules/orders.js?v=ca78544"></script>
+    <script src="js/modules/customers.js?v=ca78544"></script>
+    <script src="js/modules/knowledge-base.js?v=ca78544"></script>
+    <script src="js/modules/products.js?v=ca78544"></script>
+    <script src="js/modules/overview.js?v=ca78544"></script>
+    <script src="js/modules/projects.js?v=ca78544"></script>
+    <script src="js/modules/workflow.js?v=ca78544"></script>
     <!-- 6. Agent 模块 (Phase 4) -->
-    <script src="js/agents/designer.js?v=5b7b06a"></script>
-    <script src="js/agents/pricing.js?v=5b7b06a"></script>
-    <script src="js/agents/compliance.js?v=5b7b06a"></script>
-    <script src="js/agents/customer-service.js?v=5b7b06a"></script>
+    <script src="js/agents/designer.js?v=ca78544"></script>
+    <script src="js/agents/pricing.js?v=ca78544"></script>
+    <script src="js/agents/compliance.js?v=ca78544"></script>
+    <script src="js/agents/customer-service.js?v=ca78544"></script>
     <!-- 7. Step 实现 (Phase 4) -->
-    <script src="js/steps/step2-design.js?v=5b7b06a"></script>
-    <script src="js/steps/step3-measurement.js?v=5b7b06a"></script>
-    <script src="js/steps/zb-verification.js?v=5b7b06a"></script>
-    <script src="js/steps/step4-quotation.js?v=5b7b06a"></script>
+    <script src="js/steps/step2-design.js?v=ca78544"></script>
+    <script src="js/steps/step3-measurement.js?v=ca78544"></script>
+    <script src="js/steps/zb-verification.js?v=ca78544"></script>
+    <script src="js/steps/step4-quotation.js?v=ca78544"></script>
     <!-- 8. 独立工具 (Phase 4) -->
-    <script src="js/utils/quotation-editor.js?v=5b7b06a"></script>
-    <script src="js/utils/chatbot.js?v=5b7b06a"></script>
+    <script src="js/utils/quotation-editor.js?v=ca78544"></script>
+    <script src="js/utils/chatbot.js?v=ca78544"></script>
     <script>
         // ===== Authentication (→ js/core/auth.js) =====
 
@@ -7079,42 +7079,35 @@
                 const isSR = project.type === 'Sunroom';
                 const isPG = project.type === 'Pergola';
 
-                // ---- Zip Blinds pricing panel ----
+                // ---- Zip Blinds pricing panel (v2.0 SKU Catalog) ----
                 if (isZB) {
-                    const tiers = [
-                        { id: 'good', name: 'ZB-100', label: 'Standard', spec: '65mm tube', from: '$38/sqm' },
-                        { id: 'better', name: 'ZB-200', label: 'Professional', spec: '65-75mm tube', from: '$52/sqm', popular: true },
-                        { id: 'best', name: 'ZB-300', label: 'Elite', spec: '75mm tube', from: '$58/sqm' }
-                    ];
-                    const tierCards = tiers.map(t => {
-                        const sel = step4State.productTier === t.id;
-                        return `<div onclick="Nestopia.steps.step4.selectTier('${project.id}','${t.id}')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center relative ${sel ? 'border-orange-500 bg-orange-50 shadow-sm' : 'border-gray-200 hover:border-orange-300 bg-white'}">
-                            ${t.popular ? '<div class="absolute -top-2 left-1/2 -translate-x-1/2 text-[8px] font-bold bg-orange-500 text-white px-2 py-0.5 rounded-full">POPULAR</div>' : ''}
-                            <div class="text-[10px] font-bold text-gray-800">${t.name}</div>
-                            <div class="text-[9px] text-gray-500">${t.spec}</div>
-                            <div class="text-xs font-semibold ${sel ? 'text-orange-600' : 'text-gray-600'} mt-1">${t.from}</div>
+                    const catalog = window.zbSKUCatalog || (Nestopia.data && Nestopia.data.pricing ? Nestopia.data.pricing.zbSKUCatalog : {}) || {};
+                    const skuKeys = Object.keys(catalog);
+                    const skuCards = skuKeys.map(key => {
+                        const sku = catalog[key];
+                        const sel = step4State.selectedSKU === key;
+                        return `<div onclick="Nestopia.steps.step4.selectSKU('${project.id}','${key}')" data-sku="${key}" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center relative ${sel ? 'border-orange-500 bg-orange-50 shadow-sm' : 'border-gray-200 hover:border-orange-300 bg-white'}">
+                            <div class="text-[10px] font-bold text-gray-800">${key}</div>
+                            <div class="text-[9px] text-gray-500">${sku.type === 'motorized' ? 'Motorized' : 'Manual'} | \u2264${(sku.maxHeightMM/1000).toFixed(1)}m</div>
+                            <div class="sku-price text-xs font-semibold ${sel ? 'text-orange-600' : 'text-gray-600'} mt-1">\u00a5${sku.price}/m\u00b2</div>
                         </div>`;
                     }).join('');
 
-                    const fabrics = [
-                        { id: 'np4000', name: 'Standard', spec: '5% open', extra: 'Included' },
-                        { id: 'np6000', name: 'Premium', spec: '3% UV', extra: '+$8/sqm' },
-                        { id: 'np8000', name: 'Elite', spec: '1% blackout', extra: '+$18/sqm' }
-                    ];
-                    const fabricOpts = fabrics.map(f => `<option value="${f.id}" ${step4State.fabric === f.id ? 'selected' : ''}>${f.name} (${f.spec}) ${f.extra}</option>`).join('');
-
-                    const drives = [
-                        { id: 'bead-chain', name: 'Bead Chain', price: '$18', cat: 'Manual' },
-                        { id: 'spring-crank', name: 'Spring Crank', price: '$35', cat: 'Manual' },
-                        { id: 'electric-std', name: 'Std Electric', price: '$68', cat: 'Electric', pop: true },
-                        { id: 'electric-prem', name: 'Premium Elec', price: '$92', cat: 'Electric' },
-                        { id: 'dual-mode', name: 'Dual Mode', price: '$165', cat: 'Premium' },
-                        { id: 'solar-kit', name: 'Solar Kit', price: '$215', cat: 'Premium' }
-                    ];
-                    const driveOpts = drives.map(d => `<option value="${d.id}" ${step4State.driveSystem === d.id ? 'selected' : ''}>${d.name} (${d.price}/unit)${d.pop ? ' ★' : ''}</option>`).join('');
-
-                    // Pre-calculated values for display
                     const cs = step4State.costSummary;
+                    const currOptions = ['RMB', 'USD', 'SGD'];
+
+                    // Initial cost breakdown HTML (will be dynamically updated by refreshStep4Panel)
+                    let initCostHTML = '';
+                    if (cs.perOpeningCosts && cs.perOpeningCosts.length > 0) {
+                        cs.perOpeningCosts.forEach(poc => {
+                            initCostHTML += `<div class="flex justify-between text-[10px]"><span class="text-gray-600">#${poc.idx} ${poc.skuName} (${poc.area.toFixed(2)}m\u00b2)</span><span class="font-medium text-gray-800">\u00a5${Math.round(poc.amount).toLocaleString()}</span></div>`;
+                        });
+                    }
+                    initCostHTML += `<div class="border-t border-gray-200 pt-1 mt-1 flex justify-between text-[10px]"><span class="text-gray-600 font-medium">Product Subtotal</span><span class="font-medium text-gray-800">\u00a5${Math.round(cs.productSubtotal).toLocaleString()}</span></div>`;
+                    if (cs.discountAmt > 0) {
+                        initCostHTML += `<div class="flex justify-between text-[10px]"><span class="text-green-600">Discount (${cs.discountPct}%)</span><span class="font-medium text-green-600">-\u00a5${Math.round(cs.discountAmt).toLocaleString()}</span></div>`;
+                    }
+                    initCostHTML += `<div class="border-t border-gray-300 pt-1.5 mt-1.5 flex justify-between text-xs"><span class="font-bold text-gray-800">Total COGS</span><span class="font-bold text-orange-600">\u00a5${Math.round(cs.totalCostRMB).toLocaleString()}</span></div>`;
 
                     return `
                     <div class="bg-white rounded-lg border border-gray-100 p-4">
@@ -7125,17 +7118,12 @@
                                 </div>
                                 <div>
                                     <span class="text-sm font-semibold text-gray-700">Pricing & Quotation Engine</span>
-                                    <span class="text-[10px] text-orange-500 ml-2 font-medium">6-Strategy Zip Blinds</span>
+                                    <span class="text-[10px] text-orange-500 ml-2 font-medium">SKU Catalog Pricing (RMB)</span>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-2">
-                                <button onclick="Nestopia.steps.step4.toggleMode('${project.id}')" class="px-2 py-1 text-[10px] font-medium rounded-md border ${step4State.pricingMode === 'wholesale' ? 'bg-emerald-50 border-emerald-300 text-emerald-700' : 'bg-white border-gray-200 text-gray-600'} hover:bg-gray-50 transition">
-                                    ${step4State.pricingMode === 'retail' ? '🏷 Retail' : '🏭 Wholesale'}
-                                </button>
-                                <button id="step4LaunchBtn_${project.id}" onclick="Nestopia.steps.step4.togglePanel('${project.id}')" class="px-3 py-1.5 bg-orange-600 text-white text-xs font-semibold rounded-lg hover:bg-orange-700 transition flex items-center gap-1.5 shadow-sm">
-                                    <i class="fas fa-calculator text-[10px]"></i> Open Quotation
-                                </button>
-                            </div>
+                            <button id="step4LaunchBtn_${project.id}" onclick="Nestopia.steps.step4.togglePanel('${project.id}')" class="px-3 py-1.5 bg-orange-600 text-white text-xs font-semibold rounded-lg hover:bg-orange-700 transition flex items-center gap-1.5 shadow-sm">
+                                <i class="fas fa-calculator text-[10px]"></i> Open Quotation
+                            </button>
                         </div>
 
                         <!-- Summary from measurement (per-opening) -->
@@ -7150,20 +7138,22 @@
                                 ${step4State.openings.map((op, idx) => `
                                 <div class="flex items-center gap-3 text-[10px]">
                                     <span class="w-4 h-4 bg-indigo-100 rounded flex items-center justify-center text-[9px] font-bold text-indigo-600">${idx + 1}</span>
-                                    <span class="text-gray-600">${op.widthIn}" × ${op.heightIn}"</span>
-                                    <span class="text-orange-600 font-semibold">${op.area.toFixed(2)} sqm</span>
+                                    <span class="text-gray-600">${op.widthIn}" \u00d7 ${op.heightIn}"</span>
+                                    <span class="text-gray-500">${op.widthMM}mm \u00d7 ${op.heightMM}mm</span>
+                                    <span class="text-orange-600 font-semibold">${op.area.toFixed(2)} m\u00b2</span>
+                                    <span class="text-[9px] text-gray-400 ml-auto">${op.sku}</span>
                                 </div>`).join('')}
                                 <div class="border-t border-orange-200 pt-1.5 mt-1 flex items-center gap-3 text-[10px]">
                                     <span class="w-4 h-4"></span>
                                     <span class="text-gray-700 font-semibold">Total Area</span>
-                                    <span class="text-orange-700 font-bold">${step4State.totalArea.toFixed(2)} sqm</span>
+                                    <span class="text-orange-700 font-bold">${step4State.totalArea.toFixed(2)} m\u00b2</span>
                                 </div>
                             </div>` : `
                             <div class="grid grid-cols-4 gap-3 text-center">
                                 <div><div class="text-[10px] text-gray-500">Openings</div><div class="text-sm font-bold text-gray-800">${step4State.quantity}</div></div>
                                 <div><div class="text-[10px] text-gray-500">Width</div><div class="text-sm font-bold text-gray-800">${step4State.openings ? step4State.openings[0].widthIn : '72'}"</div></div>
                                 <div><div class="text-[10px] text-gray-500">Height</div><div class="text-sm font-bold text-gray-800">${step4State.openings ? step4State.openings[0].heightIn : '96'}"</div></div>
-                                <div><div class="text-[10px] text-gray-500">Area</div><div class="text-sm font-bold text-orange-600">${step4State.unitArea.toFixed(2)} sqm</div></div>
+                                <div><div class="text-[10px] text-gray-500">Area</div><div class="text-sm font-bold text-orange-600">${step4State.unitArea ? step4State.unitArea.toFixed(2) : '0.00'} m\u00b2</div></div>
                             </div>`}
                         </div>
 
@@ -7172,60 +7162,49 @@
                             <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
                                 <!-- Left: Product Configuration -->
                                 <div class="space-y-4">
-                                    <!-- Product Tier Selection -->
+                                    <!-- SKU Product Selection -->
                                     <div>
                                         <div class="flex items-center gap-2 mb-2">
-                                            <span class="text-xs font-semibold text-gray-700"><i class="fas fa-layer-group text-orange-400 mr-1.5"></i>Product Tier</span>
-                                            <span class="text-[9px] text-gray-400 ml-auto">Strategy 5: Good-Better-Best</span>
+                                            <span class="text-xs font-semibold text-gray-700"><i class="fas fa-barcode text-orange-400 mr-1.5"></i>Product SKU</span>
+                                            <span class="text-[9px] text-gray-400 ml-auto">Auto-selected by height & motor</span>
                                         </div>
-                                        <div class="grid grid-cols-3 gap-2" id="step4TierCards_${project.id}">${tierCards}</div>
+                                        <div class="grid grid-cols-2 gap-2" id="step4SKUCards_${project.id}">${skuCards}</div>
                                     </div>
 
-                                    <!-- Fabric Selection -->
-                                    <div class="space-y-1">
-                                        <label class="text-[10px] font-medium text-gray-500 flex items-center gap-1.5"><i class="fas fa-scroll text-orange-400"></i>Fabric / Screen</label>
-                                        <select id="step4Fabric_${project.id}" class="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-orange-200 focus:border-orange-400 bg-white" onchange="updateStep4Config('${project.id}')">
-                                            ${fabricOpts}
-                                        </select>
-                                    </div>
-
-                                    <!-- Drive System -->
-                                    <div class="space-y-1">
-                                        <label class="text-[10px] font-medium text-gray-500 flex items-center gap-1.5"><i class="fas fa-cog text-orange-400"></i>Drive System <span class="text-[8px] text-gray-400 ml-auto">Strategy 1: Modular Pricing</span></label>
-                                        <select id="step4Drive_${project.id}" class="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-orange-200 focus:border-orange-400 bg-white" onchange="updateStep4Config('${project.id}')">
-                                            ${driveOpts}
-                                        </select>
-                                    </div>
-
-                                    <!-- Quantity & Adjustments -->
+                                    <!-- Currency + Exchange Rate -->
                                     <div class="grid grid-cols-2 gap-2">
                                         <div class="space-y-1">
-                                            <label class="text-[10px] font-medium text-gray-500"><i class="fas fa-th-large text-orange-400 mr-1"></i>Quantity</label>
+                                            <label class="text-[10px] font-medium text-gray-500 flex items-center gap-1.5"><i class="fas fa-coins text-orange-400"></i>Display Currency</label>
+                                            <select id="step4Currency_${project.id}" class="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-orange-200 focus:border-orange-400 bg-white" onchange="updateStep4Config('${project.id}')">
+                                                ${currOptions.map(c => `<option value="${c}" ${step4State.currency === c ? 'selected' : ''}>${c === 'RMB' ? 'RMB (\u00a5)' : c === 'USD' ? 'USD ($)' : 'SGD (S$)'}</option>`).join('')}
+                                            </select>
+                                        </div>
+                                        <div class="space-y-1">
+                                            <label class="text-[10px] font-medium text-gray-500 flex items-center gap-1.5"><i class="fas fa-exchange-alt text-orange-400"></i>Exchange Rate</label>
+                                            <input id="step4ExRate_${project.id}" type="number" step="0.01" min="0.01" value="${step4State.exchangeRate}" class="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-orange-200 focus:border-orange-400 bg-white" onchange="updateStep4Config('${project.id}')" ${step4State.currency === 'RMB' ? 'disabled' : ''}>
+                                        </div>
+                                    </div>
+
+                                    <!-- Quantity + Discount -->
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <div class="space-y-1">
+                                            <label class="text-[10px] font-medium text-gray-500"><i class="fas fa-th-large text-orange-400 mr-1"></i>Openings</label>
                                             <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden">
-                                                <button onclick="Nestopia.steps.step4.adjustQty('${project.id}',-1)" class="px-2.5 py-1.5 bg-gray-50 hover:bg-gray-100 text-gray-600 text-xs font-bold">−</button>
+                                                <button onclick="Nestopia.steps.step4.adjustQty('${project.id}',-1)" class="px-2.5 py-1.5 bg-gray-50 hover:bg-gray-100 text-gray-600 text-xs font-bold">\u2212</button>
                                                 <span id="step4Qty_${project.id}" class="flex-1 text-center text-xs font-bold text-gray-800">${step4State.quantity}</span>
                                                 <button onclick="Nestopia.steps.step4.adjustQty('${project.id}',1)" class="px-2.5 py-1.5 bg-gray-50 hover:bg-gray-100 text-gray-600 text-xs font-bold">+</button>
                                             </div>
                                         </div>
                                         <div class="space-y-1">
-                                            <label class="text-[10px] font-medium text-gray-500"><i class="fas fa-percent text-orange-400 mr-1"></i>Dealer Discount</label>
+                                            <label class="text-[10px] font-medium text-gray-500"><i class="fas fa-percent text-orange-400 mr-1"></i>Discount</label>
                                             <select id="step4Discount_${project.id}" class="w-full px-2 py-1.5 border border-gray-200 rounded-lg text-xs" onchange="updateStep4Config('${project.id}')">
                                                 <option value="0" ${step4State.discount === 0 ? 'selected' : ''}>No discount</option>
                                                 <option value="5" ${step4State.discount === 5 ? 'selected' : ''}>5% Dealer</option>
                                                 <option value="10" ${step4State.discount === 10 ? 'selected' : ''}>10% Volume</option>
                                                 <option value="15" ${step4State.discount === 15 ? 'selected' : ''}>15% Partner</option>
+                                                <option value="20" ${step4State.discount === 20 ? 'selected' : ''}>20% Special</option>
                                             </select>
                                         </div>
-                                    </div>
-
-                                    <!-- Active Strategies -->
-                                    <div class="flex flex-wrap gap-1.5" id="step4Strategies_${project.id}">
-                                        <span class="text-[9px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200"><i class="fas fa-puzzle-piece mr-1"></i>Modular</span>
-                                        <span class="text-[9px] px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200"><i class="fas fa-layer-group mr-1"></i>Volume Tier</span>
-                                        <span class="text-[9px] px-2 py-0.5 rounded-full ${step4State.unitArea < 1 ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-gray-50 text-gray-400 border border-gray-200'}"><i class="fas fa-arrow-down mr-1"></i>Min Charge</span>
-                                        <span class="text-[9px] px-2 py-0.5 rounded-full ${cs.heightSurcharge > 0 ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-gray-50 text-gray-400 border border-gray-200'}"><i class="fas fa-arrows-alt-v mr-1"></i>Height +</span>
-                                        <span class="text-[9px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200"><i class="fas fa-star mr-1"></i>Product Tier</span>
-                                        <span class="text-[9px] px-2 py-0.5 rounded-full bg-orange-50 text-orange-700 border border-orange-200"><i class="fas fa-tags mr-1"></i>${step4State.pricingMode === 'retail' ? 'Retail' : 'Wholesale'}</span>
                                     </div>
                                 </div>
 
@@ -7234,42 +7213,35 @@
                                     <!-- Cost Breakdown -->
                                     <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">
                                         <div class="flex items-center justify-between mb-2">
-                                            <span class="text-xs font-semibold text-gray-700"><i class="fas fa-receipt text-orange-500 mr-1.5"></i>Cost Breakdown</span>
+                                            <span class="text-xs font-semibold text-gray-700"><i class="fas fa-receipt text-orange-500 mr-1.5"></i>Cost Breakdown (RMB)</span>
                                             <button onclick="Nestopia.steps.step4.calculatePricing('${project.id}')" class="text-[10px] text-orange-600 font-medium hover:text-orange-800"><i class="fas fa-sync-alt mr-1"></i>Recalculate</button>
                                         </div>
                                         <div class="space-y-1.5" id="step4CostBreakdown_${project.id}">
-                                            <div class="flex justify-between text-[10px]"><span class="text-gray-600">Fabric (${cs.tierName})</span><span class="font-medium text-gray-800">$${cs.fabricCost}</span></div>
-                                            <div class="flex justify-between text-[10px]"><span class="text-gray-600">Drive System (${cs.driveName})</span><span class="font-medium text-gray-800">$${cs.driveCost}</span></div>
-                                            ${cs.fabricUpgrade > 0 ? `<div class="flex justify-between text-[10px]"><span class="text-gray-600">Fabric Upgrade</span><span class="font-medium text-amber-600">+$${cs.fabricUpgrade}</span></div>` : ''}
-                                            ${cs.heightSurcharge > 0 ? `<div class="flex justify-between text-[10px]"><span class="text-gray-600">Height Surcharge</span><span class="font-medium text-amber-600">+$${cs.heightSurcharge}</span></div>` : ''}
-                                            ${cs.minChargeCost > 0 ? `<div class="flex justify-between text-[10px]"><span class="text-red-600">Min Charge Adj.</span><span class="font-medium text-red-600">+$${cs.minChargeCost}</span></div>` : ''}
-                                            <div class="flex justify-between text-[10px]"><span class="text-gray-600">Installation</span><span class="font-medium text-gray-800">$${cs.installCost}</span></div>
-                                            <div class="flex justify-between text-[10px]"><span class="text-gray-600">Hardware</span><span class="font-medium text-gray-800">$${cs.hardwareCost}</span></div>
-                                            ${cs.discountAmt > 0 ? `<div class="flex justify-between text-[10px]"><span class="text-green-600">Dealer Discount (${step4State.discount}%)</span><span class="font-medium text-green-600">-$${cs.discountAmt}</span></div>` : ''}
-                                            <div class="border-t border-gray-300 pt-1.5 mt-1.5 flex justify-between text-xs"><span class="font-bold text-gray-800">Total Cost (COGS)</span><span class="font-bold text-orange-600">$${cs.totalCost}</span></div>
+                                            ${initCostHTML}
                                         </div>
                                     </div>
 
-                                    <!-- 3-Tier Quote Suggestions -->
+                                    <!-- Smart Quote Options -->
                                     <div>
                                         <div class="flex items-center gap-2 mb-2">
                                             <span class="text-xs font-semibold text-gray-700"><i class="fas fa-tags text-orange-400 mr-1.5"></i>Smart Quote Options</span>
+                                            <span class="text-[9px] text-gray-400">COGS \u00d7 margin</span>
                                         </div>
                                         <div class="grid grid-cols-3 gap-2" id="step4QuoteCards_${project.id}">
                                             <div onclick="Nestopia.steps.step4.selectQuote('${project.id}','conservative')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center ${step4State.selectedQuote === 'conservative' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-blue-300'}">
                                                 <div class="text-[9px] text-gray-500 font-medium">Conservative</div>
-                                                <div class="text-sm font-bold ${step4State.selectedQuote === 'conservative' ? 'text-blue-700' : 'text-gray-800'}">$${cs.quoteConservative}</div>
+                                                <div class="text-sm font-bold ${step4State.selectedQuote === 'conservative' ? 'text-blue-700' : 'text-gray-800'}">\u00a5${cs.quoteConservative}</div>
                                                 <div class="text-[9px] text-gray-400">10% margin</div>
                                             </div>
                                             <div onclick="Nestopia.steps.step4.selectQuote('${project.id}','recommended')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center relative ${step4State.selectedQuote === 'recommended' ? 'border-orange-500 bg-orange-50 shadow-sm' : 'border-gray-200 hover:border-orange-300'}">
                                                 <div class="absolute -top-2 left-1/2 -translate-x-1/2 text-[8px] font-bold bg-orange-500 text-white px-2 py-0.5 rounded-full">BEST</div>
                                                 <div class="text-[9px] text-gray-500 font-medium">Recommended</div>
-                                                <div class="text-sm font-bold ${step4State.selectedQuote === 'recommended' ? 'text-orange-700' : 'text-gray-800'}">$${cs.quoteRecommended}</div>
+                                                <div class="text-sm font-bold ${step4State.selectedQuote === 'recommended' ? 'text-orange-700' : 'text-gray-800'}">\u00a5${cs.quoteRecommended}</div>
                                                 <div class="text-[9px] text-gray-400">18% margin</div>
                                             </div>
                                             <div onclick="Nestopia.steps.step4.selectQuote('${project.id}','premium')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center ${step4State.selectedQuote === 'premium' ? 'border-emerald-500 bg-emerald-50' : 'border-gray-200 hover:border-emerald-300'}">
                                                 <div class="text-[9px] text-gray-500 font-medium">Premium</div>
-                                                <div class="text-sm font-bold ${step4State.selectedQuote === 'premium' ? 'text-emerald-700' : 'text-gray-800'}">$${cs.quotePremium}</div>
+                                                <div class="text-sm font-bold ${step4State.selectedQuote === 'premium' ? 'text-emerald-700' : 'text-gray-800'}">\u00a5${cs.quotePremium}</div>
                                                 <div class="text-[9px] text-gray-400">35% margin</div>
                                             </div>
                                         </div>
@@ -7285,7 +7257,7 @@
                                             <div class="flex-1 bg-gray-200 rounded-full h-2">
                                                 <div class="h-2 rounded-full transition-all ${cs.marginPct >= 15 ? 'bg-green-500' : cs.marginPct >= 10 ? 'bg-amber-500' : 'bg-red-500'}" style="width:${Math.min(cs.marginPct * 2.5, 100)}%"></div>
                                             </div>
-                                            <span class="text-[10px] font-bold ${cs.marginPct >= 15 ? 'text-green-700' : 'text-amber-700'}">$${cs.profit} net</span>
+                                            <span class="text-[10px] font-bold ${cs.marginPct >= 15 ? 'text-green-700' : 'text-amber-700'}">\u00a5${cs.profit} net</span>
                                         </div>
                                     </div>
 
