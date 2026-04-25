@@ -792,6 +792,8 @@
         rebuildVerificationContent: rebuildVerificationContent,
         saveVerification: saveVerification,
         loadVerificationFromDB: loadVerificationFromDB,
+        generateFinalQuotation: generateFinalQuotation,
+        confirmFinalQuotation: confirmFinalQuotation,
         TOLERANCE_OK: TOLERANCE_OK,
         TOLERANCE_WARN: TOLERANCE_WARN
     };
@@ -801,8 +803,6 @@
     window.toggleVerificationPanel = toggleVerificationPanel;
     window.updateVerificationField = updateVerificationField;
     window.saveZBVerification = saveVerification;
-
-})();
     window.generateFinalQuotation = generateFinalQuotation;
     window.confirmFinalQuotation = confirmFinalQuotation;
 
