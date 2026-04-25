@@ -4379,46 +4379,46 @@
 
     <!-- JS 模块化文件 — 按依赖顺序加载 -->
     <!-- 1. 命名空间 -->
-    <script src="js/core/namespace.js?v=2f820dc"></script>
+    <script src="js/core/namespace.js?v=7952549"></script>
     <!-- 2. 核心基础层 (Phase 2) -->
-    <script src="js/core/supabase-config.js?v=2f820dc"></script>
-    <script src="js/core/supabase-storage.js?v=2f820dc"></script>
-    <script src="js/core/auth.js?v=2f820dc"></script>
-    <script src="js/core/tenant.js?v=2f820dc"></script>
-    <script src="js/core/i18n.js?v=2f820dc"></script>
-    <script src="js/core/router.js?v=2f820dc"></script>
+    <script src="js/core/supabase-config.js?v=7952549"></script>
+    <script src="js/core/supabase-storage.js?v=7952549"></script>
+    <script src="js/core/auth.js?v=7952549"></script>
+    <script src="js/core/tenant.js?v=7952549"></script>
+    <script src="js/core/i18n.js?v=7952549"></script>
+    <script src="js/core/router.js?v=7952549"></script>
     <!-- 3. 数据层 (Phase 1) -->
-    <script src="js/data/i18n-dict.js?v=2f820dc"></script>
-    <script src="js/data/pricing-data.js?v=2f820dc"></script>
-    <script src="js/data/product-catalog.js?v=2f820dc"></script>
-    <script src="js/data/step-config.js?v=2f820dc"></script>
-    <script src="js/data/intake-fields.js?v=2f820dc"></script>
-    <script src="js/data/seed-projects.js?v=2f820dc"></script>
+    <script src="js/data/i18n-dict.js?v=7952549"></script>
+    <script src="js/data/pricing-data.js?v=7952549"></script>
+    <script src="js/data/product-catalog.js?v=7952549"></script>
+    <script src="js/data/step-config.js?v=7952549"></script>
+    <script src="js/data/intake-fields.js?v=7952549"></script>
+    <script src="js/data/seed-projects.js?v=7952549"></script>
     <!-- 4. 工具层 (Phase 3) -->
-    <script src="js/utils/helpers.js?v=2f820dc"></script>
-    <script src="js/utils/unit-converter.js?v=2f820dc"></script>
+    <script src="js/utils/helpers.js?v=7952549"></script>
+    <script src="js/utils/unit-converter.js?v=7952549"></script>
     <!-- 5. 功能模块 (Phase 3) -->
-    <script src="js/modules/orders.js?v=2f820dc"></script>
-    <script src="js/modules/customers.js?v=2f820dc"></script>
-    <script src="js/modules/knowledge-base.js?v=2f820dc"></script>
-    <script src="js/modules/products.js?v=2f820dc"></script>
-    <script src="js/modules/overview.js?v=2f820dc"></script>
-    <script src="js/modules/projects.js?v=2f820dc"></script>
-    <script src="js/modules/workflow.js?v=2f820dc"></script>
+    <script src="js/modules/orders.js?v=7952549"></script>
+    <script src="js/modules/customers.js?v=7952549"></script>
+    <script src="js/modules/knowledge-base.js?v=7952549"></script>
+    <script src="js/modules/products.js?v=7952549"></script>
+    <script src="js/modules/overview.js?v=7952549"></script>
+    <script src="js/modules/projects.js?v=7952549"></script>
+    <script src="js/modules/workflow.js?v=7952549"></script>
     <!-- 6. Agent 模块 (Phase 4) -->
-    <script src="js/agents/designer.js?v=2f820dc"></script>
-    <script src="js/agents/pricing.js?v=2f820dc"></script>
-    <script src="js/agents/compliance.js?v=2f820dc"></script>
-    <script src="js/agents/customer-service.js?v=2f820dc"></script>
+    <script src="js/agents/designer.js?v=7952549"></script>
+    <script src="js/agents/pricing.js?v=7952549"></script>
+    <script src="js/agents/compliance.js?v=7952549"></script>
+    <script src="js/agents/customer-service.js?v=7952549"></script>
     <!-- 7. Step 实现 (Phase 4) -->
-    <script src="js/steps/step2-design.js?v=2f820dc"></script>
-    <script src="js/steps/step3-measurement.js?v=2f820dc"></script>
-    <script src="js/steps/zb-verification.js?v=2f820dc"></script>
-    <script src="js/steps/step4-quotation.js?v=2f820dc"></script>
+    <script src="js/steps/step2-design.js?v=7952549"></script>
+    <script src="js/steps/step3-measurement.js?v=7952549"></script>
+    <script src="js/steps/zb-verification.js?v=7952549"></script>
+    <script src="js/steps/step4-quotation.js?v=7952549"></script>
     <!-- 8. 独立工具 (Phase 4) -->
-    <script src="js/utils/quotation-editor.js?v=2f820dc"></script>
-    <script src="js/utils/step-progress.js?v=2f820dc"></script>
-    <script src="js/utils/chatbot.js?v=2f820dc"></script>
+    <script src="js/utils/quotation-editor.js?v=7952549"></script>
+    <script src="js/utils/step-progress.js?v=7952549"></script>
+    <script src="js/utils/chatbot.js?v=7952549"></script>
     <script>
         // ===== Authentication (→ js/core/auth.js) =====
 
@@ -6103,6 +6103,15 @@
                         }
                     });
                 }
+                // ★ Step 2 (Quotation): 自动从 Supabase 加载 measurement 数据并刷新报价摘要
+                // 解决模板同步渲染时 measurement DB 数据尚未加载导致 openings 数量回退为 1
+                if (stepNum === 2 && Nestopia.steps.step3 && Nestopia.steps.step3.ensureMeasurementLoaded) {
+                    Nestopia.steps.step3.ensureMeasurementLoaded(project.id).then(function() {
+                        if (Nestopia.steps.step4 && Nestopia.steps.step4.refreshInheritedMeasurement) {
+                            Nestopia.steps.step4.refreshInheritedMeasurement(project.id);
+                        }
+                    });
+                }
                 expandedStep = stepNum;
                 _populateCoreActionsPanel(zbConfig, zbStatus, stepNum, zbColor);
                 container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -7128,7 +7137,7 @@
                         </div>
 
                         <!-- Summary from measurement (per-opening) -->
-                        <div class="mb-4 p-3 bg-orange-50/50 rounded-lg border border-orange-100">
+                        <div id="step4InheritedSummary_${project.id}" class="mb-4 p-3 bg-orange-50/50 rounded-lg border border-orange-100">
                             <div class="flex items-center gap-2 mb-2">
                                 <i class="fas fa-arrow-right text-orange-500 text-[10px]"></i>
                                 <span class="text-xs font-semibold text-orange-700">Inherited from Measurement</span>
@@ -7310,7 +7319,7 @@
                         </button>
                     </div>
 
-                    <div class="mb-4 p-3 bg-orange-50/50 rounded-lg border border-orange-100">
+                    <div id="step4InheritedSummary_${project.id}" class="mb-4 p-3 bg-orange-50/50 rounded-lg border border-orange-100">
                         <div class="flex items-center gap-2 mb-2">
                             <i class="fas fa-arrow-right text-orange-500 text-[10px]"></i>
                             <span class="text-xs font-semibold text-orange-700">Inherited from Measurement</span>

@@ -294,10 +294,23 @@
                     return;
                 }
             }
-            // 首次打开：从 Supabase 加载
-            if (!_step4DbLoaded[projectId] && typeof NestopiaDB !== 'undefined' && NestopiaDB.isConnected()) {
+            // ★ 首次打开：先加载 measurement 数据，再加载 step4 配置
+            if (!_step4DbLoaded[projectId]) {
                 _step4DbLoaded[projectId] = true;
-                loadStep4FromDB(projectId).then(function(dbData) {
+                // 链式加载: measurement → step4 state reset → step4 DB config → refresh
+                var loadMeas = (typeof ensureMeasurementLoaded === 'function')
+                    ? ensureMeasurementLoaded(projectId)
+                    : Promise.resolve();
+                loadMeas.then(function() {
+                    // measurement 数据就绪，重建 step4 state 以读取最新 openings
+                    delete step4QuotationState[projectId];
+                    getStep4State(projectId);
+                    // 加载 step4 DB 配置（SKU 选择、折扣等用户偏好）
+                    if (typeof NestopiaDB !== 'undefined' && NestopiaDB.isConnected()) {
+                        return loadStep4FromDB(projectId);
+                    }
+                    return null;
+                }).then(function(dbData) {
                     if (dbData && dbData.step4State && typeof dbData.step4State === 'object') {
                         var state = getStep4State(projectId);
                         var s4 = dbData.step4State;
@@ -313,8 +326,9 @@
                         var proj = allProjectsData.find(function(p) { return p.id === projectId; });
                         state.costSummary = calcStep4Cost(proj, state);
                         console.log('[Quotation] Step4 state loaded from Supabase for', projectId);
-                        refreshStep4Panel(projectId);
                     }
+                    refreshStep4Panel(projectId);
+                    refreshInheritedMeasurement(projectId);
                 });
             }
             panel.classList.remove('hidden');
@@ -556,6 +570,55 @@
         }
     }
 
+    // ── UI: 刷新 "Inherited from Measurement" 摘要区域 ──────
+    // 当 measurement DB 数据异步加载完成后调用，更新 opening 数量/尺寸
+    function refreshInheritedMeasurement(projectId) {
+        // 清除缓存，强制重新从 step3 读取最新 measurement 数据
+        delete step4QuotationState[projectId];
+        var state = getStep4State(projectId);
+
+        var summaryEl = document.getElementById('step4InheritedSummary_' + projectId);
+        if (!summaryEl) return;
+
+        var badge = '<div class="flex items-center gap-2 mb-2">' +
+            '<i class="fas fa-arrow-right text-orange-500 text-[10px]"></i>' +
+            '<span class="text-xs font-semibold text-orange-700">Inherited from Measurement</span>' +
+            '<span class="text-[9px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full font-medium">' +
+                state.quantity + ' opening' + (state.quantity > 1 ? 's' : '') +
+            '</span></div>';
+
+        var body = '';
+        if (state.openings && state.openings.length > 1) {
+            body = '<div class="space-y-1.5">';
+            for (var i = 0; i < state.openings.length; i++) {
+                var op = state.openings[i];
+                body += '<div class="flex items-center gap-3 text-[10px]">' +
+                    '<span class="w-4 h-4 bg-indigo-100 rounded flex items-center justify-center text-[9px] font-bold text-indigo-600">' + (i + 1) + '</span>' +
+                    '<span class="text-gray-600">' + op.widthIn + '" \u00d7 ' + op.heightIn + '"</span>' +
+                    '<span class="text-gray-500">' + op.widthMM + 'mm \u00d7 ' + op.heightMM + 'mm</span>' +
+                    '<span class="text-orange-600 font-semibold">' + op.area.toFixed(2) + ' m\u00b2</span>' +
+                    '<span class="text-[9px] text-gray-400 ml-auto">' + op.sku + '</span>' +
+                '</div>';
+            }
+            body += '<div class="border-t border-orange-200 pt-1.5 mt-1 flex items-center gap-3 text-[10px]">' +
+                '<span class="w-4 h-4"></span>' +
+                '<span class="text-gray-700 font-semibold">Total Area</span>' +
+                '<span class="text-orange-700 font-bold">' + state.totalArea.toFixed(2) + ' m\u00b2</span>' +
+            '</div></div>';
+        } else {
+            var first = state.openings ? state.openings[0] : null;
+            body = '<div class="grid grid-cols-4 gap-3 text-center">' +
+                '<div><div class="text-[10px] text-gray-500">Openings</div><div class="text-sm font-bold text-gray-800">' + state.quantity + '</div></div>' +
+                '<div><div class="text-[10px] text-gray-500">Width</div><div class="text-sm font-bold text-gray-800">' + (first ? first.widthIn : '72') + '"</div></div>' +
+                '<div><div class="text-[10px] text-gray-500">Height</div><div class="text-sm font-bold text-gray-800">' + (first ? first.heightIn : '96') + '"</div></div>' +
+                '<div><div class="text-[10px] text-gray-500">Area</div><div class="text-sm font-bold text-orange-600">' + (state.unitArea ? state.unitArea.toFixed(2) : '0.00') + ' m\u00b2</div></div>' +
+            '</div>';
+        }
+
+        summaryEl.innerHTML = badge + body;
+        console.log('[Quotation] Inherited measurement refreshed:', state.quantity, 'openings');
+    }
+
     // ── 命名空间导出 ──────────────────────────
     N.steps.step4 = {
         state:              step4QuotationState,
@@ -572,6 +635,7 @@
         updateConfig:       updateStep4Config,
         calculatePricing:   calculateStep4Pricing,
         refreshPanel:       refreshStep4Panel,
+        refreshInheritedMeasurement: refreshInheritedMeasurement,
         // Legacy compat
         toggleMode:         toggleStep4Mode,
         selectTier:         selectStep4Tier,
@@ -596,4 +660,5 @@
     window.updateStep4Config     = updateStep4Config;
     window.calculateStep4Pricing = calculateStep4Pricing;
     window.refreshStep4Panel     = refreshStep4Panel;
+    window.refreshInheritedMeasurement = refreshInheritedMeasurement;
 })();
