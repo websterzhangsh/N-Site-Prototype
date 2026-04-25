@@ -407,6 +407,11 @@
                 genBtn.classList.add('opacity-40', 'cursor-not-allowed');
             }
         }
+
+        // ★ 自动推进: 量尺完成后尝试推进到 Step 2
+        if (state.measurementComplete && typeof checkAndAdvanceZBStep === 'function') {
+            setTimeout(function() { checkAndAdvanceZBStep(projectId); }, 500);
+        }
     }
 
     function scheduleStep3Appointment(projectId) {

@@ -277,6 +277,10 @@
             refreshQuotLoadDropdown(quotCurrentProjectId);
             // 同步到 Supabase
             saveQuotListToDB(quotCurrentProjectId, list);
+            // ★ 自动推进: 报价保存后尝试推进到 Step 3
+            if (typeof checkAndAdvanceZBStep === 'function') {
+                setTimeout(function() { checkAndAdvanceZBStep(quotCurrentProjectId); }, 500);
+            }
         } catch(e) {
             showToast('Failed to save: storage full', 'error');
         }

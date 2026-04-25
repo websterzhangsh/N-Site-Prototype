@@ -455,6 +455,11 @@
         }
 
         showToast('Verification data saved successfully', 'success');
+
+        // ★ 自动推进: 验证完成后尝试推进到 Step 4
+        if (state.verificationComplete && typeof checkAndAdvanceZBStep === 'function') {
+            setTimeout(function() { checkAndAdvanceZBStep(projectId); }, 500);
+        }
     }
 
     /**

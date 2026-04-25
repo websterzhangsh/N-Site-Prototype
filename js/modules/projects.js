@@ -522,7 +522,7 @@
         const nameEl = document.getElementById('projDetailName');
         const metaEl = document.getElementById('projDetailMeta');
         if (nameEl) nameEl.textContent = project.name;
-        if (metaEl) metaEl.textContent = `${project.customer} · ${project.type} · Started ${project.startDate} · Budget $${project.budget.toLocaleString()}`;
+        if (metaEl) metaEl.textContent = `${project.customer} · ${project.type} · Started ${project.startDate}` + (project.budget ? ` · Budget $${project.budget.toLocaleString()}` : '');
         const statusEl = document.getElementById('projDetailStatus');
         const riskColors = { high: 'bg-red-50 text-red-700', medium: 'bg-amber-50 text-amber-700', low: 'bg-green-50 text-green-700' };
         if (statusEl) {
