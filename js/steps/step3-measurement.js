@@ -695,6 +695,40 @@
             + row('fa-scroll', 'Fabric', fabricSummary);
     }
 
+    /**
+     * 确保 Supabase 测量数据已加载（仅首次加载）
+     * ★ 解决 Step 3 Verification 页面 Initial Summary 显示 "No data" 的问题：
+     *   模板 HTML 同步渲染时 DB 数据尚未加载，Initial Summary 为空。
+     *   此函数在 Step 3 渲染后立即调用，加载 DB 数据并刷新 Verification 内容。
+     * @returns {Promise} — 加载完成后 resolve
+     */
+    function ensureMeasurementLoaded(projectId) {
+        if (_measurementDbLoaded[projectId]) {
+            return Promise.resolve(getStep3State(projectId));
+        }
+        if (typeof NestopiaDB === 'undefined' || !NestopiaDB.isConnected()) {
+            return Promise.resolve(null);
+        }
+        _measurementDbLoaded[projectId] = true;
+        return loadMeasurementFromDB(projectId).then(function(dbData) {
+            if (dbData && typeof dbData === 'object') {
+                var state = getStep3State(projectId);
+                if (dbData.measurementData) {
+                    Object.keys(dbData.measurementData).forEach(function(k) {
+                        state.measurementData[k] = dbData.measurementData[k];
+                    });
+                }
+                if (dbData.obstacles && Array.isArray(dbData.obstacles)) state.obstacles = dbData.obstacles;
+                if (dbData.appointmentScheduled !== undefined) state.appointmentScheduled = dbData.appointmentScheduled;
+                if (dbData.appointmentDate) state.appointmentDate = dbData.appointmentDate;
+                if (dbData.appointmentTime) state.appointmentTime = dbData.appointmentTime;
+                if (dbData.measurementComplete !== undefined) state.measurementComplete = dbData.measurementComplete;
+                console.log('[Measurement] Auto-loaded from Supabase for', projectId);
+            }
+            return getStep3State(projectId);
+        });
+    }
+
     // ── 命名空间导出 ──────────────────────────────────────────
     N.steps.step3 = {
         step3MeasurementState: step3MeasurementState,
@@ -712,7 +746,8 @@
         generateStep3DetailedDesign: generateStep3DetailedDesign,
         handleFabricSampleUpload: handleFabricSampleUpload,
         removeFabricSample: removeFabricSample,
-        updateInstallationSummary: updateInstallationSummary
+        updateInstallationSummary: updateInstallationSummary,
+        ensureMeasurementLoaded: ensureMeasurementLoaded
     };
 
     // ── 全局别名（保持向后兼容） ─────────────────────────────
@@ -732,5 +767,6 @@
     window.handleFabricSampleUpload = handleFabricSampleUpload;
     window.removeFabricSample = removeFabricSample;
     window.updateInstallationSummary = updateInstallationSummary;
+    window.ensureMeasurementLoaded = ensureMeasurementLoaded;
 
 })();

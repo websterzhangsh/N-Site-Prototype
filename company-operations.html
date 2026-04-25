@@ -4379,45 +4379,45 @@
 
     <!-- JS 模块化文件 — 按依赖顺序加载 -->
     <!-- 1. 命名空间 -->
-    <script src="js/core/namespace.js?v=b7a3e00"></script>
+    <script src="js/core/namespace.js?v=5b7b06a"></script>
     <!-- 2. 核心基础层 (Phase 2) -->
-    <script src="js/core/supabase-config.js?v=b7a3e00"></script>
-    <script src="js/core/supabase-storage.js?v=b7a3e00"></script>
-    <script src="js/core/auth.js?v=b7a3e00"></script>
-    <script src="js/core/tenant.js?v=b7a3e00"></script>
-    <script src="js/core/i18n.js?v=b7a3e00"></script>
-    <script src="js/core/router.js?v=b7a3e00"></script>
+    <script src="js/core/supabase-config.js?v=5b7b06a"></script>
+    <script src="js/core/supabase-storage.js?v=5b7b06a"></script>
+    <script src="js/core/auth.js?v=5b7b06a"></script>
+    <script src="js/core/tenant.js?v=5b7b06a"></script>
+    <script src="js/core/i18n.js?v=5b7b06a"></script>
+    <script src="js/core/router.js?v=5b7b06a"></script>
     <!-- 3. 数据层 (Phase 1) -->
-    <script src="js/data/i18n-dict.js?v=b7a3e00"></script>
-    <script src="js/data/pricing-data.js?v=b7a3e00"></script>
-    <script src="js/data/product-catalog.js?v=b7a3e00"></script>
-    <script src="js/data/step-config.js?v=b7a3e00"></script>
-    <script src="js/data/intake-fields.js?v=b7a3e00"></script>
-    <script src="js/data/seed-projects.js?v=b7a3e00"></script>
+    <script src="js/data/i18n-dict.js?v=5b7b06a"></script>
+    <script src="js/data/pricing-data.js?v=5b7b06a"></script>
+    <script src="js/data/product-catalog.js?v=5b7b06a"></script>
+    <script src="js/data/step-config.js?v=5b7b06a"></script>
+    <script src="js/data/intake-fields.js?v=5b7b06a"></script>
+    <script src="js/data/seed-projects.js?v=5b7b06a"></script>
     <!-- 4. 工具层 (Phase 3) -->
-    <script src="js/utils/helpers.js?v=b7a3e00"></script>
-    <script src="js/utils/unit-converter.js?v=b7a3e00"></script>
+    <script src="js/utils/helpers.js?v=5b7b06a"></script>
+    <script src="js/utils/unit-converter.js?v=5b7b06a"></script>
     <!-- 5. 功能模块 (Phase 3) -->
-    <script src="js/modules/orders.js?v=b7a3e00"></script>
-    <script src="js/modules/customers.js?v=b7a3e00"></script>
-    <script src="js/modules/knowledge-base.js?v=b7a3e00"></script>
-    <script src="js/modules/products.js?v=b7a3e00"></script>
-    <script src="js/modules/overview.js?v=b7a3e00"></script>
-    <script src="js/modules/projects.js?v=b7a3e00"></script>
-    <script src="js/modules/workflow.js?v=b7a3e00"></script>
+    <script src="js/modules/orders.js?v=5b7b06a"></script>
+    <script src="js/modules/customers.js?v=5b7b06a"></script>
+    <script src="js/modules/knowledge-base.js?v=5b7b06a"></script>
+    <script src="js/modules/products.js?v=5b7b06a"></script>
+    <script src="js/modules/overview.js?v=5b7b06a"></script>
+    <script src="js/modules/projects.js?v=5b7b06a"></script>
+    <script src="js/modules/workflow.js?v=5b7b06a"></script>
     <!-- 6. Agent 模块 (Phase 4) -->
-    <script src="js/agents/designer.js?v=b7a3e00"></script>
-    <script src="js/agents/pricing.js?v=b7a3e00"></script>
-    <script src="js/agents/compliance.js?v=b7a3e00"></script>
-    <script src="js/agents/customer-service.js?v=b7a3e00"></script>
+    <script src="js/agents/designer.js?v=5b7b06a"></script>
+    <script src="js/agents/pricing.js?v=5b7b06a"></script>
+    <script src="js/agents/compliance.js?v=5b7b06a"></script>
+    <script src="js/agents/customer-service.js?v=5b7b06a"></script>
     <!-- 7. Step 实现 (Phase 4) -->
-    <script src="js/steps/step2-design.js?v=b7a3e00"></script>
-    <script src="js/steps/step3-measurement.js?v=b7a3e00"></script>
-    <script src="js/steps/zb-verification.js?v=b7a3e00"></script>
-    <script src="js/steps/step4-quotation.js?v=b7a3e00"></script>
+    <script src="js/steps/step2-design.js?v=5b7b06a"></script>
+    <script src="js/steps/step3-measurement.js?v=5b7b06a"></script>
+    <script src="js/steps/zb-verification.js?v=5b7b06a"></script>
+    <script src="js/steps/step4-quotation.js?v=5b7b06a"></script>
     <!-- 8. 独立工具 (Phase 4) -->
-    <script src="js/utils/quotation-editor.js?v=b7a3e00"></script>
-    <script src="js/utils/chatbot.js?v=b7a3e00"></script>
+    <script src="js/utils/quotation-editor.js?v=5b7b06a"></script>
+    <script src="js/utils/chatbot.js?v=5b7b06a"></script>
     <script>
         // ===== Authentication (→ js/core/auth.js) =====
 
@@ -6086,6 +6086,22 @@
                 const zbStatus = getProjectStepStatus(project, stepNum, zbConfig);
                 container.classList.remove('hidden');
                 container.innerHTML = renderStepDetailHTML(zbConfig, zbStatus, stepNum, zbColor, project);
+                // ★ Step 3 (Verification): 自动从 Supabase 加载 measurement 数据并刷新 Initial Summary
+                // 解决模板同步渲染时 DB 数据尚未加载导致 'No initial measurement data' + 错误 opening 计数
+                if (stepNum === 3 && Nestopia.steps.step3 && Nestopia.steps.step3.ensureMeasurementLoaded) {
+                    Nestopia.steps.step3.ensureMeasurementLoaded(project.id).then(function() {
+                        var zv = Nestopia.steps.zbVerification;
+                        if (zv) {
+                            var verState = zv.getVerificationState(project.id);
+                            var latestInitial = zv.getInitialMeasurement(project.id);
+                            verState.initialData = JSON.parse(JSON.stringify(latestInitial));
+                            zv.rebuildVerificationContent(project.id);
+                        }
+                        if (window.updateInstallationSummary) {
+                            window.updateInstallationSummary(project.id);
+                        }
+                    });
+                }
                 expandedStep = stepNum;
                 _populateCoreActionsPanel(zbConfig, zbStatus, stepNum, zbColor);
                 container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
