@@ -4379,46 +4379,46 @@
 
     <!-- JS 模块化文件 — 按依赖顺序加载 -->
     <!-- 1. 命名空间 -->
-    <script src="js/core/namespace.js?v=af38c46"></script>
+    <script src="js/core/namespace.js?v=9fdfdc8"></script>
     <!-- 2. 核心基础层 (Phase 2) -->
-    <script src="js/core/supabase-config.js?v=af38c46"></script>
-    <script src="js/core/supabase-storage.js?v=af38c46"></script>
-    <script src="js/core/auth.js?v=af38c46"></script>
-    <script src="js/core/tenant.js?v=af38c46"></script>
-    <script src="js/core/i18n.js?v=af38c46"></script>
-    <script src="js/core/router.js?v=af38c46"></script>
+    <script src="js/core/supabase-config.js?v=9fdfdc8"></script>
+    <script src="js/core/supabase-storage.js?v=9fdfdc8"></script>
+    <script src="js/core/auth.js?v=9fdfdc8"></script>
+    <script src="js/core/tenant.js?v=9fdfdc8"></script>
+    <script src="js/core/i18n.js?v=9fdfdc8"></script>
+    <script src="js/core/router.js?v=9fdfdc8"></script>
     <!-- 3. 数据层 (Phase 1) -->
-    <script src="js/data/i18n-dict.js?v=af38c46"></script>
-    <script src="js/data/pricing-data.js?v=af38c46"></script>
-    <script src="js/data/product-catalog.js?v=af38c46"></script>
-    <script src="js/data/step-config.js?v=af38c46"></script>
-    <script src="js/data/intake-fields.js?v=af38c46"></script>
-    <script src="js/data/seed-projects.js?v=af38c46"></script>
+    <script src="js/data/i18n-dict.js?v=9fdfdc8"></script>
+    <script src="js/data/pricing-data.js?v=9fdfdc8"></script>
+    <script src="js/data/product-catalog.js?v=9fdfdc8"></script>
+    <script src="js/data/step-config.js?v=9fdfdc8"></script>
+    <script src="js/data/intake-fields.js?v=9fdfdc8"></script>
+    <script src="js/data/seed-projects.js?v=9fdfdc8"></script>
     <!-- 4. 工具层 (Phase 3) -->
-    <script src="js/utils/helpers.js?v=af38c46"></script>
-    <script src="js/utils/unit-converter.js?v=af38c46"></script>
+    <script src="js/utils/helpers.js?v=9fdfdc8"></script>
+    <script src="js/utils/unit-converter.js?v=9fdfdc8"></script>
     <!-- 5. 功能模块 (Phase 3) -->
-    <script src="js/modules/orders.js?v=af38c46"></script>
-    <script src="js/modules/customers.js?v=af38c46"></script>
-    <script src="js/modules/knowledge-base.js?v=af38c46"></script>
-    <script src="js/modules/products.js?v=af38c46"></script>
-    <script src="js/modules/overview.js?v=af38c46"></script>
-    <script src="js/modules/projects.js?v=af38c46"></script>
-    <script src="js/modules/workflow.js?v=af38c46"></script>
+    <script src="js/modules/orders.js?v=9fdfdc8"></script>
+    <script src="js/modules/customers.js?v=9fdfdc8"></script>
+    <script src="js/modules/knowledge-base.js?v=9fdfdc8"></script>
+    <script src="js/modules/products.js?v=9fdfdc8"></script>
+    <script src="js/modules/overview.js?v=9fdfdc8"></script>
+    <script src="js/modules/projects.js?v=9fdfdc8"></script>
+    <script src="js/modules/workflow.js?v=9fdfdc8"></script>
     <!-- 6. Agent 模块 (Phase 4) -->
-    <script src="js/agents/designer.js?v=af38c46"></script>
-    <script src="js/agents/pricing.js?v=af38c46"></script>
-    <script src="js/agents/compliance.js?v=af38c46"></script>
-    <script src="js/agents/customer-service.js?v=af38c46"></script>
+    <script src="js/agents/designer.js?v=9fdfdc8"></script>
+    <script src="js/agents/pricing.js?v=9fdfdc8"></script>
+    <script src="js/agents/compliance.js?v=9fdfdc8"></script>
+    <script src="js/agents/customer-service.js?v=9fdfdc8"></script>
     <!-- 7. Step 实现 (Phase 4) -->
-    <script src="js/steps/step2-design.js?v=af38c46"></script>
-    <script src="js/steps/step3-measurement.js?v=af38c46"></script>
-    <script src="js/steps/zb-verification.js?v=af38c46"></script>
-    <script src="js/steps/step4-quotation.js?v=af38c46"></script>
+    <script src="js/steps/step2-design.js?v=9fdfdc8"></script>
+    <script src="js/steps/step3-measurement.js?v=9fdfdc8"></script>
+    <script src="js/steps/zb-verification.js?v=9fdfdc8"></script>
+    <script src="js/steps/step4-quotation.js?v=9fdfdc8"></script>
     <!-- 8. 独立工具 (Phase 4) -->
-    <script src="js/utils/quotation-editor.js?v=af38c46"></script>
-    <script src="js/utils/step-progress.js?v=af38c46"></script>
-    <script src="js/utils/chatbot.js?v=af38c46"></script>
+    <script src="js/utils/quotation-editor.js?v=9fdfdc8"></script>
+    <script src="js/utils/step-progress.js?v=9fdfdc8"></script>
+    <script src="js/utils/chatbot.js?v=9fdfdc8"></script>
     <script>
         // ===== Authentication (→ js/core/auth.js) =====
 
@@ -7111,35 +7111,11 @@
                 const isSR = project.type === 'Sunroom';
                 const isPG = project.type === 'Pergola';
 
-                // ---- Zip Blinds pricing panel (v2.0 SKU Catalog) ----
+                // ---- Zip Blinds pricing panel (v3.0 Profit Calculation Engine) ----
                 if (isZB) {
-                    const catalog = window.zbSKUCatalog || (Nestopia.data && Nestopia.data.pricing ? Nestopia.data.pricing.zbSKUCatalog : {}) || {};
-                    const skuKeys = Object.keys(catalog);
-                    const skuCards = skuKeys.map(key => {
-                        const sku = catalog[key];
-                        const sel = step4State.selectedSKU === key;
-                        return `<div onclick="Nestopia.steps.step4.selectSKU('${project.id}','${key}')" data-sku="${key}" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center relative ${sel ? 'border-orange-500 bg-orange-50 shadow-sm' : 'border-gray-200 hover:border-orange-300 bg-white'}">
-                            <div class="text-[10px] font-bold text-gray-800">${key}</div>
-                            <div class="text-[9px] text-gray-500">${sku.type === 'motorized' ? 'Motorized' : 'Manual'} | \u2264${(sku.maxHeightMM/1000).toFixed(1)}m</div>
-                            <div class="sku-price text-xs font-semibold ${sel ? 'text-orange-600' : 'text-gray-600'} mt-1">\u00a5${sku.price}/m\u00b2</div>
-                        </div>`;
-                    }).join('');
-
                     const cs = step4State.costSummary;
-                    const currOptions = ['RMB', 'USD', 'SGD'];
-
-                    // Initial cost breakdown HTML (will be dynamically updated by refreshStep4Panel)
-                    let initCostHTML = '';
-                    if (cs.perOpeningCosts && cs.perOpeningCosts.length > 0) {
-                        cs.perOpeningCosts.forEach(poc => {
-                            initCostHTML += `<div class="flex justify-between text-[10px]"><span class="text-gray-600">#${poc.idx} ${poc.skuName} (${poc.area.toFixed(2)}m\u00b2)</span><span class="font-medium text-gray-800">\u00a5${Math.round(poc.amount).toLocaleString()}</span></div>`;
-                        });
-                    }
-                    initCostHTML += `<div class="border-t border-gray-200 pt-1 mt-1 flex justify-between text-[10px]"><span class="text-gray-600 font-medium">Product Subtotal</span><span class="font-medium text-gray-800">\u00a5${Math.round(cs.productSubtotal).toLocaleString()}</span></div>`;
-                    if (cs.discountAmt > 0) {
-                        initCostHTML += `<div class="flex justify-between text-[10px]"><span class="text-green-600">Discount (${cs.discountPct}%)</span><span class="font-medium text-green-600">-\u00a5${Math.round(cs.discountAmt).toLocaleString()}</span></div>`;
-                    }
-                    initCostHTML += `<div class="border-t border-gray-300 pt-1.5 mt-1.5 flex justify-between text-xs"><span class="font-bold text-gray-800">Total COGS</span><span class="font-bold text-orange-600">\u00a5${Math.round(cs.totalCostRMB).toLocaleString()}</span></div>`;
+                    const bp = step4State.businessParams || {};
+                    const currOptions = ['SGD', 'RMB', 'USD'];
 
                     return `
                     <div class="bg-white rounded-lg border border-gray-100 p-4">
@@ -7149,8 +7125,8 @@
                                     <i class="fas fa-calculator text-orange-600 text-sm"></i>
                                 </div>
                                 <div>
-                                    <span class="text-sm font-semibold text-gray-700">Pricing & Quotation Engine</span>
-                                    <span class="text-[10px] text-orange-500 ml-2 font-medium">SKU Catalog Pricing (RMB)</span>
+                                    <span class="text-sm font-semibold text-gray-700">Profit Calculation Engine</span>
+                                    <span class="text-[10px] text-orange-500 ml-2 font-medium">v3.0</span>
                                 </div>
                             </div>
                             <button id="step4LaunchBtn_${project.id}" onclick="Nestopia.steps.step4.togglePanel('${project.id}')" class="px-3 py-1.5 bg-orange-600 text-white text-xs font-semibold rounded-lg hover:bg-orange-700 transition flex items-center gap-1.5 shadow-sm">
@@ -7158,7 +7134,7 @@
                             </button>
                         </div>
 
-                        <!-- Summary from measurement (per-opening) -->
+                        <!-- Inherited from Measurement -->
                         <div id="step4InheritedSummary_${project.id}" class="mb-4 p-3 bg-orange-50/50 rounded-lg border border-orange-100">
                             <div class="flex items-center gap-2 mb-2">
                                 <i class="fas fa-arrow-right text-orange-500 text-[10px]"></i>
@@ -7191,116 +7167,80 @@
 
                         <!-- Expandable Quotation Panel -->
                         <div id="step4QuotationPanel_${project.id}" class="hidden" style="animation: fadeInSlide 0.3s ease">
-                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                                <!-- Left: Product Configuration -->
-                                <div class="space-y-4">
-                                    <!-- SKU Product Selection -->
-                                    <div>
-                                        <div class="flex items-center gap-2 mb-2">
-                                            <span class="text-xs font-semibold text-gray-700"><i class="fas fa-barcode text-orange-400 mr-1.5"></i>Product SKU</span>
-                                            <span class="text-[9px] text-gray-400 ml-auto">Auto-selected by height & motor</span>
-                                        </div>
-                                        <div class="grid grid-cols-2 gap-2" id="step4SKUCards_${project.id}">${skuCards}</div>
-                                    </div>
 
-                                    <!-- Currency + Exchange Rate -->
-                                    <div class="grid grid-cols-2 gap-2">
-                                        <div class="space-y-1">
-                                            <label class="text-[10px] font-medium text-gray-500 flex items-center gap-1.5"><i class="fas fa-coins text-orange-400"></i>Display Currency</label>
-                                            <select id="step4Currency_${project.id}" class="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-orange-200 focus:border-orange-400 bg-white" onchange="updateStep4Config('${project.id}')">
-                                                ${currOptions.map(c => `<option value="${c}" ${step4State.currency === c ? 'selected' : ''}>${c === 'RMB' ? 'RMB (\u00a5)' : c === 'USD' ? 'USD ($)' : 'SGD (S$)'}</option>`).join('')}
-                                            </select>
-                                        </div>
-                                        <div class="space-y-1">
-                                            <label class="text-[10px] font-medium text-gray-500 flex items-center gap-1.5"><i class="fas fa-exchange-alt text-orange-400"></i>Exchange Rate</label>
-                                            <input id="step4ExRate_${project.id}" type="number" step="0.01" min="0.01" value="${step4State.exchangeRate}" class="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-orange-200 focus:border-orange-400 bg-white" onchange="updateStep4Config('${project.id}')" ${step4State.currency === 'RMB' ? 'disabled' : ''}>
-                                        </div>
-                                    </div>
-
-                                    <!-- Quantity + Discount -->
-                                    <div class="grid grid-cols-2 gap-2">
-                                        <div class="space-y-1">
-                                            <label class="text-[10px] font-medium text-gray-500"><i class="fas fa-th-large text-orange-400 mr-1"></i>Openings</label>
-                                            <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden">
-                                                <button onclick="Nestopia.steps.step4.adjustQty('${project.id}',-1)" class="px-2.5 py-1.5 bg-gray-50 hover:bg-gray-100 text-gray-600 text-xs font-bold">\u2212</button>
-                                                <span id="step4Qty_${project.id}" class="flex-1 text-center text-xs font-bold text-gray-800">${step4State.quantity}</span>
-                                                <button onclick="Nestopia.steps.step4.adjustQty('${project.id}',1)" class="px-2.5 py-1.5 bg-gray-50 hover:bg-gray-100 text-gray-600 text-xs font-bold">+</button>
-                                            </div>
-                                        </div>
-                                        <div class="space-y-1">
-                                            <label class="text-[10px] font-medium text-gray-500"><i class="fas fa-percent text-orange-400 mr-1"></i>Discount</label>
-                                            <select id="step4Discount_${project.id}" class="w-full px-2 py-1.5 border border-gray-200 rounded-lg text-xs" onchange="updateStep4Config('${project.id}')">
-                                                <option value="0" ${step4State.discount === 0 ? 'selected' : ''}>No discount</option>
-                                                <option value="5" ${step4State.discount === 5 ? 'selected' : ''}>5% Dealer</option>
-                                                <option value="10" ${step4State.discount === 10 ? 'selected' : ''}>10% Volume</option>
-                                                <option value="15" ${step4State.discount === 15 ? 'selected' : ''}>15% Partner</option>
-                                                <option value="20" ${step4State.discount === 20 ? 'selected' : ''}>20% Special</option>
-                                            </select>
-                                        </div>
+                            <!-- Business Parameters (Collapsible) -->
+                            <div class="mb-4 p-3 bg-gray-50/50 rounded-lg border border-gray-100">
+                                <div class="flex items-center justify-between mb-2 cursor-pointer" onclick="var el=document.getElementById('step4ParamsGrid_${project.id}');el.classList.toggle('hidden');var ic=this.querySelector('i.fa-chevron-down,i.fa-chevron-up');if(ic){ic.classList.toggle('fa-chevron-down');ic.classList.toggle('fa-chevron-up')}">
+                                    <span class="text-[10px] font-semibold text-gray-600"><i class="fas fa-sliders-h text-orange-400 mr-1.5"></i>Business Parameters</span>
+                                    <div class="flex items-center gap-2">
+                                        <button onclick="event.stopPropagation();Nestopia.steps.step4.resetParams('${project.id}')" class="text-[9px] text-gray-400 hover:text-orange-600" title="Reset to defaults"><i class="fas fa-undo"></i></button>
+                                        <i class="fas fa-chevron-down text-[9px] text-gray-400 transition"></i>
                                     </div>
                                 </div>
-
-                                <!-- Right: Cost Breakdown + Quote Options -->
-                                <div class="space-y-4">
-                                    <!-- Cost Breakdown -->
-                                    <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                                        <div class="flex items-center justify-between mb-2">
-                                            <span class="text-xs font-semibold text-gray-700"><i class="fas fa-receipt text-orange-500 mr-1.5"></i>Cost Breakdown (RMB)</span>
-                                            <button onclick="Nestopia.steps.step4.calculatePricing('${project.id}')" class="text-[10px] text-orange-600 font-medium hover:text-orange-800"><i class="fas fa-sync-alt mr-1"></i>Recalculate</button>
-                                        </div>
-                                        <div class="space-y-1.5" id="step4CostBreakdown_${project.id}">
-                                            ${initCostHTML}
-                                        </div>
-                                    </div>
-
-                                    <!-- Smart Quote Options -->
+                                <div id="step4ParamsGrid_${project.id}" class="grid grid-cols-3 gap-x-3 gap-y-2 hidden">
                                     <div>
-                                        <div class="flex items-center gap-2 mb-2">
-                                            <span class="text-xs font-semibold text-gray-700"><i class="fas fa-tags text-orange-400 mr-1.5"></i>Smart Quote Options</span>
-                                            <span class="text-[9px] text-gray-400">COGS \u00d7 margin</span>
-                                        </div>
-                                        <div class="grid grid-cols-3 gap-2" id="step4QuoteCards_${project.id}">
-                                            <div onclick="Nestopia.steps.step4.selectQuote('${project.id}','conservative')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center ${step4State.selectedQuote === 'conservative' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-blue-300'}">
-                                                <div class="text-[9px] text-gray-500 font-medium">Conservative</div>
-                                                <div class="text-sm font-bold ${step4State.selectedQuote === 'conservative' ? 'text-blue-700' : 'text-gray-800'}">\u00a5${cs.quoteConservative}</div>
-                                                <div class="text-[9px] text-gray-400">10% margin</div>
-                                            </div>
-                                            <div onclick="Nestopia.steps.step4.selectQuote('${project.id}','recommended')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center relative ${step4State.selectedQuote === 'recommended' ? 'border-orange-500 bg-orange-50 shadow-sm' : 'border-gray-200 hover:border-orange-300'}">
-                                                <div class="absolute -top-2 left-1/2 -translate-x-1/2 text-[8px] font-bold bg-orange-500 text-white px-2 py-0.5 rounded-full">BEST</div>
-                                                <div class="text-[9px] text-gray-500 font-medium">Recommended</div>
-                                                <div class="text-sm font-bold ${step4State.selectedQuote === 'recommended' ? 'text-orange-700' : 'text-gray-800'}">\u00a5${cs.quoteRecommended}</div>
-                                                <div class="text-[9px] text-gray-400">18% margin</div>
-                                            </div>
-                                            <div onclick="Nestopia.steps.step4.selectQuote('${project.id}','premium')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center ${step4State.selectedQuote === 'premium' ? 'border-emerald-500 bg-emerald-50' : 'border-gray-200 hover:border-emerald-300'}">
-                                                <div class="text-[9px] text-gray-500 font-medium">Premium</div>
-                                                <div class="text-sm font-bold ${step4State.selectedQuote === 'premium' ? 'text-emerald-700' : 'text-gray-800'}">\u00a5${cs.quotePremium}</div>
-                                                <div class="text-[9px] text-gray-400">35% margin</div>
-                                            </div>
-                                        </div>
+                                        <label class="text-[9px] text-gray-400 block mb-0.5">Supplier Disc.</label>
+                                        <input id="step4ParamDisc_${project.id}" type="number" step="0.01" min="0" max="1" value="${bp.supplierDiscountRate || 0.9}" class="w-full px-2 py-1 border border-gray-200 rounded text-[10px] bg-white focus:ring-1 focus:ring-orange-300" onchange="Nestopia.steps.step4.updateParam('${project.id}','supplierDiscountRate',this.value)">
                                     </div>
-
-                                    <!-- Profit Analysis Bar -->
-                                    <div id="step4ProfitBar_${project.id}" class="p-3 rounded-lg border ${cs.marginPct >= 15 ? 'bg-green-50/50 border-green-200' : cs.marginPct >= 10 ? 'bg-amber-50/50 border-amber-200' : 'bg-red-50/50 border-red-200'}">
-                                        <div class="flex items-center justify-between text-[10px] mb-1.5">
-                                            <span class="font-semibold ${cs.marginPct >= 15 ? 'text-green-700' : cs.marginPct >= 10 ? 'text-amber-700' : 'text-red-700'}"><i class="fas fa-chart-line mr-1"></i>Profit Analysis</span>
-                                            <span class="font-bold">${cs.marginPct}% margin</span>
-                                        </div>
-                                        <div class="flex items-center gap-2">
-                                            <div class="flex-1 bg-gray-200 rounded-full h-2">
-                                                <div class="h-2 rounded-full transition-all ${cs.marginPct >= 15 ? 'bg-green-500' : cs.marginPct >= 10 ? 'bg-amber-500' : 'bg-red-500'}" style="width:${Math.min(cs.marginPct * 2.5, 100)}%"></div>
-                                            </div>
-                                            <span class="text-[10px] font-bold ${cs.marginPct >= 15 ? 'text-green-700' : 'text-amber-700'}">\u00a5${cs.profit} net</span>
-                                        </div>
+                                    <div>
+                                        <label class="text-[9px] text-gray-400 block mb-0.5">Shipping Rate</label>
+                                        <input id="step4ParamShip_${project.id}" type="number" step="0.01" min="0" max="1" value="${bp.shippingCostRate || 0.30}" class="w-full px-2 py-1 border border-gray-200 rounded text-[10px] bg-white focus:ring-1 focus:ring-orange-300" onchange="Nestopia.steps.step4.updateParam('${project.id}','shippingCostRate',this.value)">
                                     </div>
-
-                                    <!-- KB Quick Reference (Quotation) -->
-                                    ${renderKBQuickRefHTML('quotation', project.id)}
-
-                                    <!-- Action Button -->
-                                    <button onclick="Nestopia.utils.quotEditor.openQuotationEditor('${project.id}')" class="w-full py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold text-xs hover:from-blue-700 hover:to-blue-800 transition shadow-md flex items-center justify-center gap-1.5">
-                                        <i class="fas fa-file-invoice-dollar"></i> Generate Quotation
-                                    </button>
+                                    <div>
+                                        <label class="text-[9px] text-gray-400 block mb-0.5">Install \u00a5/m\u00b2</label>
+                                        <input id="step4ParamInstall_${project.id}" type="number" step="1" min="0" value="${bp.installationFeePerSqm || 191}" class="w-full px-2 py-1 border border-gray-200 rounded text-[10px] bg-white focus:ring-1 focus:ring-orange-300" onchange="Nestopia.steps.step4.updateParam('${project.id}','installationFeePerSqm',this.value)">
+                                    </div>
+                                    <div>
+                                        <label class="text-[9px] text-gray-400 block mb-0.5">Market Markup</label>
+                                        <input id="step4ParamMarkup_${project.id}" type="number" step="0.01" min="1" value="${bp.marketMarkup || 2.92}" class="w-full px-2 py-1 border border-gray-200 rounded text-[10px] bg-white focus:ring-1 focus:ring-orange-300" onchange="Nestopia.steps.step4.updateParam('${project.id}','marketMarkup',this.value)">
+                                    </div>
+                                    <div>
+                                        <label class="text-[9px] text-gray-400 block mb-0.5">Pref. Discount</label>
+                                        <input id="step4ParamPref_${project.id}" type="number" step="0.01" min="0" max="1" value="${bp.preferentialDiscount || 0.50}" class="w-full px-2 py-1 border border-gray-200 rounded text-[10px] bg-white focus:ring-1 focus:ring-orange-300" onchange="Nestopia.steps.step4.updateParam('${project.id}','preferentialDiscount',this.value)">
+                                    </div>
+                                    <div>
+                                        <label class="text-[9px] text-gray-400 block mb-0.5">Accessory +%</label>
+                                        <input id="step4ParamAcc_${project.id}" type="number" step="0.01" min="0" value="${bp.accessoryMarkupRate || 0.13}" class="w-full px-2 py-1 border border-gray-200 rounded text-[10px] bg-white focus:ring-1 focus:ring-orange-300" onchange="Nestopia.steps.step4.updateParam('${project.id}','accessoryMarkupRate',this.value)">
+                                    </div>
                                 </div>
+                            </div>
+
+                            <!-- Per-Opening Details (dynamically rendered by refreshStep4Panel) -->
+                            <div id="step4OpeningsBody_${project.id}" class="mb-4">
+                                <div class="text-center text-[10px] text-gray-400 py-4"><i class="fas fa-spinner fa-spin mr-1"></i>Calculating...</div>
+                            </div>
+
+                            <!-- Summary (dynamically rendered) -->
+                            <div id="step4SummaryBody_${project.id}" class="mb-3"></div>
+
+                            <!-- Profit Bar (dynamically rendered) -->
+                            <div id="step4ProfitBar_${project.id}" class="mb-3"></div>
+
+                            <!-- Currency & Exchange Rate -->
+                            <div class="grid grid-cols-2 gap-2 mb-3">
+                                <div class="space-y-0.5">
+                                    <label class="text-[9px] text-gray-400 block"><i class="fas fa-coins text-orange-400 mr-1"></i>Display Currency</label>
+                                    <select id="step4Currency_${project.id}" class="w-full px-2 py-1.5 border border-gray-200 rounded-lg text-xs bg-white focus:ring-1 focus:ring-orange-300" onchange="updateStep4Config('${project.id}')">
+                                        ${currOptions.map(c => '<option value="' + c + '"' + (step4State.currency === c ? ' selected' : '') + '>' + (c === 'RMB' ? 'RMB (\u00a5)' : c === 'USD' ? 'USD ($)' : 'SGD (S$)') + '</option>').join('')}
+                                    </select>
+                                </div>
+                                <div class="space-y-0.5">
+                                    <label class="text-[9px] text-gray-400 block"><i class="fas fa-exchange-alt text-orange-400 mr-1"></i>Exchange Rate</label>
+                                    <input id="step4ExRate_${project.id}" type="number" step="0.0001" min="0.01" value="${step4State.exchangeRate}" class="w-full px-2 py-1.5 border border-gray-200 rounded-lg text-xs bg-white focus:ring-1 focus:ring-orange-300" onchange="updateStep4Config('${project.id}')" ${step4State.currency === 'RMB' ? 'disabled' : ''}>
+                                </div>
+                            </div>
+
+                            <!-- KB Quick Reference -->
+                            ${renderKBQuickRefHTML('quotation', project.id)}
+
+                            <!-- Action Buttons -->
+                            <div class="flex gap-2 mt-3">
+                                <button onclick="Nestopia.steps.step4.calculatePricing('${project.id}')" class="px-3 py-2 bg-gray-100 text-gray-600 rounded-lg text-xs font-medium hover:bg-gray-200 transition flex items-center gap-1.5">
+                                    <i class="fas fa-sync-alt text-[10px]"></i> Recalculate
+                                </button>
+                                <button onclick="Nestopia.utils.quotEditor.openQuotationEditor('${project.id}')" class="flex-1 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold text-xs hover:from-blue-700 hover:to-blue-800 transition shadow-md flex items-center justify-center gap-1.5">
+                                    <i class="fas fa-file-invoice-dollar"></i> Generate Quotation
+                                </button>
                             </div>
                         </div>
                     </div>`;
