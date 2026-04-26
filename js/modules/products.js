@@ -70,6 +70,14 @@
             };
         });
         console.log('[ProductCatalog] 从 zbSKUCatalog 注入 ' + Object.keys(skuCat).length + ' 个 ZB SKU 产品');
+
+        // ── 向后兼容别名：overview.js 仍使用 'zb-manual' / 'zb-motorized' ──
+        var firstKey = Object.keys(skuCat)[0]; // 默认代表 SKU（WR100A-63）
+        if (firstKey && productCatalog[firstKey]) {
+            productCatalog['zb-manual']    = productCatalog[firstKey];
+            productCatalog['zb-motorized'] = productCatalog[firstKey];
+            console.log('[ProductCatalog] 已添加 zb-manual / zb-motorized 向后兼容别名 →', firstKey);
+        }
     }
     _injectZBProducts();
 
