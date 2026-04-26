@@ -25,21 +25,44 @@
     var quotAccessoriesData = [];
     var quotCurrentProjectId = null;
 
-    // Zip Blinds unit price lookup (RMB per m^2) - based on product catalog pricing tiers
-    var zbPriceLookup = {
-        'WR110A-78 \u7535\u52a8\u9632\u98ce\u5377\u5e18 / Motorized Zip Blinds (\u22645.5m)': { defaultPrice: 680, model: 'WR110A-78' },
-        'WR110B-63 \u7535\u52a8\u9632\u98ce\u5377\u5e18 / Motorized Zip Blinds (\u22643.8m)': { defaultPrice: 580, model: 'WR110B-63' },
-        'WR85 \u624b\u52a8\u9632\u98ce\u5377\u5e18 / Manual Zip Blinds (\u22643.8m)':       { defaultPrice: 380, model: 'WR85' },
-        'WR85 \u624b\u52a8\u9632\u98ce\u5377\u5e18 / Manual Zip Blinds (\u22645.5m)':       { defaultPrice: 450, model: 'WR85' }
-    };
+    // ★ v3.0: ZB price lookup — dynamically built from zbSKUCatalog (pricing-data.js)
+    // Uses preferential selling price (市场价 × 优惠折扣) as consumer-facing unit price
+    var _pricingData = (window.Nestopia && Nestopia.data && Nestopia.data.pricing) ? Nestopia.data.pricing : {};
+    var _skuCatalog = _pricingData.zbSKUCatalog || {};
+    var _driveCatalog = _pricingData.zbDriveSystemCatalog || {};
+    var _bizParams = _pricingData.zbBusinessParams || {};
+    var _calcOpeningCostFn = _pricingData.calcOpeningCost || null;
+    var _calcAccPriceFn = _pricingData.calcAccessoryPrice || function(p) { return Math.round(p * 1.13); };
+
+    var zbPriceLookup = {};
+    var _skuKeys = Object.keys(_skuCatalog);
+    _skuKeys.forEach(function(key) {
+        var sku = _skuCatalog[key];
+        // Calculate preferential unit price for a typical 6m² opening
+        var prefUnit = 0;
+        if (_calcOpeningCostFn) {
+            var oc = _calcOpeningCostFn(key, 2000, 3000, _bizParams); // 2m × 3m = 6m²
+            prefUnit = oc ? oc.prefUnit : sku.priceTiers[0].price;
+        } else {
+            prefUnit = sku.priceTiers[0].price;
+        }
+        var label = key + ' ' + sku.nameZh + ' / ' + sku.name;
+        zbPriceLookup[label] = { defaultPrice: Math.round(prefUnit), model: key, skuKey: key };
+    });
     var zbProductNames = Object.keys(zbPriceLookup);
 
-    var zbAccessoryPresets = [
-        { name: '\u5965\u79d145-20N\u7535\u673a \u914d\u53cc\u9891\u9065\u63a7\u5668 / A-OK Motor 45-20N w/ remote', spec: '', defaultPrice: 350 },
-        { name: 'WR120 \u8f6c\u89d2\u7acb\u67f1 / Corner Post', spec: '', defaultPrice: 180 },
-        { name: '\u65b9\u7ba1\u7acb\u67f1 / Square Tube Post', spec: '', defaultPrice: 120 },
-        { name: '\u5b89\u88c5\u8d39 / Installation Fee', spec: '', defaultPrice: 0 }
-    ];
+    // ★ v3.0: Accessory presets — drive systems from catalog + common accessories
+    var zbAccessoryPresets = [];
+    Object.keys(_driveCatalog).forEach(function(dk) {
+        var d = _driveCatalog[dk];
+        var sellPrice = _calcAccPriceFn(d.price, _bizParams);
+        zbAccessoryPresets.push({ name: dk + ' ' + d.nameZh + ' / ' + d.name, spec: d.type, defaultPrice: sellPrice });
+    });
+    // Common non-drive accessories
+    zbAccessoryPresets.push({ name: 'WR120 \u8f6c\u89d2\u7acb\u67f1 / Corner Post', spec: '', defaultPrice: _calcAccPriceFn(180, _bizParams) });
+    zbAccessoryPresets.push({ name: '\u65b9\u7ba1\u7acb\u67f1 / Square Tube Post', spec: '', defaultPrice: _calcAccPriceFn(120, _bizParams) });
+    zbAccessoryPresets.push({ name: '\u591a\u9891\u9065\u63a7\u5668 / Multi-Frequency Remote', spec: '', defaultPrice: _calcAccPriceFn(45, _bizParams) });
+    zbAccessoryPresets.push({ name: '\u5b89\u88c5\u8d39 / Installation Fee', spec: '', defaultPrice: 0 });
 
     // ===== Multi-Product-Type Quotation Support =====
     var sunroomPriceLookup = {
@@ -145,9 +168,14 @@
         document.getElementById('quotRemarks').value = getQuotText('defaultRemarks');
         var currSel = document.getElementById('quotCurrency');
         if (currSel) {
-            currSel.innerHTML = '<option value="RMB">' + getQuotText('optRMB') + '</option>' +
-                '<option value="SGD">' + getQuotText('optSGD') + '</option>' +
+            currSel.innerHTML = '<option value="SGD">' + getQuotText('optSGD') + '</option>' +
+                '<option value="RMB">' + getQuotText('optRMB') + '</option>' +
                 '<option value="USD">' + getQuotText('optUSD') + '</option>';
+        }
+        // Default exchange rate to SGD
+        var rateEl = document.getElementById('quotExchangeRate');
+        if (rateEl && (!rateEl.value || rateEl.value === '1' || rateEl.value === '5.3937')) {
+            rateEl.value = (_pricingData.defaultExchangeRates && _pricingData.defaultExchangeRates.SGD) || 5.3612;
         }
 
         // Auto-fill client info (handle both data source field names)
@@ -156,18 +184,44 @@
         document.getElementById('quotClientPhone').value = project.phone || project.customerPhone || '';
         document.getElementById('quotCSRep').value = '';
 
-        // Populate line items from per-opening measurement data
+        // Populate line items from per-opening measurement data (v3.0)
         var step4St = typeof getStep4State === 'function' ? getStep4State(projectId) : null;
         if (step4St && step4St.openings && step4St.openings.length > 0 && quotProductType === 'zipblinds') {
             quotLineItemsData = step4St.openings.map(function(op, idx) {
-                var wMM = Math.round(op.widthIn * 25.4);   // inches to mm
+                var wMM = Math.round(op.widthIn * 25.4);
                 var hMM = Math.round(op.heightIn * 25.4);
-                return { product: getQuotProductNames()[0], width: wMM, height: hMM, unitPrice: getQuotPriceLookup()[getQuotProductNames()[0]].defaultPrice, qty: 1 };
+                var skuKey = op.sku || 'WR100A-63';
+                // Find matching product name in zbPriceLookup
+                var matchedName = getQuotProductNames()[0];
+                var allNames = getQuotProductNames();
+                for (var pn = 0; pn < allNames.length; pn++) {
+                    var lk = getQuotPriceLookup()[allNames[pn]];
+                    if (lk && lk.skuKey === skuKey) { matchedName = allNames[pn]; break; }
+                }
+                var unitPrice = getQuotPriceLookup()[matchedName] ? getQuotPriceLookup()[matchedName].defaultPrice : 0;
+                // Use per-opening preferential unit price if available from cost summary
+                var cs = step4St.costSummary;
+                if (cs && cs.perOpeningCosts && cs.perOpeningCosts[idx]) {
+                    unitPrice = Math.round(cs.perOpeningCosts[idx].prefUnit);
+                }
+                return { product: matchedName, width: wMM, height: hMM, unitPrice: unitPrice, qty: 1 };
+            });
+            // Auto-add drive systems as accessories
+            quotAccessoriesData = [];
+            step4St.openings.forEach(function(op, idx) {
+                var driveKey = op.driveSystem || 'AOK-45';
+                var driveData = _driveCatalog[driveKey];
+                if (driveData) {
+                    var driveName = driveKey + ' ' + driveData.nameZh + ' / ' + driveData.name;
+                    var bp = step4St.businessParams || _bizParams;
+                    var sellPrice = _calcAccPriceFn(driveData.price, bp);
+                    quotAccessoriesData.push({ name: driveName, spec: '#' + (idx + 1), unitPrice: sellPrice, qty: 1 });
+                }
             });
         } else {
             quotLineItemsData = [{ product: getQuotProductNames()[0], width: 3000, height: 2500, unitPrice: getQuotPriceLookup()[getQuotProductNames()[0]].defaultPrice, qty: 1 }];
+            quotAccessoriesData = [];
         }
-        quotAccessoriesData = [];
         renderQuotLineItems();
         renderQuotAccessories();
         updateQuotTotals();
@@ -640,6 +694,225 @@
         }
     }
 
+    // ══════════════════════════════════════════════════════════
+    //  Consumer Quotation Generator (v3.0)
+    //  简化版报价单 — 仅显示消费者所需信息（优惠价、SGD 总额）
+    //  格式参考：方小姐防风卷帘报价单20260414.xlsx
+    // ══════════════════════════════════════════════════════════
+
+    function generateConsumerQuotation(projectId) {
+        var pid = projectId || quotCurrentProjectId;
+        if (!pid) { showToast('No project selected', 'error'); return; }
+
+        var project = (typeof allProjectsData !== 'undefined') ? allProjectsData.find(function(p) { return p.id === pid; }) : null;
+        if (!project) project = workflowProjects.find(function(p) { return p.id === pid; });
+        if (!project) { showToast('Project not found', 'error'); return; }
+
+        var step4St = typeof getStep4State === 'function' ? getStep4State(pid) : null;
+        if (!step4St || !step4St.costSummary) { showToast('Please calculate quotation first', 'error'); return; }
+
+        var cs = step4St.costSummary;
+        var bp = step4St.businessParams || _bizParams;
+        var rate = step4St.exchangeRate || 5.3612;
+        var curr = step4St.currency || 'SGD';
+        var today = new Date();
+        var dateStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+
+        var tenantCfg = tenantConfigs[getCurrentTenantSlug()] || tenantConfigs['default'];
+        var logoPath = window.location.origin + '/' + tenantCfg.logo;
+        var lang = getTenantLanguage();
+        var client = project.customer || 'Customer';
+
+        // Build per-opening rows
+        var blindsRows = '';
+        var blindsTotal = 0;
+        if (cs.perOpeningCosts) {
+            cs.perOpeningCosts.forEach(function(poc, idx) {
+                var sellTotal = poc.totalPref;
+                blindsTotal += sellTotal;
+                var skuLabel = poc.skuModel || poc.sku;
+                var skuData = _skuCatalog[poc.sku];
+                var productDesc = skuData ? skuData.nameZh : skuLabel;
+                blindsRows += '<tr>' +
+                    '<td style="border:1px solid #d1d5db;padding:8px 12px;text-align:center;color:#6b7280;font-size:12px;">' + poc.idx + '</td>' +
+                    '<td style="border:1px solid #d1d5db;padding:8px 12px;font-size:12px;">' + productDesc + '<div style="font-size:10px;color:#9ca3af;">' + skuLabel + '</div></td>' +
+                    '<td style="border:1px solid #d1d5db;padding:8px 12px;text-align:center;font-size:12px;">' + poc.widthMM + ' \u00d7 ' + poc.heightMM + '</td>' +
+                    '<td style="border:1px solid #d1d5db;padding:8px 12px;text-align:center;font-size:12px;">' + poc.area.toFixed(2) + '</td>' +
+                    '<td style="border:1px solid #d1d5db;padding:8px 12px;text-align:center;font-size:12px;">' + poc.billedArea.toFixed(2) + '</td>' +
+                    '<td style="border:1px solid #d1d5db;padding:8px 12px;text-align:center;font-size:12px;">1</td>' +
+                    '<td style="border:1px solid #d1d5db;padding:8px 12px;text-align:right;font-size:12px;font-weight:600;">\u00a5' + Math.round(sellTotal).toLocaleString() + '</td>' +
+                '</tr>';
+            });
+        }
+
+        // Drive system rows
+        var driveRows = '';
+        var driveTotal = 0;
+        if (cs.perOpeningCosts) {
+            cs.perOpeningCosts.forEach(function(poc) {
+                var dd = _driveCatalog[poc.driveSystem];
+                if (!dd) return;
+                var sellP = poc.driveSell;
+                driveTotal += sellP;
+                driveRows += '<tr>' +
+                    '<td style="border:1px solid #d1d5db;padding:8px 12px;text-align:center;color:#6b7280;font-size:12px;">' + (cs.perOpeningCosts.length + poc.idx) + '</td>' +
+                    '<td style="border:1px solid #d1d5db;padding:8px 12px;font-size:12px;" colspan="4">' + dd.nameZh + ' / ' + dd.name + ' <span style="color:#9ca3af;font-size:10px;">(#' + poc.idx + ')</span></td>' +
+                    '<td style="border:1px solid #d1d5db;padding:8px 12px;text-align:center;font-size:12px;">1</td>' +
+                    '<td style="border:1px solid #d1d5db;padding:8px 12px;text-align:right;font-size:12px;font-weight:600;">\u00a5' + Math.round(sellP).toLocaleString() + '</td>' +
+                '</tr>';
+            });
+        }
+
+        var grandRMB = blindsTotal + driveTotal;
+        var grandForeign = grandRMB / rate;
+        var foreignSymbol = curr === 'SGD' ? 'S$' : '$';
+
+        // Remarks
+        var profileColor = (document.getElementById('quotProfileColor') || {}).value || 'Coffee';
+        var fabric = (document.getElementById('quotFabric') || {}).value || 'NP4000';
+        var defaultRemarks = lang === 'en' ? [
+            'Prices include supply, delivery, and installation.',
+            'Payment terms: 50% deposit upon order confirmation, 50% upon installation completion.',
+            'Warranty: 2 years for motor, 5 years for fabric, 10 years for aluminum profile.',
+            'Delivery lead time: 4-6 weeks from order confirmation.',
+            'Prices valid for 30 days from quotation date.',
+            curr + ' exchange rate: ' + rate + ' (as of ' + dateStr + ').',
+            'Profile color: ' + profileColor + '; Fabric: ' + fabric + '.'
+        ] : [
+            '\u4ee5\u4e0a\u4ef7\u683c\u5305\u542b\u4f9b\u8d27\u3001\u8fd0\u8f93\u53ca\u5b89\u88c5 / Prices include supply, delivery, and installation.',
+            '\u4ed8\u6b3e\u65b9\u5f0f\uff1a\u786e\u8ba4\u8ba2\u5355\u65f6\u652f\u4ed850%\u5b9a\u91d1\uff0c\u5b89\u88c5\u5b8c\u6210\u540e\u652f\u4ed8\u4f59\u6b3e / Payment: 50% deposit, 50% upon completion.',
+            '\u4fdd\u4fee\u671f\uff1a\u7535\u673a2\u5e74\uff0c\u9762\u65995\u5e74\uff0c\u94dd\u578b\u6750\u67b610\u5e74 / Warranty: Motor 2yr, Fabric 5yr, Profile 10yr.',
+            '\u4ea4\u8d27\u5468\u671f\uff1a\u8ba2\u5355\u786e\u8ba4\u540e4-6\u5468 / Lead time: 4-6 weeks from confirmation.',
+            '\u62a5\u4ef7\u6709\u6548\u671f30\u5929 / Quotation valid for 30 days.',
+            curr + ' \u6c47\u7387 / Exchange rate: ' + rate + ' (' + dateStr + ')',
+            '\u578b\u6750\u989c\u8272 / Profile: ' + profileColor + '; \u9762\u6599 / Fabric: ' + fabric
+        ];
+
+        var remarksHtml = defaultRemarks.map(function(line, i) {
+            return '<div style="margin-bottom:4px;font-size:11px;color:#374151;line-height:1.6;">' + (i + 1) + '. ' + line + '</div>';
+        }).join('');
+
+        // Build consumer quotation HTML
+        var html = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>' +
+            (lang === 'en' ? 'Quotation' : '\u62a5\u4ef7\u5355 / Quotation') + ' - ' + client + '</title>' +
+            '<style>' +
+            '@page { size: A4; margin: 15mm 12mm; }' +
+            'body { font-family: "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif; margin: 0; padding: 24px 32px; color: #111827; font-size: 13px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }' +
+            'table { border-collapse: collapse; width: 100%; }' +
+            '.header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 3px solid #ea580c; }' +
+            '.header-logo { width: 56px; height: 56px; object-fit: contain; border-radius: 8px; }' +
+            '.header-text { flex: 1; }' +
+            '.header-title { font-size: 18px; font-weight: 700; color: #111827; }' +
+            '.header-subtitle { font-size: 15px; font-weight: 600; color: #ea580c; margin-top: 2px; }' +
+            '.header-date { text-align: right; font-size: 11px; color: #6b7280; }' +
+            '.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 24px; margin-bottom: 18px; font-size: 12px; }' +
+            '.info-grid .label { font-weight: 600; color: #374151; }' +
+            '.info-grid .value { color: #111827; }' +
+            '.total-box { margin-top: 2px; padding: 14px 16px; background: linear-gradient(135deg, #fff7ed, #fef3c7); border: 2px solid #ea580c; border-radius: 10px; text-align: center; }' +
+            '.total-amount { font-size: 22px; font-weight: 800; color: #ea580c; }' +
+            '.total-sub { font-size: 12px; color: #6b7280; margin-top: 4px; }' +
+            '.remarks-box { margin-top: 16px; padding: 12px 16px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; }' +
+            '.remarks-title { font-size: 11px; font-weight: 600; color: #92400e; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }' +
+            '.footer { margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 12px; color: #374151; }' +
+            '.sig-line { margin-top: 40px; border-top: 1px solid #d1d5db; padding-top: 4px; font-size: 10px; color: #9ca3af; }' +
+            '@media print { .no-print { display: none !important; } body { padding: 0; } }' +
+            '@media screen { body { max-width: 800px; margin: 0 auto; background: #f9fafb; } }' +
+            '</style></head><body>' +
+
+            // Header
+            '<div class="header">' +
+            '<img src="' + logoPath + '" class="header-logo" onerror="this.style.display=\'none\'">' +
+            '<div class="header-text">' +
+            '<div class="header-title">' + tenantCfg.name + '</div>' +
+            '<div class="header-subtitle">' + (lang === 'en' ? 'Zip Blinds Quotation' : '\u9632\u98ce\u5377\u5e18\u62a5\u4ef7\u5355 / Zip Blinds Quotation') + '</div>' +
+            '</div>' +
+            '<div class="header-date">' + (lang === 'en' ? 'Date' : '\u65e5\u671f / Date') + ': ' + dateStr + '<br>Ref: ' + project.id + '</div>' +
+            '</div>' +
+
+            // Client info
+            '<div class="info-grid">' +
+            '<div><span class="label">' + (lang === 'en' ? 'Client: ' : '\u5ba2\u6237 / Client: ') + '</span><span class="value">' + client + '</span></div>' +
+            '<div><span class="label">' + (lang === 'en' ? 'Project: ' : '\u9879\u76ee / Project: ') + '</span><span class="value">' + project.name + '</span></div>' +
+            '<div><span class="label">' + (lang === 'en' ? 'Contact: ' : '\u8054\u7cfb\u7535\u8bdd / Contact: ') + '</span><span class="value">' + (project.phone || project.customerPhone || '') + '</span></div>' +
+            '<div><span class="label">' + (lang === 'en' ? 'Openings: ' : '\u5f00\u53e3\u6570 / Openings: ') + '</span><span class="value">' + (step4St.quantity || 1) + '</span></div>' +
+            '</div>' +
+
+            // Product table
+            '<table><thead><tr style="background:#f3f4f6;">' +
+            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:10px;color:#6b7280;width:32px;">#</th>' +
+            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:left;font-size:10px;color:#6b7280;">' + (lang === 'en' ? 'Product' : '\u4ea7\u54c1 / Product') + '</th>' +
+            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:10px;color:#6b7280;width:100px;">' + (lang === 'en' ? 'W \u00d7 H (mm)' : '\u5bbd\u00d7\u9ad8 / W\u00d7H (mm)') + '</th>' +
+            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:10px;color:#6b7280;width:55px;">' + (lang === 'en' ? 'Area m\u00b2' : '\u9762\u79ef m\u00b2') + '</th>' +
+            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:10px;color:#6b7280;width:65px;">' + (lang === 'en' ? 'Billed m\u00b2' : '\u8ba1\u4ef7 m\u00b2') + '</th>' +
+            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:10px;color:#6b7280;width:40px;">' + (lang === 'en' ? 'Qty' : '\u6570\u91cf') + '</th>' +
+            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:right;font-size:10px;color:#6b7280;width:80px;">' + (lang === 'en' ? 'Amount (\u00a5)' : '\u91d1\u989d (\u00a5)') + '</th>' +
+            '</tr></thead><tbody>' +
+
+            blindsRows +
+
+            // Subtotal for blinds
+            '<tr style="background:#f9fafb;">' +
+            '<td style="border:1px solid #d1d5db;padding:8px 12px;font-size:11px;" colspan="6"><strong>' + (lang === 'en' ? 'Blinds Subtotal' : '\u5377\u5e18\u5c0f\u8ba1 / Blinds Subtotal') + '</strong></td>' +
+            '<td style="border:1px solid #d1d5db;padding:8px 12px;text-align:right;font-weight:600;font-size:12px;">\u00a5' + Math.round(blindsTotal).toLocaleString() + '</td></tr>' +
+
+            driveRows +
+
+            // Grand Total in RMB
+            '<tr style="background:#eff6ff;">' +
+            '<td style="border:1px solid #d1d5db;padding:10px 12px;font-weight:700;font-size:12px;" colspan="6">' + (lang === 'en' ? 'Total (RMB)' : '\u603b\u8ba1 / Total (RMB)') + '</td>' +
+            '<td style="border:1px solid #d1d5db;padding:10px 12px;text-align:right;font-weight:700;font-size:14px;color:#ea580c;">\u00a5' + Math.round(grandRMB).toLocaleString() + '</td></tr>' +
+
+            '</tbody></table>' +
+
+            // Grand Total box (SGD)
+            (curr !== 'RMB' ? '<div class="total-box">' +
+            '<div style="font-size:11px;color:#6b7280;margin-bottom:4px;">' + (lang === 'en' ? 'Total in ' + curr : '\u603b\u8ba1 / Total (' + curr + ')') + '</div>' +
+            '<div class="total-amount">' + foreignSymbol + grandForeign.toFixed(2) + '</div>' +
+            '<div class="total-sub">' + (lang === 'en' ? 'Exchange rate' : '\u6c47\u7387') + ': 1 ' + curr + ' = \u00a5' + rate + '</div>' +
+            '</div>' : '') +
+
+            // Remarks
+            '<div class="remarks-box">' +
+            '<div class="remarks-title">' + (lang === 'en' ? 'Terms & Conditions' : '\u5907\u6ce8\u4e0e\u6761\u6b3e / Terms & Conditions') + '</div>' +
+            remarksHtml + '</div>' +
+
+            // Signature
+            '<div class="footer">' +
+            '<div><strong>' + (lang === 'en' ? 'Seller' : '\u5356\u65b9 / Seller') + ':</strong> ' + tenantCfg.name + '<div class="sig-line">' + (lang === 'en' ? 'Signature / Date' : '\u7b7e\u540d / \u65e5\u671f') + '</div></div>' +
+            '<div><strong>' + (lang === 'en' ? 'Buyer' : '\u4e70\u65b9 / Buyer') + ':</strong> ' + client + '<div class="sig-line">' + (lang === 'en' ? 'Signature / Date' : '\u7b7e\u540d / \u65e5\u671f') + '</div></div>' +
+            '</div>' +
+
+            // Print / PDF buttons
+            '<div class="no-print" style="text-align:center;margin-top:30px;">' +
+            '<button onclick="window.print()" style="padding:10px 32px;background:#ea580c;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-right:10px;"><i class="fas fa-print" style="margin-right:6px;"></i>' + (lang === 'en' ? 'Print / Save PDF' : '\u6253\u5370 / \u4fdd\u5b58PDF') + '</button>' +
+            '</div>' +
+
+            '</body></html>';
+
+        // Open in new window
+        var w = window.open('', '_blank', 'width=900,height=700,scrollbars=yes,resizable=yes');
+        if (!w) {
+            var overlay = document.createElement('div');
+            overlay.id = 'consumerQuotOverlay';
+            overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;';
+            var frame = document.createElement('iframe');
+            frame.style.cssText = 'width:90vw;height:92vh;border:none;border-radius:12px;background:#fff;box-shadow:0 25px 50px rgba(0,0,0,.25);';
+            overlay.appendChild(frame);
+            var closeBtn = document.createElement('button');
+            closeBtn.textContent = '\u2715 Close';
+            closeBtn.style.cssText = 'position:fixed;top:12px;right:24px;z-index:10000;padding:8px 20px;background:#1e293b;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;';
+            closeBtn.onclick = function() { document.body.removeChild(overlay); document.body.removeChild(closeBtn); };
+            document.body.appendChild(overlay);
+            document.body.appendChild(closeBtn);
+            frame.contentDocument.open();
+            frame.contentDocument.write(html);
+            frame.contentDocument.close();
+        } else {
+            w.document.write(html);
+            w.document.close();
+        }
+    }
+
     // ===== Namespace Export =====
     N.utils.quotEditor = {
         quotLineItemsData: quotLineItemsData,
@@ -677,7 +950,8 @@
         renderQuotLineItems: renderQuotLineItems,
         renderQuotAccessories: renderQuotAccessories,
         updateQuotTotals: updateQuotTotals,
-        previewQuotation: previewQuotation
+        previewQuotation: previewQuotation,
+        generateConsumerQuotation: generateConsumerQuotation
     };
 
     // ===== Global Aliases (backward compatibility) =====
@@ -717,4 +991,5 @@
     window.renderQuotAccessories = renderQuotAccessories;
     window.updateQuotTotals = updateQuotTotals;
     window.previewQuotation = previewQuotation;
+    window.generateConsumerQuotation = generateConsumerQuotation;
 })();

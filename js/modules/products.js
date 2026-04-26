@@ -705,6 +705,66 @@
         });
     }
 
+    // ── ZB SKU 产品专用详情渲染 ──
+    function _renderZBProductDetail(productId, p, sku) {
+        var container = document.getElementById('productDetailContent');
+        if (!container) return;
+        var driveCat = window.zbDriveSystemCatalog || {};
+        var biz = window.zbBusinessParams || {};
+        var iconSrc = productIcons[productId] || p.image;
+        var tiers = sku.priceTiers || [];
+        var lowPrice = tiers.length > 0 ? tiers[tiers.length - 1].price : 0;
+        var highPrice = tiers.length > 0 ? tiers[0].price : 0;
+
+        var drivesHTML = '';
+        if (sku.drives && sku.drives.length > 0) {
+            drivesHTML = sku.drives.map(function(dk) {
+                var d = driveCat[dk]; if (!d) return '';
+                var tl = d.type === 'motorized' ? '<span class="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-[9px] font-bold rounded">Motor</span>' :
+                         d.type === 'combo' ? '<span class="px-1.5 py-0.5 bg-purple-100 text-purple-700 text-[9px] font-bold rounded">Combo</span>' :
+                         '<span class="px-1.5 py-0.5 bg-gray-100 text-gray-600 text-[9px] font-bold rounded">Manual</span>';
+                return '<div class="flex items-center justify-between px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50/30 transition">' +
+                    '<div class="flex items-center gap-2 min-w-0"><i class="fas fa-cog text-gray-400 text-xs flex-shrink-0"></i><span class="text-sm text-gray-800 truncate">' + d.name + '</span>' + tl + '</div>' +
+                    '<span class="text-sm font-bold text-gray-900 flex-shrink-0">\u00a5' + d.price + '<span class="text-[10px] text-gray-400 font-normal ml-0.5">/set</span></span></div>';
+            }).join('');
+        }
+
+        var priceTiersHTML = tiers.map(function(t, i) {
+            var al = t.maxArea === Infinity ? '>' + (i > 0 ? tiers[i-1].maxArea : (sku.minArea||3)) + ' m\u00b2' : '\u2264' + t.maxArea + ' m\u00b2';
+            return '<div class="flex items-center justify-between px-3 py-2.5 bg-emerald-50/60 border border-emerald-200/60 rounded-lg">' +
+                '<div class="flex items-center gap-2"><span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold">' + (i+1) + '</span><span class="text-sm font-semibold text-gray-900">' + al + '</span></div>' +
+                '<span class="text-sm font-bold text-emerald-700">\u00a5' + t.price + '<span class="text-[10px] text-gray-400 font-normal ml-1">/m\u00b2</span></span></div>';
+        }).join('');
+
+        container.innerHTML =
+            '<div class="flex gap-6 mb-6"><div class="w-44 h-44 bg-white rounded-xl overflow-hidden flex-shrink-0 shadow-sm border border-gray-100 p-2"><img src="' + iconSrc + '" alt="' + p.name + '" class="w-full h-full object-contain"></div>' +
+            '<div class="flex-1 min-w-0"><div class="flex items-center gap-3 mb-1.5 flex-wrap"><h2 class="text-xl font-bold text-gray-900">' + sku.model + '</h2><span class="px-2.5 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full">Active</span><span class="px-2 py-0.5 bg-gray-100 text-gray-500 text-[10px] font-medium rounded-full">' + sku.series + '</span></div>' +
+            '<p class="text-sm text-gray-500 mb-3">' + (sku.nameZh || p.name) + '</p>' +
+            '<div class="grid grid-cols-3 gap-3 mb-3">' +
+                '<div class="bg-gray-50 rounded-lg p-2.5"><label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Housing</label><div class="text-xs font-bold text-gray-900 mt-0.5">' + sku.housing + '</div></div>' +
+                '<div class="bg-gray-50 rounded-lg p-2.5"><label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Max Size</label><div class="text-xs font-bold text-gray-900 mt-0.5">' + (sku.maxWidthMM/1000) + 'm W \u00d7 ' + (sku.maxHeightMM/1000) + 'm H</div></div>' +
+                '<div class="bg-gray-50 rounded-lg p-2.5"><label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Fabric</label><div class="text-xs font-bold text-gray-900 mt-0.5">' + sku.fabric + ' (' + sku.fabricOpenness + ')</div></div>' +
+                '<div class="bg-orange-50 rounded-lg p-2.5"><label class="text-[10px] text-orange-400 uppercase tracking-wider font-medium">Supplier Price</label><div class="text-sm font-bold text-orange-700 mt-0.5">\u00a5' + lowPrice + ' \u2013 \u00a5' + highPrice + '<span class="text-[10px] text-gray-400 font-normal">/m\u00b2</span></div></div>' +
+                (sku.samplePrice ? '<div class="bg-gray-50 rounded-lg p-2.5"><label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Sample</label><div class="text-xs font-bold text-gray-900 mt-0.5">\u00a5' + sku.samplePrice + '/pc</div></div>' : '') +
+                '<div class="bg-gray-50 rounded-lg p-2.5"><label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Min Area</label><div class="text-xs font-bold text-gray-900 mt-0.5">' + (sku.minArea||3) + ' m\u00b2</div></div>' +
+            '</div>' +
+            '<p class="text-sm text-gray-600 leading-relaxed">' + (sku.features||'') + '</p>' +
+            (sku.notes ? '<p class="text-xs text-amber-600 mt-1"><i class="fas fa-info-circle mr-1"></i>' + sku.notes + '</p>' : '') +
+            '</div></div>' +
+            '<div class="border border-gray-100 rounded-xl p-5 mb-5"><h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2"><i class="fas fa-tags text-emerald-500"></i> Pricing Tiers <span class="text-[10px] text-gray-400 font-normal">(Supplier unit price by area)</span></h4><div class="space-y-1.5 mb-3">' + priceTiersHTML + '</div>' +
+            '<p class="text-[11px] text-amber-600 bg-amber-50 rounded-lg px-3 py-2 flex items-start gap-1.5"><i class="fas fa-info-circle mt-0.5 flex-shrink-0"></i><span>Prices ex-factory (incl. tax), excl. shipping/installation. Min billable area: ' + (sku.minArea||3) + ' m\u00b2. Standard NP4000 fabric included.</span></p></div>' +
+            (drivesHTML ? '<div class="border border-gray-100 rounded-xl p-5 mb-5"><h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2"><i class="fas fa-cogs text-blue-500"></i> Compatible Drive Systems <span class="text-[10px] text-gray-400 font-normal">(' + sku.drives.length + ' options)</span></h4><div class="space-y-1.5">' + drivesHTML + '</div><p class="text-[11px] text-gray-400 mt-3"><i class="fas fa-info-circle mr-1"></i>Drive system priced per unit (RMB/set), selected during quotation.</p></div>' : '') +
+            '<div class="border border-blue-100 bg-blue-50/30 rounded-xl p-4"><h4 class="text-sm font-semibold text-blue-800 mb-2.5 flex items-center gap-2"><i class="fas fa-calculator text-blue-500"></i> Quotation Formula Parameters</h4>' +
+            '<div class="grid grid-cols-2 lg:grid-cols-3 gap-3">' +
+                '<div class="text-xs"><span class="text-gray-400">Supplier Discount:</span> <span class="font-bold text-gray-900">' + ((1-(biz.supplierDiscountRate||0.9))*100) + '% off</span></div>' +
+                '<div class="text-xs"><span class="text-gray-400">Shipping & Customs:</span> <span class="font-bold text-gray-900">' + ((biz.shippingCostRate||0.3)*100) + '%</span></div>' +
+                '<div class="text-xs"><span class="text-gray-400">Installation Fee:</span> <span class="font-bold text-gray-900">\u00a5' + (biz.installationFeePerSqm||191) + '/m\u00b2</span></div>' +
+                '<div class="text-xs"><span class="text-gray-400">Market Markup:</span> <span class="font-bold text-gray-900">\u00d7' + (biz.marketMarkup||2.92) + '</span></div>' +
+                '<div class="text-xs"><span class="text-gray-400">Default Discount:</span> <span class="font-bold text-gray-900">' + ((biz.preferentialDiscount||0.5)*100) + '%</span></div>' +
+                '<div class="text-xs"><span class="text-gray-400">Accessory Markup:</span> <span class="font-bold text-gray-900">+' + ((biz.accessoryMarkupRate||0.13)*100) + '%</span></div>' +
+            '</div></div>';
+    }
+
     // Update the product detail panel
     function updateProductDetail(productId) {
         const p = productCatalog[productId];
