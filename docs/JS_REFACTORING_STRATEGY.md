@@ -1,11 +1,11 @@
 # JS 代码重构策略
 ## company-operations.html 模块化拆分方案
 
-> **文档版本**: v1.4
+> **文档版本**: v1.5
 > **创建日期**: 2026-04-17
-> **更新日期**: 2026-04-19
+> **更新日期**: 2026-04-26
 > **状态**: ✅ Phase 0-4B 已完成，Phase 5 待执行
-> **目标文件**: `company-operations.html`（起始 16,605 行 → 当前 7,351 行）
+> **目标文件**: `company-operations.html`（起始 16,605 行 → 当前 7,670 行）
 
 ### 决策记录
 
@@ -678,14 +678,15 @@ Phase 0 --> Phase 1 --> Phase 2 --> Phase 3 --> Phase 4 --> [Phase 4B]
 
 ## 9. 执行记录（Phase 0-3）
 
-> 更新日期: 2026-04-19
+> 更新日期: 2026-04-26
 
 ### 9.1 总体进度
 
 | 指标 | 目标值 | 当前值 | 状态 |
 |------|-------|--------|------|
-| HTML 行数 | ≤ 5,000 | 7,351 | 🔄 进行中 (-55.7%) |
-| 已提取模块数 | 22 | 24 (30 文件) | ✅ 超额完成 |
+| HTML 行数 | ≤ 5,000 | 7,670 | 🔄 进行中 (-53.8%) |
+| 已提取模块数 | 22 | 24 (35 JS 文件) | ✅ 超额完成 |
+| 总 JS 代码量 | — | 14,489 行 | — |
 | onclick 命名空间覆盖率 | 100% | 70% (91/130) | 🔄 剩余为未提取的内联函数 |
 | 功能回归通过 | 100% | Phase 0-4B 均通过 | ✅ |
 | Console 零报错 | 无 | 通过 | ✅ |
@@ -717,8 +718,8 @@ Phase 0 ✅ → Phase 1 ✅ → Phase 2 ✅ → Phase 3 ✅ → Phase 4 ✅ → 
 | 步骤 | 文件 | 行数 | 命名空间 | 状态 |
 |------|------|------|---------|------|
 | 1.1 | `js/data/i18n-dict.js` | ~80 | `Nestopia.data.i18nDict` | ✅ |
-| 1.2 | `js/data/pricing-data.js` | ~60 | `Nestopia.data.pricing` | ✅ |
-| 1.3 | `js/data/product-catalog.js` | ~380 | `Nestopia.data.productCatalog` | ✅ |
+| 1.2 | `js/data/pricing-data.js` | ~~60~~ → **629** | `Nestopia.data.pricing` | ✅ 🔄 v3.0 重写 |
+| 1.3 | `js/data/product-catalog.js` | ~~380~~ → **335** | `Nestopia.data.productCatalog` | ✅ 🔄 动态ZB注入 |
 | 1.4 | `js/data/step-config.js` | ~750 | `Nestopia.data.stepConfig` | ✅ |
 | 1.5 | `js/data/intake-fields.js` | ~230 | `Nestopia.data.intakeFields` | ✅ |
 | 1.6 | `js/data/seed-projects.js` | ~1,700 | `Nestopia.data.seedProjects` | ✅ |
@@ -777,8 +778,8 @@ Phase 0 ✅ → Phase 1 ✅ → Phase 2 ✅ → Phase 3 ✅ → Phase 4 ✅ → 
 | 4.4 | `js/agents/customer-service.js` | 339 | `Nestopia.agents.cs` | ✅ |
 | 4.5 | `js/steps/step2-design.js` | 536 | `Nestopia.steps.step2` | ✅ |
 | 4.6 | `js/steps/step3-measurement.js` | 541 | `Nestopia.steps.step3` | ✅ |
-| 4.7 | `js/steps/step4-quotation.js` | 493 | `Nestopia.steps.step4` | ✅ |
-| 4.8 | `js/utils/quotation-editor.js` | 716 | `Nestopia.utils.quotEditor` | ✅ |
+| 4.7 | `js/steps/step4-quotation.js` | ~~493~~ → **1,094** | `Nestopia.steps.step4` | ✅ 🔄 v3.0 重写 |
+| 4.8 | `js/utils/quotation-editor.js` | ~~716~~ → **995** | `Nestopia.utils.quotEditor` | ✅ 🔄 v3.0 对接 |
 | 4.9 | `js/utils/chatbot.js` | 438 | `Nestopia.utils.chatbot` | ✅ |
 
 **修改脚本**: `scripts/phase4_extract_agents_steps.py`
@@ -886,5 +887,37 @@ Phase 4 完成后，`company-operations.html` 内联 `<script>` 仍有约 2,986 
 | Python 脚本锚点匹配失败 | 手动 Edit 插入 | `find_line()` 改用 `strip()` |
 | 顺序替换导致中间标记消失 | 先收集所有行号再统一替换 | 替换前在原始文件上定位全部标记 |
 | Phase 4 chatbot.js / step4 又遇 0 字节 | Agent 内用 Bash 验证 `wc -l` | 创建后必须验证非空 |
+
+### 9.11 Post-Phase 4 重大变更记录
+
+> **更新日期**: 2026-04-26
+
+Phase 4 完成后，以下模块因产品定价功能重写而发生重大变更：
+
+| Commit | 变更文件 | 变更性质 | 行数变化 |
+|--------|---------|---------|---------|
+| `9fdfdc8` | `js/data/pricing-data.js` | **完全重写 v3.0**: 从 ~60 行简单数据扩展为 629 行完整 SKU 目录（15 型号 + 12 驱动 + 6 参数 + 计算工具函数） | 60 → 629 (+569) |
+| `9fdfdc8` | `js/data/product-catalog.js` | 移除 2 个静态 ZB 条目（改由 products.js 动态注入） | 380 → 335 (-45) |
+| `9fdfdc8` | `js/modules/products.js` | 新增动态 ZB 产品注入逻辑（从 SKU 目录生成） | 969 → 1,091 (+122) |
+| `db7afd7` | `js/steps/step4-quotation.js` | **完全重写 v3.0**: 利润测算引擎，每洞口独立定价 | 493 → 1,094 (+601) |
+| `db7afd7` | `company-operations.html` | ZB 报价面板 HTML 模板替换为 v3.0 | 7,727 → 7,667 (-60) |
+| `4e73e10` | `js/utils/quotation-editor.js` | 对接 v3.0 定价 + 新增 `generateConsumerQuotation()` | 716 → 995 (+279) |
+| `4e73e10` | `company-operations.html` | 新增 Consumer Quote 按钮 | 7,667 → 7,670 (+3) |
+
+**净影响**: JS 总代码量从 ~12,000 行增至 ~14,489 行（+2,489 行），主要是 pricing-data.js 和 step4-quotation.js 的功能扩展。
+
+**新增命名空间导出**:
+- `Nestopia.data.pricing.zbSKUCatalog` — 15 个 SKU 型号数据
+- `Nestopia.data.pricing.zbDriveSystemCatalog` — 12 种驱动系统数据
+- `Nestopia.data.pricing.zbBusinessParams` — 6 个可调参数默认值
+- `Nestopia.data.pricing.calcOpeningCost()` — 单洞口成本计算
+- `Nestopia.data.pricing.calcAccessoryPrice()` — 配件价格计算
+- `Nestopia.steps.step4.selectOpeningSKU()` — 每洞口 SKU 选择
+- `Nestopia.steps.step4.selectOpeningDrive()` — 每洞口驱动选择
+- `Nestopia.steps.step4.updateParam()` — 编辑业务参数
+- `Nestopia.steps.step4.resetParams()` — 重置业务参数
+- `Nestopia.steps.step4.applyAllSKU()` — 批量应用 SKU
+- `Nestopia.steps.step4.applyAllDrive()` — 批量应用驱动
+- `Nestopia.utils.quotEditor.generateConsumerQuotation()` — 消费者报价单生成
 
 *文档已审核通过。Phase 0-4B 已完成，Phase 5（构建工具整合）为独立里程碑。*
