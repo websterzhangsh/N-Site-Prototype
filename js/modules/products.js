@@ -10,13 +10,68 @@
 
     // ===== Products Page Functions =====
     const productsState = {
-        selectedProduct: getCurrentTenantSlug() === 'omeya-sin' ? 'zb-manual' : 'sr-l-classic',
+        selectedProduct: getCurrentTenantSlug() === 'omeya-sin' ? 'WR100A-63' : 'sr-l-classic',
         filter: 'all',
         uploadVisible: false
     };
 
     // Product Catalog Data (-> js/data/product-catalog.js)
     let productCatalog = Nestopia.data.productCatalog;
+
+    // ── v3.0: 从 zbSKUCatalog 动态注入 Zip Blinds 产品条目 ──
+    function _injectZBProducts() {
+        var skuCat = window.zbSKUCatalog;
+        var driveCat = window.zbDriveSystemCatalog;
+        if (!skuCat) return;
+        var defaultImg = '/images/products/zip-blinds/zipblinds-gallery-5.jpg';
+        Object.keys(skuCat).forEach(function(key) {
+            var s = skuCat[key];
+            // 判断驱动类型
+            var hasMotor = false;
+            if (s.drives && driveCat) {
+                for (var i = 0; i < s.drives.length; i++) {
+                    var d = driveCat[s.drives[i]];
+                    if (d && d.type === 'motorized') { hasMotor = true; break; }
+                }
+            }
+            var priceRange = s.priceTiers || [];
+            var lowPrice = priceRange.length > 0 ? priceRange[priceRange.length - 1].price : 0;
+            var highPrice = priceRange.length > 0 ? priceRange[0].price : 0;
+            productCatalog[key] = {
+                name: s.name,
+                nameZh: s.nameZh,
+                category: 'blinds',
+                catLabel: 'Zip Blinds',
+                series: s.series,
+                shape: s.housing,
+                control: hasMotor ? 'Motorized' : 'Manual',
+                status: 'Active',
+                leadTime: '2-3 weeks',
+                fileCount: 0,
+                image: defaultImg,
+                desc: s.features || '',
+                components: ['Aluminum alloy housing', 'Premium outdoor fabric', 'Side track system', 'Zipper guide track'],
+                colors: 'Coffee Brown / Iron Black / Matte White / Iron Grey / Matte Black',
+                spans: [],
+                extras: [],
+                optionSet: 'blinds',
+                noteSet: 'blinds',
+                // 新增 ZB SKU 专有字段
+                _zbSKU: key,
+                _zbData: s,
+                cost: {
+                    unit: 'm\u00b2', currency: 'RMB',
+                    tiers: priceRange.map(function(t) {
+                        return { span: (t.maxArea === Infinity ? '>' + (priceRange.length > 1 ? priceRange[priceRange.length - 2].maxArea : s.minArea || 3) : '\u2264' + t.maxArea) + ' m\u00b2', priceRange: [t.price, t.price] };
+                    }),
+                    note: 'Supplier unit price (RMB/m\u00b2). Min billable area: ' + (s.minArea || 3) + ' m\u00b2.'
+                },
+                price: null
+            };
+        });
+        console.log('[ProductCatalog] 从 zbSKUCatalog 注入 ' + Object.keys(skuCat).length + ' 个 ZB SKU 产品');
+    }
+    _injectZBProducts();
 
 
     // -- Product Catalog: Supabase CRUD Helpers ---------------
@@ -654,6 +709,13 @@
     function updateProductDetail(productId) {
         const p = productCatalog[productId];
         if (!p) return;
+
+        // ── ZB SKU 产品专用详情渲染 ──
+        if (p._zbSKU && p._zbData) {
+            _renderZBProductDetail(productId, p, p._zbData);
+            return;
+        }
+
         const opts = productOptionSets[p.optionSet] || [];
         const notes = productNotes[p.noteSet] || [];
         const container = document.getElementById('productDetailContent');

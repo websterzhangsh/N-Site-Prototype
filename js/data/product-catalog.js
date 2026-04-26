@@ -276,66 +276,8 @@
                 }
             },
             // ===== ZIP BLINDS 防风卷帘 =====
-            'zb-manual': {
-                name: 'Zip Blinds Standard', category: 'blinds', catLabel: 'Zip Blinds',
-                series: 'Standard', shape: '', control: 'Manual',
-                status: 'Active', leadTime: '1-2 weeks', fileCount: 8,
-                image: '/images/products/zip-blinds/zipblinds-gallery-5.jpg',
-                desc: 'Manual zip blind system for outdoor wind and weather protection. Aluminum alloy frame with premium fabric and guide channels for secure, windproof operation.',
-                components: ['Aluminum alloy frame channels', 'Premium outdoor fabric', 'Square tube posts', 'Corner posts', 'Guide rail system'],
-                colors: 'Standard & Non-standard',
-                spans: ['≤3.8m', '≤5.5m', '>5.5m'],
-                extras: [], optionSet: 'blinds', noteSet: 'blinds',
-                cost: {
-                    unit: 'sqft', currency: 'USD',
-                    tiers: [
-                        { span: '≤3.8m', priceRange: [12, 15] },
-                        { span: '≤5.5m', priceRange: [14, 18] },
-                        { span: '>5.5m',  priceRange: [17, 22] }
-                    ],
-                    note: 'Material cost only — installation not included.'
-                },
-                price: {
-                    unit: 'sqm', currency: 'USD',
-                    mode: 'strategy',
-                    tiers: [
-                        { label: 'ZB-100 Standard', retail: [38, 45], wholesale: [31, 37] },
-                        { label: 'ZB-200 Professional', retail: [52, 62], wholesale: [43, 51] },
-                        { label: 'ZB-300 Elite', retail: [58, 85], wholesale: [48, 70] }
-                    ],
-                    note: 'Base fabric price per sqm. Drive system and surcharges applied via quotation engine.'
-                }
-            },
-            'zb-motorized': {
-                name: 'Zip Blinds Motorized', category: 'blinds', catLabel: 'Zip Blinds',
-                series: 'Motorized', shape: '', control: 'Electric Motor',
-                status: 'Active', leadTime: '2-3 weeks', fileCount: 12,
-                image: '/images/products/zip-blinds/zipblinds-gallery-1.jpg',
-                desc: 'Motorized zip blind system with electric motor for effortless remote control operation. Same premium construction with added convenience of smart motor control.',
-                components: ['Aluminum alloy frame channels', 'Premium outdoor fabric', 'Square tube posts', 'Corner posts', 'Guide rail system', 'Electric motor & control system'],
-                colors: 'Standard & Non-standard',
-                spans: ['≤3.8m', '≤5.5m', '>5.5m'],
-                extras: ['Electric motor & control system'], optionSet: 'blinds', noteSet: 'blinds',
-                cost: {
-                    unit: 'sqft', currency: 'USD',
-                    tiers: [
-                        { span: '≤3.8m', priceRange: [18, 22] },
-                        { span: '≤5.5m', priceRange: [21, 26] },
-                        { span: '>5.5m',  priceRange: [25, 32] }
-                    ],
-                    note: 'Material cost only — installation not included.'
-                },
-                price: {
-                    unit: 'sqm', currency: 'USD',
-                    mode: 'strategy',
-                    tiers: [
-                        { label: 'ZB-100 Standard', retail: [38, 45], wholesale: [31, 37] },
-                        { label: 'ZB-200 Professional', retail: [52, 62], wholesale: [43, 51] },
-                        { label: 'ZB-300 Elite', retail: [58, 85], wholesale: [48, 70] }
-                    ],
-                    note: 'Base fabric price per sqm. Motorized drive ($68-$215/unit) added in quotation engine.'
-                }
-            },
+            // v3.0: ZB SKU 产品条目在 products.js 初始化时从 zbSKUCatalog (pricing-data.js) 动态注入
+            // 不再在此静态定义，避免数据源重复
             // ===== ADU =====
             'adu-studio': {
                 name: 'Studio ADU', category: 'adu', catLabel: 'ADU',
