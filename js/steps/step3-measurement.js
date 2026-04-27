@@ -190,8 +190,17 @@
         if (!panel) return;
 
         if (panel.classList.contains('hidden')) {
-            // 打开前先从 Supabase 加载最新数据（仅首次）
-            if (!_measurementDbLoaded[projectId] && typeof NestopiaDB !== 'undefined' && NestopiaDB.isConnected()) {
+            var needsDbLoad = !_measurementDbLoaded[projectId] && typeof NestopiaDB !== 'undefined' && NestopiaDB.isConnected();
+            // 显示面板
+            panel.classList.remove('hidden');
+            if (btn) {
+                btn.innerHTML = '<i class="fas fa-times text-[10px]"></i> Close Panel';
+                btn.classList.remove('bg-purple-600', 'hover:bg-purple-700');
+                btn.classList.add('bg-gray-600', 'hover:bg-gray-700');
+            }
+            // 首次加载：显示 loading 遮罩 → 加载数据 → 移除遮罩
+            if (needsDbLoad) {
+                _showStep3LoadingOverlay(panel, projectId);
                 _measurementDbLoaded[projectId] = true;
                 loadMeasurementFromDB(projectId).then(function(dbData) {
                     if (dbData && typeof dbData === 'object') {
@@ -207,16 +216,13 @@
                         if (dbData.appointmentTime) state.appointmentTime = dbData.appointmentTime;
                         if (dbData.measurementComplete !== undefined) state.measurementComplete = dbData.measurementComplete;
                         console.log('[Measurement] Loaded from Supabase for', projectId);
-                        // 直接更新 DOM 字段值（避免 toggle-toggle 导致面板收起）
                         _populateStep3FieldsFromState(projectId, state);
                     }
+                }).then(function() {
+                    _removeStep3LoadingOverlay(projectId);
+                }).catch(function() {
+                    _removeStep3LoadingOverlay(projectId);
                 });
-            }
-            panel.classList.remove('hidden');
-            if (btn) {
-                btn.innerHTML = '<i class="fas fa-times text-[10px]"></i> Close Panel';
-                btn.classList.remove('bg-purple-600', 'hover:bg-purple-700');
-                btn.classList.add('bg-gray-600', 'hover:bg-gray-700');
             }
         } else {
             panel.classList.add('hidden');
@@ -225,6 +231,39 @@
                 btn.classList.remove('bg-gray-600', 'hover:bg-gray-700');
                 btn.classList.add('bg-purple-600', 'hover:bg-purple-700');
             }
+        }
+    }
+
+    function _showStep3LoadingOverlay(panel, projectId) {
+        panel.style.position = 'relative';
+        var overlay = document.createElement('div');
+        overlay.id = 'step3LoadingOverlay_' + projectId;
+        overlay.style.cssText = 'position:absolute;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(255,255,255,0.88);backdrop-filter:blur(4px);border-radius:12px;';
+        overlay.innerHTML =
+            '<div style="display:flex;flex-direction:column;align-items:center;gap:12px;">' +
+                '<div style="width:36px;height:36px;border:3px solid #e9d5ff;border-top-color:#9333ea;border-radius:50%;animation:spin 0.8s linear infinite;"></div>' +
+                '<div style="font-size:13px;font-weight:600;color:#4b5563;">Reading measurement data from cloud...</div>' +
+                '<div style="width:180px;height:5px;background:#f3f4f6;border-radius:9999px;overflow:hidden;">' +
+                    '<div style="height:100%;width:30%;background:linear-gradient(90deg,#9333ea,#a855f7);border-radius:9999px;animation:step3LoadBar 2.5s ease-in-out infinite;"></div>' +
+                '</div>' +
+                '<div style="font-size:10px;color:#9ca3af;margin-top:2px;">First-time sync, please wait...</div>' +
+            '</div>';
+        // 注入 keyframes（如果尚未添加）
+        if (!document.getElementById('step3LoadingStyles')) {
+            var style = document.createElement('style');
+            style.id = 'step3LoadingStyles';
+            style.textContent = '@keyframes step3LoadBar{0%{width:10%;margin-left:0}50%{width:60%;margin-left:20%}100%{width:10%;margin-left:90%}}';
+            document.head.appendChild(style);
+        }
+        panel.appendChild(overlay);
+    }
+
+    function _removeStep3LoadingOverlay(projectId) {
+        var overlay = document.getElementById('step3LoadingOverlay_' + projectId);
+        if (overlay) {
+            overlay.style.transition = 'opacity 0.4s ease';
+            overlay.style.opacity = '0';
+            setTimeout(function() { overlay.remove(); }, 400);
         }
     }
 
