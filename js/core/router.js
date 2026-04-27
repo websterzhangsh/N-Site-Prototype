@@ -81,7 +81,11 @@
 
         renderSidebarProjects: function() {
             var container = document.getElementById('sidebarProjectList');
-            if (!container || typeof allProjectsData === 'undefined') return;
+            console.log('[DBG] renderSidebarProjects() | container=' + !!container + ' | typeof allProjectsData=' + (typeof allProjectsData) + ' | length=' + (typeof allProjectsData !== 'undefined' ? allProjectsData.length : 'N/A'));
+            if (!container || typeof allProjectsData === 'undefined') {
+                console.warn('[DBG] renderSidebarProjects() aborted: !container=' + !container + ' | allProjectsData undefined=' + (typeof allProjectsData === 'undefined'));
+                return;
+            }
 
             var searchEl = document.getElementById('sidebarProjectSearch');
             var searchVal = (searchEl ? searchEl.value : '').toLowerCase();
@@ -90,6 +94,7 @@
                        p.customer.toLowerCase().indexOf(searchVal) >= 0 ||
                        p.type.toLowerCase().indexOf(searchVal) >= 0;
             });
+            console.log('[DBG] renderSidebarProjects() filtered ' + filtered.length + ' projects (visible + search match)');
 
             var riskColors = { high: '#ef4444', medium: '#f59e0b', low: '#22c55e', normal: '#22c55e' };
             var stageLabels = { intent:'Step 1', design:'Step 2', measurement:'Step 3', quotation:'Step 4', production:'Step 5', installation:'Step 6' };

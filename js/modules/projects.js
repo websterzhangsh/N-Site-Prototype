@@ -290,10 +290,18 @@
     }
 
     function loadProjectsFromDB() {
-        if (typeof NestopiaDB === 'undefined' || !NestopiaDB.isConnected()) return;
-        if (_projectsDbLoaded) return;
+        console.log('[DBG] loadProjectsFromDB() called | NestopiaDB=' + (typeof NestopiaDB) + ' | isConnected=' + (typeof NestopiaDB !== 'undefined' && NestopiaDB.isConnected()) + ' | _projectsDbLoaded=' + _projectsDbLoaded + ' | allProjectsData.length=' + (typeof allProjectsData !== 'undefined' ? allProjectsData.length : 'undefined'));
+        if (typeof NestopiaDB === 'undefined' || !NestopiaDB.isConnected()) {
+            console.warn('[DBG] loadProjectsFromDB() aborted: NestopiaDB not connected');
+            return;
+        }
+        if (_projectsDbLoaded) {
+            console.warn('[DBG] loadProjectsFromDB() aborted: already loaded');
+            return;
+        }
         _projectsDbLoaded = true;
         var tenantId = NestopiaDB.getTenantId();
+        console.log('[DBG] Querying Supabase for tenant_id=' + tenantId);
         NestopiaDB.getClient()
             .from('projects')
             .select('*')
@@ -302,16 +310,19 @@
             .not('project_number', 'is', null)
             .order('created_at', { ascending: false })
             .then(function(res) {
+                console.log('[DBG] Supabase response received | error=' + (res.error ? res.error.message : 'none') + ' | rows=' + (res.data ? res.data.length : 0));
                 if (res.error) {
                     console.warn('[Project] DB load error:', res.error.message);
                     _projectsDbLoaded = false;
                     return;
                 }
                 var rows = res.data || [];
+                console.log('[DBG] Raw rows from DB:', rows.map(function(r) { return { pn: r.project_number, title: r.title, tenant_slug: (r.product_config || {}).tenant_slug }; }));
                 // Filter by tenant slug — isolate sub-tenants sharing same tenant_id
                 var currentSlug = (typeof getCurrentTenantSlug === 'function') ? getCurrentTenantSlug() : 'default';
                 var greenscapeSlugs = ['default', 'partner1', 'partner2'];
                 var isGreenscape = greenscapeSlugs.indexOf(currentSlug) >= 0;
+                console.log('[DBG] currentSlug=' + currentSlug + ' | isGreenscape=' + isGreenscape);
                 rows = rows.filter(function(row) {
                     var cfg = row.product_config || {};
                     // 向后兼容：没有 tenant_slug 的老项目不拦截（视为当前租户的项目）
@@ -322,13 +333,18 @@
                     }
                     return cfg.tenant_slug === currentSlug;
                 });
+                console.log('[DBG] After tenant filter: ' + rows.length + ' rows remaining');
                 // Build lookup of existing in-memory project IDs
                 var existingIds = {};
                 allProjectsData.forEach(function(p) { existingIds[p.id] = true; });
+                console.log('[DBG] existingIds in allProjectsData:', Object.keys(existingIds));
                 var added = 0;
                 rows.forEach(function(row) {
                     // Skip if this project_number already exists in memory (hardcoded demo data)
-                    if (existingIds[row.project_number]) return;
+                    if (existingIds[row.project_number]) {
+                        console.log('[DBG] Skipping duplicate: ' + row.project_number);
+                        return;
+                    }
                     var cfg = row.product_config || {};
                     var project = {
                         id: row.project_number,
@@ -361,13 +377,17 @@
                     existingIds[row.project_number] = true;
                     added++;
                 });
+                console.log('[DBG] Added ' + added + ' new project(s) to allProjectsData | total now: ' + allProjectsData.length);
                 if (added > 0) {
                     console.log('[Project] ✅ Loaded ' + added + ' project(s) from DB');
                     renderProjectList();
+                } else {
+                    console.log('[DBG] No new projects to render (added=0)');
                 }
             })
             .catch(function(err) {
                 console.warn('[Project] DB load failed:', err.message);
+                console.warn('[DBG] Full error:', err);
                 _projectsDbLoaded = false;
             });
     }
