@@ -405,7 +405,7 @@
             model: 'WR120F-63',
             name: 'WR120F-63 Large Format Zip Blinds',
             nameZh: 'WR120F-63防风卷帘',
-            series: 'WR120',
+            series: 'Special',
             housing: '120mm F-Type',
             housingZh: '120mm F型',
             fabric: 'NP42054050CP',

@@ -524,6 +524,15 @@
         blinds: [
             { name: 'Material & Aperture Rate', icon: 'fa-th', desc: 'Custom fabric material and openness selection' }
         ],
+        'zb-standard': [
+            { name: 'Material & Aperture Rate', icon: 'fa-th', desc: 'Custom fabric material and openness selection' }
+        ],
+        'zb-outdoor': [
+            { name: 'Material & Aperture Rate', icon: 'fa-th', desc: 'Custom fabric material and openness selection' }
+        ],
+        'zb-special': [
+            { name: 'Material & Aperture Rate', icon: 'fa-th', desc: 'Custom fabric material and openness selection' }
+        ],
         adu: [
             { name: 'Custom Layout Design', icon: 'fa-pencil-ruler', desc: 'Tailored floor plan within modular constraints' },
             { name: 'Solar Panel System', icon: 'fa-solar-panel', desc: 'Rooftop solar power system' },
@@ -560,9 +569,18 @@
         { key: 'pergola', label: 'Pergola', icon: 'fa-warehouse', color: 'green' },
         { key: 'blinds', label: 'Zip Blinds', icon: 'fa-align-justify', color: 'purple' }
     ];
+    // ZB 系列分类（匹配报价表 3 分区结构）
+    const zbSeriesCategories = [
+        { key: 'zb-standard', label: 'WR100/110', icon: 'fa-home', color: 'blue' },
+        { key: 'zb-outdoor', label: 'WR120', icon: 'fa-mountain-sun', color: 'green' },
+        { key: 'zb-special', label: 'Special', icon: 'fa-star', color: 'amber' }
+    ];
+    // series 字段 → category key 映射
+    var zbSeriesCatMap = { 'WR100': 'zb-standard', 'WR110': 'zb-standard', 'WR120': 'zb-outdoor', 'Special': 'zb-special' };
+    var zbSeriesLabelMap = { 'zb-standard': 'WR100/110 Standard & Gazebo', 'zb-outdoor': 'WR120 Outdoor', 'zb-special': 'Special' };
     function getProductCategories() {
         const slug = getCurrentTenantSlug();
-        if (slug === 'omeya-sin') return allProductCategories.filter(c => c.key === 'blinds');
+        if (slug === 'omeya-sin') return zbSeriesCategories;
         return allProductCategories;
     }
     const productCategories = getProductCategories();
@@ -1078,6 +1096,8 @@
     window.productNotes = productNotes;
     window.allProductCategories = allProductCategories;
     window.productCategories = productCategories;
+    window.zbSeriesCatMap = zbSeriesCatMap;
+    window.zbSeriesLabelMap = zbSeriesLabelMap;
     window.PRODUCT_TENANT_ID = PRODUCT_TENANT_ID;
 
     // 函数别名

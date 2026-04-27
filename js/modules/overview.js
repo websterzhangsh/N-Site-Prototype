@@ -114,10 +114,44 @@
 
     function getOverviewProductsData() {
         const slug = getCurrentTenantSlug();
-        if (slug === 'omeya-sin') return [
-            { name: 'Zip Blinds Standard', category: 'Zip Blinds', price: 'Manual', status: 'Active', color: 'purple', filterKey: 'blinds', catalogId: 'zb-manual' },
-            { name: 'Zip Blinds Motorized', category: 'Zip Blinds', price: 'Electric', status: 'Active', color: 'purple', filterKey: 'blinds', catalogId: 'zb-motorized' }
-        ];
+        if (slug === 'omeya-sin') {
+            // 从 zbSKUCatalog 动态生成，按 Excel 3 分区结构分组
+            var skuCat = window.zbSKUCatalog;
+            var driveCat = window.zbDriveSystemCatalog;
+            var catMap = window.zbSeriesCatMap || { 'WR100': 'zb-standard', 'WR110': 'zb-standard', 'WR120': 'zb-outdoor', 'Special': 'zb-special' };
+            var labelMap = window.zbSeriesLabelMap || { 'zb-standard': 'WR100/110 Standard & Gazebo', 'zb-outdoor': 'WR120 Outdoor', 'zb-special': 'Special' };
+            if (!skuCat) return [];
+            var items = [];
+            Object.keys(skuCat).forEach(function(key) {
+                var s = skuCat[key];
+                var hasMotor = false;
+                if (s.drives && driveCat) {
+                    for (var i = 0; i < s.drives.length; i++) {
+                        var d = driveCat[s.drives[i]];
+                        if (d && d.type === 'motorized') { hasMotor = true; break; }
+                    }
+                }
+                var tiers = s.priceTiers || [];
+                var lowP = tiers.length > 0 ? tiers[tiers.length - 1].price : 0;
+                var highP = tiers.length > 0 ? tiers[0].price : 0;
+                var priceStr = lowP === highP ? ('\u00a5' + lowP + '/m\u00b2') : ('\u00a5' + lowP + '\u2013' + highP + '/m\u00b2');
+                var filterKey = catMap[s.series] || 'zb-standard';
+                items.push({
+                    name: s.model || s.name,
+                    category: labelMap[filterKey] || s.series,
+                    price: priceStr,
+                    control: hasMotor ? 'Motorized' : 'Manual',
+                    status: 'Active',
+                    color: 'purple',
+                    filterKey: filterKey,
+                    catalogId: key,
+                    series: s.series,
+                    housing: s.housing || '',
+                    notes: s.notes || ''
+                });
+            });
+            return items;
+        }
         // nestopia-chn and default/partner1/partner2 share all products
         return [
         { name: 'L-Classic Sunroom', category: 'Sunroom \u00b7 Classic', price: 'Manual', status: 'Active', color: 'amber', filterKey: 'sunroom', catalogId: 'sr-l-classic' },
@@ -219,34 +253,96 @@
     function renderOverviewProducts() {
         const grid = document.getElementById('overviewProductsGrid');
         if (!grid) return;
-        // Always re-render to support filtering
-        grid.innerHTML = overviewProductsData.map(p => '<div class="ov-product-card border border-gray-100 rounded-xl p-4 hover:shadow-md hover:border-gray-200 transition cursor-pointer" data-category="' + p.filterKey + '" data-catalog-id="' + p.catalogId + '">' +
-            '<div class="flex items-center gap-3 mb-3">' +
-                '<div class="w-12 h-12 bg-white rounded-lg overflow-hidden flex-shrink-0 border border-gray-100 p-1">' +
-                    '<img src="' + (productIcons[p.catalogId] || '') + '" alt="' + p.name + '" class="w-full h-full object-contain">' +
+
+        var slug = getCurrentTenantSlug();
+        var isOmeya = (slug === 'omeya-sin');
+
+        if (isOmeya) {
+            // ── omeya-sin: 按 3 分区（WR100/110, WR120, Special）分组渲染 ──
+            var sectionOrder = ['zb-standard', 'zb-outdoor', 'zb-special'];
+            var sectionMeta = {
+                'zb-standard': { label: 'WR100 / WR110 Series', sublabel: 'Standard & Gazebo', icon: 'fa-home', color: 'blue' },
+                'zb-outdoor':  { label: 'WR120 Series', sublabel: 'Outdoor Heavy-duty', icon: 'fa-mountain-sun', color: 'green' },
+                'zb-special':  { label: 'Special Series', sublabel: 'Hidden Rail \u00b7 Indoor \u00b7 Large Format', icon: 'fa-star', color: 'amber' }
+            };
+            var grouped = {};
+            overviewProductsData.forEach(function(p) {
+                var k = p.filterKey || 'zb-standard';
+                if (!grouped[k]) grouped[k] = [];
+                grouped[k].push(p);
+            });
+            var html = '';
+            sectionOrder.forEach(function(sk) {
+                var items = grouped[sk] || [];
+                if (items.length === 0) return;
+                var meta = sectionMeta[sk] || { label: sk, sublabel: '', icon: 'fa-box', color: 'gray' };
+                html += '<div class="ov-product-section col-span-full" data-section-filter="' + sk + '">' +
+                    '<div class="flex items-center gap-2 mb-3 mt-2">' +
+                        '<div class="w-6 h-6 bg-' + meta.color + '-50 rounded-md flex items-center justify-center">' +
+                            '<i class="fas ' + meta.icon + ' text-' + meta.color + '-500 text-xs"></i>' +
+                        '</div>' +
+                        '<span class="text-sm font-bold text-gray-700">' + meta.label + '</span>' +
+                        '<span class="text-[10px] text-gray-400 font-medium">' + meta.sublabel + '</span>' +
+                        '<span class="text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded font-medium ml-auto">' + items.length + ' SKU</span>' +
+                    '</div>' +
+                    '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">';
+                items.forEach(function(p) {
+                    var iconSrc = (typeof productIcons !== 'undefined' && productIcons[p.catalogId]) ? productIcons[p.catalogId] : '/images/products/icons/zip-blinds.png';
+                    html += '<div class="ov-product-card border border-gray-100 rounded-xl p-4 hover:shadow-md hover:border-gray-200 transition cursor-pointer" data-category="' + p.filterKey + '" data-catalog-id="' + p.catalogId + '">' +
+                        '<div class="flex items-center gap-3 mb-2">' +
+                            '<div class="w-10 h-10 bg-white rounded-lg overflow-hidden flex-shrink-0 border border-gray-100 p-1">' +
+                                '<img src="' + iconSrc + '" alt="' + p.name + '" class="w-full h-full object-contain">' +
+                            '</div>' +
+                            '<div class="flex-1 min-w-0">' +
+                                '<div class="text-sm font-semibold text-gray-900 truncate">' + p.name + '</div>' +
+                                '<div class="text-xs text-gray-400 truncate">' + (p.housing || p.category) + '</div>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="flex items-center justify-between">' +
+                            '<span class="text-xs text-gray-500 font-medium">' + p.price + '</span>' +
+                            '<div class="flex items-center gap-1.5">' +
+                                '<span class="text-[10px] ' + (p.control === 'Motorized' ? 'text-blue-600 bg-blue-50' : 'text-gray-500 bg-gray-50') + ' font-medium px-1.5 py-0.5 rounded-full">' + (p.control || '') + '</span>' +
+                                '<span class="px-2 py-0.5 bg-green-50 text-green-700 text-xs font-medium rounded-full">' + p.status + '</span>' +
+                            '</div>' +
+                        '</div>' +
+                        (p.notes ? '<div class="text-[10px] text-amber-600 mt-1.5 truncate"><i class="fas fa-info-circle mr-0.5"></i>' + p.notes + '</div>' : '') +
+                    '</div>';
+                });
+                html += '</div></div>';
+            });
+            grid.innerHTML = html;
+        } else {
+            // ── 其他租户: 原有平铺卡片 ──
+            grid.innerHTML = overviewProductsData.map(function(p) {
+                return '<div class="ov-product-card border border-gray-100 rounded-xl p-4 hover:shadow-md hover:border-gray-200 transition cursor-pointer" data-category="' + p.filterKey + '" data-catalog-id="' + p.catalogId + '">' +
+                '<div class="flex items-center gap-3 mb-3">' +
+                    '<div class="w-12 h-12 bg-white rounded-lg overflow-hidden flex-shrink-0 border border-gray-100 p-1">' +
+                        '<img src="' + (productIcons[p.catalogId] || '') + '" alt="' + p.name + '" class="w-full h-full object-contain">' +
+                    '</div>' +
+                    '<div>' +
+                        '<div class="text-sm font-semibold text-gray-900">' + p.name + '</div>' +
+                        '<div class="text-xs text-gray-400">' + p.category + '</div>' +
+                    '</div>' +
                 '</div>' +
-                '<div>' +
-                    '<div class="text-sm font-semibold text-gray-900">' + p.name + '</div>' +
-                    '<div class="text-xs text-gray-400">' + p.category + '</div>' +
+                '<div class="flex items-center justify-between">' +
+                    '<span class="text-xs text-gray-500 font-medium">' + p.price + '</span>' +
+                    '<span class="px-2 py-0.5 ' + (p.status === 'Active' ? 'bg-green-50 text-green-700' : 'bg-amber-50 text-amber-700') + ' text-xs font-medium rounded-full">' + p.status + '</span>' +
                 '</div>' +
-            '</div>' +
-            '<div class="flex items-center justify-between">' +
-                '<span class="text-xs text-gray-500 font-medium">' + p.price + '</span>' +
-                '<span class="px-2 py-0.5 ' + (p.status === 'Active' ? 'bg-green-50 text-green-700' : 'bg-amber-50 text-amber-700') + ' text-xs font-medium rounded-full">' + p.status + '</span>' +
-            '</div>' +
-            '</div>').join('');
+                '</div>';
+            }).join('');
+        }
 
         // --- Card click: navigate to Products page with that product selected ---
         grid.querySelectorAll('.ov-product-card').forEach(card => {
             card.addEventListener('click', function() {
                 const catalogId = this.dataset.catalogId;
-                if (catalogId && productCatalog[catalogId]) {
-                    productsState.selectedProduct = catalogId;
+                if (catalogId && typeof productCatalog !== 'undefined' && productCatalog[catalogId]) {
+                    if (typeof productsState !== 'undefined') productsState.selectedProduct = catalogId;
                     navigateToPage('products');
-                    setTimeout(() => {
-                        renderProductList();
-                        updateProductDetail(catalogId);
-                        const selectedItem = document.querySelector('.product-item[data-id="' + catalogId + '"]');
+                    setTimeout(function() {
+                        if (typeof renderProductList === 'function') renderProductList();
+                        if (typeof updateProductDetail === 'function') updateProductDetail(catalogId);
+                        var selectedItem = document.querySelector('.product-item[data-product="' + catalogId + '"]');
                         if (selectedItem) selectedItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }, 50);
                 }
@@ -266,11 +362,33 @@
                 this.classList.remove('bg-white', 'border', 'text-gray-600');
                 this.classList.add('bg-gray-900', 'text-white');
                 const filter = this.dataset.filter;
-                grid.querySelectorAll('.ov-product-card').forEach(card => {
-                    card.style.display = (filter === 'all' || card.dataset.category === filter) ? '' : 'none';
-                });
+                if (isOmeya) {
+                    grid.querySelectorAll('.ov-product-section').forEach(function(sec) {
+                        sec.style.display = (filter === 'all' || sec.dataset.sectionFilter === filter) ? '' : 'none';
+                    });
+                } else {
+                    grid.querySelectorAll('.ov-product-card').forEach(card => {
+                        card.style.display = (filter === 'all' || card.dataset.category === filter) ? '' : 'none';
+                    });
+                }
             });
         });
+
+        // --- 更新 Overview stats card 产品数量 ---
+        _updateOverviewProductStats(overviewProductsData);
+    }
+
+    function _updateOverviewProductStats(data) {
+        var card = document.querySelector('.overview-card[data-section="products"]');
+        if (!card) return;
+        var countEl = card.querySelector('.text-2xl');
+        if (countEl) countEl.textContent = data.length;
+        var statsDiv = card.querySelector('.flex.items-center.gap-3.mt-3');
+        if (statsDiv) {
+            var active = data.filter(function(p) { return p.status === 'Active'; }).length;
+            var cats = new Set(data.map(function(p) { return p.filterKey; })).size;
+            statsDiv.innerHTML = '<span class="text-green-600 font-medium">' + active + ' Active</span><span class="text-gray-600 font-medium">' + cats + ' Categories</span>';
+        }
     }
 
     // ===== 注册模块 =====
@@ -285,7 +403,8 @@
         renderOverviewOrders: renderOverviewOrders,
         renderOverviewCustomers: renderOverviewCustomers,
         renderOverviewProducts: renderOverviewProducts,
-        _updateOverviewCustomerStats: _updateOverviewCustomerStats
+        _updateOverviewCustomerStats: _updateOverviewCustomerStats,
+        _updateOverviewProductStats: _updateOverviewProductStats
     };
 
     // ===== 全局别名（向后兼容） =====
