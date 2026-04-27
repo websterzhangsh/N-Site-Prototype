@@ -6326,7 +6326,7 @@
                 </div>` : '';
 
             // AI Designer Panel (Step 2 specific) — inline expandable
-            const aiDesignerHTML = config.aiDesigner ? (() => {
+            const aiDesignerHTML = config.aiDesigner ? (() => { try {
                 const inherited = config.aiDesigner.inheritFields;
                 const moduleData = getIntakeData(project.id);
                 const allStyles = config.aiDesigner.styleOptions;
@@ -6368,9 +6368,11 @@
 
                 // Build product cards from productCatalog (filtered by project type) — using productIcons
                 const gridCols = styles.length <= 2 ? 'grid-cols-2' : 'grid-cols-3';
+                const _catalog = (typeof window.productCatalog !== 'undefined') ? window.productCatalog : null;
+                const _icons = (typeof window.productIcons !== 'undefined') ? window.productIcons : null;
                 const productCards = styles.map(s => {
-                    const prod = productCatalog[s.value];
-                    const iconSrc = productIcons[s.value] || '';
+                    const prod = (_catalog && _catalog[s.value]) || null;
+                    const iconSrc = (_icons && _icons[s.value]) || '';
                     const priceRange = prod && prod.price && prod.price.tiers && prod.price.tiers.length > 0 ? (prod.price.mode === 'strategy' ? ('$' + prod.price.tiers[0].retail[0] + '-' + prod.price.tiers[0].retail[1] + '/' + prod.price.unit) : ('$' + prod.price.tiers[0].retail[0] + '-' + prod.price.tiers[0].retail[1] + '/' + prod.price.unit)) : '';
                     return `<div class="step2-product-card flex flex-col items-center gap-1 p-2.5 rounded-lg border border-gray-100 hover:border-indigo-300 hover:bg-indigo-50/30 cursor-pointer transition" data-catalog-id="${s.value}" onclick="Nestopia.steps.step2.selectStep2Product('${project.id}', '${s.value}', this)">
                         <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-gray-50">
@@ -6565,7 +6567,10 @@
                         </div>
                     </div>
                 </div>`;
-            })() : '';
+            } catch(_aiErr) {
+                console.error('[Nestopia] aiDesigner panel render error:', _aiErr);
+                return '<div class="mt-4 p-4 bg-red-50 rounded-lg border border-red-200"><div class="flex items-center gap-2 mb-2"><i class="fas fa-bug text-red-400 text-sm"></i><span class="text-sm font-semibold text-red-700">AI Designer Panel Error</span></div><p class="text-xs text-red-600">' + (_aiErr.message || 'Unknown error') + '</p><p class="text-[10px] text-gray-400 mt-1">Other panels remain functional. Try reloading.</p></div>';
+            } })() : '';
 
             // Measurement Panel (Step 3 specific) — inline expandable
             const measurementPanelHTML = config.measurementPanel ? (() => {
