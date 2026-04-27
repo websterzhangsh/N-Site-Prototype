@@ -310,13 +310,14 @@
                 var rows = res.data || [];
                 // Filter by tenant slug — isolate sub-tenants sharing same tenant_id
                 var currentSlug = (typeof getCurrentTenantSlug === 'function') ? getCurrentTenantSlug() : 'default';
+                var greenscapeSlugs = ['default', 'partner1', 'partner2'];
+                var isGreenscape = greenscapeSlugs.indexOf(currentSlug) >= 0;
                 rows = rows.filter(function(row) {
                     var cfg = row.product_config || {};
-                    // Strict tenant isolation: only show projects tagged for this tenant
-                    if (!cfg.tenant_slug) return false;
+                    // 向后兼容：没有 tenant_slug 的老项目不拦截（视为当前租户的项目）
+                    if (!cfg.tenant_slug) return true;
                     // Greenscape family: default/partner1/partner2 are equivalent sub-tenants
-                    var greenscapeSlugs = ['default', 'partner1', 'partner2'];
-                    if (greenscapeSlugs.indexOf(currentSlug) >= 0) {
+                    if (isGreenscape) {
                         return greenscapeSlugs.indexOf(cfg.tenant_slug) >= 0;
                     }
                     return cfg.tenant_slug === currentSlug;

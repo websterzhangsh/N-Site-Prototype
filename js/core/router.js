@@ -70,7 +70,8 @@
             document.querySelectorAll('.page-content').forEach(function(p) { p.classList.remove('active'); });
             var page = document.getElementById('page-projects');
             if (page) page.classList.add('active');
-            document.getElementById('pageTitle').textContent = 'Projects';
+            var titleEl = document.getElementById('pageTitle');
+            if (titleEl) titleEl.textContent = 'Projects';
 
             // Select the project
             _currentSelectedProjectId = projectId;
