@@ -488,6 +488,10 @@
                     refreshStep4Panel(projectId);
                     refreshInheritedMeasurement(projectId);
                 });
+            } else {
+                // ★ DB 已加载过，但模板可能因导航被重新渲染 — 从内存 state 刷新 DOM
+                refreshStep4Panel(projectId);
+                refreshInheritedMeasurement(projectId);
             }
 
             panel.classList.remove('hidden');
