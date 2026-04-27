@@ -68,12 +68,36 @@
         return badges[stage] || '';
     }
 
+    // ===== Regression Safety: 渲染函数安全包装器 =====
+    // 包装任何 UI 渲染函数，捕获异常防止传播导致后续流程中断。
+    // 用法: renderSidebarProjects = safetyWrap(renderSidebarProjects, 'renderSidebarProjects');
+    function safetyWrap(fn, label) {
+        label = label || fn.name || 'anonymous';
+        return function() {
+            try {
+                return fn.apply(this, arguments);
+            } catch(e) {
+                console.error('[SafetyWrap] ' + label + ' crashed — suppressed to prevent cascade:', e.message);
+                // 不重新抛出异常 — 防止 DOMContentLoaded / Promise 链中断
+            }
+        };
+    }
+
+    // ===== Data Safety: 从任意对象中安全提取字符串字段 =====
+    // 永远返回 string，绝不为 null/undefined
+    function safeStr(val, fallback) {
+        fallback = fallback || '';
+        return (val !== null && val !== undefined) ? String(val) : fallback;
+    }
+
     // ===== Register on namespace =====
     N.utils.showToast = showToast;
     N.utils.getPriorityBadge = getPriorityBadge;
     N.utils.getIssuStatusBadge = getIssuStatusBadge;
     N.utils.getRiskBadge = getRiskBadge;
     N.utils.getStageBadge = getStageBadge;
+    N.utils.safetyWrap = safetyWrap;
+    N.utils.safeStr = safeStr;
 
     // ===== Global aliases (backward compat) =====
     window.showToast = showToast;
@@ -81,4 +105,6 @@
     window.getIssuStatusBadge = getIssuStatusBadge;
     window.getRiskBadge = getRiskBadge;
     window.getStageBadge = getStageBadge;
+    window.safetyWrap = safetyWrap;
+    window.safeStr = safeStr;
 })();

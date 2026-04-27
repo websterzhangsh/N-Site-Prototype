@@ -289,6 +289,41 @@
             });
     }
 
+    // ── 数据规范化：永远返回完整字段的 project 对象，绝不为 null ──
+    // 预防回归：DB schema 变更时，旧记录缺少新字段不会导致渲染器崩溃。
+    // 所有字段都有默认值；新增字段只需在此函数中添加一行。
+    function normalizeProjectFromDB(row) {
+        var cfg = row.product_config || {};
+        var defaultStep1 = {
+            checklist: { initial_communication: false, intake_questionnaire: false, hoa_precheck: false, intent_fee_collected: false, client_signoff: false },
+            questionnaire: { status: 'not_started', modules: { a1: false, a2: false, a3: false, a4: false, a5: false, a6: false, a7: false, a8: false } },
+            payments: { intent_fee: { amount: 100, status: 'pending', date: null } },
+            documents: [],
+            notes: ''
+        };
+        return {
+            id:         row.project_number,
+            name:       row.title || 'Untitled',
+            customer:   row.client_name || 'Unknown',
+            customerEmail:   row.client_email || '',
+            customerPhone:   row.client_phone || '',
+            customerAddress: row.client_address || 'TBD',
+            type:       cfg.product_type || row.project_subtype || 'Sunroom',
+            workflowStep: row.workflow_step || 1,
+            stage:      cfg.stage || 'intent',
+            riskLevel:  cfg.riskLevel || 'low',
+            budget:     cfg.budget || parseInt(String(row.budget_range || '0').replace(/[^0-9]/g, '')) || 0,
+            paid:       cfg.paid || 0,
+            timeline:   row.preferred_timeline || cfg.timeline || '',
+            startDate:  cfg.startDate || (row.created_at ? row.created_at.split('T')[0] : ''),
+            risks:      cfg.risks || [],
+            issues:     cfg.issues || [],
+            order:      cfg.order || null,
+            _step1:     cfg._step1 || defaultStep1,
+            _fromDB:    true
+        };
+    }
+
     function loadProjectsFromDB() {
         console.log('[DBG] loadProjectsFromDB() called | NestopiaDB=' + (typeof NestopiaDB) + ' | isConnected=' + (typeof NestopiaDB !== 'undefined' && NestopiaDB.isConnected()) + ' | _projectsDbLoaded=' + _projectsDbLoaded + ' | allProjectsData.length=' + (typeof allProjectsData !== 'undefined' ? allProjectsData.length : 'undefined'));
         if (typeof NestopiaDB === 'undefined' || !NestopiaDB.isConnected()) {
@@ -345,34 +380,7 @@
                         console.log('[DBG] Skipping duplicate: ' + row.project_number);
                         return;
                     }
-                    var cfg = row.product_config || {};
-                    var project = {
-                        id: row.project_number,
-                        name: row.title || 'Untitled',
-                        customer: row.client_name || 'Unknown',
-                        customerEmail: row.client_email || '',
-                        customerPhone: row.client_phone || '',
-                        customerAddress: row.client_address || 'TBD',
-                        type: cfg.product_type || row.project_subtype || 'Sunroom',
-                        workflowStep: row.workflow_step || 1,
-                        stage: cfg.stage || 'intent',
-                        riskLevel: cfg.riskLevel || 'low',
-                        budget: cfg.budget || parseInt(String(row.budget_range || '0').replace(/[^0-9]/g, '')) || 0,
-                        paid: cfg.paid || 0,
-                        timeline: row.preferred_timeline || cfg.timeline || '',
-                        startDate: cfg.startDate || (row.created_at ? row.created_at.split('T')[0] : ''),
-                        risks: cfg.risks || [],
-                        issues: cfg.issues || [],
-                        order: cfg.order || null,
-                        _step1: cfg._step1 || {
-                            checklist: { initial_communication: false, intake_questionnaire: false, hoa_precheck: false, intent_fee_collected: false, client_signoff: false },
-                            questionnaire: { status: 'not_started', modules: { a1: false, a2: false, a3: false, a4: false, a5: false, a6: false, a7: false, a8: false } },
-                            payments: { intent_fee: { amount: 100, status: 'pending', date: null } },
-                            documents: [],
-                            notes: ''
-                        },
-                        _fromDB: true
-                    };
+                    var project = normalizeProjectFromDB(row);
                     allProjectsData.unshift(project);
                     existingIds[row.project_number] = true;
                     added++;
@@ -968,6 +976,16 @@
     window.allProjectsData = allProjectsData;
     window.projectsDummyData = projectsDummyData;
     window.issuesDummyData = issuesDummyData;
+
+    // ── 回归预防：用 safetyWrap 包裹关键渲染/加载函数 ──
+    // 防止函数内部 null-ref 异常污染 DOMContentLoaded / Promise 调用链。
+    // safetyWrap 定义在 helpers.js 中，此处确保任意崩溃被捕获。
+    if (typeof safetyWrap === 'function') {
+        window.loadProjectsFromDB = safetyWrap(window.loadProjectsFromDB, 'loadProjectsFromDB');
+        if (typeof window.renderSidebarProjects === 'function') {
+            window.renderSidebarProjects = safetyWrap(window.renderSidebarProjects, 'renderSidebarProjects');
+        }
+    }
 
     // ── 独立 DOMContentLoaded 监听器：确保 loadProjectsFromDB() 必定运行 ──
     // 即使 company-operations.html 内联 handler 中任意 init*() 抛出异常导致流程中断，
