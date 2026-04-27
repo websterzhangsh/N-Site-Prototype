@@ -612,9 +612,9 @@
         const container = document.getElementById('projWorkflowSteps');
         const isZipBlinds = project.type === 'Zip Blinds';
 
-        // Reset expanded step
-        expandedStep = null;
-        currentDetailProject = project;
+        // Reset expanded step — explicitly use window to avoid strict-mode ReferenceError
+        window.expandedStep = null;
+        window.currentDetailProject = project;
         const detailContainer = document.getElementById('projStepDetail');
         if (detailContainer) { detailContainer.classList.add('hidden'); detailContainer.innerHTML = ''; }
 
@@ -673,7 +673,7 @@
             const icon = isCompleted ? 'fa-check-circle text-green-500' : `${stepIcons[i]} text-${baseColor}-500`;
 
             return `
-                <div class="${classes}" onclick="toggleStepDetail(${step}, currentDetailProject)" title="Click to view Step ${step} details">
+                <div class="${classes}" onclick="toggleStepDetail(${step}, window.currentDetailProject)" title="Click to view Step ${step} details">
                     <i class="fas ${icon} text-lg mb-1.5"></i>
                     <span class="text-xs font-semibold text-gray-700">${name}</span>
                     <span class="text-[10px] text-gray-400 mt-0.5">Step ${step}</span>

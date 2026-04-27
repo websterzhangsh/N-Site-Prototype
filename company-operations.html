@@ -4388,46 +4388,46 @@
 
     <!-- JS 模块化文件 — 按依赖顺序加载 -->
     <!-- 1. 命名空间 -->
-    <script src="js/core/namespace.js?v=6902f2d"></script>
+    <script src="js/core/namespace.js?v=df26382"></script>
     <!-- 2. 核心基础层 (Phase 2) -->
-    <script src="js/core/supabase-config.js?v=6902f2d"></script>
-    <script src="js/core/supabase-storage.js?v=6902f2d"></script>
-    <script src="js/core/auth.js?v=6902f2d"></script>
-    <script src="js/core/tenant.js?v=6902f2d"></script>
-    <script src="js/core/i18n.js?v=6902f2d"></script>
-    <script src="js/core/router.js?v=6902f2d"></script>
+    <script src="js/core/supabase-config.js?v=df26382"></script>
+    <script src="js/core/supabase-storage.js?v=df26382"></script>
+    <script src="js/core/auth.js?v=df26382"></script>
+    <script src="js/core/tenant.js?v=df26382"></script>
+    <script src="js/core/i18n.js?v=df26382"></script>
+    <script src="js/core/router.js?v=df26382"></script>
     <!-- 3. 数据层 (Phase 1) -->
-    <script src="js/data/i18n-dict.js?v=6902f2d"></script>
-    <script src="js/data/pricing-data.js?v=6902f2d"></script>
-    <script src="js/data/product-catalog.js?v=6902f2d"></script>
-    <script src="js/data/step-config.js?v=6902f2d"></script>
-    <script src="js/data/intake-fields.js?v=6902f2d"></script>
-    <script src="js/data/seed-projects.js?v=6902f2d"></script>
+    <script src="js/data/i18n-dict.js?v=df26382"></script>
+    <script src="js/data/pricing-data.js?v=df26382"></script>
+    <script src="js/data/product-catalog.js?v=df26382"></script>
+    <script src="js/data/step-config.js?v=df26382"></script>
+    <script src="js/data/intake-fields.js?v=df26382"></script>
+    <script src="js/data/seed-projects.js?v=df26382"></script>
     <!-- 4. 工具层 (Phase 3) -->
-    <script src="js/utils/helpers.js?v=6902f2d"></script>
-    <script src="js/utils/unit-converter.js?v=6902f2d"></script>
+    <script src="js/utils/helpers.js?v=df26382"></script>
+    <script src="js/utils/unit-converter.js?v=df26382"></script>
     <!-- 5. 功能模块 (Phase 3) -->
-    <script src="js/modules/orders.js?v=6902f2d"></script>
-    <script src="js/modules/customers.js?v=6902f2d"></script>
-    <script src="js/modules/knowledge-base.js?v=6902f2d"></script>
-    <script src="js/modules/products.js?v=6902f2d"></script>
-    <script src="js/modules/overview.js?v=6902f2d"></script>
-    <script src="js/modules/projects.js?v=6902f2d"></script>
-    <script src="js/modules/workflow.js?v=6902f2d"></script>
+    <script src="js/modules/orders.js?v=df26382"></script>
+    <script src="js/modules/customers.js?v=df26382"></script>
+    <script src="js/modules/knowledge-base.js?v=df26382"></script>
+    <script src="js/modules/products.js?v=df26382"></script>
+    <script src="js/modules/overview.js?v=df26382"></script>
+    <script src="js/modules/projects.js?v=df26382"></script>
+    <script src="js/modules/workflow.js?v=df26382"></script>
     <!-- 6. Agent 模块 (Phase 4) -->
-    <script src="js/agents/designer.js?v=6902f2d"></script>
-    <script src="js/agents/pricing.js?v=6902f2d"></script>
-    <script src="js/agents/compliance.js?v=6902f2d"></script>
-    <script src="js/agents/customer-service.js?v=6902f2d"></script>
+    <script src="js/agents/designer.js?v=df26382"></script>
+    <script src="js/agents/pricing.js?v=df26382"></script>
+    <script src="js/agents/compliance.js?v=df26382"></script>
+    <script src="js/agents/customer-service.js?v=df26382"></script>
     <!-- 7. Step 实现 (Phase 4) -->
-    <script src="js/steps/step2-design.js?v=6902f2d"></script>
-    <script src="js/steps/step3-measurement.js?v=6902f2d"></script>
-    <script src="js/steps/zb-verification.js?v=6902f2d"></script>
-    <script src="js/steps/step4-quotation.js?v=6902f2d"></script>
+    <script src="js/steps/step2-design.js?v=df26382"></script>
+    <script src="js/steps/step3-measurement.js?v=df26382"></script>
+    <script src="js/steps/zb-verification.js?v=df26382"></script>
+    <script src="js/steps/step4-quotation.js?v=df26382"></script>
     <!-- 8. 独立工具 (Phase 4) -->
-    <script src="js/utils/quotation-editor.js?v=6902f2d"></script>
-    <script src="js/utils/step-progress.js?v=6902f2d"></script>
-    <script src="js/utils/chatbot.js?v=6902f2d"></script>
+    <script src="js/utils/quotation-editor.js?v=df26382"></script>
+    <script src="js/utils/step-progress.js?v=df26382"></script>
+    <script src="js/utils/chatbot.js?v=df26382"></script>
     <script>
         // ===== Authentication (→ js/core/auth.js) =====
 
@@ -5954,8 +5954,8 @@
 
             // Re-render step detail if open
             if (expandedStep && currentDetailProject) {
-                toggleStepDetail(expandedStep, currentDetailProject);
-                toggleStepDetail(expandedStep, currentDetailProject);
+                toggleStepDetail(expandedStep, window.currentDetailProject);
+                toggleStepDetail(expandedStep, window.currentDetailProject);
             }
         }
 
@@ -6053,6 +6053,15 @@
         function toggleStepDetail(stepNum, project) {
             const container = document.getElementById('projStepDetail');
             if (!container) return;
+
+            // null-safety: recover project from global if null
+            if (!project) {
+                project = window.currentDetailProject || null;
+            }
+            if (!project) {
+                console.error('[Nestopia] toggleStepDetail: project is null for step', stepNum);
+                return;
+            }
 
             if (expandedStep === stepNum) {
                 // Collapse
@@ -7409,7 +7418,7 @@
                         </div>
                         <div class="flex items-center gap-2">
 
-                            <button onclick="toggleStepDetail(${stepNum}, currentDetailProject)" class="w-7 h-7 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50">
+                            <button onclick="toggleStepDetail(${stepNum}, window.currentDetailProject)" class="w-7 h-7 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50">
                                 <i class="fas fa-times text-gray-400 text-xs"></i>
                             </button>
                         </div>
