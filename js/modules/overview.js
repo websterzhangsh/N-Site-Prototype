@@ -730,5 +730,6 @@
     window._ovStartEdit = _ovStartEdit;
     window._ovCancelEdit = _ovCancelEdit;
     window._ovSaveEdit = _ovSaveEdit;
+    window._ovShowForbidden = _ovShowForbidden;
 
 })();
