@@ -250,6 +250,61 @@
         }
     }
 
+    // ── 列表视图辅助函数 ──
+    function _renderOmeyaProductList(data) {
+        var sectionOrder = ['zb-standard', 'zb-outdoor', 'zb-special'];
+        var sectionMeta = {
+            'zb-standard': { label: 'WR100 / WR110 Series', sublabel: 'Standard & Gazebo', icon: 'fa-home', color: 'blue' },
+            'zb-outdoor':  { label: 'WR120 Series', sublabel: 'Outdoor Heavy-duty', icon: 'fa-mountain-sun', color: 'green' },
+            'zb-special':  { label: 'Special Series', sublabel: 'Hidden Rail \u00b7 Indoor \u00b7 Large Format', icon: 'fa-star', color: 'amber' }
+        };
+        var grouped = {};
+        data.forEach(function(p) { var k = p.filterKey || 'zb-standard'; if (!grouped[k]) grouped[k] = []; grouped[k].push(p); });
+        var html = '<div class="border border-gray-100 rounded-xl overflow-hidden">';
+        sectionOrder.forEach(function(sk) {
+            var items = grouped[sk] || [];
+            if (items.length === 0) return;
+            var meta = sectionMeta[sk] || { label: sk, sublabel: '', icon: 'fa-box', color: 'gray' };
+            html += '<div class="ov-product-section" data-section-filter="' + sk + '">' +
+                '<div class="px-4 py-2 bg-gray-50/80 flex items-center justify-between border-b border-gray-100">' +
+                    '<div class="flex items-center gap-2">' +
+                        '<i class="fas ' + meta.icon + ' text-' + meta.color + '-500 text-xs"></i>' +
+                        '<span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">' + meta.label + '</span>' +
+                        '<span class="text-[10px] text-gray-400">' + meta.sublabel + '</span>' +
+                    '</div>' +
+                    '<span class="text-[10px] bg-gray-200/80 text-gray-500 px-1.5 py-0.5 rounded font-medium">' + items.length + '</span>' +
+                '</div>';
+            items.forEach(function(p) { html += _renderProductListItem(p); });
+            html += '</div>';
+        });
+        html += '</div>';
+        return html;
+    }
+
+    function _renderDefaultProductList(data) {
+        var html = '<div class="border border-gray-100 rounded-xl overflow-hidden">';
+        data.forEach(function(p) { html += _renderProductListItem(p); });
+        html += '</div>';
+        return html;
+    }
+
+    function _renderProductListItem(p) {
+        var iconSrc = (typeof productIcons !== 'undefined' && productIcons[p.catalogId]) ? productIcons[p.catalogId] : '/images/products/icons/zip-blinds.png';
+        return '<div class="ov-product-item flex items-center gap-3 px-4 py-2.5 border-b border-gray-50 hover:bg-blue-50/30 cursor-pointer transition-all" data-category="' + p.filterKey + '" data-catalog-id="' + p.catalogId + '">' +
+            '<div class="w-8 h-8 bg-white rounded-lg overflow-hidden flex-shrink-0 border border-gray-100 p-0.5">' +
+                '<img src="' + iconSrc + '" alt="' + (p.name || '') + '" class="w-full h-full object-contain">' +
+            '</div>' +
+            '<div class="flex-1 min-w-0">' +
+                '<div class="text-sm font-medium text-gray-900 truncate">' + (p.name || '') + '</div>' +
+                '<div class="text-xs text-gray-400 truncate">' + (p.housing || p.category || '') + '</div>' +
+            '</div>' +
+            '<span class="text-xs text-gray-500 font-medium flex-shrink-0">' + (p.price || '') + '</span>' +
+            '<span class="text-[10px] ' + (p.control === 'Motorized' ? 'text-blue-600 bg-blue-50' : 'text-gray-500 bg-gray-50') + ' font-medium px-1.5 py-0.5 rounded-full flex-shrink-0">' + (p.control || 'Manual') + '</span>' +
+            '<span class="px-2 py-0.5 bg-green-50 text-green-700 text-[10px] font-medium rounded-full flex-shrink-0">' + (p.status || 'Active') + '</span>' +
+            (p.notes ? '<span class="text-[10px] text-amber-500 flex-shrink-0" title="' + p.notes + '"><i class="fas fa-info-circle"></i></span>' : '') +
+        '</div>';
+    }
+
     function renderOverviewProducts() {
         const grid = document.getElementById('overviewProductsGrid');
         if (!grid) return;
@@ -258,84 +313,17 @@
         var isOmeya = (slug === 'omeya-sin');
 
         if (isOmeya) {
-            // ── omeya-sin: 按 3 分区（WR100/110, WR120, Special）分组渲染 ──
-            var sectionOrder = ['zb-standard', 'zb-outdoor', 'zb-special'];
-            var sectionMeta = {
-                'zb-standard': { label: 'WR100 / WR110 Series', sublabel: 'Standard & Gazebo', icon: 'fa-home', color: 'blue' },
-                'zb-outdoor':  { label: 'WR120 Series', sublabel: 'Outdoor Heavy-duty', icon: 'fa-mountain-sun', color: 'green' },
-                'zb-special':  { label: 'Special Series', sublabel: 'Hidden Rail \u00b7 Indoor \u00b7 Large Format', icon: 'fa-star', color: 'amber' }
-            };
-            var grouped = {};
-            overviewProductsData.forEach(function(p) {
-                var k = p.filterKey || 'zb-standard';
-                if (!grouped[k]) grouped[k] = [];
-                grouped[k].push(p);
-            });
-            var html = '';
-            sectionOrder.forEach(function(sk) {
-                var items = grouped[sk] || [];
-                if (items.length === 0) return;
-                var meta = sectionMeta[sk] || { label: sk, sublabel: '', icon: 'fa-box', color: 'gray' };
-                html += '<div class="ov-product-section col-span-full" data-section-filter="' + sk + '">' +
-                    '<div class="flex items-center gap-2 mb-3 mt-2">' +
-                        '<div class="w-6 h-6 bg-' + meta.color + '-50 rounded-md flex items-center justify-center">' +
-                            '<i class="fas ' + meta.icon + ' text-' + meta.color + '-500 text-xs"></i>' +
-                        '</div>' +
-                        '<span class="text-sm font-bold text-gray-700">' + meta.label + '</span>' +
-                        '<span class="text-[10px] text-gray-400 font-medium">' + meta.sublabel + '</span>' +
-                        '<span class="text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded font-medium ml-auto">' + items.length + ' SKU</span>' +
-                    '</div>' +
-                    '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">';
-                items.forEach(function(p) {
-                    var iconSrc = (typeof productIcons !== 'undefined' && productIcons[p.catalogId]) ? productIcons[p.catalogId] : '/images/products/icons/zip-blinds.png';
-                    html += '<div class="ov-product-card border border-gray-100 rounded-xl p-4 hover:shadow-md hover:border-gray-200 transition cursor-pointer" data-category="' + p.filterKey + '" data-catalog-id="' + p.catalogId + '">' +
-                        '<div class="flex items-center gap-3 mb-2">' +
-                            '<div class="w-10 h-10 bg-white rounded-lg overflow-hidden flex-shrink-0 border border-gray-100 p-1">' +
-                                '<img src="' + iconSrc + '" alt="' + p.name + '" class="w-full h-full object-contain">' +
-                            '</div>' +
-                            '<div class="flex-1 min-w-0">' +
-                                '<div class="text-sm font-semibold text-gray-900 truncate">' + p.name + '</div>' +
-                                '<div class="text-xs text-gray-400 truncate">' + (p.housing || p.category) + '</div>' +
-                            '</div>' +
-                        '</div>' +
-                        '<div class="flex items-center justify-between">' +
-                            '<span class="text-xs text-gray-500 font-medium">' + p.price + '</span>' +
-                            '<div class="flex items-center gap-1.5">' +
-                                '<span class="text-[10px] ' + (p.control === 'Motorized' ? 'text-blue-600 bg-blue-50' : 'text-gray-500 bg-gray-50') + ' font-medium px-1.5 py-0.5 rounded-full">' + (p.control || '') + '</span>' +
-                                '<span class="px-2 py-0.5 bg-green-50 text-green-700 text-xs font-medium rounded-full">' + p.status + '</span>' +
-                            '</div>' +
-                        '</div>' +
-                        (p.notes ? '<div class="text-[10px] text-amber-600 mt-1.5 truncate"><i class="fas fa-info-circle mr-0.5"></i>' + p.notes + '</div>' : '') +
-                    '</div>';
-                });
-                html += '</div></div>';
-            });
-            grid.innerHTML = html;
+            // ── omeya-sin: 按 3 分区列表视图 ──
+            grid.innerHTML = _renderOmeyaProductList(overviewProductsData);
         } else {
-            // ── 其他租户: 原有平铺卡片 ──
-            grid.innerHTML = overviewProductsData.map(function(p) {
-                return '<div class="ov-product-card border border-gray-100 rounded-xl p-4 hover:shadow-md hover:border-gray-200 transition cursor-pointer" data-category="' + p.filterKey + '" data-catalog-id="' + p.catalogId + '">' +
-                '<div class="flex items-center gap-3 mb-3">' +
-                    '<div class="w-12 h-12 bg-white rounded-lg overflow-hidden flex-shrink-0 border border-gray-100 p-1">' +
-                        '<img src="' + (productIcons[p.catalogId] || '') + '" alt="' + p.name + '" class="w-full h-full object-contain">' +
-                    '</div>' +
-                    '<div>' +
-                        '<div class="text-sm font-semibold text-gray-900">' + p.name + '</div>' +
-                        '<div class="text-xs text-gray-400">' + p.category + '</div>' +
-                    '</div>' +
-                '</div>' +
-                '<div class="flex items-center justify-between">' +
-                    '<span class="text-xs text-gray-500 font-medium">' + p.price + '</span>' +
-                    '<span class="px-2 py-0.5 ' + (p.status === 'Active' ? 'bg-green-50 text-green-700' : 'bg-amber-50 text-amber-700') + ' text-xs font-medium rounded-full">' + p.status + '</span>' +
-                '</div>' +
-                '</div>';
-            }).join('');
+            // ── 其他租户: 列表视图 ──
+            grid.innerHTML = _renderDefaultProductList(overviewProductsData);
         }
 
-        // --- Card click: navigate to Products page with that product selected ---
-        grid.querySelectorAll('.ov-product-card').forEach(card => {
-            card.addEventListener('click', function() {
-                const catalogId = this.dataset.catalogId;
+        // --- Item click: navigate to Products page with that product selected ---
+        grid.querySelectorAll('.ov-product-item').forEach(function(item) {
+            item.addEventListener('click', function() {
+                var catalogId = this.dataset.catalogId;
                 if (catalogId && typeof productCatalog !== 'undefined' && productCatalog[catalogId]) {
                     if (typeof productsState !== 'undefined') productsState.selectedProduct = catalogId;
                     navigateToPage('products');
@@ -350,25 +338,25 @@
         });
 
         // --- Overview filter buttons (hide non-tenant categories) ---
-        var ovTenantCatKeys = productCategories.map(function(c) { return c.key; });
-        document.querySelectorAll('.ov-product-filter-btn').forEach(btn => {
+        var ovTenantCatKeys = (typeof productCategories !== 'undefined') ? productCategories.map(function(c) { return c.key; }) : [];
+        document.querySelectorAll('.ov-product-filter-btn').forEach(function(btn) {
             var f = btn.dataset.filter;
             if (f !== 'all' && ovTenantCatKeys.indexOf(f) === -1) { btn.style.display = 'none'; }
             btn.addEventListener('click', function() {
-                document.querySelectorAll('.ov-product-filter-btn').forEach(b => {
+                document.querySelectorAll('.ov-product-filter-btn').forEach(function(b) {
                     b.classList.remove('bg-gray-900', 'text-white');
                     b.classList.add('bg-white', 'border', 'text-gray-600');
                 });
                 this.classList.remove('bg-white', 'border', 'text-gray-600');
                 this.classList.add('bg-gray-900', 'text-white');
-                const filter = this.dataset.filter;
+                var filter = this.dataset.filter;
                 if (isOmeya) {
                     grid.querySelectorAll('.ov-product-section').forEach(function(sec) {
                         sec.style.display = (filter === 'all' || sec.dataset.sectionFilter === filter) ? '' : 'none';
                     });
                 } else {
-                    grid.querySelectorAll('.ov-product-card').forEach(card => {
-                        card.style.display = (filter === 'all' || card.dataset.category === filter) ? '' : 'none';
+                    grid.querySelectorAll('.ov-product-item').forEach(function(item) {
+                        item.style.display = (filter === 'all' || item.dataset.category === filter) ? '' : 'none';
                     });
                 }
             });
