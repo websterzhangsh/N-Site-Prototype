@@ -410,7 +410,7 @@
         if (!container) return;
         const searchVal = (document.getElementById('projectListSearch')?.value || '').toLowerCase();
         const filtered = allProjectsData.filter(p => !p.hidden).filter(p => {
-            const matchesSearch = p.name.toLowerCase().includes(searchVal) || p.customer.toLowerCase().includes(searchVal);
+            const matchesSearch = (p.name || '').toLowerCase().includes(searchVal) || (p.customer || '').toLowerCase().includes(searchVal);
             const matchesFilter = currentProjectFilter === 'all' || 
                 (currentProjectFilter === 'active' && p.workflowStep < 6) ||
                 (currentProjectFilter === 'completed' && p.workflowStep === 6 && p.stage === 'installation');
@@ -421,16 +421,16 @@
         const stepNames = ['', 'Intent', 'Design', 'Measurement', 'Quotation', 'Production', 'Installation'];
 
         container.innerHTML = filtered.map(p => {
-            const isZB = p.type === 'Zip Blinds';
+            const isZB = (p.type || '') === 'Zip Blinds';
             const progressPct = isZB ? 50 : Math.round((p.workflowStep / 6) * 100);
             const stepLabel = isZB ? 'Measure & Quote' : 'Step ' + p.workflowStep + '/6';
             return `
             <div class="project-list-item p-4 border-b border-gray-100 hover:bg-blue-50/40 cursor-pointer transition" data-project-id="${p.id}" onclick="Nestopia.modules.projects.selectProject('${p.id}')">
                 <div class="flex items-start justify-between mb-1.5">
-                    <div class="font-medium text-sm text-gray-900 leading-tight">${p.name}</div>
+                    <div class="font-medium text-sm text-gray-900 leading-tight">${p.name || 'Untitled'}</div>
                     <div class="w-2 h-2 rounded-full bg-${riskColors[p.riskLevel]}-500 flex-shrink-0 mt-1.5 ml-2"></div>
                 </div>
-                <div class="text-xs text-gray-500 mb-2">${p.customer} &middot; ${p.type}</div>
+                <div class="text-xs text-gray-500 mb-2">${p.customer || 'Unknown'} &middot; ${p.type || 'Unknown'}</div>
                 <div class="flex items-center gap-2">
                     <div class="flex-1 bg-gray-100 rounded-full h-1.5">
                         <div class="bg-blue-500 rounded-full h-1.5 transition-all" style="width:${progressPct}%"></div>
@@ -968,4 +968,12 @@
     window.allProjectsData = allProjectsData;
     window.projectsDummyData = projectsDummyData;
     window.issuesDummyData = issuesDummyData;
+
+    // ── 独立 DOMContentLoaded 监听器：确保 loadProjectsFromDB() 必定运行 ──
+    // 即使 company-operations.html 内联 handler 中任意 init*() 抛出异常导致流程中断，
+    // 此独立监听器仍会触发 DB 项目加载。_projectsDbLoaded 锁防止重复请求。
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('[DBG] Projects.js standalone DOMContentLoaded → calling loadProjectsFromDB()');
+        loadProjectsFromDB();
+    });
 })();
