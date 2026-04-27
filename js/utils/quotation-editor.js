@@ -762,7 +762,7 @@
         }
 
         // ── 总价（仅显示外币总价）──
-        var grandRMB = (cs.totalBlindsSell || 0) + (cs.totalDriveSell || 0);
+        var grandRMB = cs.grandTotalPref || ((cs.totalPref || 0) + (cs.totalDriveSell || 0));
         var grandForeign = grandRMB / rate;
         var foreignSymbol = curr === 'SGD' ? 'S$' : '$';
 
