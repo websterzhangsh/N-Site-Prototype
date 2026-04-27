@@ -737,64 +737,260 @@
         });
     }
 
-    // ── ZB SKU 产品专用详情渲染 ──
-    function _renderZBProductDetail(productId, p, sku) {
-        var container = document.getElementById('productDetailContent');
-        if (!container) return;
-        var driveCat = window.zbDriveSystemCatalog || {};
+    // ── ZB SKU 产品专用详情渲染 — 模块化子函数 ──
+
+    // B区: 产品头部（强制使用 sketch 风格图标）
+    function _renderZBDetailHeader(sku, p) {
+        var sketchSrc = '/images/products/icons/zip-blinds.png'; // 始终使用 sketch 图标
+        return '<div class="flex gap-6 mb-6">' +
+            '<div class="w-44 h-44 bg-white rounded-xl overflow-hidden flex-shrink-0 shadow-sm border border-gray-100 p-2">' +
+                '<img src="' + sketchSrc + '" alt="' + (p.name || '') + '" class="w-full h-full object-contain">' +
+            '</div>' +
+            '<div class="flex-1 min-w-0">' +
+                '<div class="flex items-center gap-3 mb-1.5 flex-wrap">' +
+                    '<h2 class="text-xl font-bold text-gray-900">' + sku.model + '</h2>' +
+                    '<span class="px-2.5 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full">Active</span>' +
+                    '<span class="px-2 py-0.5 bg-gray-100 text-gray-500 text-[10px] font-medium rounded-full">' + sku.series + '</span>' +
+                '</div>' +
+                '<p class="text-sm text-gray-500 mb-3">' + (sku.nameZh || p.name || '') + '</p>' +
+                '<div class="grid grid-cols-3 gap-3 mb-3">' +
+                    '<div class="bg-gray-50 rounded-lg p-2.5"><label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Housing</label><div class="text-xs font-bold text-gray-900 mt-0.5">' + (sku.housing || '-') + '</div></div>' +
+                    '<div class="bg-gray-50 rounded-lg p-2.5"><label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Max Size</label><div class="text-xs font-bold text-gray-900 mt-0.5">' + (sku.maxWidthMM/1000) + 'm W \u00d7 ' + (sku.maxHeightMM/1000) + 'm H</div></div>' +
+                    '<div class="bg-gray-50 rounded-lg p-2.5"><label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Fabric</label><div class="text-xs font-bold text-gray-900 mt-0.5">' + (sku.fabric || '-') + ' (' + (sku.fabricOpenness || '-') + ')</div></div>' +
+                '</div>' +
+                '<p class="text-sm text-gray-600 leading-relaxed">' + (sku.features || '') + '</p>' +
+                (sku.notes ? '<p class="text-xs text-amber-600 mt-1"><i class="fas fa-info-circle mr-1"></i>' + sku.notes + '</p>' : '') +
+            '</div></div>';
+    }
+
+    // C区: 可编辑的 Pricing Tiers（供应商单价可调）
+    function _renderZBPricingTiers(sku, productId) {
+        var tiers = sku.priceTiers || [];
+        var tiersHTML = tiers.map(function(t, i) {
+            var al = t.maxArea === Infinity ? '>' + (i > 0 ? tiers[i-1].maxArea : (sku.minArea||3)) + ' m\u00b2' : '\u2264' + t.maxArea + ' m\u00b2';
+            return '<div class="flex items-center justify-between px-3 py-2.5 bg-emerald-50/60 border border-emerald-200/60 rounded-lg">' +
+                '<div class="flex items-center gap-2">' +
+                    '<span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold">' + (i+1) + '</span>' +
+                    '<span class="text-sm font-semibold text-gray-900">' + al + '</span>' +
+                '</div>' +
+                '<div class="flex items-center gap-1">' +
+                    '<span class="text-xs text-gray-400">\u00a5</span>' +
+                    '<input type="number" value="' + t.price + '" min="50" max="9999" step="1" ' +
+                        'data-tier-idx="' + i + '" data-sku="' + productId + '" ' +
+                        'onchange="window._onZBTierPriceChange(this)" ' +
+                        'class="w-16 px-1.5 py-1 border border-emerald-300 rounded text-xs font-bold text-emerald-700 text-right focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white">' +
+                    '<span class="text-[10px] text-gray-400">/m\u00b2</span>' +
+                '</div></div>';
+        }).join('');
+
+        var minAreaHTML = '<div class="flex items-center gap-2 mt-3">' +
+            '<span class="text-xs text-gray-500">Min billable area:</span>' +
+            '<input type="number" value="' + (sku.minArea||3) + '" min="1" max="20" step="0.5" ' +
+                'data-sku="' + productId + '" ' +
+                'onchange="window._onZBMinAreaChange(this)" ' +
+                'class="w-14 px-1.5 py-1 border border-gray-300 rounded text-xs font-bold text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">' +
+            '<span class="text-xs text-gray-400">m\u00b2</span>' +
+            (sku.samplePrice ? '<span class="text-xs text-gray-400 ml-4">Sample:</span><input type="number" value="' + sku.samplePrice + '" min="0" max="99999" step="10" data-sku="' + productId + '" onchange="window._onZBSamplePriceChange(this)" class="w-16 px-1.5 py-1 border border-gray-300 rounded text-xs font-bold text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 ml-1"><span class="text-xs text-gray-400">\u00a5/pc</span>' : '') +
+        '</div>';
+
+        return '<div class="border border-gray-100 rounded-xl p-5 mb-5">' +
+            '<h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">' +
+                '<i class="fas fa-tags text-emerald-500"></i> Pricing Tiers ' +
+                '<span class="text-[10px] text-gray-400 font-normal">(editable \u2014 supplier unit price by area)</span>' +
+            '</h4>' +
+            '<div class="space-y-1.5 mb-3">' + tiersHTML + '</div>' +
+            minAreaHTML +
+            '<p class="text-[11px] text-amber-600 bg-amber-50 rounded-lg px-3 py-2 mt-3 flex items-start gap-1.5"><i class="fas fa-info-circle mt-0.5 flex-shrink-0"></i><span>Prices ex-factory (incl. tax), excl. shipping/installation. Standard NP4000 fabric included.</span></p>' +
+        '</div>';
+    }
+
+    // C区: 报价公式参数（可编辑）+ 实时价格摘要
+    function _renderZBQuotationSection(sku, productId) {
         var biz = window.zbBusinessParams || {};
-        var iconSrc = productIcons[productId] || p.image;
         var tiers = sku.priceTiers || [];
         var lowPrice = tiers.length > 0 ? tiers[tiers.length - 1].price : 0;
         var highPrice = tiers.length > 0 ? tiers[0].price : 0;
 
-        var drivesHTML = '';
-        if (sku.drives && sku.drives.length > 0) {
-            drivesHTML = sku.drives.map(function(dk) {
-                var d = driveCat[dk]; if (!d) return '';
-                var tl = d.type === 'motorized' ? '<span class="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-[9px] font-bold rounded">Motor</span>' :
-                         d.type === 'combo' ? '<span class="px-1.5 py-0.5 bg-purple-100 text-purple-700 text-[9px] font-bold rounded">Combo</span>' :
-                         '<span class="px-1.5 py-0.5 bg-gray-100 text-gray-600 text-[9px] font-bold rounded">Manual</span>';
-                return '<div class="flex items-center justify-between px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50/30 transition">' +
-                    '<div class="flex items-center gap-2 min-w-0"><i class="fas fa-cog text-gray-400 text-xs flex-shrink-0"></i><span class="text-sm text-gray-800 truncate">' + d.name + '</span>' + tl + '</div>' +
-                    '<span class="text-sm font-bold text-gray-900 flex-shrink-0">\u00a5' + d.price + '<span class="text-[10px] text-gray-400 font-normal ml-0.5">/set</span></span></div>';
-            }).join('');
-        }
+        // 实时计算卖价摘要
+        var disc = biz.supplierDiscountRate || 0.9;
+        var ship = biz.shippingCostRate || 0.3;
+        var inst = biz.installationFeePerSqm || 191;
+        var markup = biz.marketMarkup || 2.92;
+        var prefDisc = biz.preferentialDiscount || 0.5;
+        var exchRate = biz.audExchangeRate || 0.21; // RMB to AUD approx
 
-        var priceTiersHTML = tiers.map(function(t, i) {
-            var al = t.maxArea === Infinity ? '>' + (i > 0 ? tiers[i-1].maxArea : (sku.minArea||3)) + ' m\u00b2' : '\u2264' + t.maxArea + ' m\u00b2';
-            return '<div class="flex items-center justify-between px-3 py-2.5 bg-emerald-50/60 border border-emerald-200/60 rounded-lg">' +
-                '<div class="flex items-center gap-2"><span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold">' + (i+1) + '</span><span class="text-sm font-semibold text-gray-900">' + al + '</span></div>' +
-                '<span class="text-sm font-bold text-emerald-700">\u00a5' + t.price + '<span class="text-[10px] text-gray-400 font-normal ml-1">/m\u00b2</span></span></div>';
-        }).join('');
+        var calcLow = ((lowPrice * disc * (1 + ship) + inst) * markup * prefDisc * exchRate).toFixed(0);
+        var calcHigh = ((highPrice * disc * (1 + ship) + inst) * markup * prefDisc * exchRate).toFixed(0);
 
-        container.innerHTML =
-            '<div class="flex gap-6 mb-6"><div class="w-44 h-44 bg-white rounded-xl overflow-hidden flex-shrink-0 shadow-sm border border-gray-100 p-2"><img src="' + iconSrc + '" alt="' + p.name + '" class="w-full h-full object-contain"></div>' +
-            '<div class="flex-1 min-w-0"><div class="flex items-center gap-3 mb-1.5 flex-wrap"><h2 class="text-xl font-bold text-gray-900">' + sku.model + '</h2><span class="px-2.5 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full">Active</span><span class="px-2 py-0.5 bg-gray-100 text-gray-500 text-[10px] font-medium rounded-full">' + sku.series + '</span></div>' +
-            '<p class="text-sm text-gray-500 mb-3">' + (sku.nameZh || p.name) + '</p>' +
-            '<div class="grid grid-cols-3 gap-3 mb-3">' +
-                '<div class="bg-gray-50 rounded-lg p-2.5"><label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Housing</label><div class="text-xs font-bold text-gray-900 mt-0.5">' + sku.housing + '</div></div>' +
-                '<div class="bg-gray-50 rounded-lg p-2.5"><label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Max Size</label><div class="text-xs font-bold text-gray-900 mt-0.5">' + (sku.maxWidthMM/1000) + 'm W \u00d7 ' + (sku.maxHeightMM/1000) + 'm H</div></div>' +
-                '<div class="bg-gray-50 rounded-lg p-2.5"><label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Fabric</label><div class="text-xs font-bold text-gray-900 mt-0.5">' + sku.fabric + ' (' + sku.fabricOpenness + ')</div></div>' +
-                '<div class="bg-orange-50 rounded-lg p-2.5"><label class="text-[10px] text-orange-400 uppercase tracking-wider font-medium">Supplier Price</label><div class="text-sm font-bold text-orange-700 mt-0.5">\u00a5' + lowPrice + ' \u2013 \u00a5' + highPrice + '<span class="text-[10px] text-gray-400 font-normal">/m\u00b2</span></div></div>' +
-                (sku.samplePrice ? '<div class="bg-gray-50 rounded-lg p-2.5"><label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Sample</label><div class="text-xs font-bold text-gray-900 mt-0.5">\u00a5' + sku.samplePrice + '/pc</div></div>' : '') +
-                '<div class="bg-gray-50 rounded-lg p-2.5"><label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Min Area</label><div class="text-xs font-bold text-gray-900 mt-0.5">' + (sku.minArea||3) + ' m\u00b2</div></div>' +
-            '</div>' +
-            '<p class="text-sm text-gray-600 leading-relaxed">' + (sku.features||'') + '</p>' +
-            (sku.notes ? '<p class="text-xs text-amber-600 mt-1"><i class="fas fa-info-circle mr-1"></i>' + sku.notes + '</p>' : '') +
-            '</div></div>' +
-            '<div class="border border-gray-100 rounded-xl p-5 mb-5"><h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2"><i class="fas fa-tags text-emerald-500"></i> Pricing Tiers <span class="text-[10px] text-gray-400 font-normal">(Supplier unit price by area)</span></h4><div class="space-y-1.5 mb-3">' + priceTiersHTML + '</div>' +
-            '<p class="text-[11px] text-amber-600 bg-amber-50 rounded-lg px-3 py-2 flex items-start gap-1.5"><i class="fas fa-info-circle mt-0.5 flex-shrink-0"></i><span>Prices ex-factory (incl. tax), excl. shipping/installation. Min billable area: ' + (sku.minArea||3) + ' m\u00b2. Standard NP4000 fabric included.</span></p></div>' +
-            (drivesHTML ? '<div class="border border-gray-100 rounded-xl p-5 mb-5"><h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2"><i class="fas fa-cogs text-blue-500"></i> Compatible Drive Systems <span class="text-[10px] text-gray-400 font-normal">(' + sku.drives.length + ' options)</span></h4><div class="space-y-1.5">' + drivesHTML + '</div><p class="text-[11px] text-gray-400 mt-3"><i class="fas fa-info-circle mr-1"></i>Drive system priced per unit (RMB/set), selected during quotation.</p></div>' : '') +
-            '<div class="border border-blue-100 bg-blue-50/30 rounded-xl p-4"><h4 class="text-sm font-semibold text-blue-800 mb-2.5 flex items-center gap-2"><i class="fas fa-calculator text-blue-500"></i> Quotation Formula Parameters <span class="text-[10px] text-blue-400 font-normal">(editable)</span></h4>' +
-            '<div class="grid grid-cols-2 lg:grid-cols-3 gap-2.5">' +
-                '<div class="bg-white rounded-lg p-2.5 border border-gray-200"><label class="text-[10px] text-gray-400 uppercase block mb-1">Supplier Discount</label><div class="flex items-center gap-1"><input type="number" value="' + (biz.supplierDiscountRate||0.9) + '" min="0.5" max="1" step="0.01" onchange="window.zbBusinessParams.supplierDiscountRate=parseFloat(this.value)" class="w-14 px-1.5 py-1 border border-gray-300 rounded text-xs font-bold text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"><span class="text-xs text-gray-400">rate</span></div></div>' +
-                '<div class="bg-white rounded-lg p-2.5 border border-gray-200"><label class="text-[10px] text-gray-400 uppercase block mb-1">Shipping & Customs</label><div class="flex items-center gap-1"><input type="number" value="' + (biz.shippingCostRate||0.3) + '" min="0" max="1" step="0.01" onchange="window.zbBusinessParams.shippingCostRate=parseFloat(this.value)" class="w-14 px-1.5 py-1 border border-gray-300 rounded text-xs font-bold text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"><span class="text-xs text-gray-400">rate</span></div></div>' +
-                '<div class="bg-white rounded-lg p-2.5 border border-gray-200"><label class="text-[10px] text-gray-400 uppercase block mb-1">Installation Fee</label><div class="flex items-center gap-1"><input type="number" value="' + (biz.installationFeePerSqm||191) + '" min="0" max="1000" step="1" onchange="window.zbBusinessParams.installationFeePerSqm=parseFloat(this.value)" class="w-16 px-1.5 py-1 border border-gray-300 rounded text-xs font-bold text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"><span class="text-xs text-gray-400">\u00a5/m\u00b2</span></div></div>' +
-                '<div class="bg-white rounded-lg p-2.5 border border-gray-200"><label class="text-[10px] text-gray-400 uppercase block mb-1">Market Markup</label><div class="flex items-center gap-1"><input type="number" value="' + (biz.marketMarkup||2.92) + '" min="1" max="10" step="0.01" onchange="window.zbBusinessParams.marketMarkup=parseFloat(this.value)" class="w-14 px-1.5 py-1 border border-gray-300 rounded text-xs font-bold text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"><span class="text-xs text-gray-400">\u00d7</span></div></div>' +
-                '<div class="bg-white rounded-lg p-2.5 border border-gray-200"><label class="text-[10px] text-gray-400 uppercase block mb-1">Default Discount</label><div class="flex items-center gap-1"><input type="number" value="' + (biz.preferentialDiscount||0.5) + '" min="0" max="1" step="0.01" onchange="window.zbBusinessParams.preferentialDiscount=parseFloat(this.value)" class="w-14 px-1.5 py-1 border border-gray-300 rounded text-xs font-bold text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"><span class="text-xs text-gray-400">rate</span></div></div>' +
-                '<div class="bg-white rounded-lg p-2.5 border border-gray-200"><label class="text-[10px] text-gray-400 uppercase block mb-1">Accessory Markup</label><div class="flex items-center gap-1"><input type="number" value="' + (biz.accessoryMarkupRate||0.13) + '" min="0" max="1" step="0.001" onchange="window.zbBusinessParams.accessoryMarkupRate=parseFloat(this.value)" class="w-16 px-1.5 py-1 border border-gray-300 rounded text-xs font-bold text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"><span class="text-xs text-gray-400">rate</span></div></div>' +
+        var summaryHTML = '<div class="border border-orange-200/60 bg-orange-50/30 rounded-xl p-4 mb-5">' +
+            '<h4 class="text-sm font-semibold text-orange-800 mb-2.5 flex items-center gap-2">' +
+                '<i class="fas fa-receipt text-orange-500"></i> Simplified Price Summary ' +
+                '<span class="text-[10px] text-orange-400 font-normal">(auto-calculated from parameters below)</span>' +
+            '</h4>' +
+            '<div class="grid grid-cols-3 gap-3" id="zbPriceSummary_' + productId + '">' +
+                '<div class="bg-white rounded-lg p-2.5 border border-orange-200">' +
+                    '<label class="text-[10px] text-orange-400 uppercase tracking-wider font-medium">Selling Price Range</label>' +
+                    '<div class="text-sm font-bold text-orange-700 mt-0.5">A$' + calcLow + ' \u2013 A$' + calcHigh + '<span class="text-[10px] text-gray-400 font-normal ml-0.5">/m\u00b2</span></div>' +
+                '</div>' +
+                '<div class="bg-white rounded-lg p-2.5 border border-gray-200">' +
+                    '<label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Supplier Cost</label>' +
+                    '<div class="text-sm font-bold text-gray-900 mt-0.5">\u00a5' + lowPrice + ' \u2013 \u00a5' + highPrice + '<span class="text-[10px] text-gray-400 font-normal ml-0.5">/m\u00b2</span></div>' +
+                '</div>' +
+                '<div class="bg-white rounded-lg p-2.5 border border-gray-200">' +
+                    '<label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Gross Margin</label>' +
+                    '<div class="text-sm font-bold text-emerald-700 mt-0.5">~' + Math.round((1 - 1/(markup * (1+ship))) * 100) + '%</div>' +
+                '</div>' +
             '</div></div>';
+
+        var paramsHTML = '<div class="border border-blue-100 bg-blue-50/30 rounded-xl p-4 mb-5">' +
+            '<h4 class="text-sm font-semibold text-blue-800 mb-2.5 flex items-center gap-2">' +
+                '<i class="fas fa-calculator text-blue-500"></i> Quotation Formula Parameters ' +
+                '<span class="text-[10px] text-blue-400 font-normal">(editable \u2014 changes update summary above)</span>' +
+            '</h4>' +
+            '<div class="grid grid-cols-2 lg:grid-cols-3 gap-2.5">' +
+                '<div class="bg-white rounded-lg p-2.5 border border-gray-200"><label class="text-[10px] text-gray-400 uppercase block mb-1">Supplier Discount</label><div class="flex items-center gap-1"><input type="number" value="' + disc + '" min="0.5" max="1" step="0.01" data-param="supplierDiscountRate" data-sku="' + productId + '" onchange="window._onZBParamChange(this)" class="w-14 px-1.5 py-1 border border-gray-300 rounded text-xs font-bold text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"><span class="text-xs text-gray-400">rate</span></div></div>' +
+                '<div class="bg-white rounded-lg p-2.5 border border-gray-200"><label class="text-[10px] text-gray-400 uppercase block mb-1">Shipping & Customs</label><div class="flex items-center gap-1"><input type="number" value="' + ship + '" min="0" max="1" step="0.01" data-param="shippingCostRate" data-sku="' + productId + '" onchange="window._onZBParamChange(this)" class="w-14 px-1.5 py-1 border border-gray-300 rounded text-xs font-bold text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"><span class="text-xs text-gray-400">rate</span></div></div>' +
+                '<div class="bg-white rounded-lg p-2.5 border border-gray-200"><label class="text-[10px] text-gray-400 uppercase block mb-1">Installation Fee</label><div class="flex items-center gap-1"><input type="number" value="' + inst + '" min="0" max="1000" step="1" data-param="installationFeePerSqm" data-sku="' + productId + '" onchange="window._onZBParamChange(this)" class="w-16 px-1.5 py-1 border border-gray-300 rounded text-xs font-bold text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"><span class="text-xs text-gray-400">\u00a5/m\u00b2</span></div></div>' +
+                '<div class="bg-white rounded-lg p-2.5 border border-gray-200"><label class="text-[10px] text-gray-400 uppercase block mb-1">Market Markup</label><div class="flex items-center gap-1"><input type="number" value="' + markup + '" min="1" max="10" step="0.01" data-param="marketMarkup" data-sku="' + productId + '" onchange="window._onZBParamChange(this)" class="w-14 px-1.5 py-1 border border-gray-300 rounded text-xs font-bold text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"><span class="text-xs text-gray-400">\u00d7</span></div></div>' +
+                '<div class="bg-white rounded-lg p-2.5 border border-gray-200"><label class="text-[10px] text-gray-400 uppercase block mb-1">Default Discount</label><div class="flex items-center gap-1"><input type="number" value="' + prefDisc + '" min="0" max="1" step="0.01" data-param="preferentialDiscount" data-sku="' + productId + '" onchange="window._onZBParamChange(this)" class="w-14 px-1.5 py-1 border border-gray-300 rounded text-xs font-bold text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"><span class="text-xs text-gray-400">rate</span></div></div>' +
+                '<div class="bg-white rounded-lg p-2.5 border border-gray-200"><label class="text-[10px] text-gray-400 uppercase block mb-1">AUD Exchange</label><div class="flex items-center gap-1"><input type="number" value="' + exchRate + '" min="0.05" max="0.5" step="0.005" data-param="audExchangeRate" data-sku="' + productId + '" onchange="window._onZBParamChange(this)" class="w-16 px-1.5 py-1 border border-gray-300 rounded text-xs font-bold text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"><span class="text-xs text-gray-400">\u00a5\u2192A$</span></div></div>' +
+            '</div></div>';
+
+        return summaryHTML + paramsHTML;
+    }
+
+    // Drive Systems 渲染
+    function _renderZBDriveSystems(sku) {
+        var driveCat = window.zbDriveSystemCatalog || {};
+        if (!sku.drives || sku.drives.length === 0) return '';
+        var drivesHTML = sku.drives.map(function(dk) {
+            var d = driveCat[dk]; if (!d) return '';
+            var tl = d.type === 'motorized' ? '<span class="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-[9px] font-bold rounded">Motor</span>' :
+                     d.type === 'combo' ? '<span class="px-1.5 py-0.5 bg-purple-100 text-purple-700 text-[9px] font-bold rounded">Combo</span>' :
+                     '<span class="px-1.5 py-0.5 bg-gray-100 text-gray-600 text-[9px] font-bold rounded">Manual</span>';
+            return '<div class="flex items-center justify-between px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50/30 transition">' +
+                '<div class="flex items-center gap-2 min-w-0"><i class="fas fa-cog text-gray-400 text-xs flex-shrink-0"></i><span class="text-sm text-gray-800 truncate">' + d.name + '</span>' + tl + '</div>' +
+                '<span class="text-sm font-bold text-gray-900 flex-shrink-0">\u00a5' + d.price + '<span class="text-[10px] text-gray-400 font-normal ml-0.5">/set</span></span></div>';
+        }).join('');
+        return '<div class="border border-gray-100 rounded-xl p-5 mb-5">' +
+            '<h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2"><i class="fas fa-cogs text-blue-500"></i> Compatible Drive Systems <span class="text-[10px] text-gray-400 font-normal">(' + sku.drives.length + ' options)</span></h4>' +
+            '<div class="space-y-1.5">' + drivesHTML + '</div>' +
+            '<p class="text-[11px] text-gray-400 mt-3"><i class="fas fa-info-circle mr-1"></i>Drive system priced per unit (RMB/set), selected during quotation.</p></div>';
+    }
+
+    // D区: 未来功能按钮（灰化 + Coming Soon 小字标签）
+    function _renderZBActionButtons() {
+        return '<div class="flex gap-3 mt-5">' +
+            '<button class="flex-1 py-3 bg-gray-100 border border-gray-200 text-gray-400 rounded-xl font-medium flex items-center justify-center gap-2 cursor-not-allowed" disabled>' +
+                '<i class="fas fa-sliders-h text-gray-300"></i>' +
+                '<span>Customize Product</span>' +
+                '<span class="text-[9px] text-gray-400 bg-gray-200 px-1.5 py-0.5 rounded-full ml-1">coming soon</span>' +
+            '</button>' +
+            '<button class="flex-1 py-3 bg-gray-100 border border-gray-200 text-gray-400 rounded-xl font-medium flex items-center justify-center gap-2 cursor-not-allowed" disabled>' +
+                '<i class="fas fa-archive text-gray-300"></i>' +
+                '<span>Archive Product</span>' +
+                '<span class="text-[9px] text-gray-400 bg-gray-200 px-1.5 py-0.5 rounded-full ml-1">coming soon</span>' +
+            '</button>' +
+        '</div>';
+    }
+
+    // 主渲染入口（含 try/catch 错误边界）
+    function _renderZBProductDetail(productId, p, sku) {
+        var container = document.getElementById('productDetailContent');
+        if (!container) return;
+        try {
+            container.innerHTML =
+                _renderZBDetailHeader(sku, p) +
+                _renderZBPricingTiers(sku, productId) +
+                _renderZBDriveSystems(sku) +
+                _renderZBQuotationSection(sku, productId) +
+                _renderZBActionButtons();
+        } catch (err) {
+            console.error('[Nestopia] _renderZBProductDetail failed:', err);
+            container.innerHTML = '<div class="p-5 border border-red-200 bg-red-50 rounded-xl text-center">' +
+                '<i class="fas fa-exclamation-triangle text-red-400 text-2xl mb-2"></i>' +
+                '<p class="text-sm text-red-700 font-medium">Error rendering product detail</p>' +
+                '<p class="text-xs text-red-500 mt-1">' + (err.message || '') + '</p>' +
+                '<button onclick="updateProductDetail(\'' + productId + '\')" class="mt-3 px-4 py-1.5 bg-red-100 text-red-700 rounded-lg text-xs font-medium hover:bg-red-200 transition">Retry</button></div>';
+        }
+    }
+
+    // ── C区 交互事件处理器：参数变更时实时重算价格摘要 ──
+    window._onZBParamChange = function(el) {
+        var param = el.dataset.param;
+        var val = parseFloat(el.value);
+        if (isNaN(val)) return;
+        window.zbBusinessParams = window.zbBusinessParams || {};
+        window.zbBusinessParams[param] = val;
+        // 触发价格摘要重算
+        var skuKey = el.dataset.sku;
+        var skuCat = window.zbSKUCatalog;
+        if (skuCat && skuCat[skuKey]) {
+            _updateZBPriceSummary(skuKey, skuCat[skuKey]);
+        }
+    };
+
+    window._onZBTierPriceChange = function(el) {
+        var idx = parseInt(el.dataset.tierIdx);
+        var skuKey = el.dataset.sku;
+        var val = parseFloat(el.value);
+        if (isNaN(val) || isNaN(idx)) return;
+        var skuCat = window.zbSKUCatalog;
+        if (skuCat && skuCat[skuKey] && skuCat[skuKey].priceTiers && skuCat[skuKey].priceTiers[idx]) {
+            skuCat[skuKey].priceTiers[idx].price = val;
+            _updateZBPriceSummary(skuKey, skuCat[skuKey]);
+        }
+    };
+
+    window._onZBMinAreaChange = function(el) {
+        var skuKey = el.dataset.sku;
+        var val = parseFloat(el.value);
+        if (isNaN(val)) return;
+        var skuCat = window.zbSKUCatalog;
+        if (skuCat && skuCat[skuKey]) {
+            skuCat[skuKey].minArea = val;
+        }
+    };
+
+    window._onZBSamplePriceChange = function(el) {
+        var skuKey = el.dataset.sku;
+        var val = parseFloat(el.value);
+        if (isNaN(val)) return;
+        var skuCat = window.zbSKUCatalog;
+        if (skuCat && skuCat[skuKey]) {
+            skuCat[skuKey].samplePrice = val;
+        }
+    };
+
+    // 实时重算并更新价格摘要 DOM
+    function _updateZBPriceSummary(skuKey, sku) {
+        var summaryEl = document.getElementById('zbPriceSummary_' + skuKey);
+        if (!summaryEl) return;
+        var biz = window.zbBusinessParams || {};
+        var tiers = sku.priceTiers || [];
+        var lowPrice = tiers.length > 0 ? tiers[tiers.length - 1].price : 0;
+        var highPrice = tiers.length > 0 ? tiers[0].price : 0;
+        var disc = biz.supplierDiscountRate || 0.9;
+        var ship = biz.shippingCostRate || 0.3;
+        var inst = biz.installationFeePerSqm || 191;
+        var markup = biz.marketMarkup || 2.92;
+        var prefDisc = biz.preferentialDiscount || 0.5;
+        var exchRate = biz.audExchangeRate || 0.21;
+        var calcLow = ((lowPrice * disc * (1 + ship) + inst) * markup * prefDisc * exchRate).toFixed(0);
+        var calcHigh = ((highPrice * disc * (1 + ship) + inst) * markup * prefDisc * exchRate).toFixed(0);
+        summaryEl.innerHTML =
+            '<div class="bg-white rounded-lg p-2.5 border border-orange-200">' +
+                '<label class="text-[10px] text-orange-400 uppercase tracking-wider font-medium">Selling Price Range</label>' +
+                '<div class="text-sm font-bold text-orange-700 mt-0.5">A$' + calcLow + ' \u2013 A$' + calcHigh + '<span class="text-[10px] text-gray-400 font-normal ml-0.5">/m\u00b2</span></div>' +
+            '</div>' +
+            '<div class="bg-white rounded-lg p-2.5 border border-gray-200">' +
+                '<label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Supplier Cost</label>' +
+                '<div class="text-sm font-bold text-gray-900 mt-0.5">\u00a5' + lowPrice + ' \u2013 \u00a5' + highPrice + '<span class="text-[10px] text-gray-400 font-normal ml-0.5">/m\u00b2</span></div>' +
+            '</div>' +
+            '<div class="bg-white rounded-lg p-2.5 border border-gray-200">' +
+                '<label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Gross Margin</label>' +
+                '<div class="text-sm font-bold text-emerald-700 mt-0.5">~' + Math.round((1 - 1/(markup * (1+ship))) * 100) + '%</div>' +
+            '</div>';
     }
 
     // Update the product detail panel

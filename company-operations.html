@@ -877,7 +877,7 @@
                                         <button class="ov-product-filter-btn px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50" data-filter="zb-special">Special</button>
                                     </div>
                                 </div>
-                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 p-5" id="overviewProductsGrid">
+                                <div class="p-5" id="overviewProductsGrid">
                                     <!-- Populated by JS -->
                                 </div>
                             </div>
@@ -2817,11 +2817,14 @@
                                     <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
                                     <input type="text" id="productSearch" placeholder="Search products..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
                                 </div>
-                                <div class="flex gap-2 mt-3">
+                                <div class="flex gap-2 mt-3 flex-wrap">
                                     <button class="product-filter-btn px-3 py-1 bg-gray-900 text-white text-xs rounded-full" data-filter="all">All</button>
                                     <button class="product-filter-btn px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50" data-filter="sunroom">Sunroom</button>
                                     <button class="product-filter-btn px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50" data-filter="pergola">Pergola</button>
                                     <button class="product-filter-btn px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50" data-filter="blinds">Zip Blinds</button>
+                                    <button class="product-filter-btn px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50" data-filter="zb-standard">WR100/110</button>
+                                    <button class="product-filter-btn px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50" data-filter="zb-outdoor">WR120</button>
+                                    <button class="product-filter-btn px-3 py-1 bg-white border text-gray-600 text-xs rounded-full hover:bg-gray-50" data-filter="zb-special">Special</button>
                                 </div>
                             </div>
 
@@ -2895,25 +2898,18 @@
                                 </div>
                             </div>
 
-                            <!-- Action Buttons -->
-                            <div class="relative">
-                                <div class="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
-                                    <span class="px-3 py-1.5 bg-gray-900/80 text-white text-[10px] font-semibold rounded-full tracking-wider uppercase backdrop-blur-sm">Coming Soon</span>
-                                </div>
-                                <div class="flex gap-3 opacity-40">
-                                    <button class="flex-1 py-3 bg-white border border-gray-300 text-gray-700 rounded-xl font-medium flex items-center justify-center gap-2" disabled>
-                                        <i class="fas fa-copy"></i>
-                                        <span>Duplicate Product</span>
-                                    </button>
-                                    <button class="flex-1 py-3 bg-white border border-gray-300 text-gray-700 rounded-xl font-medium flex items-center justify-center gap-2" disabled>
-                                        <i class="fas fa-archive"></i>
-                                        <span>Archive Product</span>
-                                    </button>
-                                    <button class="py-3 px-6 bg-red-50 border border-red-200 text-red-600 rounded-xl font-medium flex items-center justify-center gap-2" disabled>
-                                        <i class="fas fa-trash"></i>
-                                        <span>Delete</span>
-                                    </button>
-                                </div>
+                            <!-- Action Buttons (D区 — 灰化 + Coming Soon) -->
+                            <div class="flex gap-3">
+                                <button class="flex-1 py-3 bg-gray-100 border border-gray-200 text-gray-400 rounded-xl font-medium flex items-center justify-center gap-2 cursor-not-allowed" disabled>
+                                    <i class="fas fa-sliders-h text-gray-300"></i>
+                                    <span>Customize Product</span>
+                                    <span class="text-[9px] text-gray-400 bg-gray-200 px-1.5 py-0.5 rounded-full ml-1">coming soon</span>
+                                </button>
+                                <button class="flex-1 py-3 bg-gray-100 border border-gray-200 text-gray-400 rounded-xl font-medium flex items-center justify-center gap-2 cursor-not-allowed" disabled>
+                                    <i class="fas fa-archive text-gray-300"></i>
+                                    <span>Archive Product</span>
+                                    <span class="text-[9px] text-gray-400 bg-gray-200 px-1.5 py-0.5 rounded-full ml-1">coming soon</span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -4391,46 +4387,46 @@
 
     <!-- JS 模块化文件 — 按依赖顺序加载 -->
     <!-- 1. 命名空间 -->
-    <script src="js/core/namespace.js?v=5d31f8b"></script>
+    <script src="js/core/namespace.js?v=17cc796"></script>
     <!-- 2. 核心基础层 (Phase 2) -->
-    <script src="js/core/supabase-config.js?v=5d31f8b"></script>
-    <script src="js/core/supabase-storage.js?v=5d31f8b"></script>
-    <script src="js/core/auth.js?v=5d31f8b"></script>
-    <script src="js/core/tenant.js?v=5d31f8b"></script>
-    <script src="js/core/i18n.js?v=5d31f8b"></script>
-    <script src="js/core/router.js?v=5d31f8b"></script>
+    <script src="js/core/supabase-config.js?v=17cc796"></script>
+    <script src="js/core/supabase-storage.js?v=17cc796"></script>
+    <script src="js/core/auth.js?v=17cc796"></script>
+    <script src="js/core/tenant.js?v=17cc796"></script>
+    <script src="js/core/i18n.js?v=17cc796"></script>
+    <script src="js/core/router.js?v=17cc796"></script>
     <!-- 3. 数据层 (Phase 1) -->
-    <script src="js/data/i18n-dict.js?v=5d31f8b"></script>
-    <script src="js/data/pricing-data.js?v=5d31f8b"></script>
-    <script src="js/data/product-catalog.js?v=5d31f8b"></script>
-    <script src="js/data/step-config.js?v=5d31f8b"></script>
-    <script src="js/data/intake-fields.js?v=5d31f8b"></script>
-    <script src="js/data/seed-projects.js?v=5d31f8b"></script>
+    <script src="js/data/i18n-dict.js?v=17cc796"></script>
+    <script src="js/data/pricing-data.js?v=17cc796"></script>
+    <script src="js/data/product-catalog.js?v=17cc796"></script>
+    <script src="js/data/step-config.js?v=17cc796"></script>
+    <script src="js/data/intake-fields.js?v=17cc796"></script>
+    <script src="js/data/seed-projects.js?v=17cc796"></script>
     <!-- 4. 工具层 (Phase 3) -->
-    <script src="js/utils/helpers.js?v=5d31f8b"></script>
-    <script src="js/utils/unit-converter.js?v=5d31f8b"></script>
+    <script src="js/utils/helpers.js?v=17cc796"></script>
+    <script src="js/utils/unit-converter.js?v=17cc796"></script>
     <!-- 5. 功能模块 (Phase 3) -->
-    <script src="js/modules/orders.js?v=5d31f8b"></script>
-    <script src="js/modules/customers.js?v=5d31f8b"></script>
-    <script src="js/modules/knowledge-base.js?v=5d31f8b"></script>
-    <script src="js/modules/products.js?v=5d31f8b"></script>
-    <script src="js/modules/overview.js?v=5d31f8b"></script>
-    <script src="js/modules/projects.js?v=5d31f8b"></script>
-    <script src="js/modules/workflow.js?v=5d31f8b"></script>
+    <script src="js/modules/orders.js?v=17cc796"></script>
+    <script src="js/modules/customers.js?v=17cc796"></script>
+    <script src="js/modules/knowledge-base.js?v=17cc796"></script>
+    <script src="js/modules/products.js?v=17cc796"></script>
+    <script src="js/modules/overview.js?v=17cc796"></script>
+    <script src="js/modules/projects.js?v=17cc796"></script>
+    <script src="js/modules/workflow.js?v=17cc796"></script>
     <!-- 6. Agent 模块 (Phase 4) -->
-    <script src="js/agents/designer.js?v=5d31f8b"></script>
-    <script src="js/agents/pricing.js?v=5d31f8b"></script>
-    <script src="js/agents/compliance.js?v=5d31f8b"></script>
-    <script src="js/agents/customer-service.js?v=5d31f8b"></script>
+    <script src="js/agents/designer.js?v=17cc796"></script>
+    <script src="js/agents/pricing.js?v=17cc796"></script>
+    <script src="js/agents/compliance.js?v=17cc796"></script>
+    <script src="js/agents/customer-service.js?v=17cc796"></script>
     <!-- 7. Step 实现 (Phase 4) -->
-    <script src="js/steps/step2-design.js?v=5d31f8b"></script>
-    <script src="js/steps/step3-measurement.js?v=5d31f8b"></script>
-    <script src="js/steps/zb-verification.js?v=5d31f8b"></script>
-    <script src="js/steps/step4-quotation.js?v=5d31f8b"></script>
+    <script src="js/steps/step2-design.js?v=17cc796"></script>
+    <script src="js/steps/step3-measurement.js?v=17cc796"></script>
+    <script src="js/steps/zb-verification.js?v=17cc796"></script>
+    <script src="js/steps/step4-quotation.js?v=17cc796"></script>
     <!-- 8. 独立工具 (Phase 4) -->
-    <script src="js/utils/quotation-editor.js?v=5d31f8b"></script>
-    <script src="js/utils/step-progress.js?v=5d31f8b"></script>
-    <script src="js/utils/chatbot.js?v=5d31f8b"></script>
+    <script src="js/utils/quotation-editor.js?v=17cc796"></script>
+    <script src="js/utils/step-progress.js?v=17cc796"></script>
+    <script src="js/utils/chatbot.js?v=17cc796"></script>
     <script>
         // ===== Authentication (→ js/core/auth.js) =====
 
