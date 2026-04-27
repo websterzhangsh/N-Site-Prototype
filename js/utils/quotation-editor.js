@@ -712,7 +712,6 @@
         if (!step4St || !step4St.costSummary) { showToast('Please calculate quotation first', 'error'); return; }
 
         var cs = step4St.costSummary;
-        var bp = step4St.businessParams || _bizParams;
         var rate = step4St.exchangeRate || 5.3612;
         var curr = step4St.currency || 'SGD';
         var today = new Date();
@@ -720,176 +719,162 @@
 
         var tenantCfg = tenantConfigs[getCurrentTenantSlug()] || tenantConfigs['default'];
         var logoPath = window.location.origin + '/' + tenantCfg.logo;
-        var lang = getTenantLanguage();
         var client = project.customer || 'Customer';
+        var csName = tenantCfg.csName || '';
+        var csPhone = tenantCfg.csPhone || '';
 
-        // Build per-opening rows
+        // ── 构建产品行（无单项价格，只显示尺寸和面积）──
         var blindsRows = '';
-        var blindsTotal = 0;
+        var totalOpenings = 0;
         if (cs.perOpeningCosts) {
-            cs.perOpeningCosts.forEach(function(poc, idx) {
-                var sellTotal = poc.totalPref;
-                blindsTotal += sellTotal;
+            cs.perOpeningCosts.forEach(function(poc) {
+                totalOpenings++;
                 var skuLabel = poc.skuModel || poc.sku;
                 var skuData = _skuCatalog[poc.sku];
-                var productDesc = skuData ? skuData.nameZh : skuLabel;
+                var productDesc = skuData ? (skuData.nameZh || skuData.name) : skuLabel;
                 blindsRows += '<tr>' +
                     '<td style="border:1px solid #d1d5db;padding:8px 12px;text-align:center;color:#6b7280;font-size:12px;">' + poc.idx + '</td>' +
-                    '<td style="border:1px solid #d1d5db;padding:8px 12px;font-size:12px;">' + productDesc + '<div style="font-size:10px;color:#9ca3af;">' + skuLabel + '</div></td>' +
-                    '<td style="border:1px solid #d1d5db;padding:8px 12px;text-align:center;font-size:12px;">' + poc.widthMM + ' \u00d7 ' + poc.heightMM + '</td>' +
+                    '<td style="border:1px solid #d1d5db;padding:8px 12px;font-size:12px;">' + productDesc + '</td>' +
+                    '<td style="border:1px solid #d1d5db;padding:8px 12px;text-align:center;font-size:12px;">' + poc.widthMM + '</td>' +
+                    '<td style="border:1px solid #d1d5db;padding:8px 12px;text-align:center;font-size:12px;">' + poc.heightMM + '</td>' +
                     '<td style="border:1px solid #d1d5db;padding:8px 12px;text-align:center;font-size:12px;">' + poc.area.toFixed(2) + '</td>' +
                     '<td style="border:1px solid #d1d5db;padding:8px 12px;text-align:center;font-size:12px;">' + poc.billedArea.toFixed(2) + '</td>' +
                     '<td style="border:1px solid #d1d5db;padding:8px 12px;text-align:center;font-size:12px;">1</td>' +
-                    '<td style="border:1px solid #d1d5db;padding:8px 12px;text-align:right;font-size:12px;font-weight:600;">\u00a5' + Math.round(sellTotal).toLocaleString() + '</td>' +
                 '</tr>';
             });
         }
 
-        // Drive system rows
-        var driveRows = '';
-        var driveTotal = 0;
-        if (cs.perOpeningCosts) {
-            cs.perOpeningCosts.forEach(function(poc) {
-                var dd = _driveCatalog[poc.driveSystem];
-                if (!dd) return;
-                var sellP = poc.driveSell;
-                driveTotal += sellP;
-                driveRows += '<tr>' +
-                    '<td style="border:1px solid #d1d5db;padding:8px 12px;text-align:center;color:#6b7280;font-size:12px;">' + (cs.perOpeningCosts.length + poc.idx) + '</td>' +
-                    '<td style="border:1px solid #d1d5db;padding:8px 12px;font-size:12px;" colspan="4">' + dd.nameZh + ' / ' + dd.name + ' <span style="color:#9ca3af;font-size:10px;">(#' + poc.idx + ')</span></td>' +
-                    '<td style="border:1px solid #d1d5db;padding:8px 12px;text-align:center;font-size:12px;">1</td>' +
-                    '<td style="border:1px solid #d1d5db;padding:8px 12px;text-align:right;font-size:12px;font-weight:600;">\u00a5' + Math.round(sellP).toLocaleString() + '</td>' +
-                '</tr>';
-            });
+        // ── 电机合并为一行 ──
+        var driveCount = totalOpenings;
+        var driveName = '';
+        if (cs.perOpeningCosts && cs.perOpeningCosts.length > 0) {
+            var firstDrive = cs.perOpeningCosts[0].driveSystem;
+            var dd = _driveCatalog[firstDrive];
+            driveName = dd ? ((dd.nameZh || '') + ' / ' + (dd.name || '')) : (firstDrive || 'Motor');
+        }
+        var motorRow = '';
+        if (driveCount > 0 && driveName) {
+            motorRow = '<tr>' +
+                '<td style="border:1px solid #d1d5db;padding:8px 12px;text-align:center;color:#6b7280;font-size:12px;">' + (totalOpenings + 1) + '</td>' +
+                '<td style="border:1px solid #d1d5db;padding:8px 12px;font-size:12px;" colspan="5">' + driveName + '</td>' +
+                '<td style="border:1px solid #d1d5db;padding:8px 12px;text-align:center;font-size:12px;">' + driveCount + '</td>' +
+            '</tr>';
         }
 
-        var grandRMB = blindsTotal + driveTotal;
+        // ── 总价（仅显示外币总价）──
+        var grandRMB = (cs.totalBlindsSell || 0) + (cs.totalDriveSell || 0);
         var grandForeign = grandRMB / rate;
         var foreignSymbol = curr === 'SGD' ? 'S$' : '$';
 
-        // Remarks
+        // ── 备注 ──
         var profileColor = (document.getElementById('quotProfileColor') || {}).value || 'Coffee';
         var fabric = (document.getElementById('quotFabric') || {}).value || 'NP4000';
-        var defaultRemarks = lang === 'en' ? [
-            'Prices include supply, delivery, and installation.',
-            'Payment terms: 50% deposit upon order confirmation, 50% upon installation completion.',
-            'Warranty: 2 years for motor, 5 years for fabric, 10 years for aluminum profile.',
-            'Delivery lead time: 4-6 weeks from order confirmation.',
-            'Prices valid for 30 days from quotation date.',
-            curr + ' exchange rate: ' + rate + ' (as of ' + dateStr + ').',
-            'Profile color: ' + profileColor + '; Fabric: ' + fabric + '.'
-        ] : [
-            '\u4ee5\u4e0a\u4ef7\u683c\u5305\u542b\u4f9b\u8d27\u3001\u8fd0\u8f93\u53ca\u5b89\u88c5 / Prices include supply, delivery, and installation.',
-            '\u4ed8\u6b3e\u65b9\u5f0f\uff1a\u786e\u8ba4\u8ba2\u5355\u65f6\u652f\u4ed850%\u5b9a\u91d1\uff0c\u5b89\u88c5\u5b8c\u6210\u540e\u652f\u4ed8\u4f59\u6b3e / Payment: 50% deposit, 50% upon completion.',
-            '\u4fdd\u4fee\u671f\uff1a\u7535\u673a2\u5e74\uff0c\u9762\u65995\u5e74\uff0c\u94dd\u578b\u6750\u67b610\u5e74 / Warranty: Motor 2yr, Fabric 5yr, Profile 10yr.',
-            '\u4ea4\u8d27\u5468\u671f\uff1a\u8ba2\u5355\u786e\u8ba4\u540e4-6\u5468 / Lead time: 4-6 weeks from confirmation.',
-            '\u62a5\u4ef7\u6709\u6548\u671f30\u5929 / Quotation valid for 30 days.',
-            curr + ' \u6c47\u7387 / Exchange rate: ' + rate + ' (' + dateStr + ')',
-            '\u578b\u6750\u989c\u8272 / Profile: ' + profileColor + '; \u9762\u6599 / Fabric: ' + fabric
+        var fabricDesc = 'Polyester+PVC, 5% openness';
+        var remarks = [
+            '\u578b\u6750\u989c\u8272 ' + profileColor + '\uff1b\u9762\u6599 ' + fabric + ' ' + fabricDesc + ' / Profile: ' + profileColor + '; Fabric: ' + fabric + ' ' + fabricDesc,
+            curr + ' \u5bf9\u4eba\u6c11\u5e01\u6c47\u7387 / ' + curr + ' to RMB exchange rate: ' + rate + ' (' + dateStr + ')',
+            '\u5305\u542b\u6d77\u5173\u8d39\u53ca\u7269\u6d41\u8fd0\u8f93\u7b49\u8d39\u7528 / Include customs duties, logistics, and shipping fees',
+            '\u8d28\u4fdd\uff1a\u94dd\u5408\u91d1\u578b\u6750\u5341\u5e74\uff0c\u7535\u673a\u4e09\u5e74\uff0c\u9632\u98ce\u5377\u5e18\u4e24\u5e74 / Warranty: Aluminum alloy 10 years, motor 3 years, zip blinds 2 years',
+            '\u4ed8\u6b3e\u6761\u4ef6\uff1a\u4e0b\u5355\u751f\u4ea7\u524d\u9700\u4ed850%\u5b9a\u91d1\uff0c\u53d1\u8d27\u524d\u4ed8\u6e05\u4f59\u6b3e / Payment: 50% deposit before production, balance before shipment'
         ];
-
-        var remarksHtml = defaultRemarks.map(function(line, i) {
-            return '<div style="margin-bottom:4px;font-size:11px;color:#374151;line-height:1.6;">' + (i + 1) + '. ' + line + '</div>';
+        var remarksHtml = remarks.map(function(line, i) {
+            return '<div style="margin-bottom:5px;font-size:11px;color:#374151;line-height:1.6;">' + (i + 1) + '. ' + line + '</div>';
         }).join('');
 
-        // Build consumer quotation HTML
-        var html = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>' +
-            (lang === 'en' ? 'Quotation' : '\u62a5\u4ef7\u5355 / Quotation') + ' - ' + client + '</title>' +
+        // ── 构建 HTML ──
+        var html = _buildConsumerHTML(tenantCfg, logoPath, dateStr, client, csName, csPhone, project,
+            blindsRows, motorRow, totalOpenings, grandForeign, foreignSymbol, curr, remarksHtml);
+
+        _openConsumerQuotWindow(html);
+    }
+
+    function _buildConsumerHTML(tenantCfg, logoPath, dateStr, client, csName, csPhone, project,
+        blindsRows, motorRow, totalOpenings, grandForeign, foreignSymbol, curr, remarksHtml) {
+        return '<!DOCTYPE html><html><head><meta charset="utf-8">' +
+            '<title>\u9632\u98ce\u5377\u5e18\u62a5\u4ef7\u5355 / Zip Blinds Quotation - ' + client + '</title>' +
             '<style>' +
-            '@page { size: A4; margin: 15mm 12mm; }' +
-            'body { font-family: "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif; margin: 0; padding: 24px 32px; color: #111827; font-size: 13px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }' +
-            'table { border-collapse: collapse; width: 100%; }' +
-            '.header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 3px solid #ea580c; }' +
-            '.header-logo { width: 56px; height: 56px; object-fit: contain; border-radius: 8px; }' +
-            '.header-text { flex: 1; }' +
-            '.header-title { font-size: 18px; font-weight: 700; color: #111827; }' +
-            '.header-subtitle { font-size: 15px; font-weight: 600; color: #ea580c; margin-top: 2px; }' +
-            '.header-date { text-align: right; font-size: 11px; color: #6b7280; }' +
-            '.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 24px; margin-bottom: 18px; font-size: 12px; }' +
-            '.info-grid .label { font-weight: 600; color: #374151; }' +
-            '.info-grid .value { color: #111827; }' +
-            '.total-box { margin-top: 2px; padding: 14px 16px; background: linear-gradient(135deg, #fff7ed, #fef3c7); border: 2px solid #ea580c; border-radius: 10px; text-align: center; }' +
-            '.total-amount { font-size: 22px; font-weight: 800; color: #ea580c; }' +
-            '.total-sub { font-size: 12px; color: #6b7280; margin-top: 4px; }' +
-            '.remarks-box { margin-top: 16px; padding: 12px 16px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; }' +
-            '.remarks-title { font-size: 11px; font-weight: 600; color: #92400e; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }' +
-            '.footer { margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 12px; color: #374151; }' +
-            '.sig-line { margin-top: 40px; border-top: 1px solid #d1d5db; padding-top: 4px; font-size: 10px; color: #9ca3af; }' +
-            '@media print { .no-print { display: none !important; } body { padding: 0; } }' +
-            '@media screen { body { max-width: 800px; margin: 0 auto; background: #f9fafb; } }' +
+            '@page{size:A4;margin:15mm 12mm;}' +
+            'body{font-family:"Microsoft YaHei","Helvetica Neue",Arial,sans-serif;margin:0;padding:24px 32px;color:#111827;font-size:13px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}' +
+            'table{border-collapse:collapse;width:100%;}' +
+            '.hdr{display:flex;align-items:center;gap:16px;margin-bottom:16px;padding-bottom:14px;border-bottom:3px solid #ea580c;}' +
+            '.hdr img{width:56px;height:56px;object-fit:contain;border-radius:8px;}' +
+            '.hdr-t{flex:1;}.hdr-name{font-size:18px;font-weight:700;color:#111827;}' +
+            '.hdr-sub{font-size:14px;font-weight:600;color:#ea580c;margin-top:2px;}' +
+            '.hdr-date{text-align:right;font-size:11px;color:#6b7280;}' +
+            '.info{display:grid;grid-template-columns:1fr 1fr;gap:4px 24px;margin-bottom:14px;font-size:12px;}' +
+            '.info .l{font-weight:600;color:#374151;}.info .v{color:#111827;}' +
+            '.sec-title{font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.6px;margin:14px 0 6px;}' +
+            '.total-row td{background:#eff6ff;font-weight:700;font-size:14px;}' +
+            '.total-row .amt{color:#ea580c;font-size:18px;text-align:right;}' +
+            '.rmk{margin-top:16px;padding:12px 16px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;}' +
+            '.rmk-t{font-size:11px;font-weight:600;color:#92400e;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;}' +
+            '.ftr{margin-top:24px;display:grid;grid-template-columns:1fr 1fr;gap:20px;font-size:12px;color:#374151;}' +
+            '@media print{.no-print{display:none!important;}body{padding:0;}}' +
+            '@media screen{body{max-width:800px;margin:0 auto;background:#f9fafb;}}' +
             '</style></head><body>' +
 
             // Header
-            '<div class="header">' +
-            '<img src="' + logoPath + '" class="header-logo" onerror="this.style.display=\'none\'">' +
-            '<div class="header-text">' +
-            '<div class="header-title">' + tenantCfg.name + '</div>' +
-            '<div class="header-subtitle">' + (lang === 'en' ? 'Zip Blinds Quotation' : '\u9632\u98ce\u5377\u5e18\u62a5\u4ef7\u5355 / Zip Blinds Quotation') + '</div>' +
+            '<div class="hdr">' +
+            '<img src="' + logoPath + '" onerror="this.style.display=\'none\'">' +
+            '<div class="hdr-t">' +
+            '<div class="hdr-name">' + tenantCfg.name + '</div>' +
+            '<div class="hdr-sub">\u9632\u98ce\u5377\u5e18\u62a5\u4ef7\u5355 / Zip Blinds Quotation</div>' +
             '</div>' +
-            '<div class="header-date">' + (lang === 'en' ? 'Date' : '\u65e5\u671f / Date') + ': ' + dateStr + '<br>Ref: ' + project.id + '</div>' +
-            '</div>' +
-
-            // Client info
-            '<div class="info-grid">' +
-            '<div><span class="label">' + (lang === 'en' ? 'Client: ' : '\u5ba2\u6237 / Client: ') + '</span><span class="value">' + client + '</span></div>' +
-            '<div><span class="label">' + (lang === 'en' ? 'Project: ' : '\u9879\u76ee / Project: ') + '</span><span class="value">' + project.name + '</span></div>' +
-            '<div><span class="label">' + (lang === 'en' ? 'Contact: ' : '\u8054\u7cfb\u7535\u8bdd / Contact: ') + '</span><span class="value">' + (project.phone || project.customerPhone || '') + '</span></div>' +
-            '<div><span class="label">' + (lang === 'en' ? 'Openings: ' : '\u5f00\u53e3\u6570 / Openings: ') + '</span><span class="value">' + (step4St.quantity || 1) + '</span></div>' +
+            '<div class="hdr-date">\u65e5\u671f / Date: ' + dateStr + '</div>' +
             '</div>' +
 
-            // Product table
-            '<table><thead><tr style="background:#f3f4f6;">' +
-            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:10px;color:#6b7280;width:32px;">#</th>' +
-            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:left;font-size:10px;color:#6b7280;">' + (lang === 'en' ? 'Product' : '\u4ea7\u54c1 / Product') + '</th>' +
-            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:10px;color:#6b7280;width:100px;">' + (lang === 'en' ? 'W \u00d7 H (mm)' : '\u5bbd\u00d7\u9ad8 / W\u00d7H (mm)') + '</th>' +
-            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:10px;color:#6b7280;width:55px;">' + (lang === 'en' ? 'Area m\u00b2' : '\u9762\u79ef m\u00b2') + '</th>' +
-            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:10px;color:#6b7280;width:65px;">' + (lang === 'en' ? 'Billed m\u00b2' : '\u8ba1\u4ef7 m\u00b2') + '</th>' +
-            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:10px;color:#6b7280;width:40px;">' + (lang === 'en' ? 'Qty' : '\u6570\u91cf') + '</th>' +
-            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:right;font-size:10px;color:#6b7280;width:80px;">' + (lang === 'en' ? 'Amount (\u00a5)' : '\u91d1\u989d (\u00a5)') + '</th>' +
+            // Client info (2×2 grid matching reference)
+            '<div class="info">' +
+            '<div><span class="l">\u5ba2\u6237\u59d3\u540d / Client: </span><span class="v">' + client + '</span></div>' +
+            '<div><span class="l">\u5ba2\u670d / CS Rep: </span><span class="v">' + csName + '</span></div>' +
+            '<div><span class="l">\u8054\u7cfb\u7535\u8bdd / Contact: </span><span class="v">' + (project.phone || project.customerPhone || '') + '</span></div>' +
+            '<div><span class="l">CS Contact: </span><span class="v">' + csPhone + '</span></div>' +
+            '</div>' +
+
+            // Section: Product Dimensions
+            '<div class="sec-title">\u4ea7\u54c1\u5c3a\u5bf8 / PRODUCT DIMENSIONS</div>' +
+            '<table><thead>' +
+            '<tr style="background:#f3f4f6;">' +
+            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:10px;color:#6b7280;width:32px;">\u5e8f\u53f7<br>No.</th>' +
+            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:left;font-size:10px;color:#6b7280;">\u54c1\u7c7b / Product</th>' +
+            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:10px;color:#6b7280;width:70px;">\u5bbd<br>Width(mm)</th>' +
+            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:10px;color:#6b7280;width:70px;">\u9ad8<br>Height(mm)</th>' +
+            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:10px;color:#6b7280;width:65px;">\u8ba1\u7b97\u9762\u79ef<br>Area(M\u00b2)</th>' +
+            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:10px;color:#6b7280;width:65px;">\u8ba1\u4ef7\u9762\u79ef<br>Priced(M\u00b2)</th>' +
+            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:10px;color:#6b7280;width:40px;">\u6570\u91cf<br>Qty</th>' +
             '</tr></thead><tbody>' +
 
             blindsRows +
+            motorRow +
 
-            // Subtotal for blinds
-            '<tr style="background:#f9fafb;">' +
-            '<td style="border:1px solid #d1d5db;padding:8px 12px;font-size:11px;" colspan="6"><strong>' + (lang === 'en' ? 'Blinds Subtotal' : '\u5377\u5e18\u5c0f\u8ba1 / Blinds Subtotal') + '</strong></td>' +
-            '<td style="border:1px solid #d1d5db;padding:8px 12px;text-align:right;font-weight:600;font-size:12px;">\u00a5' + Math.round(blindsTotal).toLocaleString() + '</td></tr>' +
-
-            driveRows +
-
-            // Grand Total in RMB
-            '<tr style="background:#eff6ff;">' +
-            '<td style="border:1px solid #d1d5db;padding:10px 12px;font-weight:700;font-size:12px;" colspan="6">' + (lang === 'en' ? 'Total (RMB)' : '\u603b\u8ba1 / Total (RMB)') + '</td>' +
-            '<td style="border:1px solid #d1d5db;padding:10px 12px;text-align:right;font-weight:700;font-size:14px;color:#ea580c;">\u00a5' + Math.round(grandRMB).toLocaleString() + '</td></tr>' +
+            // Preferential Total Price row
+            '<tr class="total-row">' +
+            '<td style="border:1px solid #d1d5db;padding:10px 12px;" colspan="6"><strong>\u4f18\u60e0\u603b\u4ef7 / Preferential Total Price (' + curr + ')</strong></td>' +
+            '<td class="amt" style="border:1px solid #d1d5db;padding:10px 12px;">' + foreignSymbol + Math.round(grandForeign).toLocaleString() + '</td>' +
+            '</tr>' +
 
             '</tbody></table>' +
 
-            // Grand Total box (SGD)
-            (curr !== 'RMB' ? '<div class="total-box">' +
-            '<div style="font-size:11px;color:#6b7280;margin-bottom:4px;">' + (lang === 'en' ? 'Total in ' + curr : '\u603b\u8ba1 / Total (' + curr + ')') + '</div>' +
-            '<div class="total-amount">' + foreignSymbol + grandForeign.toFixed(2) + '</div>' +
-            '<div class="total-sub">' + (lang === 'en' ? 'Exchange rate' : '\u6c47\u7387') + ': 1 ' + curr + ' = \u00a5' + rate + '</div>' +
-            '</div>' : '') +
-
             // Remarks
-            '<div class="remarks-box">' +
-            '<div class="remarks-title">' + (lang === 'en' ? 'Terms & Conditions' : '\u5907\u6ce8\u4e0e\u6761\u6b3e / Terms & Conditions') + '</div>' +
+            '<div class="rmk">' +
+            '<div class="rmk-t">\u7279\u6b8a\u8bf4\u660e / Special Remarks</div>' +
             remarksHtml + '</div>' +
 
-            // Signature
-            '<div class="footer">' +
-            '<div><strong>' + (lang === 'en' ? 'Seller' : '\u5356\u65b9 / Seller') + ':</strong> ' + tenantCfg.name + '<div class="sig-line">' + (lang === 'en' ? 'Signature / Date' : '\u7b7e\u540d / \u65e5\u671f') + '</div></div>' +
-            '<div><strong>' + (lang === 'en' ? 'Buyer' : '\u4e70\u65b9 / Buyer') + ':</strong> ' + client + '<div class="sig-line">' + (lang === 'en' ? 'Signature / Date' : '\u7b7e\u540d / \u65e5\u671f') + '</div></div>' +
+            // Footer: Seller / Buyer
+            '<div class="ftr">' +
+            '<div><strong>\u5356\u65b9 / Seller:</strong> ' + tenantCfg.name + '</div>' +
+            '<div><strong>\u4e70\u65b9 / Buyer:</strong> ' + client + '</div>' +
             '</div>' +
 
-            // Print / PDF buttons
+            // Print button
             '<div class="no-print" style="text-align:center;margin-top:30px;">' +
-            '<button onclick="window.print()" style="padding:10px 32px;background:#ea580c;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-right:10px;"><i class="fas fa-print" style="margin-right:6px;"></i>' + (lang === 'en' ? 'Print / Save PDF' : '\u6253\u5370 / \u4fdd\u5b58PDF') + '</button>' +
-            '</div>' +
+            '<button onclick="window.print()" style="padding:10px 32px;background:#ea580c;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;">' +
+            '<i class="fas fa-print" style="margin-right:6px;"></i>\u6253\u5370 / Print / Save PDF</button></div>' +
 
             '</body></html>';
+    }
 
-        // Open in new window
+    function _openConsumerQuotWindow(html) {
         var w = window.open('', '_blank', 'width=900,height=700,scrollbars=yes,resizable=yes');
         if (!w) {
             var overlay = document.createElement('div');
