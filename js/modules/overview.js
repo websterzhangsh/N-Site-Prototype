@@ -291,7 +291,9 @@
 
     function _renderProductListItem(p) {
         var iconSrc = (typeof productIcons !== 'undefined' && productIcons[p.catalogId]) ? productIcons[p.catalogId] : '/images/products/icons/zip-blinds.png';
+        var skuLabel = p.catalogId || '';
         return '<div class="ov-product-item flex items-center gap-3 px-4 py-2.5 border-b border-gray-50 hover:bg-blue-50/30 cursor-pointer transition-all" data-category="' + p.filterKey + '" data-catalog-id="' + p.catalogId + '">' +
+            '<span class="text-[11px] font-mono font-semibold text-gray-500 flex-shrink-0 w-[90px] truncate" title="' + skuLabel + '">' + skuLabel + '</span>' +
             '<div class="w-8 h-8 bg-white rounded-lg overflow-hidden flex-shrink-0 border border-gray-100 p-0.5">' +
                 '<img src="' + iconSrc + '" alt="' + (p.name || '') + '" class="w-full h-full object-contain">' +
             '</div>' +
@@ -352,12 +354,19 @@
 
     function _renderOvDetailPanel(catalogId) {
         var skuCat = window.zbSKUCatalog;
-        var pc = (typeof productCatalog !== 'undefined') ? productCatalog : {};
+        var N = window.Nestopia || {};
+        var pc = (N.data && N.data.productCatalog) || {};
         var p = pc[catalogId];
-        if (!p) return '<div class="p-5 text-center text-gray-400">Product not found</div>';
-        var skuKey = p._zbSKU || catalogId;
-        var sku = (skuCat && skuCat[skuKey]) || p._zbData;
-        if (!sku) return '<div class="p-5 text-center text-gray-400">SKU data not available</div>';
+        var sku;
+        if (p) {
+            var skuKey = p._zbSKU || catalogId;
+            sku = (skuCat && skuCat[skuKey]) || p._zbData;
+        } else if (skuCat && skuCat[catalogId]) {
+            // fallback: 直接从 zbSKUCatalog 查找（omeya 产品键即 SKU 键）
+            sku = skuCat[catalogId];
+            p = { name: sku.name || sku.model || catalogId, id: catalogId, image: '' };
+        }
+        if (!p || !sku) return '<div class="p-5 text-center text-gray-400">Product not found</div>';
         return '<div class="bg-white rounded-xl border border-gray-200 overflow-hidden">' +
             '<div class="p-4 border-b border-gray-200 flex items-center justify-between">' +
                 '<h3 class="font-semibold text-gray-900">Product Information</h3>' +
@@ -377,7 +386,8 @@
     }
 
     function _renderOvDetailHeader(sku, p) {
-        var iconSrc = (typeof productIcons !== 'undefined' && productIcons[p.id || '']) || p.image || '/images/products/icons/zip-blinds.png';
+        var pId = p.id || p._zbSKU || '';
+        var iconSrc = (typeof productIcons !== 'undefined' && productIcons[pId]) || p.image || '/images/products/icons/zip-blinds.png';
         var tiers = sku.priceTiers || [];
         var lowP = tiers.length > 0 ? tiers[tiers.length - 1].price : 0;
         var highP = tiers.length > 0 ? tiers[0].price : 0;
