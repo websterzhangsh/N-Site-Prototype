@@ -10,6 +10,7 @@
 
     // ===== Company Overview: Toggle Detail Sections =====
     let activeOverviewSection = null;
+    var _ovSelectedProduct = null; // 当前 Overview 详情面板选中的产品
 
     function toggleOverviewSection(section) {
         const allSections = document.querySelectorAll('.overview-detail-section');
@@ -305,6 +306,179 @@
         '</div>';
     }
 
+    // ══════════════════════════════════════════════════════
+    // Overview 产品详情面板 — master-detail 交互
+    // ══════════════════════════════════════════════════════
+
+    function _showOvProductDetail(catalogId) {
+        var listCol = document.getElementById('ovProductListCol');
+        var detailCol = document.getElementById('ovProductDetailCol');
+        if (!listCol || !detailCol) return;
+        listCol.style.width = '280px';
+        listCol.style.flexShrink = '0';
+        listCol.style.maxHeight = '720px';
+        listCol.style.overflowY = 'auto';
+        detailCol.classList.remove('hidden');
+        _ovSelectedProduct = catalogId;
+        // 高亮选中项
+        var grid = document.getElementById('overviewProductsGrid');
+        if (grid) {
+            grid.querySelectorAll('.ov-product-item').forEach(function(item) {
+                var sel = item.dataset.catalogId === catalogId;
+                item.classList.toggle('bg-blue-50', sel);
+                item.classList.toggle('border-l-4', sel);
+                item.classList.toggle('border-l-blue-500', sel);
+            });
+        }
+        try {
+            detailCol.innerHTML = _renderOvDetailPanel(catalogId);
+        } catch (err) {
+            console.error('[Nestopia] _showOvProductDetail failed:', err);
+            detailCol.innerHTML = '<div class="p-5 border border-red-200 bg-red-50 rounded-xl text-center"><p class="text-red-600 font-medium mb-2">Failed to load details</p><p class="text-red-400 text-xs">' + (err.message || '') + '</p></div>';
+        }
+    }
+
+    function _hideOvProductDetail() {
+        var listCol = document.getElementById('ovProductListCol');
+        var detailCol = document.getElementById('ovProductDetailCol');
+        if (listCol) { listCol.style.width = ''; listCol.style.flexShrink = ''; listCol.style.maxHeight = ''; listCol.style.overflowY = ''; }
+        if (detailCol) { detailCol.classList.add('hidden'); detailCol.innerHTML = ''; }
+        _ovSelectedProduct = null;
+        var grid = document.getElementById('overviewProductsGrid');
+        if (grid) grid.querySelectorAll('.ov-product-item').forEach(function(item) {
+            item.classList.remove('bg-blue-50', 'border-l-4', 'border-l-blue-500');
+        });
+    }
+
+    function _renderOvDetailPanel(catalogId) {
+        var skuCat = window.zbSKUCatalog;
+        var pc = (typeof productCatalog !== 'undefined') ? productCatalog : {};
+        var p = pc[catalogId];
+        if (!p) return '<div class="p-5 text-center text-gray-400">Product not found</div>';
+        var skuKey = p._zbSKU || catalogId;
+        var sku = (skuCat && skuCat[skuKey]) || p._zbData;
+        if (!sku) return '<div class="p-5 text-center text-gray-400">SKU data not available</div>';
+        return '<div class="bg-white rounded-xl border border-gray-200 overflow-hidden">' +
+            '<div class="p-4 border-b border-gray-200 flex items-center justify-between">' +
+                '<h3 class="font-semibold text-gray-900">Product Information</h3>' +
+                '<div class="flex gap-2">' +
+                    '<button class="px-3 py-1.5 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition"><i class="fas fa-edit mr-1"></i>Edit</button>' +
+                    '<button class="px-3 py-1.5 text-sm text-red-500 hover:bg-red-50 rounded-lg transition"><i class="fas fa-trash-alt mr-1"></i>Delete</button>' +
+                '</div>' +
+            '</div>' +
+            '<div class="p-5">' +
+                _renderOvDetailHeader(sku, p) +
+                _renderOvPricingTiers(sku) +
+                _renderOvDriveSystems(sku) +
+                _renderOvQuotationParams() +
+                _renderOvProductFiles() +
+                _renderOvActionButtons() +
+            '</div></div>';
+    }
+
+    function _renderOvDetailHeader(sku, p) {
+        var iconSrc = (typeof productIcons !== 'undefined' && productIcons[p.id || '']) || p.image || '/images/products/icons/zip-blinds.png';
+        var tiers = sku.priceTiers || [];
+        var lowP = tiers.length > 0 ? tiers[tiers.length - 1].price : 0;
+        var highP = tiers.length > 0 ? tiers[0].price : 0;
+        return '<div class="flex gap-6 mb-6">' +
+            '<div class="w-36 h-36 bg-white rounded-xl overflow-hidden flex-shrink-0 shadow-sm border border-gray-100 p-2">' +
+                '<img src="' + iconSrc + '" alt="' + (p.name || '') + '" class="w-full h-full object-contain">' +
+            '</div>' +
+            '<div class="flex-1 min-w-0">' +
+                '<div class="flex items-center gap-3 mb-1.5 flex-wrap">' +
+                    '<h2 class="text-xl font-bold text-gray-900">' + (sku.model || p.name || '') + '</h2>' +
+                    '<span class="px-2.5 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full">Active</span>' +
+                    '<span class="px-2 py-0.5 bg-gray-100 text-gray-500 text-[10px] font-medium rounded-full">' + (sku.series || '') + '</span>' +
+                '</div>' +
+                '<p class="text-sm text-gray-500 mb-3">' + (sku.nameZh || p.name || '') + '</p>' +
+                _renderOvDetailSpecs(sku, lowP, highP) +
+                '<p class="text-sm text-gray-600 leading-relaxed">' + (sku.features || '') + '</p>' +
+                (sku.notes ? '<p class="text-xs text-amber-600 mt-1"><i class="fas fa-info-circle mr-1"></i>' + sku.notes + '</p>' : '') +
+            '</div></div>';
+    }
+
+    function _renderOvDetailSpecs(sku, lowP, highP) {
+        return '<div class="grid grid-cols-3 gap-3 mb-3">' +
+            '<div class="bg-gray-50 rounded-lg p-2.5"><label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Housing</label><div class="text-xs font-bold text-gray-900 mt-0.5">' + (sku.housing || '') + '</div></div>' +
+            '<div class="bg-gray-50 rounded-lg p-2.5"><label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Max Size</label><div class="text-xs font-bold text-gray-900 mt-0.5">' + ((sku.maxWidthMM||0)/1000) + 'm W \u00d7 ' + ((sku.maxHeightMM||0)/1000) + 'm H</div></div>' +
+            '<div class="bg-gray-50 rounded-lg p-2.5"><label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Fabric</label><div class="text-xs font-bold text-gray-900 mt-0.5">' + (sku.fabric || '') + ' (' + (sku.fabricOpenness || '') + ')</div></div>' +
+            '<div class="bg-orange-50 rounded-lg p-2.5"><label class="text-[10px] text-orange-400 uppercase tracking-wider font-medium">Supplier Price</label><div class="text-sm font-bold text-orange-700 mt-0.5">\u00a5' + lowP + ' \u2013 \u00a5' + highP + '<span class="text-[10px] text-gray-400 font-normal">/m\u00b2</span></div></div>' +
+            '<div class="bg-gray-50 rounded-lg p-2.5"><label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Min Area</label><div class="text-xs font-bold text-gray-900 mt-0.5">' + (sku.minArea || 3) + ' m\u00b2</div></div>' +
+            (sku.samplePrice ? '<div class="bg-gray-50 rounded-lg p-2.5"><label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Sample</label><div class="text-xs font-bold text-gray-900 mt-0.5">\u00a5' + sku.samplePrice + '/pc</div></div>' : '') +
+        '</div>';
+    }
+
+    function _renderOvPricingTiers(sku) {
+        var tiers = sku.priceTiers || [];
+        if (tiers.length === 0) return '';
+        var html = tiers.map(function(t, i) {
+            var al = t.maxArea === Infinity ? '>' + (i > 0 ? tiers[i-1].maxArea : (sku.minArea||3)) + ' m\u00b2' : '\u2264' + t.maxArea + ' m\u00b2';
+            return '<div class="flex items-center justify-between px-3 py-2.5 bg-emerald-50/60 border border-emerald-200/60 rounded-lg">' +
+                '<div class="flex items-center gap-2"><span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold">' + (i+1) + '</span><span class="text-sm font-semibold text-gray-900">' + al + '</span></div>' +
+                '<span class="text-sm font-bold text-emerald-700">\u00a5' + t.price + '<span class="text-[10px] text-gray-400 font-normal ml-1">/m\u00b2</span></span></div>';
+        }).join('');
+        return '<div class="border border-gray-100 rounded-xl p-5 mb-5">' +
+            '<h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2"><i class="fas fa-tags text-emerald-500"></i> Pricing Tiers <span class="text-[10px] text-gray-400 font-normal">(Supplier unit price by area)</span></h4>' +
+            '<div class="space-y-1.5 mb-3">' + html + '</div>' +
+            '<p class="text-[11px] text-amber-600 bg-amber-50 rounded-lg px-3 py-2 flex items-start gap-1.5"><i class="fas fa-info-circle mt-0.5 flex-shrink-0"></i><span>Prices ex-factory (incl. tax), excl. shipping/installation. Min billable area: ' + (sku.minArea||3) + ' m\u00b2. Standard NP4000 fabric included.</span></p></div>';
+    }
+
+    function _renderOvDriveSystems(sku) {
+        var driveCat = window.zbDriveSystemCatalog || {};
+        if (!sku.drives || sku.drives.length === 0) return '';
+        var html = sku.drives.map(function(dk) {
+            var d = driveCat[dk]; if (!d) return '';
+            var tl = d.type === 'motorized' ? '<span class="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-[9px] font-bold rounded">Motor</span>' :
+                     d.type === 'combo' ? '<span class="px-1.5 py-0.5 bg-purple-100 text-purple-700 text-[9px] font-bold rounded">Combo</span>' :
+                     '<span class="px-1.5 py-0.5 bg-gray-100 text-gray-600 text-[9px] font-bold rounded">Manual</span>';
+            return '<div class="flex items-center justify-between px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50/30 transition">' +
+                '<div class="flex items-center gap-2 min-w-0"><i class="fas fa-cog text-gray-400 text-xs flex-shrink-0"></i><span class="text-sm text-gray-800 truncate">' + d.name + '</span>' + tl + '</div>' +
+                '<span class="text-sm font-bold text-gray-900 flex-shrink-0">\u00a5' + d.price + '<span class="text-[10px] text-gray-400 font-normal ml-0.5">/set</span></span></div>';
+        }).join('');
+        return '<div class="border border-gray-100 rounded-xl p-5 mb-5">' +
+            '<h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2"><i class="fas fa-cogs text-blue-500"></i> Compatible Drive Systems <span class="text-[10px] text-gray-400 font-normal">(' + sku.drives.length + ' options)</span></h4>' +
+            '<div class="space-y-1.5">' + html + '</div>' +
+            '<p class="text-[11px] text-gray-400 mt-3"><i class="fas fa-info-circle mr-1"></i>Drive system priced per unit (RMB/set), selected during quotation.</p></div>';
+    }
+
+    function _renderOvQuotationParams() {
+        var biz = window.zbBusinessParams || {};
+        return '<div class="border border-blue-100 bg-blue-50/30 rounded-xl p-4 mb-5">' +
+            '<h4 class="text-sm font-semibold text-blue-800 mb-2.5 flex items-center gap-2"><i class="fas fa-calculator text-blue-500"></i> Quotation Formula Parameters</h4>' +
+            '<div class="grid grid-cols-2 lg:grid-cols-3 gap-2.5">' +
+                _renderOvParamField('Supplier Discount', (biz.supplierDiscountRate || 0.9) + ' off') +
+                _renderOvParamField('Shipping & Customs', ((biz.shippingCostRate || 0.3) * 100) + '%') +
+                _renderOvParamField('Installation Fee', '\u00a5' + (biz.installationFeePerSqm || 191) + '/m\u00b2') +
+                _renderOvParamField('Market Markup', '\u00d7' + (biz.marketMarkup || 2.92)) +
+                _renderOvParamField('Default Discount', ((biz.preferentialDiscount || 0.5) * 100) + '%') +
+                _renderOvParamField('Accessory Markup', '+' + ((biz.accessoryMarkupRate || 0.13) * 100) + '%') +
+            '</div></div>';
+    }
+
+    function _renderOvParamField(label, value) {
+        return '<div class="bg-white rounded-lg p-2.5 border border-gray-200">' +
+            '<label class="text-[10px] text-gray-400 uppercase block mb-1">' + label + '</label>' +
+            '<div class="text-xs font-bold text-gray-900">' + value + '</div></div>';
+    }
+
+    function _renderOvProductFiles() {
+        return '<div class="border border-gray-100 rounded-xl p-5 mb-5">' +
+            '<div class="flex items-center justify-between mb-3">' +
+                '<h4 class="text-sm font-semibold text-gray-900 flex items-center gap-2"><i class="fas fa-file-alt text-gray-400"></i> Product Files</h4>' +
+                '<button class="px-3 py-1.5 bg-blue-600 text-white text-xs rounded-lg flex items-center gap-1.5 opacity-50 cursor-not-allowed" disabled><i class="fas fa-cloud-upload-alt"></i> Upload Files</button>' +
+            '</div>' +
+            '<p class="text-sm text-gray-400 text-center py-4"><i class="fas fa-inbox text-gray-300 text-lg mb-2 block"></i>Files will appear here after upload</p></div>';
+    }
+
+    function _renderOvActionButtons() {
+        return '<div class="flex gap-3">' +
+            '<button class="flex-1 py-3 bg-white border border-gray-200 text-gray-700 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-gray-50 transition"><i class="fas fa-copy text-gray-400"></i> Duplicate Product</button>' +
+            '<button class="flex-1 py-3 bg-white border border-gray-200 text-gray-700 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-gray-50 transition"><i class="fas fa-archive text-gray-400"></i> Archive Product</button>' +
+            '<button class="flex-none px-5 py-3 bg-white border border-red-200 text-red-500 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-red-50 transition"><i class="fas fa-trash-alt"></i> Del</button>' +
+        '</div>';
+    }
+
     function renderOverviewProducts() {
         const grid = document.getElementById('overviewProductsGrid');
         if (!grid) return;
@@ -312,28 +486,18 @@
         var slug = getCurrentTenantSlug();
         var isOmeya = (slug === 'omeya-sin');
 
-        if (isOmeya) {
-            // ── omeya-sin: 按 3 分区列表视图 ──
-            grid.innerHTML = _renderOmeyaProductList(overviewProductsData);
-        } else {
-            // ── 其他租户: 列表视图 ──
-            grid.innerHTML = _renderDefaultProductList(overviewProductsData);
-        }
+        // ── 两栏 flex 布局：左列列表 + 右列详情（初始隐藏）──
+        var listHTML = isOmeya ? _renderOmeyaProductList(overviewProductsData) : _renderDefaultProductList(overviewProductsData);
+        grid.innerHTML = '<div class="flex gap-6">' +
+            '<div id="ovProductListCol" class="transition-all duration-300" style="width:100%">' + listHTML + '</div>' +
+            '<div id="ovProductDetailCol" class="hidden flex-1 min-w-0"></div>' +
+        '</div>';
 
-        // --- Item click: navigate to Products page with that product selected ---
+        // --- Item click: 展开内联详情面板 ---
         grid.querySelectorAll('.ov-product-item').forEach(function(item) {
             item.addEventListener('click', function() {
                 var catalogId = this.dataset.catalogId;
-                if (catalogId && typeof productCatalog !== 'undefined' && productCatalog[catalogId]) {
-                    if (typeof productsState !== 'undefined') productsState.selectedProduct = catalogId;
-                    navigateToPage('products');
-                    setTimeout(function() {
-                        if (typeof renderProductList === 'function') renderProductList();
-                        if (typeof updateProductDetail === 'function') updateProductDetail(catalogId);
-                        var selectedItem = document.querySelector('.product-item[data-product="' + catalogId + '"]');
-                        if (selectedItem) selectedItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 50);
-                }
+                if (catalogId) _showOvProductDetail(catalogId);
             });
         });
 
@@ -407,5 +571,7 @@
     window.renderOverviewCustomers = renderOverviewCustomers;
     window.renderOverviewProducts = renderOverviewProducts;
     window._updateOverviewCustomerStats = _updateOverviewCustomerStats;
+    window._showOvProductDetail = _showOvProductDetail;
+    window._hideOvProductDetail = _hideOvProductDetail;
 
 })();
