@@ -90,6 +90,29 @@
         return (val !== null && val !== undefined) ? String(val) : fallback;
     }
 
+    // ===== Rendering Safety: 安全渲染子面板 =====
+    // 独立渲染一个面板 HTML——若面板渲染函数抛异常，返回错误占位 HTML
+    // 而非让整个 step detail 崩溃
+    // 用法:
+    //   html += safeRenderPanel('aiDesigner', config.aiDesigner, function(cfg) { return renderAI(cfg); });
+    function safeRenderPanel(panelName, panelConfig, renderFn) {
+        if (!panelConfig || typeof renderFn !== 'function') return '';
+        try {
+            var result = renderFn(panelConfig);
+            return (result !== null && result !== undefined) ? String(result) : '';
+        } catch (e) {
+            console.error('[SafeRenderPanel] ' + panelName + ' crashed — panel skipped:', e.message);
+            return '<div class="mt-4 p-4 bg-amber-50 rounded-lg border border-amber-200">' +
+                '<div class="flex items-center gap-2 mb-2">' +
+                '<i class="fas fa-exclamation-triangle text-amber-400 text-sm"></i>' +
+                '<span class="text-sm font-semibold text-amber-700">' + panelName + ' — Render Error</span>' +
+                '</div>' +
+                '<p class="text-xs text-amber-600">The ' + panelName + ' panel failed to load. Other sections remain available.</p>' +
+                '<p class="text-[10px] text-gray-400 mt-1 font-mono">' + e.message + '</p>' +
+                '</div>';
+        }
+    }
+
     // ===== Register on namespace =====
     N.utils.showToast = showToast;
     N.utils.getPriorityBadge = getPriorityBadge;
@@ -98,6 +121,7 @@
     N.utils.getStageBadge = getStageBadge;
     N.utils.safetyWrap = safetyWrap;
     N.utils.safeStr = safeStr;
+    N.utils.safeRenderPanel = safeRenderPanel;
 
     // ===== Global aliases (backward compat) =====
     window.showToast = showToast;
@@ -107,4 +131,5 @@
     window.getStageBadge = getStageBadge;
     window.safetyWrap = safetyWrap;
     window.safeStr = safeStr;
+    window.safeRenderPanel = safeRenderPanel;
 })();
