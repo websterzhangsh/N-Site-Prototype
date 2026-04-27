@@ -363,8 +363,7 @@
                 _renderOvPricingTiers(sku) +
                 _renderOvDriveSystems(sku) +
                 _renderOvQuotationParams() +
-                _renderOvProductFiles() +
-                _renderOvActionButtons() +
+                _renderOvLifecycleSection() +
             '</div></div>';
     }
 
@@ -455,21 +454,47 @@
             '<div class="text-xs font-bold text-gray-900">' + value + '</div></div>';
     }
 
-    function _renderOvProductFiles() {
-        return '<div class="border border-gray-100 rounded-xl p-5 mb-5">' +
+    function _renderOvLifecycleSection() {
+        return '<div class="mt-6 border border-dashed border-gray-200 rounded-xl p-5 relative">' +
+            '<div class="flex items-center justify-between mb-4">' +
+                '<h4 class="text-sm font-semibold text-gray-400 flex items-center gap-2">' +
+                    '<i class="fas fa-sync-alt text-gray-300"></i> Product Life Cycle Mgt</h4>' +
+                '<span class="px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-amber-50 text-amber-500 border border-amber-200 rounded-full">Coming Soon</span>' +
+            '</div>' +
+            _renderOvProductFilesDisabled() +
+            _renderOvActionButtonsDisabled() +
+        '</div>';
+    }
+
+    function _renderOvProductFilesDisabled() {
+        return '<div class="border border-gray-100 rounded-xl p-5 mb-5 opacity-50">' +
             '<div class="flex items-center justify-between mb-3">' +
                 '<h4 class="text-sm font-semibold text-gray-900 flex items-center gap-2"><i class="fas fa-file-alt text-gray-400"></i> Product Files</h4>' +
-                '<button class="px-3 py-1.5 bg-blue-600 text-white text-xs rounded-lg flex items-center gap-1.5 opacity-50 cursor-not-allowed" disabled><i class="fas fa-cloud-upload-alt"></i> Upload Files</button>' +
+                '<button onclick="_ovShowForbidden(event)" class="px-3 py-1.5 bg-gray-400 text-white text-xs rounded-lg flex items-center gap-1.5 cursor-not-allowed"><i class="fas fa-cloud-upload-alt"></i> Upload Files</button>' +
             '</div>' +
             '<p class="text-sm text-gray-400 text-center py-4"><i class="fas fa-inbox text-gray-300 text-lg mb-2 block"></i>Files will appear here after upload</p></div>';
     }
 
-    function _renderOvActionButtons() {
+    function _renderOvActionButtonsDisabled() {
         return '<div class="flex gap-3">' +
-            '<button class="flex-1 py-3 bg-white border border-gray-200 text-gray-700 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-gray-50 transition"><i class="fas fa-copy text-gray-400"></i> Duplicate Product</button>' +
-            '<button class="flex-1 py-3 bg-white border border-gray-200 text-gray-700 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-gray-50 transition"><i class="fas fa-archive text-gray-400"></i> Archive Product</button>' +
-            '<button class="flex-none px-5 py-3 bg-white border border-red-200 text-red-500 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-red-50 transition"><i class="fas fa-trash-alt"></i> Del</button>' +
+            '<button onclick="_ovShowForbidden(event)" class="flex-1 py-3 bg-gray-50 border border-gray-200 text-gray-400 rounded-xl font-medium flex items-center justify-center gap-2 cursor-not-allowed transition"><i class="fas fa-copy text-gray-300"></i> Duplicate Product</button>' +
+            '<button onclick="_ovShowForbidden(event)" class="flex-1 py-3 bg-gray-50 border border-gray-200 text-gray-400 rounded-xl font-medium flex items-center justify-center gap-2 cursor-not-allowed transition"><i class="fas fa-archive text-gray-300"></i> Archive Product</button>' +
+            '<button onclick="_ovShowForbidden(event)" class="flex-none px-5 py-3 bg-gray-50 border border-gray-200 text-gray-400 rounded-xl font-medium flex items-center justify-center gap-2 cursor-not-allowed transition"><i class="fas fa-trash-alt text-gray-300"></i> Del</button>' +
         '</div>';
+    }
+
+    function _ovShowForbidden(e) {
+        if (e) e.preventDefault();
+        var overlay = document.createElement('div');
+        overlay.className = 'fixed inset-0 z-[9999] flex items-center justify-center bg-black/20 backdrop-blur-sm';
+        overlay.onclick = function() { overlay.remove(); };
+        overlay.innerHTML = '<div class="bg-white rounded-2xl shadow-2xl px-8 py-6 flex flex-col items-center gap-3 animate-fade-in" onclick="event.stopPropagation()">' +
+            '<div class="text-5xl">🚫</div>' +
+            '<div class="text-sm font-semibold text-gray-700">Feature Coming Soon</div>' +
+            '<div class="text-xs text-gray-400">This capability is under development.</div>' +
+            '<button onclick="this.closest(\'.fixed\').remove()" class="mt-2 px-4 py-1.5 text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg transition">OK</button>' +
+        '</div>';
+        document.body.appendChild(overlay);
     }
 
     // ══════════════════════════════════════════════════════
