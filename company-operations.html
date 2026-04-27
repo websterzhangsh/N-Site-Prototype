@@ -2855,53 +2855,62 @@
                             </div>
 
                             <!-- Product Files -->
-                            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
-                                <div class="p-4 border-b border-gray-200 flex items-center justify-between">
-                                    <h3 class="font-semibold text-gray-900">Product Files</h3>
-                                    <button id="uploadFilesBtn" class="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition flex items-center gap-2">
-                                        <i class="fas fa-cloud-upload-alt"></i>
-                                        <span>Upload Files</span>
-                                    </button>
+                            <div class="relative">
+                                <div class="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+                                    <span class="px-3 py-1.5 bg-gray-900/80 text-white text-[10px] font-semibold rounded-full tracking-wider uppercase backdrop-blur-sm">Coming Soon</span>
                                 </div>
-                                <!-- Upload Area (Hidden by default) -->
-                                <div id="fileUploadArea" class="p-5 border-b border-gray-200 hidden">
-                                    <div id="fileDropZone" class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-blue-400 hover:bg-blue-50/50 transition cursor-pointer">
-                                        <input type="file" id="productFileInput" multiple accept="image/*,.pdf,.dwg,.dxf,.skp,.obj" class="hidden">
-                                        <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
-                                        <p class="text-gray-600 font-medium">Drag & drop files here or click to browse</p>
-                                        <p class="text-gray-400 text-sm mt-1">Supported: Images, PDF, DWG, DXF, SKP, OBJ (Max 50MB each)</p>
+                                <div class="bg-white rounded-xl border border-gray-200 overflow-hidden opacity-40">
+                                    <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+                                        <h3 class="font-semibold text-gray-900">Product Files</h3>
+                                        <button id="uploadFilesBtn" class="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg flex items-center gap-2" disabled>
+                                            <i class="fas fa-cloud-upload-alt"></i>
+                                            <span>Upload Files</span>
+                                        </button>
                                     </div>
-                                    <div id="uploadProgress" class="mt-4 hidden">
-                                        <div class="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
-                                            <i class="fas fa-spinner fa-spin text-blue-600"></i>
-                                            <div class="flex-1">
-                                                <div class="text-sm font-medium text-gray-700">Uploading files...</div>
-                                                <div class="h-2 bg-gray-200 rounded-full mt-1 overflow-hidden">
-                                                    <div id="uploadProgressBar" class="h-full bg-blue-600 rounded-full transition-all" style="width: 0%"></div>
+                                    <div id="fileUploadArea" class="p-5 border-b border-gray-200 hidden">
+                                        <div id="fileDropZone" class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center">
+                                            <input type="file" id="productFileInput" multiple accept="image/*,.pdf,.dwg,.dxf,.skp,.obj" class="hidden">
+                                            <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
+                                            <p class="text-gray-600 font-medium">Drag & drop files here or click to browse</p>
+                                            <p class="text-gray-400 text-sm mt-1">Supported: Images, PDF, DWG, DXF, SKP, OBJ (Max 50MB each)</p>
+                                        </div>
+                                        <div id="uploadProgress" class="mt-4 hidden">
+                                            <div class="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
+                                                <i class="fas fa-spinner fa-spin text-blue-600"></i>
+                                                <div class="flex-1">
+                                                    <div class="text-sm font-medium text-gray-700">Uploading files...</div>
+                                                    <div class="h-2 bg-gray-200 rounded-full mt-1 overflow-hidden">
+                                                        <div id="uploadProgressBar" class="h-full bg-blue-600 rounded-full transition-all" style="width: 0%"></div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="p-4 text-center text-sm text-gray-400">
-                                    <i class="fas fa-folder-open mr-1"></i> Files will appear here after upload
+                                    <div class="p-4 text-center text-sm text-gray-400">
+                                        <i class="fas fa-folder-open mr-1"></i> Files will appear here after upload
+                                    </div>
                                 </div>
                             </div>
 
                             <!-- Action Buttons -->
-                            <div class="flex gap-3">
-                                <button class="flex-1 py-3 bg-white border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition flex items-center justify-center gap-2">
-                                    <i class="fas fa-copy"></i>
-                                    <span>Duplicate Product</span>
-                                </button>
-                                <button class="flex-1 py-3 bg-white border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition flex items-center justify-center gap-2">
-                                    <i class="fas fa-archive"></i>
-                                    <span>Archive Product</span>
-                                </button>
-                                <button class="py-3 px-6 bg-red-50 border border-red-200 text-red-600 rounded-xl font-medium hover:bg-red-100 transition flex items-center justify-center gap-2">
-                                    <i class="fas fa-trash"></i>
-                                    <span>Delete</span>
-                                </button>
+                            <div class="relative">
+                                <div class="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+                                    <span class="px-3 py-1.5 bg-gray-900/80 text-white text-[10px] font-semibold rounded-full tracking-wider uppercase backdrop-blur-sm">Coming Soon</span>
+                                </div>
+                                <div class="flex gap-3 opacity-40">
+                                    <button class="flex-1 py-3 bg-white border border-gray-300 text-gray-700 rounded-xl font-medium flex items-center justify-center gap-2" disabled>
+                                        <i class="fas fa-copy"></i>
+                                        <span>Duplicate Product</span>
+                                    </button>
+                                    <button class="flex-1 py-3 bg-white border border-gray-300 text-gray-700 rounded-xl font-medium flex items-center justify-center gap-2" disabled>
+                                        <i class="fas fa-archive"></i>
+                                        <span>Archive Product</span>
+                                    </button>
+                                    <button class="py-3 px-6 bg-red-50 border border-red-200 text-red-600 rounded-xl font-medium flex items-center justify-center gap-2" disabled>
+                                        <i class="fas fa-trash"></i>
+                                        <span>Delete</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -4379,46 +4388,46 @@
 
     <!-- JS 模块化文件 — 按依赖顺序加载 -->
     <!-- 1. 命名空间 -->
-    <script src="js/core/namespace.js?v=ae0de31"></script>
+    <script src="js/core/namespace.js?v=cc06e30"></script>
     <!-- 2. 核心基础层 (Phase 2) -->
-    <script src="js/core/supabase-config.js?v=ae0de31"></script>
-    <script src="js/core/supabase-storage.js?v=ae0de31"></script>
-    <script src="js/core/auth.js?v=ae0de31"></script>
-    <script src="js/core/tenant.js?v=ae0de31"></script>
-    <script src="js/core/i18n.js?v=ae0de31"></script>
-    <script src="js/core/router.js?v=ae0de31"></script>
+    <script src="js/core/supabase-config.js?v=cc06e30"></script>
+    <script src="js/core/supabase-storage.js?v=cc06e30"></script>
+    <script src="js/core/auth.js?v=cc06e30"></script>
+    <script src="js/core/tenant.js?v=cc06e30"></script>
+    <script src="js/core/i18n.js?v=cc06e30"></script>
+    <script src="js/core/router.js?v=cc06e30"></script>
     <!-- 3. 数据层 (Phase 1) -->
-    <script src="js/data/i18n-dict.js?v=ae0de31"></script>
-    <script src="js/data/pricing-data.js?v=ae0de31"></script>
-    <script src="js/data/product-catalog.js?v=ae0de31"></script>
-    <script src="js/data/step-config.js?v=ae0de31"></script>
-    <script src="js/data/intake-fields.js?v=ae0de31"></script>
-    <script src="js/data/seed-projects.js?v=ae0de31"></script>
+    <script src="js/data/i18n-dict.js?v=cc06e30"></script>
+    <script src="js/data/pricing-data.js?v=cc06e30"></script>
+    <script src="js/data/product-catalog.js?v=cc06e30"></script>
+    <script src="js/data/step-config.js?v=cc06e30"></script>
+    <script src="js/data/intake-fields.js?v=cc06e30"></script>
+    <script src="js/data/seed-projects.js?v=cc06e30"></script>
     <!-- 4. 工具层 (Phase 3) -->
-    <script src="js/utils/helpers.js?v=ae0de31"></script>
-    <script src="js/utils/unit-converter.js?v=ae0de31"></script>
+    <script src="js/utils/helpers.js?v=cc06e30"></script>
+    <script src="js/utils/unit-converter.js?v=cc06e30"></script>
     <!-- 5. 功能模块 (Phase 3) -->
-    <script src="js/modules/orders.js?v=ae0de31"></script>
-    <script src="js/modules/customers.js?v=ae0de31"></script>
-    <script src="js/modules/knowledge-base.js?v=ae0de31"></script>
-    <script src="js/modules/products.js?v=ae0de31"></script>
-    <script src="js/modules/overview.js?v=ae0de31"></script>
-    <script src="js/modules/projects.js?v=ae0de31"></script>
-    <script src="js/modules/workflow.js?v=ae0de31"></script>
+    <script src="js/modules/orders.js?v=cc06e30"></script>
+    <script src="js/modules/customers.js?v=cc06e30"></script>
+    <script src="js/modules/knowledge-base.js?v=cc06e30"></script>
+    <script src="js/modules/products.js?v=cc06e30"></script>
+    <script src="js/modules/overview.js?v=cc06e30"></script>
+    <script src="js/modules/projects.js?v=cc06e30"></script>
+    <script src="js/modules/workflow.js?v=cc06e30"></script>
     <!-- 6. Agent 模块 (Phase 4) -->
-    <script src="js/agents/designer.js?v=ae0de31"></script>
-    <script src="js/agents/pricing.js?v=ae0de31"></script>
-    <script src="js/agents/compliance.js?v=ae0de31"></script>
-    <script src="js/agents/customer-service.js?v=ae0de31"></script>
+    <script src="js/agents/designer.js?v=cc06e30"></script>
+    <script src="js/agents/pricing.js?v=cc06e30"></script>
+    <script src="js/agents/compliance.js?v=cc06e30"></script>
+    <script src="js/agents/customer-service.js?v=cc06e30"></script>
     <!-- 7. Step 实现 (Phase 4) -->
-    <script src="js/steps/step2-design.js?v=ae0de31"></script>
-    <script src="js/steps/step3-measurement.js?v=ae0de31"></script>
-    <script src="js/steps/zb-verification.js?v=ae0de31"></script>
-    <script src="js/steps/step4-quotation.js?v=ae0de31"></script>
+    <script src="js/steps/step2-design.js?v=cc06e30"></script>
+    <script src="js/steps/step3-measurement.js?v=cc06e30"></script>
+    <script src="js/steps/zb-verification.js?v=cc06e30"></script>
+    <script src="js/steps/step4-quotation.js?v=cc06e30"></script>
     <!-- 8. 独立工具 (Phase 4) -->
-    <script src="js/utils/quotation-editor.js?v=ae0de31"></script>
-    <script src="js/utils/step-progress.js?v=ae0de31"></script>
-    <script src="js/utils/chatbot.js?v=ae0de31"></script>
+    <script src="js/utils/quotation-editor.js?v=cc06e30"></script>
+    <script src="js/utils/step-progress.js?v=cc06e30"></script>
+    <script src="js/utils/chatbot.js?v=cc06e30"></script>
     <script>
         // ===== Authentication (→ js/core/auth.js) =====
 
