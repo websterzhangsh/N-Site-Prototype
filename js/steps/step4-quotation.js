@@ -992,8 +992,12 @@
     // ══════════════════════════════════════════════════════════
 
     function refreshInheritedMeasurement(projectId) {
-        delete step4QuotationState[projectId];
-        var state = getStep4State(projectId);
+        // ★ 非破坏性：不删除已加载的 state，仅从 measurement 数据刷新 inherited summary UI
+        var state = step4QuotationState[projectId];
+        if (!state) {
+            // 如果 state 不存在（首次），则初始化
+            state = getStep4State(projectId);
+        }
         var summaryEl = document.getElementById('step4InheritedSummary_' + projectId);
         if (!summaryEl) return;
 

@@ -199,10 +199,12 @@
                     if (lk && lk.skuKey === skuKey) { matchedName = allNames[pn]; break; }
                 }
                 var unitPrice = getQuotPriceLookup()[matchedName] ? getQuotPriceLookup()[matchedName].defaultPrice : 0;
-                // Use per-opening preferential unit price if available from cost summary
+                // ★ 使用 totalPref 反推 unitPrice，确保 area × unitPrice = 精确的 pricing engine 结果
                 var cs = step4St.costSummary;
                 if (cs && cs.perOpeningCosts && cs.perOpeningCosts[idx]) {
-                    unitPrice = Math.round(cs.perOpeningCosts[idx].prefUnit);
+                    var poc = cs.perOpeningCosts[idx];
+                    var editorArea = (wMM * hMM) / 1000000;
+                    unitPrice = editorArea > 0 ? Math.round((poc.totalPref / editorArea) * 100) / 100 : Math.round(poc.prefUnit);
                 }
                 return { product: matchedName, width: wMM, height: hMM, unitPrice: unitPrice, qty: 1 };
             });
