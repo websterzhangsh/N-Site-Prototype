@@ -16,13 +16,15 @@
     };
 
     // Product Catalog Data (-> js/data/product-catalog.js)
-    let productCatalog = Nestopia.data.productCatalog;
+    // ★ 使用 var 而非 let — 避免 TDZ（Temporal Dead Zone）崩溃
+    // 如果 Nestopia.data.productCatalog 不可用，后续代码仍可安全执行
+    var productCatalog = (Nestopia && Nestopia.data && Nestopia.data.productCatalog) || {};
 
     // ── v3.0: 从 zbSKUCatalog 动态注入 Zip Blinds 产品条目 ──
     function _injectZBProducts() {
         var skuCat = window.zbSKUCatalog;
         var driveCat = window.zbDriveSystemCatalog;
-        if (!skuCat) return;
+        if (!skuCat || !productCatalog) return;
         var sketchIcon = '/images/products/icons/zip-blinds.png'; // sketch 风格产品图标
         Object.keys(skuCat).forEach(function(key) {
             var s = skuCat[key];
@@ -86,7 +88,7 @@
 
     // -- Product Catalog: Supabase CRUD Helpers ---------------
     const PRODUCT_TENANT_ID = '550e8400-e29b-41d4-a716-446655440000';
-    let _productCatalogSeeded = false;
+    var _productCatalogSeeded = false;
 
     async function loadProductCatalogFromDB() {
         if (typeof NestopiaDB === 'undefined') return false;

@@ -290,18 +290,6 @@
     function selectStep2Product(projectId, catalogId, el) {
         var state = getStep2State(projectId);
         state.selectedProduct = catalogId;
-        // ★ DEBUG: 诊断产品 spec 不显示问题
-        console.log('[Step2] selectStep2Product:', catalogId, 'projectId:', projectId);
-        console.log('[Step2] typeof productCatalog:', typeof productCatalog);
-        if (typeof productCatalog !== 'undefined' && productCatalog) {
-            console.log('[Step2] productCatalog keys count:', Object.keys(productCatalog).length);
-            console.log('[Step2] has catalogId:', catalogId in productCatalog, 'value:', productCatalog[catalogId] ? 'EXISTS' : 'UNDEFINED');
-            if (productCatalog[catalogId]) {
-                var _p = productCatalog[catalogId];
-                console.log('[Step2] product fields:', JSON.stringify({control: _p.control, series: _p.series, leadTime: _p.leadTime, hasCost: !!_p.cost}));
-            }
-        }
-        console.log('[Step2] DOM check:', 'step2StatControl_' + projectId, '→', !!document.getElementById('step2StatControl_' + projectId));
         // Update card visuals
         var container = el.closest('.grid');
         container.querySelectorAll('.step2-product-card').forEach(function(card) {
