@@ -98,15 +98,14 @@
             if (!res.ok) return false;
             const rows = await res.json();
             if (rows.length === 0) return false;
-            // 构建 productCatalog 和 productIcons
-            const newCatalog = {};
+            // ★ MERGE DB 产品到现有 catalog（保留静态 product-catalog.js 中的产品作为 baseline）
+            // 这样即使 DB 中只有部分产品（如只有 ZB），Sunroom/Pergola 等静态产品仍然可用
             rows.forEach(r => {
-                newCatalog[r.product_key] = r.product_data;
+                productCatalog[r.product_key] = r.product_data;
                 if (r.product_data.icon) productIcons[r.product_key] = r.product_data.icon;
                 else if (r.product_data.image) productIcons[r.product_key] = r.product_data.image;
             });
-            productCatalog = newCatalog;
-            console.log('[ProductCatalog] 从 DB 加载 ' + rows.length + ' 个产品');
+            console.log('[ProductCatalog] 从 DB 合并 ' + rows.length + ' 个产品 (总计 ' + Object.keys(productCatalog).length + ')');
             return true;
         } catch (e) { console.warn('[ProductCatalog] DB 加载失败', e); return false; }
     }
