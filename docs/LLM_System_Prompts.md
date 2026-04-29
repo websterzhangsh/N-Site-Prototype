@@ -165,27 +165,112 @@ When users ask about these topics, indicate which agent would handle it:
 
 ---
 
-## 3. Prompt Engineering Guidelines
+## 3. AI Designer Prompt（图像生成）
 
-### 3.1 Temperature Settings
+### 3.1 概述
+AI Designer 使用阿里通义万相（DashScope）多模态图像编辑 API，将产品参考图融合到用户的后院实景照片中，生成逼真的效果渲染图。与 2C/2B 聊天机器人不同，AI Designer prompt 直接嵌入后端 API 代理函数中，不经过 `llm-config.js`。
+
+| 属性 | 值 |
+|------|-----|
+| **Implementation** | `functions/api/design-generate.js` |
+| **API Endpoint** | `POST /api/design-generate` |
+| **LLM Provider** | 阿里通义万相 (DashScope multimodal-generation) |
+| **模型优先级** | `qwen-image-edit-max` → `qwen-image-edit-max-2026-01-16` → `qwen-image-edit-plus` |
+| **调用方式** | 同步调用 + SSE 心跳流式响应 |
+| **输入** | 最多 3 张图片（背景照 + 产品参考图 + 可选第三张）+ 文本 prompt |
+
+### 3.2 首次生成 Prompt（DEFAULT_PROMPT）
+
+用于首次设计生成场景：将产品参考图融合到后院实景照片中。
+
+```
+请将第二张图片中的阳光房（sunroom/glass conservatory）融合到第一张图片的后院场景中。
+
+核心要求：
+1. 【保持原设计】必须完整保留第二张图片中阳光房的原始设计、外观、结构和风格，不得修改或简化
+2. 【位置】阳光房必须紧贴主建筑物墙壁，作为房屋的延伸部分（attached sunroom），不能独立放置在草坪中央
+3. 【大小】阳光房尺寸要适中，宽度不超过主建筑的1/3，高度与主建筑一层齐平，保持合理比例
+4. 【透视】阳光房的透视角度必须与主建筑保持一致
+5. 【融合】添加自然过渡，包括阴影、光照方向一致性
+
+禁止事项 - NO 喧宾夺主：
+- 禁止改变阳光房的原始设计、颜色、材质和结构
+- 阳光房不能比主建筑更突出或更大
+- 阳光房不能放在草坪中央或离主建筑太远
+- 不能破坏原有后院的整体布局
+- 不能简化或修改阳光房的细节
+```
+
+**适用场景**: 用户上传后院照片 + 选择产品款式后，首次点击 "Generate Design"。  
+**代码位置**: `functions/api/design-generate.js` 第 15 行 `DEFAULT_PROMPT` 常量。
+
+### 3.3 迭代编辑 Prompt（Iteration Prompt）
+
+用于用户对已生成的设计图进行二次修改（如调整位置、颜色、大小等）。
+
+```
+请对这张图片进行编辑修改，具体要求如下：${prompt}。请确保按照要求做出明显的修改，不要保持原样不变。
+```
+
+**适用场景**: 用户在 Design Instructions 文本框中输入自定义修改指令，对已有设计图进行迭代编辑。  
+**代码位置**: `functions/api/design-generate.js` 第 173-174 行。  
+**触发条件**: `is_iteration === true && prompt` 不为空时，使用此增强模板包裹用户输入的 prompt。
+
+### 3.4 自定义 Prompt 覆盖逻辑
+
+```javascript
+if (is_iteration && prompt) {
+    // 迭代模式：用增强模板包裹用户 prompt
+    editPrompt = `请对这张图片进行编辑修改，具体要求如下：${prompt}。...`;
+} else {
+    // 首次生成：用户自定义 prompt 优先，否则使用 DEFAULT_PROMPT
+    editPrompt = prompt || DEFAULT_PROMPT;
+}
+```
+
+**优先级**:
+1. 迭代模式 + 用户输入 → 迭代增强模板
+2. 首次生成 + 用户自定义 prompt → 用户自定义 prompt 原文
+3. 首次生成 + 无自定义 prompt → DEFAULT_PROMPT
+
+### 3.5 模型降级策略
+
+```
+MODEL_PRIORITY = [
+    'qwen-image-edit-max',           // 最新旗舰（优先）
+    'qwen-image-edit-max-2026-01-16', // 旗舰历史版本（稳定）
+    'qwen-image-edit-plus'            // 备选模型（兜底）
+]
+```
+
+降级触发条件：**任何错误**（HTTP 非 200、API 返回 error code、响应中无图片）→ 尝试下一个模型，直到所有模型都失败才返回错误。
+
+---
+
+## 4. Prompt Engineering Guidelines
+
+### 4.1 Temperature Settings
 | Mode | Temperature | Rationale |
 |------|-------------|-----------|
 | 2C Consumer | 0.7 | Warmer, more creative for engaging conversation |
 | 2B Business | 0.5 | More focused, factual for professional use |
+| AI Designer | N/A（图像模型） | 由 DashScope 图像编辑 API 内部控制，不可配置 |
 
-### 3.2 Max Tokens
+### 4.2 Max Tokens
 | Mode | Max Tokens | Rationale |
 |------|-----------|-----------|
 | 2C Consumer | 800 | Short, punchy responses to keep engagement |
 | 2B Business | 1500 | Longer responses allowed for detailed quotes/specs |
+| AI Designer | N/A | 输出为图片，无 token 限制 |
 
-### 3.3 History Context
+### 4.3 History Context
 | Mode | History Turns | Rationale |
 |------|-------------|-----------|
 | 2C Consumer | Last 6 messages | Short browsing sessions |
 | 2B Business | Last 10 messages | Longer working sessions with context continuity |
+| AI Designer | 无历史上下文 | 每次调用独立，通过图片输入携带上下文 |
 
-### 3.4 Iteration Protocol
+### 4.4 Iteration Protocol
 System prompts should be reviewed and updated:
 - **Monthly** during active development
 - **After each new product launch** (update product specs/pricing)
@@ -194,9 +279,9 @@ System prompts should be reviewed and updated:
 
 ---
 
-## 4. API Integration
+## 5. API Integration
 
-### 4.1 Endpoint
+### 5.1 Chat Endpoint（2C / 2B）
 ```
 POST /api/chat
 Content-Type: application/json
@@ -208,7 +293,7 @@ Content-Type: application/json
 }
 ```
 
-### 4.2 Response
+**Response**:
 ```json
 {
   "success": true,
@@ -221,14 +306,36 @@ Content-Type: application/json
 }
 ```
 
-### 4.3 Fallback Behavior
+### 5.2 AI Designer Endpoint
+```
+POST /api/design-generate
+Content-Type: application/json
+
+{
+  "bg_image": "base64 或 URL — 后院实景照片",
+  "fg_image": "base64 或 URL — 产品参考图",
+  "ref_image": "base64 或 URL — 可选第三张参考图",
+  "prompt": "可选 — 用户自定义 prompt（为空则使用 DEFAULT_PROMPT）",
+  "is_iteration": false  // true = 迭代编辑模式
+}
+```
+
+**Response**: SSE 流式事件
+```
+data: {"type":"processing","elapsed":0}
+data: {"type":"heartbeat","elapsed":5}
+data: {"type":"result","image":"base64 图片数据","model":"qwen-image-edit-max","elapsed":12}
+```
+
+### 5.3 Fallback Behavior
 If the LLM API call fails (network error, timeout, API key issue):
 - **2C**: Falls back to keyword-matched FAQ responses (`getBotResponse()` in `index.html`)
 - **2B**: Falls back to agent-specific template responses (`b2bChat.fallback()` in `company-operations.html`)
+- **AI Designer**: 按 MODEL_PRIORITY 依次尝试所有模型，全部失败后返回 `{"type":"error","message":"All models failed..."}`
 
 ---
 
-## 5. Future Enhancements
+## 6. Future Enhancements
 
 | Enhancement | Priority | Description |
 |-------------|----------|-------------|
@@ -238,20 +345,23 @@ If the LLM API call fails (network error, timeout, API key issue):
 | Conversation summarization | P3 | Auto-summarize long sessions to maintain context within token limits |
 | Multi-modal prompts | P3 | Include image description in prompt when photos are uploaded |
 | A/B testing framework | P3 | Test prompt variations and measure conversion/satisfaction |
+| AI Designer 多产品 prompt | P2 | 根据产品类型（Sunroom/Pergola/ZB）动态切换 DEFAULT_PROMPT |
 
 ---
 
-## 6. Change Log
+## 7. Change Log
 
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0.0 | 2026-03-24 | Initial document: 2C consumer prompt + 2B dealer partner prompt; API integration spec; prompt engineering guidelines |
+| 1.1.0 | 2026-04-29 | 新增 Section 3: AI Designer Prompt（DEFAULT_PROMPT、迭代 Prompt、自定义覆盖逻辑、模型降级策略）；更新 Section 4-5 补充 AI Designer 参数；新增 AI Designer API endpoint 文档 |
 
 ---
 
 **Document Owner**: Nestopia Product Team  
 **Related Docs**:
-- `functions/lib/llm-config.js` — Runtime prompt configuration
-- `functions/api/chat.js` — Chat API endpoint
+- `functions/lib/llm-config.js` — Runtime prompt configuration (2C/2B)
+- `functions/api/chat.js` — Chat API endpoint (2C/2B)
+- `functions/api/design-generate.js` — AI Designer API endpoint
 - `docs/Chatbot_Agent_Spec_CN.md` — Chatbot Agent specification
 - `docs/DATA_AI_STRATEGY.md` — Data & AI strategy
