@@ -8,11 +8,7 @@
 const MODEL_PRIORITY = [
   'qwen-image-edit-max',
   'qwen-image-edit-max-2026-01-16',
-  'qwen-image-edit-plus',
-  'qwen-image-edit-plus-2025-12-15',
-  'qwen-image-edit-plus-2025-10-30',
-  'qwen-image-2.0-pro',
-  'qwen-image-edit'
+  'qwen-image-edit-plus'
 ];
 
 // 优化后的提示词
