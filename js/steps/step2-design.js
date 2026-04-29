@@ -450,114 +450,175 @@
     }
 
     // --- Main Generate Function (with prompt support) ---
+    var _step2Generating = false;  // ★ 防止重复点击
+
     function generateStep2Design(projectId) {
-        var state = getStep2State(projectId);
-        if (!state || !state.photos[0] || !state.selectedProduct) return;
-        var product = productCatalog[state.selectedProduct];
-        if (!product) return;
-
-        // Get optional design prompt
-        var promptInput = document.getElementById('step2PromptInput_' + projectId);
-        var promptText = promptInput ? promptInput.value.trim() : '';
-
-        // Reset iteration state for fresh generation
-        state.currentIteration = 0;
-        state.generated = false;
-        state.lastResultImage = null;
-
-        // Show loading
-        var loading = document.getElementById('step2RenderLoading_' + projectId);
-        var placeholder = document.getElementById('step2RenderPlaceholder_' + projectId);
-        var statusEl = document.getElementById('step2RenderStatus_' + projectId);
-        var loadingText = document.getElementById('step2LoadingText_' + projectId);
-        var loadingElapsed = document.getElementById('step2LoadingElapsed_' + projectId);
-        loading.classList.remove('hidden');
-        if (placeholder) placeholder.classList.add('hidden');
-        statusEl.textContent = 'Generating...';
-        statusEl.className = 'px-2 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-medium rounded-full';
-        var btn = document.getElementById('step2GenerateBtn_' + projectId);
-        if (btn) btn.disabled = true;
-
-        // Hide post-gen actions from any previous generation
-        var postGenActions = document.getElementById('step2PostGenActions_' + projectId);
-        if (postGenActions) postGenActions.classList.add('hidden');
-        var iterPanel = document.getElementById('step2IteratePanel_' + projectId);
-        if (iterPanel) iterPanel.classList.add('hidden');
-
-        // Determine foreground image source:
-        // Sunroom/Pergola → use manually uploaded product reference photo
-        // Others (ZB etc.) → use pre-stored catalog image
-        var project = allProjectsData.find(function(p) { return p.id === projectId; });
-        var needsRefPhoto = project && (project.type === 'Sunroom' || project.type === 'Pergola');
-
-        function _sendGenRequest(foregroundBase64) {
-            var body = {
-                background_image: state.photos[0],
-                foreground_image: foregroundBase64,
-                is_iteration: false
-            };
-            if (promptText) body.prompt = promptText;
-
-            streamDesignGenerate(body, {
-                onProgress: function(elapsed) {
-                    loadingElapsed.textContent = 'Processing... ' + elapsed + 's elapsed';
-                    if (elapsed > 20) loadingText.textContent = 'AI is blending the design...';
-                },
-                onFallback: function(msg) {
-                    loadingText.textContent = 'Switching model...';
-                    loadingElapsed.textContent = msg;
-                },
-                onResult: function(data) {
-                    loading.classList.add('hidden');
-                    if (btn) btn.disabled = false;
-                    // Show result
-                    var result = document.getElementById('step2RenderResult_' + projectId);
-                    var img = document.getElementById('step2RenderImg_' + projectId);
-                    img.src = data.result_image;
-                    result.classList.remove('hidden');
-                    statusEl.innerHTML = '<i class="fas fa-check-circle mr-1"></i>Ready';
-                    statusEl.className = 'px-2 py-0.5 bg-green-100 text-green-700 text-[10px] font-medium rounded-full';
-                    state.generated = true;
-                    state.lastResultImage = data.result_image;
-
-                    // Show post-generation actions (Save + Refine)
-                    if (postGenActions) postGenActions.classList.remove('hidden');
-                    // Reset iteration UI for fresh generation
-                    var remainingEl = document.getElementById('step2IterRemaining_' + projectId);
-                    if (remainingEl) remainingEl.textContent = '2';
-                    var iterBtn = document.getElementById('step2IterateBtn_' + projectId);
-                    if (iterBtn) {
-                        iterBtn.disabled = false;
-                        iterBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-                    }
-
-                    var modelInfo = data.fallback_used ? ' (fallback: ' + data.model_used + ')' : '';
-                    showToast('Design generated successfully' + modelInfo, 'success');
-                },
-                onError: function(msg) {
-                    loading.classList.add('hidden');
-                    if (btn) btn.disabled = false;
-                    statusEl.textContent = 'Error';
-                    statusEl.className = 'px-2 py-0.5 bg-red-100 text-red-700 text-[10px] font-medium rounded-full';
-                    showToast('Generation failed: ' + msg, 'error');
-                }
-            });
+        // ★ 防止重复点击
+        if (_step2Generating) {
+            showToast('Design generation in progress, please wait...', 'warning');
+            return;
         }
 
-        if (needsRefPhoto && state.productRefPhoto) {
-            // Sunroom/Pergola: use the manually uploaded product reference photo
-            _sendGenRequest(state.productRefPhoto);
-        } else {
-            // Other product types: fetch pre-stored catalog image as base64
-            fetchImageAsBase64(product.image, function(productBase64) {
-                if (!productBase64) {
-                    showToast('Failed to load product image', 'error');
-                    loading.classList.add('hidden');
-                    if (btn) btn.disabled = false;
-                    return;
-                }
-                _sendGenRequest(productBase64);
-            });
+        var btn = document.getElementById('step2GenerateBtn_' + projectId);
+        // ★ 立即禁用按钮，防止连续点击
+        if (btn) btn.disabled = true;
+
+        try {
+            var state = getStep2State(projectId);
+
+            // ★ 有意义的 guard check — 告知用户缺什么
+            if (!state || !state.photos[0]) {
+                showToast('Please upload a backyard photo first', 'error');
+                if (btn) btn.disabled = false;
+                return;
+            }
+            if (!state.selectedProduct) {
+                showToast('Please select a product first', 'error');
+                if (btn) btn.disabled = false;
+                return;
+            }
+            var product = (typeof productCatalog !== 'undefined') ? productCatalog[state.selectedProduct] : null;
+            if (!product) {
+                showToast('Selected product not found in catalog', 'error');
+                if (btn) btn.disabled = false;
+                return;
+            }
+
+            // Sunroom/Pergola: 检查产品参考图
+            var project = allProjectsData.find(function(p) { return p.id === projectId; });
+            var needsRefPhoto = project && (project.type === 'Sunroom' || project.type === 'Pergola');
+            if (needsRefPhoto && !state.productRefPhoto) {
+                showToast('Please upload a product reference photo for Sunroom/Pergola', 'error');
+                if (btn) btn.disabled = false;
+                return;
+            }
+
+            // ★ 确认 streamDesignGenerate 可用
+            if (typeof streamDesignGenerate !== 'function') {
+                showToast('Design service not loaded. Please refresh the page.', 'error');
+                console.error('[Step2] streamDesignGenerate is not available');
+                if (btn) btn.disabled = false;
+                return;
+            }
+
+            _step2Generating = true;
+
+            // Get optional design prompt
+            var promptInput = document.getElementById('step2PromptInput_' + projectId);
+            var promptText = promptInput ? promptInput.value.trim() : '';
+
+            // Reset iteration state for fresh generation
+            state.currentIteration = 0;
+            state.generated = false;
+            state.lastResultImage = null;
+
+            // Show loading (★ null-safe)
+            var loading = document.getElementById('step2RenderLoading_' + projectId);
+            var placeholder = document.getElementById('step2RenderPlaceholder_' + projectId);
+            var statusEl = document.getElementById('step2RenderStatus_' + projectId);
+            var loadingText = document.getElementById('step2LoadingText_' + projectId);
+            var loadingElapsed = document.getElementById('step2LoadingElapsed_' + projectId);
+            if (loading) loading.classList.remove('hidden');
+            if (placeholder) placeholder.classList.add('hidden');
+            if (statusEl) {
+                statusEl.textContent = 'Generating...';
+                statusEl.className = 'px-2 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-medium rounded-full';
+            }
+
+            // Hide post-gen actions from any previous generation
+            var postGenActions = document.getElementById('step2PostGenActions_' + projectId);
+            if (postGenActions) postGenActions.classList.add('hidden');
+            var iterPanel = document.getElementById('step2IteratePanel_' + projectId);
+            if (iterPanel) iterPanel.classList.add('hidden');
+
+            function _onComplete() {
+                _step2Generating = false;
+            }
+
+            function _sendGenRequest(foregroundBase64) {
+                var body = {
+                    background_image: state.photos[0],
+                    foreground_image: foregroundBase64,
+                    is_iteration: false
+                };
+                if (promptText) body.prompt = promptText;
+
+                streamDesignGenerate(body, {
+                    onProgress: function(elapsed) {
+                        if (loadingElapsed) loadingElapsed.textContent = 'Processing... ' + elapsed + 's elapsed';
+                        if (elapsed > 20 && loadingText) loadingText.textContent = 'AI is blending the design...';
+                    },
+                    onFallback: function(msg) {
+                        if (loadingText) loadingText.textContent = 'Switching model...';
+                        if (loadingElapsed) loadingElapsed.textContent = msg;
+                    },
+                    onResult: function(data) {
+                        _onComplete();
+                        if (loading) loading.classList.add('hidden');
+                        if (btn) btn.disabled = false;
+                        // Show result
+                        var result = document.getElementById('step2RenderResult_' + projectId);
+                        var img = document.getElementById('step2RenderImg_' + projectId);
+                        if (img) img.src = data.result_image;
+                        if (result) result.classList.remove('hidden');
+                        if (statusEl) {
+                            statusEl.innerHTML = '<i class="fas fa-check-circle mr-1"></i>Ready';
+                            statusEl.className = 'px-2 py-0.5 bg-green-100 text-green-700 text-[10px] font-medium rounded-full';
+                        }
+                        state.generated = true;
+                        state.lastResultImage = data.result_image;
+
+                        // Show post-generation actions (Save + Refine)
+                        if (postGenActions) postGenActions.classList.remove('hidden');
+                        // Reset iteration UI for fresh generation
+                        var remainingEl = document.getElementById('step2IterRemaining_' + projectId);
+                        if (remainingEl) remainingEl.textContent = '2';
+                        var iterBtn = document.getElementById('step2IterateBtn_' + projectId);
+                        if (iterBtn) {
+                            iterBtn.disabled = false;
+                            iterBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                        }
+
+                        var modelInfo = data.fallback_used ? ' (fallback: ' + data.model_used + ')' : '';
+                        showToast('Design generated successfully' + modelInfo, 'success');
+                    },
+                    onError: function(msg) {
+                        _onComplete();
+                        if (loading) loading.classList.add('hidden');
+                        if (btn) btn.disabled = false;
+                        if (statusEl) {
+                            statusEl.textContent = 'Error';
+                            statusEl.className = 'px-2 py-0.5 bg-red-100 text-red-700 text-[10px] font-medium rounded-full';
+                        }
+                        showToast('Generation failed: ' + msg, 'error');
+                    }
+                });
+            }
+
+            if (needsRefPhoto && state.productRefPhoto) {
+                // Sunroom/Pergola: use the manually uploaded product reference photo
+                _sendGenRequest(state.productRefPhoto);
+            } else {
+                // Other product types: fetch pre-stored catalog image as base64
+                fetchImageAsBase64(product.image, function(productBase64) {
+                    if (!productBase64) {
+                        _onComplete();
+                        showToast('Failed to load product image', 'error');
+                        if (loading) loading.classList.add('hidden');
+                        if (btn) btn.disabled = false;
+                        return;
+                    }
+                    _sendGenRequest(productBase64);
+                });
+            }
+        } catch (err) {
+            // ★ 异常兜底 — 确保按钮恢复、loading 消失
+            _step2Generating = false;
+            console.error('[Step2] generateStep2Design error:', err);
+            if (btn) btn.disabled = false;
+            var loadingEl = document.getElementById('step2RenderLoading_' + projectId);
+            if (loadingEl) loadingEl.classList.add('hidden');
+            showToast('Generate design error: ' + (err.message || 'Unknown error'), 'error');
         }
     }
 
