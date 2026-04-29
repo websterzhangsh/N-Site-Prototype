@@ -462,18 +462,31 @@
             body: JSON.stringify(body)
         }).then(function(response) {
             if (!response.ok) {
-                return response.json().then(function(errData) {
-                    callbacks.onError(errData.error || 'Request failed');
+                // ★ 非 200 响应：尝试解析 JSON 错误，失败则给通用提示
+                return response.text().then(function(text) {
+                    try {
+                        var errData = JSON.parse(text);
+                        callbacks.onError(errData.error || 'Request failed (HTTP ' + response.status + ')');
+                    } catch (_) {
+                        callbacks.onError('Request failed (HTTP ' + response.status + ')');
+                    }
                 });
             }
 
             var reader = response.body.getReader();
             var decoder = new TextDecoder();
             var buffer = '';
+            var gotTerminalEvent = false; // ★ 追踪是否收到 result/error 终端事件
 
             function readStream() {
                 reader.read().then(function(result) {
-                    if (result.done) return;
+                    if (result.done) {
+                        // ★ 流结束但未收到终端事件 — 主动报错，防止 loading 卡死
+                        if (!gotTerminalEvent) {
+                            callbacks.onError('Connection closed unexpectedly. Please try again.');
+                        }
+                        return;
+                    }
 
                     buffer += decoder.decode(result.value, { stream: true });
                     var events = buffer.split('\n\n');
@@ -493,9 +506,11 @@
                                     if (callbacks.onFallback) callbacks.onFallback(data.message);
                                     break;
                                 case 'result':
+                                    gotTerminalEvent = true;
                                     if (callbacks.onResult) callbacks.onResult(data);
                                     return;
                                 case 'error':
+                                    gotTerminalEvent = true;
                                     if (callbacks.onError) callbacks.onError(data.message);
                                     return;
                             }

@@ -227,50 +227,60 @@ export async function onRequestPost(context) {
         return { ...result, elapsed };
       };
 
-      // 按优先级顺序尝试模型
+      // 按优先级顺序尝试模型 — 任何错误（繁忙/模型不可用/参数错误等）都尝试下一个
       let usedModel = MODEL_PRIORITY[0];
       let response, data, elapsed = 0;
       let fallbackUsed = false;
+      let lastError = null;
 
       for (let i = 0; i < MODEL_PRIORITY.length; i++) {
         const model = MODEL_PRIORITY[i];
         console.log(`Trying model ${i + 1}/${MODEL_PRIORITY.length}: ${model}`);
         
         if (i > 0) {
-          await sendEvent({ type: 'fallback', message: `Model busy, trying ${model}...` });
+          await sendEvent({ type: 'fallback', message: `Trying ${model}...` });
           fallbackUsed = true;
         }
 
-        ({ response, data, elapsed } = await fetchWithHeartbeats(model, elapsed));
-        usedModel = model;
+        try {
+          ({ response, data, elapsed } = await fetchWithHeartbeats(model, elapsed));
+          usedModel = model;
 
-        // 如果成功或非繁忙错误，停止尝试
-        if (!isServiceBusy(response, data)) {
-          break;
+          // ★ 如果成功（HTTP OK + 无错误码 + 能提取到图片），立即返回
+          if (response.ok && !data.code) {
+            const testImage = extractImage(data);
+            if (testImage) {
+              console.log(`Model ${model} succeeded`);
+              lastError = null;
+              break;
+            }
+            // 有响应但没有图片 — 记录错误，尝试下一个
+            lastError = { message: 'No image in response', model };
+            console.log(`${model}: response OK but no image found, trying next...`);
+          } else {
+            // API 返回了错误
+            lastError = { message: data.message || data.code || 'Unknown error', model };
+            console.log(`${model} error: ${lastError.message}, trying next...`);
+          }
+        } catch (fetchErr) {
+          // 网络/超时错误 — 记录后尝试下一个
+          lastError = { message: fetchErr.message, model };
+          console.log(`${model} fetch error: ${fetchErr.message}, trying next...`);
         }
-        console.log(`${model} is busy, trying next...`);
       }
 
-      // 检查 API 错误
-      if (!response.ok || data.code) {
+      // 所有模型都失败
+      if (lastError) {
         await sendEvent({
           type: 'error',
-          message: data.message || data.code || 'Generation failed',
+          message: `All models failed. Last error (${lastError.model}): ${lastError.message}`,
           model_used: usedModel
         });
         return;
       }
 
-      // 提取结果图像
+      // ★ 成功 — 提取结果图像（loop 内已验证 extractImage 有效）
       const resultImage = extractImage(data);
-      if (!resultImage) {
-        await sendEvent({
-          type: 'error',
-          message: 'Task completed but no image found in response'
-        });
-        return;
-      }
-
       console.log(`Generation succeeded: model=${usedModel}, elapsed=${elapsed}s`);
 
       // 发送最终结果
