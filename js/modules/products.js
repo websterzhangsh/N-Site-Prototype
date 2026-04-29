@@ -98,14 +98,21 @@
             if (!res.ok) return false;
             const rows = await res.json();
             if (rows.length === 0) return false;
-            // ★ MERGE DB 产品到现有 catalog（保留静态 product-catalog.js 中的产品作为 baseline）
-            // 这样即使 DB 中只有部分产品（如只有 ZB），Sunroom/Pergola 等静态产品仍然可用
+            // ★ DB 产品合并策略：
+            // - 静态 catalog（product-catalog.js）中已有的产品 → 不覆盖（静态版本是权威数据源）
+            // - DB 中的新产品（如租户自定义产品）→ 添加到 catalog
+            // 这样确保静态产品字段完整性（cost/tiers/specs 等），不会被 DB 中可能缺字段的旧版本覆盖
+            let added = 0;
             rows.forEach(r => {
-                productCatalog[r.product_key] = r.product_data;
+                if (!productCatalog[r.product_key]) {
+                    productCatalog[r.product_key] = r.product_data;
+                    added++;
+                }
+                // 图标始终从 DB 更新（不影响产品数据完整性）
                 if (r.product_data.icon) productIcons[r.product_key] = r.product_data.icon;
                 else if (r.product_data.image) productIcons[r.product_key] = r.product_data.image;
             });
-            console.log('[ProductCatalog] 从 DB 合并 ' + rows.length + ' 个产品 (总计 ' + Object.keys(productCatalog).length + ')');
+            console.log('[ProductCatalog] DB: ' + rows.length + ' 行, 新增 ' + added + ' 个产品 (总计 ' + Object.keys(productCatalog).length + ')');
             return true;
         } catch (e) { console.warn('[ProductCatalog] DB 加载失败', e); return false; }
     }

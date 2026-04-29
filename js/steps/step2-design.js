@@ -303,16 +303,24 @@
         el.querySelectorAll('div')[0].classList.add('bg-indigo-100', 'text-indigo-600');
         el.querySelectorAll('div')[0].classList.remove('bg-gray-100', 'text-gray-400');
         // Update label
-        var product = productCatalog[catalogId];
+        var product = (typeof productCatalog !== 'undefined') ? productCatalog[catalogId] : null;
         var label = document.getElementById('step2ProductLabel_' + projectId);
         if (label && product) label.textContent = product.name;
-        // Update stats
+        // Update stats (空值安全 — DB 数据可能缺少字段)
         if (product) {
-            var tier0 = product.cost.tiers[0].priceRange;
-            document.getElementById('step2StatControl_' + projectId).textContent = product.control;
-            document.getElementById('step2StatPrice_' + projectId).textContent = '$' + tier0[0] + '-' + tier0[1];
-            document.getElementById('step2StatLead_' + projectId).textContent = product.leadTime;
-            document.getElementById('step2StatSeries_' + projectId).textContent = product.series.replace(' Series', '');
+            try {
+                var tier0 = (product.cost && product.cost.tiers && product.cost.tiers[0]) ? product.cost.tiers[0].priceRange : null;
+                var controlEl = document.getElementById('step2StatControl_' + projectId);
+                var priceEl = document.getElementById('step2StatPrice_' + projectId);
+                var leadEl = document.getElementById('step2StatLead_' + projectId);
+                var seriesEl = document.getElementById('step2StatSeries_' + projectId);
+                if (controlEl) controlEl.textContent = product.control || '—';
+                if (priceEl) priceEl.textContent = (tier0 && tier0[0] != null) ? ('$' + tier0[0] + '-' + tier0[1]) : '—';
+                if (leadEl) leadEl.textContent = product.leadTime || '—';
+                if (seriesEl) seriesEl.textContent = product.series ? product.series.replace(' Series', '') : '—';
+            } catch (e) {
+                console.warn('[Step2] Stats update error for', catalogId, e);
+            }
         }
         updateStep2GenerateBtn(projectId);
         // 自动同步到 Supabase
