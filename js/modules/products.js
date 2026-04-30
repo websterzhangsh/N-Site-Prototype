@@ -20,6 +20,24 @@
     // 如果 Nestopia.data.productCatalog 不可用，后续代码仍可安全执行
     var productCatalog = (Nestopia && Nestopia.data && Nestopia.data.productCatalog) || {};
 
+    // ★ productIcons 必须在 _injectZBProducts() 调用之前声明（避免 TDZ 崩溃）
+    // 原先为 const，声明在 IIFE 末尾 (~line 597)，但 _injectZBProducts 在 line 86 同步调用时
+    // 就会写入 productIcons[key]，触发 ReferenceError → 整个 IIFE 崩溃
+    var productIcons = {
+        'sr-l-classic': '/images/products/icons/sunroom-l-type.png',
+        'sr-l-smart':   '/images/products/icons/sunroom-l-type.png',
+        'sr-l-pro':     '/images/products/icons/sunroom-l-type.png',
+        'sr-m-classic': '/images/products/icons/sunroom-m-type.png',
+        'sr-m-smart':   '/images/products/icons/sunroom-m-type.png',
+        'sr-m-pro':     '/images/products/icons/sunroom-m-type.png',
+        'pg-basic':     '/images/products/icons/pergola.png',
+        'pg-classic':   '/images/products/icons/pergola.png',
+        'zb-manual':    '/images/products/icons/zip-blinds.png',
+        'zb-motorized': '/images/products/icons/zip-blinds.png',
+        'adu-studio':   '/images/products/icons/adu-studio.png',
+        'adu-2bed':     '/images/products/icons/adu-2bed.png'
+    };
+
     // ── v3.0: 从 zbSKUCatalog 动态注入 Zip Blinds 产品条目 ──
     function _injectZBProducts() {
         var skuCat = window.zbSKUCatalog;
@@ -593,21 +611,8 @@
     }
     const productCategories = getProductCategories();
 
-    // Product 3D icon mapping (per product ID -> icon path)
-    const productIcons = {
-        'sr-l-classic': '/images/products/icons/sunroom-l-type.png',
-        'sr-l-smart':   '/images/products/icons/sunroom-l-type.png',
-        'sr-l-pro':     '/images/products/icons/sunroom-l-type.png',
-        'sr-m-classic': '/images/products/icons/sunroom-m-type.png',
-        'sr-m-smart':   '/images/products/icons/sunroom-m-type.png',
-        'sr-m-pro':     '/images/products/icons/sunroom-m-type.png',
-        'pg-basic':     '/images/products/icons/pergola.png',
-        'pg-classic':   '/images/products/icons/pergola.png',
-        'zb-manual':    '/images/products/icons/zip-blinds.png',
-        'zb-motorized': '/images/products/icons/zip-blinds.png',
-        'adu-studio':   '/images/products/icons/adu-studio.png',
-        'adu-2bed':     '/images/products/icons/adu-2bed.png'
-    };
+    // ★ productIcons 已移至 IIFE 顶部（line ~25）避免 TDZ 崩溃
+    // 此处保留注释作为原始位置标记
 
     async function initProductsPage() {
         // 从 Supabase 加载租户产品目录
@@ -1325,5 +1330,7 @@
     window.handleFileUpload = handleFileUpload;
     window.handleProductImageUpload = handleFileUpload;        // 兼容别名
     window.uploadProductFiles = handleFileUpload;              // 兼容别名
+
+    console.log('[Nestopia] products.js IIFE OK | catalog:', Object.keys(productCatalog).length, 'keys | icons:', Object.keys(productIcons).length, 'keys | window.productCatalog:', typeof Object.getOwnPropertyDescriptor(window, 'productCatalog'));
 
 })();
