@@ -24,6 +24,7 @@
     var quotLineItemsData = [];
     var quotAccessoriesData = [];
     var quotCurrentProjectId = null;
+    var quotProjectTenantSlug = '';   // ★ 项目级租户 slug — 报价单品牌跟随项目而非会话
 
     // ★ v3.0: ZB price lookup — dynamically built from zbSKUCatalog (pricing-data.js)
     // Uses preferential selling price (市场价 × 优惠折扣) as consumer-facing unit price
@@ -124,6 +125,9 @@
             project = allProjectsData.find(function(p) { return p.id === projectId; });
         }
         if (!project) return;
+
+        // ★ 提取项目级租户 slug — 报价单品牌跟随项目
+        quotProjectTenantSlug = project.tenant_slug || getCurrentTenantSlug();
 
         // Detect product type from project
         var ptype = (project.type || '').toLowerCase();
@@ -521,7 +525,7 @@
         var today = new Date();
         var dateStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
 
-        var tenantCfg = tenantConfigs[getCurrentTenantSlug()] || tenantConfigs['default'];
+        var tenantCfg = tenantConfigs[quotProjectTenantSlug || getCurrentTenantSlug()] || tenantConfigs['default'];
         var logoPath = window.location.origin + '/' + tenantCfg.logo;
         var lang = getTenantLanguage();
         var t = function(key) { return getQuotText(key); };
@@ -719,7 +723,7 @@
         var today = new Date();
         var dateStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
 
-        var tenantCfg = tenantConfigs[getCurrentTenantSlug()] || tenantConfigs['default'];
+        var tenantCfg = tenantConfigs[quotProjectTenantSlug || getCurrentTenantSlug()] || tenantConfigs['default'];
         var logoPath = window.location.origin + '/' + tenantCfg.logo;
         var client = project.customer || 'Customer';
         var csName = tenantCfg.csName || '';

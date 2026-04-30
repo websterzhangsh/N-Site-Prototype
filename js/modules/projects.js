@@ -319,6 +319,7 @@
             risks:      cfg.risks || [],
             issues:     cfg.issues || [],
             order:      cfg.order || null,
+            tenant_slug: cfg.tenant_slug || '',
             _step1:     cfg._step1 || defaultStep1,
             _fromDB:    true
         };

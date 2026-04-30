@@ -1,24 +1,25 @@
 # Nestopia LLM System Prompts
 
-**Version**: 1.0.0  
-**Last Updated**: 2026-03-24  
+**Version**: 1.1.0  
+**Last Updated**: 2026-04-29  
 **Status**: Active  
 **Maintainer**: websterzhangsh  
-**Implementation**: `functions/lib/llm-config.js`  
-**API Endpoint**: `/api/chat` (accepts `mode` parameter: `'2c'` | `'2b'`)
+**Implementation**: `functions/lib/llm-config.js` (2C/2B Chat), `functions/api/design-generate.js` (AI Designer)  
+**API Endpoint**: `/api/chat` (2C/2B), `/api/design-generate` (AI Designer)
 
 ---
 
 ## Overview
 
-Nestopia deploys two distinct system prompts for its LLM-powered chatbots:
+Nestopia 部署三套 LLM system prompts，分别服务于不同场景和受众：
 
 | Prompt | Audience | Location | Purpose |
 |--------|----------|----------|---------|
 | **2C (Consumer)** | Homeowners visiting public website | `index.html` | Lead generation, product education, consultation booking |
 | **2B (Business)** | Dealer partners using operations platform | `company-operations.html` | Agent routing, project support, domain expertise |
+| **AI Designer** | Dealer partners using AI design feature | `company-operations.html` Step 2 / AI Designer page | Photo-realistic product rendering from site photos |
 
-Both prompts share the same LLM backend (Qwen via DashScope API) but serve fundamentally different audiences and objectives.
+2C/2B 聊天 prompt 共享同一个 LLM 后端（Qwen 文本模型），AI Designer prompt 使用独立的通义万相图像编辑模型。
 
 ---
 
