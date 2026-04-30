@@ -12,6 +12,29 @@
     let designerSelectedStyles = {};  // keyed by project_id
     let designerUploadedPhotos = {};  // keyed by project_id
 
+    // ★ 多路径产品数据查找 — 避免依赖单一 window.productCatalog
+    // 路径 1: window.productCatalog (Object.defineProperty from products.js)
+    // 路径 2: Nestopia.data.productCatalog (直接设置自 product-catalog.js)
+    // 路径 3: Nestopia.modules.products.productCatalog (模块注册路径)
+    function _resolveProduct(catalogId) {
+        if (!catalogId) return null;
+        // 路径 1: window.productCatalog (products.js 的 defineProperty proxy)
+        if (typeof productCatalog !== 'undefined' && productCatalog && productCatalog[catalogId]) {
+            return productCatalog[catalogId];
+        }
+        // 路径 2: Nestopia.data.productCatalog (product-catalog.js 直接设置)
+        var N = window.Nestopia;
+        if (N && N.data && N.data.productCatalog && N.data.productCatalog[catalogId]) {
+            return N.data.productCatalog[catalogId];
+        }
+        // 路径 3: modules 注册
+        if (N && N.modules && N.modules.products && N.modules.products.productCatalog && N.modules.products.productCatalog[catalogId]) {
+            return N.modules.products.productCatalog[catalogId];
+        }
+        console.warn('[Step2] _resolveProduct: 未找到产品', catalogId, '| window.productCatalog:', typeof productCatalog, '| N.data.productCatalog:', !!(N && N.data && N.data.productCatalog));
+        return null;
+    }
+
     function toggleDesignStyle(el, styleValue) {
         const projectId = currentDetailProject?.id;
         if (!projectId) return;
@@ -302,8 +325,8 @@
         el.classList.remove('border-gray-100');
         el.querySelectorAll('div')[0].classList.add('bg-indigo-100', 'text-indigo-600');
         el.querySelectorAll('div')[0].classList.remove('bg-gray-100', 'text-gray-400');
-        // Update label
-        var product = (typeof productCatalog !== 'undefined') ? productCatalog[catalogId] : null;
+        // Update label — 多路径数据读取（Rule 7: 外部模块 readiness 检查）
+        var product = _resolveProduct(catalogId);
         var label = document.getElementById('step2ProductLabel_' + projectId);
         if (label && product) label.textContent = product.name;
         // Update stats (空值安全 — DB 数据可能缺少字段)
@@ -485,7 +508,7 @@
                 if (btn) btn.disabled = false;
                 return;
             }
-            var product = (typeof productCatalog !== 'undefined') ? productCatalog[state.selectedProduct] : null;
+            var product = _resolveProduct(state.selectedProduct);
             if (!product) {
                 showToast('Selected product not found in catalog', 'error');
                 if (btn) btn.disabled = false;
