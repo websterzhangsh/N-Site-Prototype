@@ -285,9 +285,13 @@
     }
 
     function _renderProductListItem(p) {
-        var skuLabel = p.catalogId || '';
-        return '<div class="ov-product-item px-3 py-2 border-b border-gray-50 hover:bg-blue-50/40 cursor-pointer transition-all" data-category="' + p.filterKey + '" data-catalog-id="' + p.catalogId + '">' +
-            '<span class="text-[12px] font-mono font-semibold text-gray-600">' + skuLabel + '</span>' +
+        var displayName = p.name || p.catalogId || '';
+        var statusDot = p.status === 'Active' ? 'bg-green-400' : 'bg-amber-400';
+        return '<div class="ov-product-item px-3 py-2.5 border-b border-gray-50 hover:bg-blue-50/40 cursor-pointer transition-all" data-category="' + p.filterKey + '" data-catalog-id="' + p.catalogId + '">' +
+            '<div class="flex items-center gap-2">' +
+                '<span class="w-1.5 h-1.5 rounded-full ' + statusDot + ' flex-shrink-0"></span>' +
+                '<span class="text-[12px] font-medium text-gray-700 truncate">' + displayName + '</span>' +
+            '</div>' +
         '</div>';
     }
 
