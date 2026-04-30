@@ -1,7 +1,7 @@
 # Nestopia 存储策略
 
 > **版本:** 1.0 | **日期:** 2026-04-08 | **状态:** 草案  
-> **关联文档:** [DATA_AI_STRATEGY.md](DATA_AI_STRATEGY.md) (v3.1), [KB_STORAGE_DESIGN.md](KB_STORAGE_DESIGN.md) (v1.0), [ZB_KB_KNOWLEDGE_AGENT_DESIGN.md](ZB_KB_KNOWLEDGE_AGENT_DESIGN.md) (v1.0), **[SUPABASE_ADOPTION.md](SUPABASE_ADOPTION.md)** (v1.0 — 实施进度跟踪)
+> **关联文档:** [DATA_AI_STRATEGY.md](DATA_AI_STRATEGY.md) (v3.1), [KB_STORAGE_DESIGN.md](KB_STORAGE_DESIGN.md) (v1.0), [ZB_KB_KNOWLEDGE_AGENT_DESIGN.md](ZB_KB_KNOWLEDGE_AGENT_DESIGN.md) (v1.0), **[SUPABASE_ADOPTION.md](SUPABASE_ADOPTION.md)** (v1.0 — 实施进度跟踪), [PRODUCT_MASTER_DATA_ARCHITECTURE.md](PRODUCT_MASTER_DATA_ARCHITECTURE.md) (v1.0 — 产品主数据加载架构)
 
 ---
 
@@ -202,7 +202,7 @@ kb_documents:
 | 租户级 KB 元数据 | ~~`zbProductKB` JS 数组~~ → Supabase `kb_documents` | ✅ 已升级 |
 | 项目文件上传（<5MB） | ~~localStorage base64~~ → Supabase Storage | ✅ 已升级 |
 | 项目文件上传（≥5MB） | Supabase Storage（50MB 限制） | ✅ 已升级 |
-| 产品目录 | ~~`productCatalog` const~~ → Supabase `tenant_products` CRUD | ✅ 已升级 |
+| 产品目录 | ~~`productCatalog` const~~ → Supabase `tenant_products` CRUD（详见 [产品主数据加载架构](PRODUCT_MASTER_DATA_ARCHITECTURE.md)）| ✅ 已升级 |
 | 工作流数据 | ~~JS 内存~~ → Supabase JSONB（6 张表） | ✅ 已升级 |
 | KB Quick Reference 面板 | 工作流内嵌，上下文推送 | ✅ 已完成 |
 | 文档预览模态框 | 元数据展示 + Phase 2 占位 | ✅ 已完成 |
@@ -388,8 +388,12 @@ CREATE POLICY project_access ON kb_documents
 │       │       │                            (目录结构、DB 模型)   │
 │       │       │                                               │
 │       │       └── ZB_KB_KNOWLEDGE_AGENT_DESIGN.md              │
-│       │                                  ← Zip Blinds KB 专用   │
-│       │                                    (Phase 1a-3 路线图)   │
+│       │       │                          ← Zip Blinds KB 专用   │
+│       │       │                            (Phase 1a-3 路线图)   │
+│       │       │                                               │
+│       │       └── PRODUCT_MASTER_DATA_ARCHITECTURE.md          │
+│       │                                  ← 产品主数据 3 层加载    │
+│       │                                    架构（运行时数据流）    │
 │       │                                                       │
 │       └── supabase/schema.sql            ← 数据库 DDL          │
 │           supabase/seed_data.sql         ← 测试数据             │

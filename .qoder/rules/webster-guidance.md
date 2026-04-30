@@ -102,3 +102,4 @@ trigger: always_on
 - `docs/STORAGE_STRATEGY.md` — 存储策略（Supabase + Cloudflare R2）
 - `docs/KB_STORAGE_DESIGN.md` — KB 存储架构细节
 - `docs/ZB_KB_KNOWLEDGE_AGENT_DESIGN.md` — Zip Blinds KB & Knowledge Agent 设计
+- `docs/PRODUCT_MASTER_DATA_ARCHITECTURE.md` — 产品主数据 3 层加载架构

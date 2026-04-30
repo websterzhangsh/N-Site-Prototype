@@ -528,6 +528,7 @@ The Knowledge Base serves as a **private domain data repository** that feeds our
 - `docs/Customer_Service_Executive_Agent_Spec.md` - Service Agent spec
 - **[SUPABASE_ADOPTION.md](SUPABASE_ADOPTION.md)** — Supabase 实施进度跟踪（本文档 §4 数据架构的落地执行状态）
 - **[STORAGE_STRATEGY.md](STORAGE_STRATEGY.md)** — 存储技术选型 & 架构设计（Supabase + Cloudflare R2）
+- **[PRODUCT_MASTER_DATA_ARCHITECTURE.md](PRODUCT_MASTER_DATA_ARCHITECTURE.md)** — 产品主数据 3 层加载架构（静态文件 → ZB 注入 → Supabase 增量）
 
 ---
 
