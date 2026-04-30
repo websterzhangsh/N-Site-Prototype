@@ -331,5 +331,5 @@
             }
     };
 
-    console.log('[Nestopia] product-catalog.js loaded');
+    console.log('[Nestopia] product-catalog.js loaded | keys:', Object.keys(N.data.productCatalog).length, '| N.data type:', typeof N.data);
 })();

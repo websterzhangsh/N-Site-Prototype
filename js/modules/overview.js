@@ -343,6 +343,8 @@
         var skuCat = window.zbSKUCatalog;
         var N = window.Nestopia || {};
         var pc = (N.data && N.data.productCatalog) || {};
+        var pcKeys = Object.keys(pc);
+        console.log('[Overview] _renderOvDetailPanel:', catalogId, '| pc keys:', pcKeys.length, pcKeys.length > 0 ? pcKeys.slice(0, 5).join(',') + '...' : '(empty)', '| N.data:', typeof N.data, '| N.data.productCatalog:', typeof (N.data && N.data.productCatalog));
         var p = pc[catalogId];
         var sku;
         if (p) {
@@ -353,7 +355,46 @@
             sku = skuCat[catalogId];
             p = { name: sku.name || sku.model || catalogId, id: catalogId, image: '' };
         }
-        if (!p || !sku) return '<div class="p-5 text-center text-gray-400">Product not found</div>';
+
+        // ── ZB 产品：使用 sku 详情渲染 ──
+        if (p && sku) {
+            return '<div class="bg-white rounded-xl border border-gray-200 overflow-hidden">' +
+                '<div class="p-4 border-b border-gray-200 flex items-center justify-between">' +
+                    '<h3 class="font-semibold text-gray-900">Product Information</h3>' +
+                    '<div class="flex gap-2">' +
+                        '<button onclick="_ovStartEdit(\'' + catalogId + '\')" class="px-3 py-1.5 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition"><i class="fas fa-edit mr-1"></i>Edit</button>' +
+                        '<button class="px-3 py-1.5 text-sm text-red-500 hover:bg-red-50 rounded-lg transition"><i class="fas fa-trash-alt mr-1"></i>Delete</button>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="p-5">' +
+                    _renderOvDetailHeader(sku, p) +
+                    _renderOvPricingTiers(sku) +
+                    _renderOvDriveSystems(sku) +
+                    _renderOvQuotationParams() +
+                    _renderOvLifecycleSection() +
+                '</div></div>';
+        }
+
+        // ── 标准产品（Sunroom/Pergola/ADU）：从 productCatalog 渲染 ──
+        if (p) {
+            return _renderStandardDetailPanel(p, catalogId);
+        }
+
+        return '<div class="p-5 text-center text-gray-400">Product not found</div>';
+    }
+
+    // ── 标准产品（非 ZB）详情面板 ──
+    function _renderStandardDetailPanel(p, catalogId) {
+        var iconSrc = (typeof productIcons !== 'undefined' && productIcons[catalogId]) || p.icon || p.image || '';
+        var tier0 = (p.cost && p.cost.tiers && p.cost.tiers[0]) ? p.cost.tiers[0] : null;
+        var priceStr = '\u2014';
+        if (tier0 && tier0.priceRange) {
+            priceStr = '$' + tier0.priceRange[0] + '\u2013' + tier0.priceRange[1] + '/' + (p.cost.unit || 'sqft');
+        }
+        var tiersHTML = _renderStandardCostTiers(p);
+        var priceHTML = _renderStandardSellingPrice(p);
+        var compsHTML = _renderStandardComponents(p);
+
         return '<div class="bg-white rounded-xl border border-gray-200 overflow-hidden">' +
             '<div class="p-4 border-b border-gray-200 flex items-center justify-between">' +
                 '<h3 class="font-semibold text-gray-900">Product Information</h3>' +
@@ -363,12 +404,69 @@
                 '</div>' +
             '</div>' +
             '<div class="p-5">' +
-                _renderOvDetailHeader(sku, p) +
-                _renderOvPricingTiers(sku) +
-                _renderOvDriveSystems(sku) +
-                _renderOvQuotationParams() +
-                _renderOvLifecycleSection() +
+                '<div class="flex gap-6 mb-6">' +
+                    (iconSrc ? '<div class="w-36 h-36 bg-white rounded-xl overflow-hidden flex-shrink-0 shadow-sm border border-gray-100 p-2"><img src="' + iconSrc + '" alt="' + (p.name || '') + '" class="w-full h-full object-contain"></div>' : '') +
+                    '<div class="flex-1 min-w-0">' +
+                        '<div class="flex items-center gap-3 mb-1.5 flex-wrap">' +
+                            '<h2 class="text-xl font-bold text-gray-900">' + (p.name || catalogId) + '</h2>' +
+                            '<span class="px-2.5 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full">' + (p.status || 'Active') + '</span>' +
+                            (p.series ? '<span class="px-2 py-0.5 bg-gray-100 text-gray-500 text-[10px] font-medium rounded-full">' + p.series + '</span>' : '') +
+                        '</div>' +
+                        '<p class="text-sm text-gray-500 mb-3 line-clamp-2">' + (p.desc || '') + '</p>' +
+                        '<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">' +
+                            '<div class="bg-gray-50 rounded-lg p-2.5"><label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Control</label><div class="text-xs font-bold text-gray-900 mt-0.5">' + (p.control || '\u2014') + '</div></div>' +
+                            '<div class="bg-gray-50 rounded-lg p-2.5"><label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Lead Time</label><div class="text-xs font-bold text-gray-900 mt-0.5">' + (p.leadTime || '\u2014') + '</div></div>' +
+                            '<div class="bg-gray-50 rounded-lg p-2.5"><label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Category</label><div class="text-xs font-bold text-gray-900 mt-0.5">' + (p.catLabel || p.category || '\u2014') + '</div></div>' +
+                            '<div class="bg-gray-50 rounded-lg p-2.5"><label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Starting At</label><div class="text-xs font-bold text-gray-900 mt-0.5">' + priceStr + '</div></div>' +
+                        '</div>' +
+                        (p.colors ? '<div class="mt-3"><label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Colors</label><div class="text-xs text-gray-600 mt-0.5">' + p.colors + '</div></div>' : '') +
+                    '</div>' +
+                '</div>' +
+                tiersHTML +
+                priceHTML +
+                compsHTML +
             '</div></div>';
+    }
+
+    function _renderStandardCostTiers(p) {
+        if (!p.cost || !p.cost.tiers || p.cost.tiers.length === 0) return '';
+        var html = '<div class="mb-6"><h4 class="text-sm font-semibold text-gray-900 mb-3"><i class="fas fa-layer-group text-blue-500 mr-2"></i>Cost Tiers (' + (p.cost.currency || 'USD') + '/' + (p.cost.unit || 'sqft') + ')</h4>' +
+            '<div class="overflow-hidden rounded-lg border border-gray-100"><table class="w-full text-sm"><thead><tr class="bg-gray-50">' +
+            '<th class="px-3 py-2 text-left text-[10px] font-bold text-gray-400 uppercase">Span</th>' +
+            '<th class="px-3 py-2 text-left text-[10px] font-bold text-gray-400 uppercase">Price Range</th></tr></thead><tbody>';
+        p.cost.tiers.forEach(function(t) {
+            var range = t.priceRange ? ('$' + t.priceRange[0] + ' \u2013 $' + t.priceRange[1]) : '\u2014';
+            html += '<tr class="border-t border-gray-50"><td class="px-3 py-2 text-gray-700 font-medium">' + (t.span || '\u2014') + '</td><td class="px-3 py-2 text-gray-900 font-semibold">' + range + '</td></tr>';
+        });
+        html += '</tbody></table></div>';
+        if (p.cost.note) html += '<p class="text-xs text-gray-400 mt-2 italic">' + p.cost.note + '</p>';
+        return html + '</div>';
+    }
+
+    function _renderStandardSellingPrice(p) {
+        if (!p.price || !p.price.tiers || p.price.tiers.length === 0) return '';
+        var html = '<div class="mb-6"><h4 class="text-sm font-semibold text-gray-900 mb-3"><i class="fas fa-tags text-green-500 mr-2"></i>Selling Price (' + (p.price.currency || 'USD') + '/' + (p.price.unit || 'sqft') + ')</h4>' +
+            '<div class="overflow-hidden rounded-lg border border-gray-100"><table class="w-full text-sm"><thead><tr class="bg-gray-50">' +
+            '<th class="px-3 py-2 text-left text-[10px] font-bold text-gray-400 uppercase">Span</th>' +
+            '<th class="px-3 py-2 text-left text-[10px] font-bold text-gray-400 uppercase">Retail</th>' +
+            '<th class="px-3 py-2 text-left text-[10px] font-bold text-gray-400 uppercase">Wholesale</th></tr></thead><tbody>';
+        p.price.tiers.forEach(function(t) {
+            var retail = t.retail ? ('$' + t.retail[0] + ' \u2013 $' + t.retail[1]) : '\u2014';
+            var wholesale = t.wholesale ? ('$' + t.wholesale[0] + ' \u2013 $' + t.wholesale[1]) : '\u2014';
+            html += '<tr class="border-t border-gray-50"><td class="px-3 py-2 text-gray-700 font-medium">' + (t.span || '\u2014') + '</td><td class="px-3 py-2 text-gray-900 font-semibold">' + retail + '</td><td class="px-3 py-2 text-gray-600">' + wholesale + '</td></tr>';
+        });
+        html += '</tbody></table></div>';
+        if (p.price.note) html += '<p class="text-xs text-gray-400 mt-2 italic">' + p.price.note + '</p>';
+        return html + '</div>';
+    }
+
+    function _renderStandardComponents(p) {
+        if (!p.components || p.components.length === 0) return '';
+        var html = '<div class="mb-6"><h4 class="text-sm font-semibold text-gray-900 mb-3"><i class="fas fa-puzzle-piece text-purple-500 mr-2"></i>Components</h4><div class="flex flex-wrap gap-2">';
+        p.components.forEach(function(c) {
+            html += '<span class="px-2.5 py-1 bg-gray-50 border border-gray-100 rounded-lg text-xs text-gray-600">' + c + '</span>';
+        });
+        return html + '</div></div>';
     }
 
     function _renderOvDetailHeader(sku, p) {
