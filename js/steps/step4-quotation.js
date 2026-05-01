@@ -991,11 +991,32 @@
     //  Refresh Inherited Measurement Summary
     // ══════════════════════════════════════════════════════════
 
-    function refreshInheritedMeasurement(projectId) {
-        // ★ 非破坏性：不删除已加载的 state，仅从 measurement 数据刷新 inherited summary UI
+    function refreshInheritedMeasurement(projectId, forceRebuild) {
+        // ★ forceRebuild: 异步加载 measurement 完成后，强制从最新数据重建 state
+        //    解决：模板同步渲染时 step3 DB 数据未到 → state 缓存了 1 opening → 刷新时仍读旧缓存
+        if (forceRebuild && step4QuotationState[projectId]) {
+            // 保留用户已编辑的报价参数（discount / currency / businessParams）
+            var old = step4QuotationState[projectId];
+            var saved = {
+                currency: old.currency,
+                exchangeRate: old.exchangeRate,
+                discount: old.discount,
+                productTier: old.productTier,
+                businessParams: old.businessParams
+            };
+            delete step4QuotationState[projectId];
+            var rebuilt = getStep4State(projectId);
+            // 恢复报价参数
+            rebuilt.currency = saved.currency;
+            rebuilt.exchangeRate = saved.exchangeRate;
+            rebuilt.discount = saved.discount;
+            rebuilt.productTier = saved.productTier;
+            if (saved.businessParams) rebuilt.businessParams = saved.businessParams;
+            var proj = allProjectsData.find(function(p) { return p.id === projectId; });
+            rebuilt.costSummary = calcStep4Cost(proj, rebuilt);
+        }
         var state = step4QuotationState[projectId];
         if (!state) {
-            // 如果 state 不存在（首次），则初始化
             state = getStep4State(projectId);
         }
         var summaryEl = document.getElementById('step4InheritedSummary_' + projectId);
