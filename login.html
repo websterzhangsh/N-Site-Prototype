@@ -619,6 +619,15 @@
             };
             
             // Persist credentials based on "Remember me" choice
+            // ★ 安全：先清除双存储中的旧认证数据，防止跨租户残留
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('auth_data');
+            localStorage.removeItem('auth_remember');
+            localStorage.removeItem('tenant_slug');
+            sessionStorage.removeItem('auth_token');
+            sessionStorage.removeItem('auth_data');
+            sessionStorage.removeItem('tenant_slug');
+
             // Remember me = localStorage (survives browser close)
             // No remember = sessionStorage (clears on browser close)
             const storage = rememberMe ? localStorage : sessionStorage;
@@ -644,6 +653,14 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
+            // ★ 安全检查：已认证用户不允许重新登录切换租户 — 必须先 Logout
+            const existingToken = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
+            if (existingToken) {
+                // 已有有效 token → 直接跳转操作台，阻止租户切换
+                window.location.href = 'company-operations.html';
+                return;
+            }
+
             document.getElementById('loadingOverlay').classList.add('show');
 
             // Use dropdown's current value as initial slug

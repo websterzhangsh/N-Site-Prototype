@@ -14,6 +14,21 @@
                 window.location.href = 'login.html';
                 return false;
             }
+
+            // ★ 安全：验证 auth_data 中记录的租户与 tenant_slug 一致
+            var dataStr = localStorage.getItem('auth_data') || sessionStorage.getItem('auth_data');
+            if (dataStr) {
+                try {
+                    var authData = JSON.parse(dataStr);
+                    var storedSlug = localStorage.getItem('tenant_slug') || sessionStorage.getItem('tenant_slug') || 'default';
+                    if (authData.tenant && authData.tenant !== storedSlug) {
+                        console.error('[Auth] 租户不一致: auth_data.tenant=' + authData.tenant + ' vs tenant_slug=' + storedSlug + ' — 强制重新登录');
+                        N.auth.logout();
+                        return false;
+                    }
+                } catch(e) { /* JSON 解析失败忽略 */ }
+            }
+
             return true;
         },
 
