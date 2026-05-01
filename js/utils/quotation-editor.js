@@ -719,7 +719,7 @@
 
         var cs = step4St.costSummary;
         var rate = step4St.exchangeRate || 5.3612;
-        var curr = step4St.currency || 'SGD';
+        var curr = 'SGD';   // ★ 新加坡客户报价单始终使用本地货币 SGD
         var today = new Date();
         var dateStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
 
@@ -776,9 +776,9 @@
         var profileColor = (document.getElementById('quotProfileColor') || {}).value || 'Coffee';
         var fabric = (document.getElementById('quotFabric') || {}).value || 'NP4000';
         var fabricDesc = 'Polyester+PVC, 5% openness';
+        // ★ 新加坡客户报价单 — 仅显示 SGD，不出现 RMB/汇率信息
         var remarks = [
             '\u578b\u6750\u989c\u8272 ' + profileColor + '\uff1b\u9762\u6599 ' + fabric + ' ' + fabricDesc + ' / Profile: ' + profileColor + '; Fabric: ' + fabric + ' ' + fabricDesc,
-            curr + ' \u5bf9\u4eba\u6c11\u5e01\u6c47\u7387 / ' + curr + ' to RMB exchange rate: ' + rate + ' (' + dateStr + ')',
             '\u5305\u542b\u6d77\u5173\u8d39\u53ca\u7269\u6d41\u8fd0\u8f93\u7b49\u8d39\u7528 / Include customs duties, logistics, and shipping fees',
             '\u8d28\u4fdd\uff1a\u94dd\u5408\u91d1\u578b\u6750\u5341\u5e74\uff0c\u7535\u673a\u4e09\u5e74\uff0c\u9632\u98ce\u5377\u5e18\u4e24\u5e74 / Warranty: Aluminum alloy 10 years, motor 3 years, zip blinds 2 years',
             '\u4ed8\u6b3e\u6761\u4ef6\uff1a\u4e0b\u5355\u751f\u4ea7\u524d\u9700\u4ed850%\u5b9a\u91d1\uff0c\u53d1\u8d27\u524d\u4ed8\u6e05\u4f59\u6b3e / Payment: 50% deposit before production, balance before shipment'
