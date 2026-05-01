@@ -103,3 +103,4 @@ trigger: always_on
 - `docs/KB_STORAGE_DESIGN.md` — KB 存储架构细节
 - `docs/ZB_KB_KNOWLEDGE_AGENT_DESIGN.md` — Zip Blinds KB & Knowledge Agent 设计
 - `docs/PRODUCT_MASTER_DATA_ARCHITECTURE.md` — 产品主数据 3 层加载架构
+- `docs/SECURITY_STRATEGY.md` — 平台安全策略（认证、多租户隔离、API 安全、路线图）
