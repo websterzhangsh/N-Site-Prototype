@@ -718,7 +718,11 @@
         if (!step4St || !step4St.costSummary) { showToast('Please calculate quotation first', 'error'); return; }
 
         var cs = step4St.costSummary;
-        var rate = step4St.exchangeRate || 5.3612;
+        // ★ SGD 汇率：优先从报价编辑器读取（用户可调），否则用定价数据默认值
+        var rateInput = document.getElementById('quotExchangeRate');
+        var rate = (rateInput && Number(rateInput.value)) ||
+                   (typeof _pricingData !== 'undefined' && _pricingData.defaultExchangeRates && _pricingData.defaultExchangeRates.SGD) ||
+                   5.3612;
         var curr = 'SGD';   // ★ 新加坡客户报价单始终使用本地货币 SGD
         var today = new Date();
         var dateStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
