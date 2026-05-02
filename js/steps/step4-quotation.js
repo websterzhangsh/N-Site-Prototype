@@ -458,6 +458,8 @@
                         if (s4.discount !== undefined) state.discount = s4.discount;
                         if (s4.currency) state.currency = s4.currency;
                         if (s4.exchangeRate) state.exchangeRate = s4.exchangeRate;
+                        // ★ 数据一致性：RMB 汇率固定为 1
+                        if (state.currency === 'RMB') state.exchangeRate = 1;
                         // v3.0 fields
                         if (s4.businessParams && typeof s4.businessParams === 'object') {
                             state.businessParams = s4.businessParams;
@@ -744,6 +746,12 @@
     }
 
     function _refreshZBPanel(projectId, state, cs, curr, rate, showForeign) {
+        // ── 0. Sync currency & rate inputs ──
+        var currEl = document.getElementById('step4Currency_' + projectId);
+        var rateEl = document.getElementById('step4ExRate_' + projectId);
+        if (currEl) currEl.value = curr;
+        if (rateEl) { rateEl.value = rate; rateEl.disabled = (curr === 'RMB'); }
+
         // ── 1. Per-Opening Details ──
         var openingsEl = document.getElementById('step4OpeningsBody_' + projectId);
         if (openingsEl && cs.perOpeningCosts) {
