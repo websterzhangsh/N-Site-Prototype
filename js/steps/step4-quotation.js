@@ -641,17 +641,21 @@
             var currEl = document.getElementById('step4Currency_' + projectId);
             var rateEl = document.getElementById('step4ExRate_' + projectId);
             if (currEl) {
-                state.currency = currEl.value;
-                // Auto-fill default rate
-                if (state.currency === 'RMB') {
-                    state.exchangeRate = 1;
-                    if (rateEl) { rateEl.value = 1; rateEl.disabled = true; }
-                } else if (state.currency === 'SGD') {
-                    state.exchangeRate = DEFAULT_RATES.SGD;
-                    if (rateEl) { rateEl.value = DEFAULT_RATES.SGD; rateEl.disabled = false; }
-                } else if (state.currency === 'USD') {
-                    state.exchangeRate = DEFAULT_RATES.USD;
-                    if (rateEl) { rateEl.value = DEFAULT_RATES.USD; rateEl.disabled = false; }
+                var newCurrency = currEl.value;
+                var currencyChanged = (newCurrency !== state.currency);
+                state.currency = newCurrency;
+                // ★ 仅在切换货币时重置默认汇率，手动编辑汇率时不覆盖
+                if (currencyChanged) {
+                    if (state.currency === 'RMB') {
+                        state.exchangeRate = 1;
+                        if (rateEl) { rateEl.value = 1; rateEl.disabled = true; }
+                    } else if (state.currency === 'SGD') {
+                        state.exchangeRate = DEFAULT_RATES.SGD;
+                        if (rateEl) { rateEl.value = DEFAULT_RATES.SGD; rateEl.disabled = false; }
+                    } else if (state.currency === 'USD') {
+                        state.exchangeRate = DEFAULT_RATES.USD;
+                        if (rateEl) { rateEl.value = DEFAULT_RATES.USD; rateEl.disabled = false; }
+                    }
                 }
             }
             if (rateEl && !rateEl.disabled) state.exchangeRate = parseFloat(rateEl.value) || DEFAULT_RATES.SGD;
