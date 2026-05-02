@@ -1,6 +1,6 @@
 # 多层定价链架构设计
 
-> **版本:** 1.0 | **日期:** 2026-05-02 | **状态:** 设计中  
+> **版本:** 1.1 | **日期:** 2026-05-02 | **状态:** 设计中  
 > **作者:** Nestopia 产品 & 技术团队  
 > **关联文档:** [PRODUCT_MASTER_DATA_ARCHITECTURE.md](PRODUCT_MASTER_DATA_ARCHITECTURE.md), [SECURITY_STRATEGY.md](SECURITY_STRATEGY.md), [DATA_AI_STRATEGY.md](DATA_AI_STRATEGY.md)
 
@@ -44,6 +44,35 @@ C = B × (1 + y)     ← 分销商对终端客户的零售售价
 - **y** = 分销商的零售加价因子，涵盖本地成本（运费、安装）+ 分销商利润
 - **C** = 最终客户支付价格
 
+### 1.4 SKU 可见性控制
+
+并非所有 SKU 都对每个分销商开放。Nestopia-CHN 作为平台方，需要控制哪些产品型号对下游分销商可见：
+
+**业务场景举例：**
+
+| 场景 | 说明 |
+|------|------|
+| **新品上线前** | WR120F-63 大幅面卷帘尚未通过新加坡市场验证，暂不对 Omeya-SIN 开放 |
+| **区域限制** | 某些 SKU 仅适用于特定气候/建筑标准的市场（如凉亭专用 WR110 系列） |
+| **供货能力** | 某型号暂时缺货或产能不足，临时对特定分销商隐藏 |
+| **战略管控** | 高端型号仅开放给达到一定销售额的分销商 |
+| **淘汰过渡** | 旧型号逐步退出但不立即下架，先对新分销商隐藏 |
+
+**设计原则：白名单模式**
+
+```
+Nestopia-CHN 的 15 个 SKU
+├── WR100A-63  ──▷ Omeya-SIN: ✅ 可见（已发布）
+├── WR100B-63  ──▷ Omeya-SIN: ✅ 可见（已发布）
+├── WR110A-63  ──▷ Omeya-SIN: ❌ 不可见（未发布）
+├── WR120A-63  ──▷ Omeya-SIN: ✅ 可见（已发布）
+├── WR120F-63  ──▷ Omeya-SIN: 🔒 已隐藏（曾发布，后收回）
+└── ...
+```
+
+> **核心机制**: `distributor_price_list` 表中有记录且 `is_visible = true` → 分销商可见。
+> 无记录 = 从未发布（不可见）；有记录但 `is_visible = false` = 主动隐藏（保留历史价格数据）。
+
 ---
 
 ## 2. 定价链数据模型
@@ -69,8 +98,8 @@ C = B × (1 + y)     ← 分销商对终端客户的零售售价
 │  ──────────────────────────────────────────                       │
 │  计算: B_tier = A_tier × (1 + x_sku)                              │
 │  存储: Supabase `platform_wholesale_pricing` 表                   │
-│  管理者: Nestopia-CHN 管理员 (设定 x)                              │
-│  可见性: Nestopia-CHN + 对应分销商                                  │
+│  管理者: Nestopia-CHN 管理员 (设定 x + 可见性)                     │
+│  可见性: Nestopia-CHN + 对应分销商（仅 is_visible=true 的 SKU）     │
 │                                                                   │
 │  示例 (x = 0.40):                                                 │
 │    WR120A-63 → ≤6m²: 448 RMB/m², >6m²: 392 RMB/m²              │
@@ -144,6 +173,55 @@ function calcWholesaleDrivePrice(driveKey, skuKey) {
 }
 ```
 
+### 2.5 SKU 可见性数据模型
+
+SKU 可见性与定价紧密耦合在 `distributor_price_list` 表中（**白名单模式**）：
+
+```
+                    platform_wholesale_pricing (全量 SKU + x)
+                    ┌──────────────────────────────────────┐
+                    │ WR100A-63  x=0.35                    │
+                    │ WR100B-63  x=0.35                    │
+                    │ WR110A-63  x=0.38                    │
+                    │ WR110A-78  x=0.38                    │
+                    │ WR120A-63  x=0.40                    │
+                    │ WR120F-63  x=0.45                    │
+                    │ ... (全部 15 SKU + 12 drives)         │
+                    └──────────────┬───────────────────────┘
+                                   │
+                     [Publish — 选择性发布]
+                                   │
+            ┌──────────────────────┼──────────────────────┐
+            ▼                      ▼                      ▼
+   Omeya-SIN 的价目表      FutureCo-MY 的价目表     另一分销商...
+   ┌─────────────────┐    ┌─────────────────┐
+   │ WR100A-63 ✅    │    │ WR100A-63 ✅    │
+   │ WR120A-63 ✅    │    │ WR110A-63 ✅    │
+   │ WR120F-63 🔒    │    │ WR120A-63 ✅    │
+   │ (3/15 已发布)    │    │ (3/15 已发布)    │
+   │ (1 已隐藏)       │    │                 │
+   └─────────────────┘    └─────────────────┘
+```
+
+**三种可见性状态：**
+
+| 状态 | DB 表现 | 分销商体验 | 说明 |
+|------|---------|-----------|------|
+| **未发布** | `distributor_price_list` 中无该 SKU 记录 | 完全不可见，不出现在选品列表 | 默认状态 |
+| **已发布(可见)** | 记录存在 + `is_visible = true` | 可选用、可报价、可查看价格 | 正常业务状态 |
+| **已隐藏** | 记录存在 + `is_visible = false` | 不出现在新项目选品中，但已有报价保持不变 | 临时下架/缺货 |
+
+**关键设计决策：**
+
+1. **可见性绑定价目表** — 不单独建表，`distributor_price_list` 同时承载「定价」和「可见性」两个维度。
+   理由：不存在"可见但无价格"或"有价格但永远不可见"的合理场景。
+
+2. **隐藏 ≠ 删除** — `is_visible = false` 保留历史价格记录（审计追溯），
+   且该 SKU 在已有项目的报价中仍然有效（不追溯影响）。
+
+3. **分销商不可自行添加 SKU** — 只有 Nestopia-CHN 能向 `distributor_price_list` 写入，
+   分销商是纯消费方（SELECT only）。
+
 ---
 
 ## 3. 数据库设计 (Supabase)
@@ -198,10 +276,11 @@ CREATE POLICY "nestopia_chn_admin_all" ON platform_wholesale_pricing
 ### 3.2 新增表: `distributor_price_list`
 
 分销商可见的批发价目表（由系统根据 `platform_wholesale_pricing` 自动生成）。
+**同时承载「定价」和「可见性」两个维度。**
 
 ```sql
 -- ═══════════════════════════════════════════════════════
---  分销商价目表 — 分销商可见的进货价
+--  分销商价目表 — 分销商可见的进货价 + SKU 可见性控制
 -- ═══════════════════════════════════════════════════════
 
 CREATE TABLE distributor_price_list (
@@ -218,26 +297,42 @@ CREATE TABLE distributor_price_list (
     price_tiers     JSONB NOT NULL,                  -- [{ maxArea, wholesalePrice }]
     currency        TEXT NOT NULL DEFAULT 'RMB',
     
+    -- ★ SKU 可见性控制
+    is_visible      BOOLEAN NOT NULL DEFAULT TRUE,   -- true=分销商可见, false=已隐藏
+    hidden_reason   TEXT,                             -- 隐藏原因 (如 'out_of_stock', 'region_restricted', 'deprecated')
+    hidden_at       TIMESTAMPTZ,                     -- 隐藏时间
+    
     -- 同步元数据
     source_margin_x NUMERIC(5,4),                    -- 生成时使用的 x 值 (审计用)
-    synced_at       TIMESTAMPTZ DEFAULT NOW(),
+    published_at    TIMESTAMPTZ DEFAULT NOW(),        -- 首次发布时间
+    synced_at       TIMESTAMPTZ DEFAULT NOW(),        -- 最近同步时间
     
     -- 唯一约束
     CONSTRAINT uq_tenant_sku UNIQUE (tenant_id, sku_key)
 );
 
--- RLS 策略：分销商只能看到自己的价目表
+-- 索引
+CREATE INDEX idx_dpl_tenant ON distributor_price_list (tenant_id);
+CREATE INDEX idx_dpl_visible ON distributor_price_list (tenant_id, is_visible);
+
+-- RLS 策略：分销商只能看到自己的 且 is_visible=true 的价目表
 ALTER TABLE distributor_price_list ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "distributor_read_own" ON distributor_price_list
+CREATE POLICY "distributor_read_visible" ON distributor_price_list
     FOR SELECT
-    USING (tenant_id = (auth.jwt() ->> 'tenant_id')::UUID);
+    USING (
+        tenant_id = (auth.jwt() ->> 'tenant_id')::UUID
+        AND is_visible = TRUE
+    );
 
 CREATE POLICY "platform_manage_all" ON distributor_price_list
     FOR ALL
     USING (auth.jwt() ->> 'tenant_slug' = 'nestopia-chn')
     WITH CHECK (auth.jwt() ->> 'tenant_slug' = 'nestopia-chn');
 ```
+
+> **设计要点**: 分销商的 RLS 策略包含 `is_visible = TRUE` 条件，
+> 即使分销商直接查 DB 也无法看到被隐藏的 SKU — 数据层级的访问控制。
 
 ### 3.3 现有表变更
 
@@ -274,6 +369,7 @@ CREATE POLICY "platform_manage_all" ON distributor_price_list
                         └──────────┬───────────┘
                                    │
                      [系统计算 B = A × (1+x)]
+                     [选择性发布 + 可见性控制]
                                    │
                                    ▼
 ┌────────────────────┐   ┌──────────────────────┐   ┌──────────────────────┐
@@ -284,6 +380,8 @@ CREATE POLICY "platform_manage_all" ON distributor_price_list
 │ priceTiers[]       │   │ sku_key               │──▷│    Snapshot          │
 │ samplePrice        │   │ price_tiers (JSON)    │   │  └─ pricingSource    │
 └────────────────────┘   │ source_margin_x       │   └──────────────────────┘
+                         │ ★ is_visible          │
+                         │ hidden_reason         │
                          └──────────────────────┘
 ```
 
@@ -298,50 +396,50 @@ CREATE POLICY "platform_manage_all" ON distributor_price_list
 ### 4.2 主界面: 批发定价总表
 
 ```
-┌──────────────────────────────────────────────────────────────────────────┐
-│  🏷️ Wholesale Pricing — Platform Price Management                       │
-│  ─────────────────────────────────────────────────────────────────────── │
-│                                                                          │
-│  [Filter by Series: ▼ All]  [Search SKU...]         [Publish to ▼ All]  │
-│                                                                          │
-│  ┌────────────────────────────────────────────────────────────────────┐  │
-│  │ SKU          │ Series │ Supplier(A) │  x   │ Wholesale(B) │ Δ%   │  │
-│  │──────────────│────────│─────────────│──────│──────────────│──────│  │
-│  │ WR100A-63    │ WR100  │ 270/250     │ 0.35 │ 365/338      │ +35% │  │
-│  │ WR100B-63    │ WR100  │ 275/240     │ 0.35 │ 371/324      │ +35% │  │
-│  │ WR110A-63    │ WR110  │ 295/270     │ 0.38 │ 407/373      │ +38% │  │
-│  │ WR110A-78    │ WR110  │ 315/295     │ 0.38 │ 435/407      │ +38% │  │
-│  │ WR110B-63    │ WR110  │ 265/250     │ 0.38 │ 366/345      │ +38% │  │
-│  │ WR110B-78    │ WR110  │ 295/280     │ 0.38 │ 407/386      │ +38% │  │
-│  │ WR120A-63    │ WR120  │ 320/280     │ 0.40 │ 448/392      │ +40% │  │
-│  │ WR120A-78    │ WR120  │ 345/305     │ 0.40 │ 483/427      │ +40% │  │
-│  │ WR120B-63    │ WR120  │ 275/260     │ 0.40 │ 385/364      │ +40% │  │
-│  │ WR120B-78    │ WR120  │ 330/295     │ 0.40 │ 462/413      │ +40% │  │
-│  │ WR120C-63    │ WR120  │ 325/295     │ 0.40 │ 455/413      │ +40% │  │
-│  │ WR120C-78    │ WR120  │ 365/315     │ 0.40 │ 511/441      │ +40% │  │
-│  │ ...          │        │             │      │              │      │  │
-│  └────────────────────────────────────────────────────────────────────┘  │
-│                                                                          │
-│  ┌─ Drive Systems ────────────────────────────────────────────────────┐  │
-│  │ Drive        │ Type      │ Supplier(A) │  x   │ Wholesale(B) │ Δ% │  │
-│  │──────────────│───────────│─────────────│──────│──────────────│────│  │
-│  │ AOK-35       │ Motorized │ 255         │ 0.35 │ 344          │+35%│  │
-│  │ AOK-45       │ Motorized │ 355         │ 0.35 │ 479          │+35%│  │
-│  │ WEISIDA-50N  │ Motorized │ 386         │ 0.35 │ 521          │+35%│  │
-│  │ SPRING-SM    │ Manual    │ 155         │ 0.30 │ 202          │+30%│  │
-│  │ SOLAR-M45    │ Motorized │ 860         │ 0.30 │ 1,118        │+30%│  │
-│  │ ...          │           │             │      │              │    │  │
-│  └────────────────────────────────────────────────────────────────────┘  │
-│                                                                          │
-│  [💾 Save All]  [📤 Publish to Distributors]                             │
-└──────────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────────┐
+│  Wholesale Pricing — Platform Price Management                               │
+│  ──────────────────────────────────────────────────────────────────────────── │
+│                                                                              │
+│  [Filter: ▼ All Series]  [Search SKU...]     Distributor: [▼ Omeya-SIN]     │
+│                                                                              │
+│  ┌──────────────────────────────────────────────────────────────────────┐    │
+│  │ ☑ │ SKU         │ Series│ Supplier(A)│  x  │ Wholesale(B)│ Δ% │Vis │    │
+│  │───│─────────────│───────│────────────│─────│─────────────│────│────│    │
+│  │ ☑ │ WR100A-63   │ WR100 │ 270/250    │0.35 │ 365/338     │+35%│ ✅ │    │
+│  │ ☑ │ WR100B-63   │ WR100 │ 275/240    │0.35 │ 371/324     │+35%│ ✅ │    │
+│  │ ☐ │ WR110A-63   │ WR110 │ 295/270    │0.38 │ 407/373     │+38%│ — │    │
+│  │ ☐ │ WR110A-78   │ WR110 │ 315/295    │0.38 │ 435/407     │+38%│ — │    │
+│  │ ☑ │ WR120A-63   │ WR120 │ 320/280    │0.40 │ 448/392     │+40%│ ✅ │    │
+│  │ ☑ │ WR120A-78   │ WR120 │ 345/305    │0.40 │ 483/427     │+40%│ ✅ │    │
+│  │ ☑ │ WR120F-63   │ Spec. │ 502/408    │0.45 │ 728/592     │+45%│ 🔒 │    │
+│  │   │             │       │            │     │             │    │    │    │
+│  └──────────────────────────────────────────────────────────────────────┘    │
+│                                                                              │
+│  ☑ = 已发布(可见)   ☐ = 未发布   🔒 = 已隐藏                                  │
+│                                                                              │
+│  ┌─ Drive Systems ──────────────────────────────────────────────────────┐    │
+│  │ ☑ │ Drive       │ Type     │ Supplier(A)│  x  │ Wholesale(B)│ Δ%│Vis│    │
+│  │───│─────────────│──────────│────────────│─────│─────────────│───│───│    │
+│  │ ☑ │ AOK-35      │ Motor    │ 255        │0.35 │ 344         │+35│ ✅│    │
+│  │ ☑ │ AOK-45      │ Motor    │ 355        │0.35 │ 479         │+35│ ✅│    │
+│  │ ☐ │ SOLAR-M45   │ Motor    │ 860        │0.30 │ 1,118       │+30│ — │    │
+│  │   │ ...         │          │            │     │             │   │   │    │
+│  └──────────────────────────────────────────────────────────────────────┘    │
+│                                                                              │
+│  Selected: 8 of 15 SKUs visible to Omeya-SIN                                │
+│                                                                              │
+│  [💾 Save All]  [📤 Publish Selected]  [🔒 Hide Selected]  [Batch Margin…]  │
+└──────────────────────────────────────────────────────────────────────────────┘
 ```
 
 **说明：**
-- **Supplier(A)** 列：显示供货商原价（分区间，如 "320/280" 表示 ≤6m²=320、>6m²=280）
-- **x** 列：可编辑的加价因子（输入框），支持按系列批量设置
-- **Wholesale(B)** 列：实时计算 B = A × (1+x)，只读显示
-- **Δ%** 列：加价百分比标签，视觉辅助
+- **☑/☐ 复选框** 列：控制该 SKU 是否发布给当前选中的分销商
+- **Vis** 列：当前分销商的可见状态（✅ 已发布可见 / 🔒 已隐藏 / — 未发布）
+- **Supplier(A)** 列：供货商原价（分区间），仅 Nestopia-CHN 可见
+- **x** 列：可编辑的加价因子
+- **Wholesale(B)** 列：实时计算 B = A × (1+x)，只读
+- **Distributor 下拉** 列：切换查看不同分销商的 SKU 可见性配置
+- **底部操作栏**：Publish Selected（发布勾选项）/ Hide Selected（隐藏勾选项）/ Batch Margin（批量设 x）
 
 ### 4.3 批量操作
 
@@ -362,46 +460,60 @@ CREATE POLICY "platform_manage_all" ON distributor_price_list
 └────────────────────────────────────────────────────┘
 ```
 
-### 4.4 发布到分销商
+### 4.4 发布到分销商（含可见性控制）
 
-点击 "Publish to Distributors" 后，系统将：
+点击 "Publish Selected" 后，系统将：
 
-1. 读取所有 `is_active = true` 的 `platform_wholesale_pricing` 记录
+1. 读取 UI 上勾选（☑）的 SKU 列表
 2. 对每个目标分销商租户，计算 B = A × (1+x) 并写入 `distributor_price_list`
-3. **不暴露供货商原价 A 和加价因子 x** — 分销商只能看到最终的 B
+3. 勾选的 SKU → `is_visible = true`；未勾选且已存在的记录 → 不变（保持现状）
+4. 点击 "Hide Selected" → 将选中 SKU 的 `is_visible` 设为 `false`
+5. **不暴露供货商原价 A 和加价因子 x** — 分销商只能看到最终的 B
 
 ```javascript
-// 伪代码：发布批发价到分销商
-async function publishWholesalePrices(targetTenantIds) {
-    var wholesalePricing = await loadAllWholesalePricing();  // from platform_wholesale_pricing
+// 伪代码：发布批发价到分销商（含可见性）
+async function publishWholesalePrices(targetTenantId, selectedSKUs) {
+    var wholesalePricing = await loadAllWholesalePricing();
+    var priceList = [];
     
-    for (var tenantId of targetTenantIds) {
-        var priceList = [];
+    selectedSKUs.forEach(function(skuKey) {
+        var sku = zbSKUCatalog[skuKey];
+        if (!sku) return;
+        var xFactor = wholesalePricing[skuKey]?.margin_factor_x || 0.40;
         
-        Object.keys(zbSKUCatalog).forEach(function(skuKey) {
-            var sku = zbSKUCatalog[skuKey];
-            var xFactor = wholesalePricing[skuKey]?.margin_factor_x || 0.40;
-            
-            // 计算批发价区间
-            var wholesaleTiers = sku.priceTiers.map(function(tier) {
-                return {
-                    maxArea: tier.maxArea,
-                    wholesalePrice: Math.round(tier.price * (1 + xFactor))
-                };
-            });
-            
-            priceList.push({
-                tenant_id: tenantId,
-                sku_key: skuKey,
-                product_type: 'blinds',
-                price_tiers: wholesaleTiers,
-                source_margin_x: xFactor
-            });
+        // 计算批发价区间
+        var wholesaleTiers = sku.priceTiers.map(function(tier) {
+            return {
+                maxArea: tier.maxArea,
+                wholesalePrice: Math.round(tier.price * (1 + xFactor))
+            };
         });
         
-        // Upsert 到 distributor_price_list
-        await supabaseUpsert('distributor_price_list', priceList, ['tenant_id', 'sku_key']);
-    }
+        priceList.push({
+            tenant_id: targetTenantId,
+            sku_key: skuKey,
+            product_type: 'blinds',
+            price_tiers: wholesaleTiers,
+            source_margin_x: xFactor,
+            is_visible: true,            // ★ 发布即可见
+            published_at: new Date().toISOString()
+        });
+    });
+    
+    // Upsert — 已存在的记录更新价格+恢复可见，新记录插入
+    await supabaseUpsert('distributor_price_list', priceList, ['tenant_id', 'sku_key']);
+}
+
+// 隐藏 SKU（不删除，保留历史价格）
+async function hideSkusFromDistributor(targetTenantId, skuKeys, reason) {
+    await supabaseUpdate('distributor_price_list', {
+        is_visible: false,
+        hidden_reason: reason || 'manual_hide',
+        hidden_at: new Date().toISOString()
+    }, {
+        tenant_id: targetTenantId,
+        sku_key: skuKeys  // IN 查询
+    });
 }
 ```
 
@@ -534,6 +646,7 @@ company-operations.html       新增 Wholesale Pricing 页面入口      P1
 | 分销商无 `distributor_price_list` | 降级为现有逻辑（透明供货商价） |
 | 部分 SKU 有 x，部分没有 | 未设置 x 的 SKU 使用系列默认值或全局默认值 |
 | 旧项目已保存的报价 | 保持原数据不变，不追溯重算 |
+| SKU 被隐藏但已有项目引用 | 已有报价中的 SKU 保持有效（快照锁价），仅新项目选品中不可见 |
 
 ---
 
@@ -545,10 +658,15 @@ company-operations.html       新增 Wholesale Pricing 页面入口      P1
 |--------|:------------------:|:----------------:|:------------:|:-------:|
 | 供货商原价 A | ✅ | ❌ | ❌ | ❌ |
 | 加价因子 x | ✅ | ❌ | ❌ | ❌ |
-| 批发价 B | ✅ | ✅ | ✅ | ❌ |
+| 批发价 B（可见 SKU） | ✅ | ✅ | ✅ | ❌ |
+| 批发价 B（隐藏 SKU） | ✅ | ❌ | ❌ | ❌ |
+| SKU 可见性配置 | ✅ (管理) | ❌ (透明无感) | ❌ | ❌ |
 | 分销商加价 y | ✅ (审计) | ✅ | ✅ | ❌ |
 | 最终售价 C | ✅ (审计) | ✅ | ✅ | ✅ (报价单) |
 | 分销商利润率 | ❌ | ✅ | 🔒 (权限) | ❌ |
+
+> **分销商无感设计**: 分销商看到的产品目录就是"他们能卖的全部产品"，
+> 不会意识到有被隐藏的 SKU 存在。这比显示"无权限"体验更好。
 
 ### 7.2 Supabase RLS 策略摘要
 
@@ -556,9 +674,11 @@ company-operations.html       新增 Wholesale Pricing 页面入口      P1
 -- platform_wholesale_pricing: 仅 Nestopia-CHN
 POLICY: tenant_slug = 'nestopia-chn'
 
--- distributor_price_list: 平台全权 + 分销商只读自己的
-POLICY (SELECT): tenant_id = jwt.tenant_id  OR  tenant_slug = 'nestopia-chn'
-POLICY (INSERT/UPDATE/DELETE): tenant_slug = 'nestopia-chn'
+-- distributor_price_list:
+--   分销商只能读 is_visible=true 的自己的记录（数据层强制过滤）
+--   平台全权管理（含隐藏记录）
+POLICY (SELECT for distributor): tenant_id = jwt.tenant_id AND is_visible = TRUE
+POLICY (ALL for platform): tenant_slug = 'nestopia-chn'
 ```
 
 ### 7.3 前端数据隔离
@@ -599,16 +719,18 @@ function getPriceSource(tenantSlug) {
 | 2.1 | 新增 `wholesale-pricing.js` 模块 | JS 模块 |
 | 2.2 | 在 `company-operations.html` 添加 Wholesale Pricing 页面模板 | HTML |
 | 2.3 | 实现 SKU 定价表 CRUD + 批量设置 | UI + CRUD |
-| 2.4 | 实现 "Publish to Distributors" 功能 | JS + DB |
+| 2.4 | 实现 "Publish / Hide" SKU 可见性管理功能 | JS + DB |
+| 2.5 | 实现 per-distributor 视图（切换分销商查看/管理其 SKU 可见性） | UI |
 
 ### Phase 3: 分销商报价集成 (1-2 周)
 
 | 步骤 | 任务 | 产出 |
 |------|------|------|
 | 3.1 | `calcStep4Cost()` 支持双源价格 (A/B) | JS 改造 |
-| 3.2 | 分销商加载 `distributor_price_list` | JS + DB |
-| 3.3 | Step 4 面板显示进货价(B)而非供货商价(A) | UI 调整 |
-| 3.4 | 报价单锁价机制（快照 B 到 `quotation_data`） | JS |
+| 3.2 | 分销商加载 `distributor_price_list`（仅 `is_visible=true`） | JS + DB |
+| 3.3 | Step 4 选品列表仅显示可见 SKU，隐藏/未发布的不出现 | UI 过滤 |
+| 3.4 | Step 4 面板显示进货价(B)而非供货商价(A) | UI 调整 |
+| 3.5 | 报价单锁价机制（快照 B 到 `quotation_data`，SKU 被隐藏后已有报价不受影响） | JS |
 
 ### Phase 4: 审计 & 优化 (持续)
 
@@ -702,6 +824,9 @@ function getPriceSource(tenantSlug) {
 | 4 | 面料升级费和高度附加费是否也乘以 (1+x)？ | 建议是 — 这些是供货商报价的一部分 | 待定 |
 | 5 | `pricing-data.js` 长期是否迁移到 Supabase 以实现真正的数据隔离？ | 是，Phase 4 规划 | 待定 |
 | 6 | 分销商的 y 是简化的单一系数，还是保留现有的详细分解（运费+安装+加价+折扣）？ | 默认提供简化模式 y，可选切换为详细模式 | 待定 |
+| ~~7~~ | ~~某些 SKU 是否需要对下游分销商不可见？~~ | ~~已设计：白名单模式 + is_visible 字段~~ | **已解决 (v1.1)** |
+| 8 | 隐藏 SKU 时是否需要通知分销商？（如"WR120F-63 已下架"提示） | 建议初期不通知（无感隐藏），后期可加通知机制 | 待定 |
+| 9 | 分销商能否申请开通被隐藏/未发布的 SKU？ | 可在 Phase 4 加入"SKU 申请"工作流 | 待定 |
 
 ---
 
