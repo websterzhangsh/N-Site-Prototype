@@ -370,7 +370,7 @@
                     _renderOvDetailHeader(sku, p) +
                     _renderOvPricingTiers(sku) +
                     _renderOvDriveSystems(sku) +
-                    _renderOvQuotationParams() +
+                    // ★ Quotation Formula Parameters 已移至 Nestopia-CHN 平台层管理
                     _renderOvLifecycleSection() +
                 '</div></div>';
         }

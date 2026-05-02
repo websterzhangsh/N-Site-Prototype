@@ -818,58 +818,14 @@
     }
 
     // C区: 报价公式参数（可编辑）+ 实时价格摘要
+    // ★ v1.1: Quotation Formula Parameters 已移至 Nestopia-CHN 平台层管理
+    //         分销商租户（如 Omeya-SIN）不再显示此面板
+    //         未来在 Nestopia-CHN 的 Wholesale Pricing 模块中实现
+    //         参见: docs/PRICING_CHAIN_ARCHITECTURE.md
     function _renderZBQuotationSection(sku, productId) {
-        var biz = window.zbBusinessParams || {};
-        var tiers = sku.priceTiers || [];
-        var lowPrice = tiers.length > 0 ? tiers[tiers.length - 1].price : 0;
-        var highPrice = tiers.length > 0 ? tiers[0].price : 0;
-
-        // 实时计算卖价摘要
-        var disc = biz.supplierDiscountRate || 0.9;
-        var ship = biz.shippingCostRate || 0.3;
-        var inst = biz.installationFeePerSqm || 191;
-        var markup = biz.marketMarkup || 2.92;
-        var prefDisc = biz.preferentialDiscount || 0.5;
-        var exchRate = biz.audExchangeRate || 0.21; // RMB to AUD approx
-
-        var calcLow = ((lowPrice * disc * (1 + ship) + inst) * markup * prefDisc * exchRate).toFixed(0);
-        var calcHigh = ((highPrice * disc * (1 + ship) + inst) * markup * prefDisc * exchRate).toFixed(0);
-
-        var summaryHTML = '<div class="border border-orange-200/60 bg-orange-50/30 rounded-xl p-4 mb-5">' +
-            '<h4 class="text-sm font-semibold text-orange-800 mb-2.5 flex items-center gap-2">' +
-                '<i class="fas fa-receipt text-orange-500"></i> Simplified Price Summary ' +
-                '<span class="text-[10px] text-orange-400 font-normal">(auto-calculated from parameters below)</span>' +
-            '</h4>' +
-            '<div class="grid grid-cols-3 gap-3" id="zbPriceSummary_' + productId + '">' +
-                '<div class="bg-white rounded-lg p-2.5 border border-orange-200">' +
-                    '<label class="text-[10px] text-orange-400 uppercase tracking-wider font-medium">Selling Price Range</label>' +
-                    '<div class="text-sm font-bold text-orange-700 mt-0.5">A$' + calcLow + ' \u2013 A$' + calcHigh + '<span class="text-[10px] text-gray-400 font-normal ml-0.5">/m\u00b2</span></div>' +
-                '</div>' +
-                '<div class="bg-white rounded-lg p-2.5 border border-gray-200">' +
-                    '<label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Supplier Cost</label>' +
-                    '<div class="text-sm font-bold text-gray-900 mt-0.5">\u00a5' + lowPrice + ' \u2013 \u00a5' + highPrice + '<span class="text-[10px] text-gray-400 font-normal ml-0.5">/m\u00b2</span></div>' +
-                '</div>' +
-                '<div class="bg-white rounded-lg p-2.5 border border-gray-200">' +
-                    '<label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Gross Margin</label>' +
-                    '<div class="text-sm font-bold text-emerald-700 mt-0.5">~' + Math.round((1 - 1/(markup * (1+ship))) * 100) + '%</div>' +
-                '</div>' +
-            '</div></div>';
-
-        var paramsHTML = '<div class="border border-blue-100 bg-blue-50/30 rounded-xl p-4 mb-5">' +
-            '<h4 class="text-sm font-semibold text-blue-800 mb-2.5 flex items-center gap-2">' +
-                '<i class="fas fa-calculator text-blue-500"></i> Quotation Formula Parameters ' +
-                '<span class="text-[10px] text-blue-400 font-normal">(editable \u2014 changes update summary above)</span>' +
-            '</h4>' +
-            '<div class="grid grid-cols-2 lg:grid-cols-3 gap-2.5">' +
-                '<div class="bg-white rounded-lg p-2.5 border border-gray-200"><label class="text-[10px] text-gray-400 uppercase block mb-1">Supplier Discount</label><div class="flex items-center gap-1"><input type="number" value="' + disc + '" min="0.5" max="1" step="0.01" data-param="supplierDiscountRate" data-sku="' + productId + '" onchange="window._onZBParamChange(this)" class="w-14 px-1.5 py-1 border border-gray-300 rounded text-xs font-bold text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"><span class="text-xs text-gray-400">rate</span></div></div>' +
-                '<div class="bg-white rounded-lg p-2.5 border border-gray-200"><label class="text-[10px] text-gray-400 uppercase block mb-1">Shipping & Customs</label><div class="flex items-center gap-1"><input type="number" value="' + ship + '" min="0" max="1" step="0.01" data-param="shippingCostRate" data-sku="' + productId + '" onchange="window._onZBParamChange(this)" class="w-14 px-1.5 py-1 border border-gray-300 rounded text-xs font-bold text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"><span class="text-xs text-gray-400">rate</span></div></div>' +
-                '<div class="bg-white rounded-lg p-2.5 border border-gray-200"><label class="text-[10px] text-gray-400 uppercase block mb-1">Installation Fee</label><div class="flex items-center gap-1"><input type="number" value="' + inst + '" min="0" max="1000" step="1" data-param="installationFeePerSqm" data-sku="' + productId + '" onchange="window._onZBParamChange(this)" class="w-16 px-1.5 py-1 border border-gray-300 rounded text-xs font-bold text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"><span class="text-xs text-gray-400">\u00a5/m\u00b2</span></div></div>' +
-                '<div class="bg-white rounded-lg p-2.5 border border-gray-200"><label class="text-[10px] text-gray-400 uppercase block mb-1">Market Markup</label><div class="flex items-center gap-1"><input type="number" value="' + markup + '" min="1" max="10" step="0.01" data-param="marketMarkup" data-sku="' + productId + '" onchange="window._onZBParamChange(this)" class="w-14 px-1.5 py-1 border border-gray-300 rounded text-xs font-bold text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"><span class="text-xs text-gray-400">\u00d7</span></div></div>' +
-                '<div class="bg-white rounded-lg p-2.5 border border-gray-200"><label class="text-[10px] text-gray-400 uppercase block mb-1">Default Discount</label><div class="flex items-center gap-1"><input type="number" value="' + prefDisc + '" min="0" max="1" step="0.01" data-param="preferentialDiscount" data-sku="' + productId + '" onchange="window._onZBParamChange(this)" class="w-14 px-1.5 py-1 border border-gray-300 rounded text-xs font-bold text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"><span class="text-xs text-gray-400">rate</span></div></div>' +
-                '<div class="bg-white rounded-lg p-2.5 border border-gray-200"><label class="text-[10px] text-gray-400 uppercase block mb-1">AUD Exchange</label><div class="flex items-center gap-1"><input type="number" value="' + exchRate + '" min="0.05" max="0.5" step="0.005" data-param="audExchangeRate" data-sku="' + productId + '" onchange="window._onZBParamChange(this)" class="w-16 px-1.5 py-1 border border-gray-300 rounded text-xs font-bold text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"><span class="text-xs text-gray-400">\u00a5\u2192A$</span></div></div>' +
-            '</div></div>';
-
-        return summaryHTML + paramsHTML;
+        // 分销商视角：不显示内部定价参数和成本信息
+        // 后续 Nestopia-CHN 实现时，通过 tenant_slug 判断是否渲染
+        return '';
     }
 
     // Drive Systems 渲染
