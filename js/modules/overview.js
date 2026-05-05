@@ -153,19 +153,68 @@
             });
             return items;
         }
-        // nestopia-chn and default/partner1/partner2 share all products
-        return [
-        { name: 'L-Classic Sunroom', category: 'Sunroom \u00b7 Classic', price: 'Manual', status: 'Active', color: 'amber', filterKey: 'sunroom', catalogId: 'sr-l-classic' },
-        { name: 'L-Smart Sunroom', category: 'Sunroom \u00b7 Smart', price: 'Motorized', status: 'Active', color: 'amber', filterKey: 'sunroom', catalogId: 'sr-l-smart' },
-        { name: 'L-Pro Sunroom', category: 'Sunroom \u00b7 Pro', price: 'Solar+Motor', status: 'Active', color: 'amber', filterKey: 'sunroom', catalogId: 'sr-l-pro' },
-        { name: 'M-Classic Sunroom', category: 'Sunroom \u00b7 Classic', price: 'Manual', status: 'Active', color: 'blue', filterKey: 'sunroom', catalogId: 'sr-m-classic' },
-        { name: 'M-Smart Sunroom', category: 'Sunroom \u00b7 Smart', price: 'Motorized', status: 'Active', color: 'blue', filterKey: 'sunroom', catalogId: 'sr-m-smart' },
-        { name: 'M-Pro Sunroom', category: 'Sunroom \u00b7 Pro', price: 'Solar+Motor', status: 'Active', color: 'blue', filterKey: 'sunroom', catalogId: 'sr-m-pro' },
-        { name: 'Pergola Basic', category: 'Pergola \u00b7 Basic', price: 'Manual', status: 'Active', color: 'green', filterKey: 'pergola', catalogId: 'pg-basic' },
-        { name: 'Pergola Classic', category: 'Pergola \u00b7 Classic', price: 'Motorized', status: 'Active', color: 'green', filterKey: 'pergola', catalogId: 'pg-classic' },
-        { name: 'Zip Blinds Standard', category: 'Zip Blinds', price: 'Manual', status: 'Active', color: 'purple', filterKey: 'blinds', catalogId: 'zb-manual' },
-        { name: 'Zip Blinds Motorized', category: 'Zip Blinds', price: 'Electric', status: 'Active', color: 'purple', filterKey: 'blinds', catalogId: 'zb-motorized' }
+        // nestopia-chn: 平台端显示所有产品分类（含 Sunroom/Pergola）
+        if (slug === 'nestopia-chn') {
+            return [
+            { name: 'L-Classic Sunroom', category: 'Sunroom \u00b7 Classic', price: 'Manual', status: 'Active', color: 'amber', filterKey: 'sunroom', catalogId: 'sr-l-classic' },
+            { name: 'L-Smart Sunroom', category: 'Sunroom \u00b7 Smart', price: 'Motorized', status: 'Active', color: 'amber', filterKey: 'sunroom', catalogId: 'sr-l-smart' },
+            { name: 'L-Pro Sunroom', category: 'Sunroom \u00b7 Pro', price: 'Solar+Motor', status: 'Active', color: 'amber', filterKey: 'sunroom', catalogId: 'sr-l-pro' },
+            { name: 'M-Classic Sunroom', category: 'Sunroom \u00b7 Classic', price: 'Manual', status: 'Active', color: 'blue', filterKey: 'sunroom', catalogId: 'sr-m-classic' },
+            { name: 'M-Smart Sunroom', category: 'Sunroom \u00b7 Smart', price: 'Motorized', status: 'Active', color: 'blue', filterKey: 'sunroom', catalogId: 'sr-m-smart' },
+            { name: 'M-Pro Sunroom', category: 'Sunroom \u00b7 Pro', price: 'Solar+Motor', status: 'Active', color: 'blue', filterKey: 'sunroom', catalogId: 'sr-m-pro' },
+            { name: 'Pergola Basic', category: 'Pergola \u00b7 Basic', price: 'Manual', status: 'Active', color: 'green', filterKey: 'pergola', catalogId: 'pg-basic' },
+            { name: 'Pergola Classic', category: 'Pergola \u00b7 Classic', price: 'Motorized', status: 'Active', color: 'green', filterKey: 'pergola', catalogId: 'pg-classic' },
+            { name: 'Zip Blinds Standard', category: 'Zip Blinds', price: 'Manual', status: 'Active', color: 'purple', filterKey: 'blinds', catalogId: 'zb-manual' },
+            { name: 'Zip Blinds Motorized', category: 'Zip Blinds', price: 'Electric', status: 'Active', color: 'purple', filterKey: 'blinds', catalogId: 'zb-motorized' }
+            ];
+        }
+        // 分销商（default/partner1/greenscape-us）: Zip Blinds 动态生成 + Sunroom/Pergola 保持不变
+        var items = [
+            { name: 'L-Classic Sunroom', category: 'Sunroom \u00b7 Classic', price: 'Manual', status: 'Active', color: 'amber', filterKey: 'sunroom', catalogId: 'sr-l-classic' },
+            { name: 'L-Smart Sunroom', category: 'Sunroom \u00b7 Smart', price: 'Motorized', status: 'Active', color: 'amber', filterKey: 'sunroom', catalogId: 'sr-l-smart' },
+            { name: 'L-Pro Sunroom', category: 'Sunroom \u00b7 Pro', price: 'Solar+Motor', status: 'Active', color: 'amber', filterKey: 'sunroom', catalogId: 'sr-l-pro' },
+            { name: 'M-Classic Sunroom', category: 'Sunroom \u00b7 Classic', price: 'Manual', status: 'Active', color: 'blue', filterKey: 'sunroom', catalogId: 'sr-m-classic' },
+            { name: 'M-Smart Sunroom', category: 'Sunroom \u00b7 Smart', price: 'Motorized', status: 'Active', color: 'blue', filterKey: 'sunroom', catalogId: 'sr-m-smart' },
+            { name: 'M-Pro Sunroom', category: 'Sunroom \u00b7 Pro', price: 'Solar+Motor', status: 'Active', color: 'blue', filterKey: 'sunroom', catalogId: 'sr-m-pro' },
+            { name: 'Pergola Basic', category: 'Pergola \u00b7 Basic', price: 'Manual', status: 'Active', color: 'green', filterKey: 'pergola', catalogId: 'pg-basic' },
+            { name: 'Pergola Classic', category: 'Pergola \u00b7 Classic', price: 'Motorized', status: 'Active', color: 'green', filterKey: 'pergola', catalogId: 'pg-classic' }
         ];
+        // 动态追加 Zip Blinds SKU（同 Omeya 逻辑）
+        var skuCat = window.zbSKUCatalog;
+        var driveCat = window.zbDriveSystemCatalog;
+        var catMap = window.zbSeriesCatMap || { 'WR100': 'zb-standard', 'WR110': 'zb-standard', 'WR120': 'zb-outdoor', 'Special': 'zb-special' };
+        var labelMap = window.zbSeriesLabelMap || { 'zb-standard': 'WR100/110 Standard & Gazebo', 'zb-outdoor': 'WR120 Outdoor', 'zb-special': 'Special' };
+        if (skuCat) {
+            Object.keys(skuCat).forEach(function(key) {
+                var s = skuCat[key];
+                var hasMotor = false;
+                if (s.drives && driveCat) {
+                    for (var i = 0; i < s.drives.length; i++) {
+                        var d = driveCat[s.drives[i]];
+                        if (d && d.type === 'motorized') { hasMotor = true; break; }
+                    }
+                }
+                var tiers = s.priceTiers || [];
+                var lowP = tiers.length > 0 ? tiers[tiers.length - 1].price : 0;
+                var highP = tiers.length > 0 ? tiers[0].price : 0;
+                var priceStr = lowP === highP ? ('\u00a5' + lowP + '/m\u00b2') : ('\u00a5' + lowP + '\u2013' + highP + '/m\u00b2');
+                var filterKey = catMap[s.series] || 'zb-standard';
+                items.push({
+                    name: s.model || s.name,
+                    category: labelMap[filterKey] || s.series,
+                    price: priceStr,
+                    control: hasMotor ? 'Motorized' : 'Manual',
+                    status: 'Active',
+                    color: 'purple',
+                    filterKey: filterKey,
+                    catalogId: key,
+                    series: s.series,
+                    housing: s.housing || '',
+                    notes: s.notes || ''
+                });
+            });
+        }
+        return items;
     }
     const overviewProductsData = getOverviewProductsData();
 
@@ -781,9 +830,11 @@
 
         var slug = getCurrentTenantSlug();
         var isOmeya = (slug === 'omeya-sin');
+        var isDistributor = N.tenant && N.tenant.isDistributor && N.tenant.isDistributor();
+        var useSkuList = isOmeya || isDistributor;
 
         // ── 两栏 flex 布局：左列列表 + 右列详情（初始隐藏）──
-        var listHTML = isOmeya ? _renderOmeyaProductList(overviewProductsData) : _renderDefaultProductList(overviewProductsData);
+        var listHTML = useSkuList ? _renderOmeyaProductList(overviewProductsData) : _renderDefaultProductList(overviewProductsData);
         grid.innerHTML = '<div class="flex gap-6">' +
             '<div id="ovProductListCol" class="transition-all duration-300" style="width:100%">' + listHTML + '</div>' +
             '<div id="ovProductDetailCol" class="hidden flex-1 min-w-0"></div>' +
@@ -810,7 +861,7 @@
                 this.classList.remove('bg-white', 'border', 'text-gray-600');
                 this.classList.add('bg-gray-900', 'text-white');
                 var filter = this.dataset.filter;
-                if (isOmeya) {
+                if (useSkuList) {
                     grid.querySelectorAll('.ov-product-section').forEach(function(sec) {
                         sec.style.display = (filter === 'all' || sec.dataset.sectionFilter === filter) ? '' : 'none';
                     });
