@@ -347,8 +347,9 @@
         console.log('[Overview] _renderOvDetailPanel:', catalogId, '| pc keys:', pcKeys.length, pcKeys.length > 0 ? pcKeys.slice(0, 5).join(',') + '...' : '(empty)', '| N.data:', typeof N.data, '| N.data.productCatalog:', typeof (N.data && N.data.productCatalog));
         var p = pc[catalogId];
         var sku;
+        var skuKey = catalogId;
         if (p) {
-            var skuKey = p._zbSKU || catalogId;
+            skuKey = p._zbSKU || catalogId;
             sku = (skuCat && skuCat[skuKey]) || p._zbData;
         } else if (skuCat && skuCat[catalogId]) {
             // fallback: 直接从 zbSKUCatalog 查找（omeya 产品键即 SKU 键）
@@ -367,8 +368,8 @@
                     '</div>' +
                 '</div>' +
                 '<div class="p-5">' +
-                    _renderOvDetailHeader(sku, p) +
-                    _renderOvPricingTiers(sku) +
+                    _renderOvDetailHeader(sku, p, skuKey) +
+                    _renderOvPricingTiers(sku, skuKey) +
                     _renderOvDriveSystems(sku) +
                     // ★ Quotation Formula Parameters 已移至 Nestopia-CHN 平台层管理
                     _renderOvLifecycleSection() +
@@ -469,12 +470,36 @@
         return html + '</div></div>';
     }
 
-    function _renderOvDetailHeader(sku, p) {
+    /**
+     * Phase 3: 获取分销商已导入的批发价 tiers
+     * @param {string} skuKey
+     * @returns {Array|null}
+     */
+    function _getDistributorWholesaleTiers(skuKey) {
+        var _N = window.Nestopia || {};
+        if (!_N.tenant || !_N.tenant.isDistributor || !_N.tenant.isDistributor()) return null;
+        var dpMod = _N.modules && _N.modules.distributorPricing;
+        if (!dpMod || !dpMod.getWholesalePriceTiers) return null;
+        return dpMod.getWholesalePriceTiers(skuKey);
+    }
+
+    function _renderOvDetailHeader(sku, p, skuKey) {
         var pId = p.id || p._zbSKU || '';
         var iconSrc = (typeof productIcons !== 'undefined' && productIcons[pId]) || p.image || '/images/products/icons/zip-blinds.png';
+        // Phase 3: 分销商优先使用已导入批发价
+        var wTiers = _getDistributorWholesaleTiers(skuKey);
         var tiers = sku.priceTiers || [];
-        var lowP = tiers.length > 0 ? tiers[tiers.length - 1].price : 0;
-        var highP = tiers.length > 0 ? tiers[0].price : 0;
+        var lowP, highP, priceLabel;
+        if (wTiers && wTiers.length > 0) {
+            var wPrices = wTiers.map(function(t) { return t.wholesalePrice; });
+            lowP = Math.min.apply(null, wPrices);
+            highP = Math.max.apply(null, wPrices);
+            priceLabel = 'Wholesale Price';
+        } else {
+            lowP = tiers.length > 0 ? tiers[tiers.length - 1].price : 0;
+            highP = tiers.length > 0 ? tiers[0].price : 0;
+            priceLabel = 'Supplier Price';
+        }
         return '<div class="flex gap-6 mb-6">' +
             '<div class="w-36 h-36 bg-white rounded-xl overflow-hidden flex-shrink-0 shadow-sm border border-gray-100 p-2">' +
                 '<img src="' + iconSrc + '" alt="' + (p.name || '') + '" class="w-full h-full object-contain">' +
@@ -486,24 +511,44 @@
                     '<span class="px-2 py-0.5 bg-gray-100 text-gray-500 text-[10px] font-medium rounded-full">' + (sku.series || '') + '</span>' +
                 '</div>' +
                 '<p class="text-sm text-gray-500 mb-3">' + (sku.nameZh || p.name || '') + '</p>' +
-                _renderOvDetailSpecs(sku, lowP, highP) +
+                _renderOvDetailSpecs(sku, lowP, highP, priceLabel) +
                 '<p class="text-sm text-gray-600 leading-relaxed">' + (sku.features || '') + '</p>' +
                 (sku.notes ? '<p class="text-xs text-amber-600 mt-1"><i class="fas fa-info-circle mr-1"></i>' + sku.notes + '</p>' : '') +
             '</div></div>';
     }
 
-    function _renderOvDetailSpecs(sku, lowP, highP) {
+    function _renderOvDetailSpecs(sku, lowP, highP, priceLabel) {
+        var pLabel = priceLabel || 'Supplier Price';
+        var pBgClass = pLabel === 'Wholesale Price' ? 'bg-blue-50' : 'bg-orange-50';
+        var pLabelClass = pLabel === 'Wholesale Price' ? 'text-blue-400' : 'text-orange-400';
+        var pValueClass = pLabel === 'Wholesale Price' ? 'text-blue-700' : 'text-orange-700';
         return '<div class="grid grid-cols-3 gap-3 mb-3">' +
             '<div class="bg-gray-50 rounded-lg p-2.5"><label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Housing</label><div class="text-xs font-bold text-gray-900 mt-0.5">' + (sku.housing || '') + '</div></div>' +
             '<div class="bg-gray-50 rounded-lg p-2.5"><label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Max Size</label><div class="text-xs font-bold text-gray-900 mt-0.5">' + ((sku.maxWidthMM||0)/1000) + 'm W \u00d7 ' + ((sku.maxHeightMM||0)/1000) + 'm H</div></div>' +
             '<div class="bg-gray-50 rounded-lg p-2.5"><label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Fabric</label><div class="text-xs font-bold text-gray-900 mt-0.5">' + (sku.fabric || '') + ' (' + (sku.fabricOpenness || '') + ')</div></div>' +
-            '<div class="bg-orange-50 rounded-lg p-2.5"><label class="text-[10px] text-orange-400 uppercase tracking-wider font-medium">Supplier Price</label><div class="text-sm font-bold text-orange-700 mt-0.5">\u00a5' + lowP + ' \u2013 \u00a5' + highP + '<span class="text-[10px] text-gray-400 font-normal">/m\u00b2</span></div></div>' +
+            '<div class="' + pBgClass + ' rounded-lg p-2.5"><label class="text-[10px] ' + pLabelClass + ' uppercase tracking-wider font-medium">' + pLabel + '</label><div class="text-sm font-bold ' + pValueClass + ' mt-0.5">\u00a5' + lowP + ' \u2013 \u00a5' + highP + '<span class="text-[10px] text-gray-400 font-normal">/m\u00b2</span></div></div>' +
             '<div class="bg-gray-50 rounded-lg p-2.5"><label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Min Area</label><div class="text-xs font-bold text-gray-900 mt-0.5">' + (sku.minArea || 3) + ' m\u00b2</div></div>' +
             (sku.samplePrice ? '<div class="bg-gray-50 rounded-lg p-2.5"><label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Sample</label><div class="text-xs font-bold text-gray-900 mt-0.5">\u00a5' + sku.samplePrice + '/pc</div></div>' : '') +
         '</div>';
     }
 
-    function _renderOvPricingTiers(sku) {
+    function _renderOvPricingTiers(sku, skuKey) {
+        // Phase 3: 分销商优先使用已导入批发价 tiers
+        var wTiers = _getDistributorWholesaleTiers(skuKey);
+        if (wTiers && wTiers.length > 0) {
+            var html = wTiers.map(function(t, i) {
+                var maxA = t.maxArea === 9999 ? Infinity : (t.maxArea || Infinity);
+                var al = maxA === Infinity ? '>' + (i > 0 ? wTiers[i-1].maxArea : (sku.minArea||3)) + ' m\u00b2' : '\u2264' + t.maxArea + ' m\u00b2';
+                return '<div class="flex items-center justify-between px-3 py-2.5 bg-blue-50/60 border border-blue-200/60 rounded-lg">' +
+                    '<div class="flex items-center gap-2"><span class="w-5 h-5 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-[10px] font-bold">' + (i+1) + '</span><span class="text-sm font-semibold text-gray-900">' + al + '</span></div>' +
+                    '<span class="text-sm font-bold text-blue-700">\u00a5' + t.wholesalePrice + '<span class="text-[10px] text-gray-400 font-normal ml-1">/m\u00b2</span></span></div>';
+            }).join('');
+            return '<div class="border border-blue-100 rounded-xl p-5 mb-5">' +
+                '<h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2"><i class="fas fa-tags text-blue-500"></i> Pricing Tiers <span class="text-[10px] text-blue-400 font-normal">(Imported wholesale price)</span></h4>' +
+                '<div class="space-y-1.5 mb-3">' + html + '</div>' +
+                '<p class="text-[11px] text-blue-600 bg-blue-50 rounded-lg px-3 py-2 flex items-start gap-1.5"><i class="fas fa-check-circle mt-0.5 flex-shrink-0"></i><span>Wholesale prices imported from Nestopia-CHN. Min billable area: ' + (sku.minArea||3) + ' m\u00b2.</span></p></div>';
+        }
+        // 默认: 供应商原价 A
         var tiers = sku.priceTiers || [];
         if (tiers.length === 0) return '';
         var html = tiers.map(function(t, i) {

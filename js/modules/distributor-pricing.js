@@ -32,10 +32,13 @@
     function init() {
         // 仅分销商端显示（非 nestopia-chn）
         if (N.tenant && N.tenant.isPlatform && N.tenant.isPlatform()) {
+            console.log('[DistributorPricing] Skip init — platform tenant');
             return;
         }
 
         _state.initialized = true;
+        var tenantId = _getDbTenantId();
+        console.log('[DistributorPricing] init — slug:', (N.tenant && N.tenant.getCurrentSlug ? N.tenant.getCurrentSlug() : '?'), '| dbTenantId:', tenantId);
         checkPendingImports();
     }
 
