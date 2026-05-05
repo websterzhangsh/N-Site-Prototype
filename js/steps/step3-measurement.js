@@ -376,10 +376,54 @@
                 '<div class="flex items-center gap-2 mb-2"><div class="w-5 h-5 bg-indigo-100 rounded flex items-center justify-center"><span class="text-[10px] font-bold text-indigo-600">' + oi + '</span></div>' +
                 '<span class="text-xs font-semibold text-indigo-700">Opening #' + oi + '</span></div>' +
                 '<div class="grid grid-cols-2 gap-2.5">' + rows + '</div></div>';
+            // ★ 多开口时，Opening #1 之后显示 "Apply to All" 按钮
+            if (oi === 1 && numOpenings > 1) {
+                html += '<div class="mt-2 flex justify-end">' +
+                    '<button onclick="copyOpening1ToAll(\'' + projectId + '\')" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-lg hover:bg-indigo-100 hover:border-indigo-300 transition-all" title="Copy Mounting, Motor, Fabric SKU, Openness, Color from Opening #1 to all other openings">' +
+                    '<i class="fas fa-copy text-[10px]"></i>Apply #1 to All Openings</button></div>';
+            }
         }
         container.innerHTML = html;
         // ★ 重建 opening 后刷新 Installation Summary
         updateInstallationSummary(projectId);
+    }
+
+    // ★ 从 Opening #1 复制指定字段到所有其他 Opening
+    var COPY_FIELDS = ['mounting', 'motor', 'fabric_sku', 'fabric_openness', 'fabric_color'];
+
+    function copyOpening1ToAll(projectId) {
+        var state = getStep3State(projectId);
+        var numO = parseInt(state.measurementData['openings'] || '1') || 1;
+        if (numO <= 1) return;
+
+        // 读取 Opening #1 的源值
+        var sourceVals = {};
+        COPY_FIELDS.forEach(function(fk) {
+            var srcKey = 'opening_1_' + fk;
+            var el = document.getElementById('step3_' + srcKey + '_' + projectId);
+            sourceVals[fk] = el ? el.value : (state.measurementData[srcKey] || '');
+        });
+
+        // 应用到 Opening #2 ~ #N
+        var copiedCount = 0;
+        for (var oi = 2; oi <= numO; oi++) {
+            COPY_FIELDS.forEach(function(fk) {
+                var targetKey = 'opening_' + oi + '_' + fk;
+                var el = document.getElementById('step3_' + targetKey + '_' + projectId);
+                if (el) {
+                    el.value = sourceVals[fk];
+                    copiedCount++;
+                }
+                state.measurementData[targetKey] = sourceVals[fk];
+            });
+        }
+
+        // 刷新 Installation Summary
+        updateInstallationSummary(projectId);
+
+        if (typeof showToast === 'function') {
+            showToast('Copied Opening #1 settings to ' + (numO - 1) + ' other opening(s)', 'success');
+        }
     }
 
     function saveStep3Measurement(projectId) {
@@ -791,7 +835,8 @@
         handleFabricSampleUpload: handleFabricSampleUpload,
         removeFabricSample: removeFabricSample,
         updateInstallationSummary: updateInstallationSummary,
-        ensureMeasurementLoaded: ensureMeasurementLoaded
+        ensureMeasurementLoaded: ensureMeasurementLoaded,
+        copyOpening1ToAll: copyOpening1ToAll
     };
 
     // ── 全局别名（保持向后兼容） ─────────────────────────────
@@ -812,5 +857,6 @@
     window.removeFabricSample = removeFabricSample;
     window.updateInstallationSummary = updateInstallationSummary;
     window.ensureMeasurementLoaded = ensureMeasurementLoaded;
+    window.copyOpening1ToAll = copyOpening1ToAll;
 
 })();
