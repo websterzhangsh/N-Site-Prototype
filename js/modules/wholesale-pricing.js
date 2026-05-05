@@ -379,8 +379,16 @@
     // ══════════════════════════════════════════════════════════
 
     function _renderStatCard(label, value, icon, color, tooltip) {
-        var titleAttr = tooltip ? ' title="' + _escHtml(tooltip) + '"' : '';
-        return '<div class="bg-white rounded-xl border border-gray-200 p-4 cursor-default"' + titleAttr + '>' +
+        var tooltipHtml = '';
+        if (tooltip) {
+            tooltipHtml = '<div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg ' +
+                'opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap pointer-events-none z-50 shadow-lg">' +
+                '<span>' + _escHtml(tooltip) + '</span>' +
+                '<div class="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-gray-900"></div>' +
+            '</div>';
+        }
+        return '<div class="relative group bg-white rounded-xl border border-gray-200 p-4 cursor-default">' +
+            tooltipHtml +
             '<div class="flex items-center justify-between">' +
                 '<div>' +
                     '<div class="text-sm text-gray-500">' + label + '</div>' +
