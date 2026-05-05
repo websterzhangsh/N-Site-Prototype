@@ -153,22 +153,7 @@
             });
             return items;
         }
-        // nestopia-chn: 平台端显示所有产品分类（含 Sunroom/Pergola）
-        if (slug === 'nestopia-chn') {
-            return [
-            { name: 'L-Classic Sunroom', category: 'Sunroom \u00b7 Classic', price: 'Manual', status: 'Active', color: 'amber', filterKey: 'sunroom', catalogId: 'sr-l-classic' },
-            { name: 'L-Smart Sunroom', category: 'Sunroom \u00b7 Smart', price: 'Motorized', status: 'Active', color: 'amber', filterKey: 'sunroom', catalogId: 'sr-l-smart' },
-            { name: 'L-Pro Sunroom', category: 'Sunroom \u00b7 Pro', price: 'Solar+Motor', status: 'Active', color: 'amber', filterKey: 'sunroom', catalogId: 'sr-l-pro' },
-            { name: 'M-Classic Sunroom', category: 'Sunroom \u00b7 Classic', price: 'Manual', status: 'Active', color: 'blue', filterKey: 'sunroom', catalogId: 'sr-m-classic' },
-            { name: 'M-Smart Sunroom', category: 'Sunroom \u00b7 Smart', price: 'Motorized', status: 'Active', color: 'blue', filterKey: 'sunroom', catalogId: 'sr-m-smart' },
-            { name: 'M-Pro Sunroom', category: 'Sunroom \u00b7 Pro', price: 'Solar+Motor', status: 'Active', color: 'blue', filterKey: 'sunroom', catalogId: 'sr-m-pro' },
-            { name: 'Pergola Basic', category: 'Pergola \u00b7 Basic', price: 'Manual', status: 'Active', color: 'green', filterKey: 'pergola', catalogId: 'pg-basic' },
-            { name: 'Pergola Classic', category: 'Pergola \u00b7 Classic', price: 'Motorized', status: 'Active', color: 'green', filterKey: 'pergola', catalogId: 'pg-classic' },
-            { name: 'Zip Blinds Standard', category: 'Zip Blinds', price: 'Manual', status: 'Active', color: 'purple', filterKey: 'blinds', catalogId: 'zb-manual' },
-            { name: 'Zip Blinds Motorized', category: 'Zip Blinds', price: 'Electric', status: 'Active', color: 'purple', filterKey: 'blinds', catalogId: 'zb-motorized' }
-            ];
-        }
-        // 分销商（default/partner1/greenscape-us）: Zip Blinds 动态生成 + Sunroom/Pergola 保持不变
+        // 所有非 Omeya 租户（含 nestopia-chn 和分销商）: Sunroom/Pergola 静态 + Zip Blinds 动态生成
         var items = [
             { name: 'L-Classic Sunroom', category: 'Sunroom \u00b7 Classic', price: 'Manual', status: 'Active', color: 'amber', filterKey: 'sunroom', catalogId: 'sr-l-classic' },
             { name: 'L-Smart Sunroom', category: 'Sunroom \u00b7 Smart', price: 'Motorized', status: 'Active', color: 'amber', filterKey: 'sunroom', catalogId: 'sr-l-smart' },
@@ -830,8 +815,8 @@
 
         var slug = getCurrentTenantSlug();
         var isOmeya = (slug === 'omeya-sin');
-        var isDistributor = N.tenant && N.tenant.isDistributor && N.tenant.isDistributor();
-        var useSkuList = isOmeya || isDistributor;
+        // 所有租户统一使用分组列表渲染器（Omeya 风格）
+        var useSkuList = true;
 
         // ── 两栏 flex 布局：左列列表 + 右列详情（初始隐藏）──
         var listHTML = useSkuList ? _renderOmeyaProductList(overviewProductsData) : _renderDefaultProductList(overviewProductsData);
@@ -863,7 +848,11 @@
                 var filter = this.dataset.filter;
                 if (useSkuList) {
                     grid.querySelectorAll('.ov-product-section').forEach(function(sec) {
-                        sec.style.display = (filter === 'all' || sec.dataset.sectionFilter === filter) ? '' : 'none';
+                        var sf = sec.dataset.sectionFilter;
+                        var match = (filter === 'all') ||
+                                    (sf === filter) ||
+                                    (filter === 'blinds' && sf && sf.indexOf('zb-') === 0);
+                        sec.style.display = match ? '' : 'none';
                     });
                 } else {
                     grid.querySelectorAll('.ov-product-item').forEach(function(item) {
