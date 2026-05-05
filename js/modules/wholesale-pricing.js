@@ -29,7 +29,9 @@
         filterSeries: 'all',       // 系列筛选
         searchQuery: '',           // 搜索文本
         loading: false,
-        initialized: false
+        initialized: false,
+        historyData: [],           // 发布历史日志
+        historyLoaded: false       // 历史是否已加载
     };
 
     // ══════════════════════════════════════════════════════════
@@ -300,6 +302,23 @@
                         'class="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition flex items-center gap-2 text-sm">' +
                         '<i class="fas fa-eye-slash"></i> Hide Selected' +
                     '</button>' +
+                '</div>' +
+            '</div>' +
+
+            // ── Publish History Section ──
+            '<div class="mt-4">' +
+                '<button onclick="Nestopia.modules.wholesalePricing.toggleHistoryPanel()" ' +
+                    'class="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition mb-3">' +
+                    '<i class="fas fa-history text-gray-400"></i>' +
+                    '<span class="font-medium">Publish History</span>' +
+                    '<i class="fas fa-chevron-down text-xs text-gray-400"></i>' +
+                '</button>' +
+                '<div id="wp-history-section" class="hidden">' +
+                    '<div class="bg-white rounded-xl border border-gray-200 p-4">' +
+                        '<div id="wp-history-panel">' +
+                            '<div class="text-center text-gray-400 py-6"><i class="fas fa-spinner fa-spin mr-2"></i>Loading history...</div>' +
+                        '</div>' +
+                    '</div>' +
                 '</div>' +
             '</div>' +
 
@@ -856,6 +875,8 @@
                 } else {
                     var distName = _getDistributorName(tenantId);
                     _showToast(records.length + ' SKU(s) published to ' + distName, 'success');
+                    // 写入发布历史日志
+                    _logPublishHistory('publish', tenantId, records);
                     _state.selectedSKUs = new Set();
                     _state.editedRows = {};
                     loadData();
@@ -907,6 +928,11 @@
                     _showToast('Hide error: ' + res.error.message, 'error');
                 } else {
                     _showToast(publishedKeys.length + ' SKU(s) hidden', 'success');
+                    // 写入隐藏历史日志
+                    var hideRecords = publishedKeys.map(function(k) {
+                        return { sku_key: k, product_type: _getProductType(k) };
+                    });
+                    _logPublishHistory('hide', tenantId, hideRecords);
                     _state.selectedSKUs = new Set();
                     loadData();
                 }
@@ -935,8 +961,169 @@
     }
 
     // ══════════════════════════════════════════════════════════
-    //  6. 导航控制 — 只对 nestopia-chn 显示
+    //  5b. 发布历史日志
     // ══════════════════════════════════════════════════════════
+
+    /**
+     * 写入发布/隐藏历史日志
+     * @param {string} action - 'publish' | 'hide' | 'unhide'
+     * @param {string} tenantId - 目标分销商 UUID
+     * @param {Array} records - 受影响的记录列表（至少含 sku_key）
+     */
+    function _logPublishHistory(action, tenantId, records) {
+        var client = _getClient();
+        if (!client) return;
+
+        var skuKeys = records.map(function(r) { return r.sku_key; });
+        var details = {
+            items: records.map(function(r) {
+                var d = { sku_key: r.sku_key, product_type: r.product_type || _getProductType(r.sku_key) };
+                if (r.price_tiers) d.price_tiers = r.price_tiers;
+                if (r.source_margin_x !== undefined) d.margin_x = r.source_margin_x;
+                return d;
+            })
+        };
+
+        client.from('publish_history')
+            .insert({
+                tenant_id: tenantId,
+                action: action,
+                sku_count: skuKeys.length,
+                sku_keys: skuKeys,
+                details: details,
+                created_by: 'platform'
+            })
+            .then(function(res) {
+                if (res.error) {
+                    console.warn('[WholesalePricing] History log failed:', res.error.message);
+                } else {
+                    console.log('[WholesalePricing] History logged:', action, skuKeys.length, 'SKUs');
+                    // 刷新历史面板（如果已打开）
+                    if (_state.historyLoaded) _loadPublishHistory();
+                }
+            });
+    }
+
+    /**
+     * 判断 SKU 的产品类型
+     */
+    function _getProductType(skuKey) {
+        var skuCat = window.zbSKUCatalog || {};
+        var driveCat = window.zbDriveSystemCatalog || {};
+        if (skuCat[skuKey]) return 'blinds';
+        if (driveCat[skuKey]) return 'drive';
+        return 'unknown';
+    }
+
+    /**
+     * 加载发布历史（最近 50 条）
+     */
+    function _loadPublishHistory() {
+        var client = _getClient();
+        if (!client) return;
+
+        client.from('publish_history')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(50)
+            .then(function(res) {
+                if (res.error) {
+                    console.warn('[WholesalePricing] Load history failed:', res.error.message);
+                    return;
+                }
+                _state.historyData = res.data || [];
+                _state.historyLoaded = true;
+                _renderHistoryPanel();
+            });
+    }
+
+    /**
+     * 渲染发布历史面板
+     */
+    function _renderHistoryPanel() {
+        var container = document.getElementById('wp-history-panel');
+        if (!container) return;
+
+        var items = _state.historyData || [];
+        if (items.length === 0) {
+            container.innerHTML = '<div class="text-center text-gray-400 py-8"><i class="fas fa-history text-2xl mb-2"></i><p class="text-sm">No publish history yet</p></div>';
+            return;
+        }
+
+        var html = '<div class="space-y-2 max-h-[400px] overflow-y-auto">';
+        items.forEach(function(item) {
+            var time = new Date(item.created_at);
+            var timeStr = time.toLocaleDateString() + ' ' + time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            var distName = _getDistributorName(item.tenant_id);
+            var actionIcon, actionColor, actionLabel;
+
+            if (item.action === 'publish') {
+                actionIcon = 'fa-upload';
+                actionColor = 'text-green-600 bg-green-50';
+                actionLabel = 'Published';
+            } else if (item.action === 'hide') {
+                actionIcon = 'fa-eye-slash';
+                actionColor = 'text-orange-600 bg-orange-50';
+                actionLabel = 'Hidden';
+            } else {
+                actionIcon = 'fa-eye';
+                actionColor = 'text-blue-600 bg-blue-50';
+                actionLabel = 'Unhidden';
+            }
+
+            // 构建变更详情摘要
+            var details = item.details || {};
+            var detailItems = details.items || [];
+            var blindsCount = detailItems.filter(function(d) { return d.product_type === 'blinds'; }).length;
+            var driveCount = detailItems.filter(function(d) { return d.product_type === 'drive'; }).length;
+            var summary = [];
+            if (blindsCount > 0) summary.push(blindsCount + ' blinds');
+            if (driveCount > 0) summary.push(driveCount + ' drives');
+            var summaryStr = summary.join(', ') || (item.sku_count + ' SKU(s)');
+
+            // SKU 列表（最多显示 5 个）
+            var skuKeys = item.sku_keys || [];
+            var skuPreview = skuKeys.slice(0, 5).join(', ');
+            if (skuKeys.length > 5) skuPreview += ' +' + (skuKeys.length - 5) + ' more';
+
+            html += '<div class="border border-gray-100 rounded-lg p-3 hover:bg-gray-50/50 transition">' +
+                '<div class="flex items-start justify-between gap-3">' +
+                    '<div class="flex items-start gap-2.5 min-w-0">' +
+                        '<div class="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0 ' + actionColor + '">' +
+                            '<i class="fas ' + actionIcon + ' text-xs"></i>' +
+                        '</div>' +
+                        '<div class="min-w-0">' +
+                            '<div class="flex items-center gap-2 flex-wrap">' +
+                                '<span class="text-sm font-medium text-gray-900">' + actionLabel + '</span>' +
+                                '<span class="text-xs text-gray-400">\u2192</span>' +
+                                '<span class="text-xs font-medium text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">' + distName + '</span>' +
+                            '</div>' +
+                            '<p class="text-xs text-gray-500 mt-0.5">' + summaryStr + '</p>' +
+                            '<p class="text-[11px] text-gray-400 mt-0.5 truncate" title="' + skuPreview + '">' + skuPreview + '</p>' +
+                        '</div>' +
+                    '</div>' +
+                    '<span class="text-[10px] text-gray-400 whitespace-nowrap flex-shrink-0">' + timeStr + '</span>' +
+                '</div>' +
+            '</div>';
+        });
+        html += '</div>';
+        container.innerHTML = html;
+    }
+
+    /**
+     * 切换历史面板显示/隐藏
+     */
+    function toggleHistoryPanel() {
+        var panel = document.getElementById('wp-history-section');
+        if (!panel) return;
+        var isHidden = panel.classList.contains('hidden');
+        if (isHidden) {
+            panel.classList.remove('hidden');
+            if (!_state.historyLoaded) _loadPublishHistory();
+        } else {
+            panel.classList.add('hidden');
+        }
+    }
 
     function _showNavItem() {
         var navItem = document.getElementById('nav-wholesale-pricing');
@@ -1006,6 +1193,7 @@
         applyBatchMargin: applyBatchMargin,
         publishSelected: publishSelected,
         hideSelected: hideSelected,
+        toggleHistoryPanel: toggleHistoryPanel,
 
         // 内部事件处理（onclick 引用）
         _onFilterChange: _onFilterChange,
