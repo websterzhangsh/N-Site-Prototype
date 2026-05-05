@@ -241,7 +241,7 @@
                                 '<th class="px-3 py-2 text-center w-24">x Factor</th>' +
                                 '<th class="px-3 py-2 text-right">Wholesale (B)</th>' +
                                 '<th class="px-3 py-2 text-center w-16">&Delta;%</th>' +
-                                '<th class="px-3 py-2 text-center w-16">Vis</th>' +
+                                '<th class="px-3 py-2 text-center w-16" title="Visibility — whether this SKU is published to selected distributor">Vis</th>' +
                             '</tr>' +
                         '</thead>' +
                         '<tbody class="divide-y divide-gray-100">' +
@@ -268,7 +268,7 @@
                                 '<th class="px-3 py-2 text-center w-24">x Factor</th>' +
                                 '<th class="px-3 py-2 text-right">Wholesale (B)</th>' +
                                 '<th class="px-3 py-2 text-center w-16">&Delta;%</th>' +
-                                '<th class="px-3 py-2 text-center w-16">Vis</th>' +
+                                '<th class="px-3 py-2 text-center w-16" title="Visibility — whether this SKU is published to selected distributor">Vis</th>' +
                             '</tr>' +
                         '</thead>' +
                         '<tbody class="divide-y divide-gray-100">' +
@@ -359,8 +359,9 @@
     //  3. 渲染辅助函数
     // ══════════════════════════════════════════════════════════
 
-    function _renderStatCard(label, value, icon, color) {
-        return '<div class="bg-white rounded-xl border border-gray-200 p-4">' +
+    function _renderStatCard(label, value, icon, color, tooltip) {
+        var titleAttr = tooltip ? ' title="' + _escHtml(tooltip) + '"' : '';
+        return '<div class="bg-white rounded-xl border border-gray-200 p-4 cursor-default"' + titleAttr + '>' +
             '<div class="flex items-center justify-between">' +
                 '<div>' +
                     '<div class="text-sm text-gray-500">' + label + '</div>' +
