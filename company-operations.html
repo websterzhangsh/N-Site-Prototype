@@ -4429,6 +4429,7 @@
     <script src="js/modules/knowledge-base.js?v=priceFix2"></script>
     <script src="js/modules/products.js?v=noParams1"></script>
     <script src="js/modules/wholesale-pricing.js?v=wpV1"></script>
+    <script src="js/modules/distributor-pricing.js?v=ph3V1"></script>
     <script src="js/modules/overview.js?v=noParams1"></script>
     <script src="js/modules/projects.js?v=tenantFix1"></script>
     <script src="js/modules/workflow.js?v=priceFix2"></script>
@@ -7505,6 +7506,11 @@
                 }
             }
         });
+
+        // ===== Distributor Pricing: 通知 + 导入 (→ js/modules/distributor-pricing.js) =====
+        if (Nestopia.modules && Nestopia.modules.distributorPricing && Nestopia.modules.distributorPricing.init) {
+            Nestopia.modules.distributorPricing.init();
+        }
 
         // ===== Projects Management: 6-Step Workflow (→ js/modules/workflow.js) =====
 

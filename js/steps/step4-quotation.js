@@ -279,6 +279,17 @@
                 var driveKey = op.driveSystem || 'AOK-45';
                 var driveData = zbDriveSystemCatalog[driveKey];
                 var driveCost = driveData ? driveData.price : 0;
+
+                // Phase 3: 分销商使用批发价 B 作为 drive cost（如已导入）
+                var _N = window.Nestopia;
+                if (_N && _N.tenant && _N.tenant.isDistributor && _N.tenant.isDistributor()) {
+                    var _dpMod = _N.modules && _N.modules.distributorPricing;
+                    if (_dpMod && _dpMod.getWholesalePrice) {
+                        var wDrivePrice = _dpMod.getWholesalePrice(driveKey);
+                        if (wDrivePrice) driveCost = wDrivePrice;
+                    }
+                }
+
                 var driveSell = _calcAccessoryPrice(driveCost, bp);
 
                 // Use calcOpeningCost from pricing-data.js

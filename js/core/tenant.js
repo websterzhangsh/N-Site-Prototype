@@ -8,10 +8,11 @@
     var N = window.Nestopia;
 
     var tenantConfigs = {
-        'default':      { name: 'Greenscape Builders', logo: 'images/partner-logo.png', language: 'en',        unitSystem: 'imperial' },
-        'partner1':     { name: 'Greenscape Builders', logo: 'images/partner-logo.png', language: 'en',        unitSystem: 'imperial' },
-        'omeya-sin':    { name: 'Omeya-SIN', logo: 'images/omeya-logo.png',             language: 'en',        unitSystem: 'imperial' },
-        'nestopia-chn': { name: 'Nestopia-CHN', logo: 'images/nestopia-logo.png',        language: 'bilingual', unitSystem: 'metric' }
+        'default':       { name: 'Greenscape Builders', logo: 'images/partner-logo.png', language: 'en',        unitSystem: 'imperial', dbTenantId: 'a3000000-0000-0000-0000-000000000003' },
+        'partner1':      { name: 'Greenscape Builders', logo: 'images/partner-logo.png', language: 'en',        unitSystem: 'imperial', dbTenantId: 'a3000000-0000-0000-0000-000000000003' },
+        'greenscape-us': { name: 'GreenScape Builders (US)', logo: 'images/partner-logo.png', language: 'en',   unitSystem: 'imperial', dbTenantId: 'a3000000-0000-0000-0000-000000000003' },
+        'omeya-sin':     { name: 'Omeya-SIN', logo: 'images/omeya-logo.png',             language: 'en',        unitSystem: 'imperial', dbTenantId: 'a2000000-0000-0000-0000-000000000002' },
+        'nestopia-chn':  { name: 'Nestopia-CHN', logo: 'images/nestopia-logo.png',        language: 'bilingual', unitSystem: 'metric',   dbTenantId: 'a1000000-0000-0000-0000-000000000001' }
     };
 
     // ── 租户级显示偏好（默认值） ─────────────────────────────
@@ -52,6 +53,31 @@
             return localStorage.getItem('tenant_slug') || sessionStorage.getItem('tenant_slug') || 'default';
         },
 
+        /**
+         * 获取当前租户在 Supabase 中的 UUID (用于 distributor_price_list 等表)
+         * 如果找不到映射，回退到 NestopiaDB.getTenantId()
+         */
+        getDbTenantId: function() {
+            var slug = N.tenant.getCurrentSlug();
+            var cfg = tenantConfigs[slug] || tenantConfigs['default'];
+            if (cfg && cfg.dbTenantId) return cfg.dbTenantId;
+            return (typeof NestopiaDB !== 'undefined' && NestopiaDB.getTenantId) ? NestopiaDB.getTenantId() : null;
+        },
+
+        /**
+         * 当前租户是否为平台方（nestopia-chn）
+         */
+        isPlatform: function() {
+            return N.tenant.getCurrentSlug() === 'nestopia-chn';
+        },
+
+        /**
+         * 当前租户是否为分销商（非平台方）
+         */
+        isDistributor: function() {
+            return !N.tenant.isPlatform();
+        },
+
         getUnitSystem: function() {
             var slug = N.tenant.getCurrentSlug();
             var cfg = tenantConfigs[slug] || tenantConfigs['default'];
@@ -79,6 +105,7 @@
 
     // ── 全局别名桥接（原始函数名兼容） ──
     window.getCurrentTenantSlug = N.tenant.getCurrentSlug;
+    window.getDbTenantId = N.tenant.getDbTenantId;
     window.tenantConfigs = tenantConfigs;
     window.getTenantUnitSystem = N.tenant.getUnitSystem;
     window.getTenantLanguage = N.tenant.getLanguage;

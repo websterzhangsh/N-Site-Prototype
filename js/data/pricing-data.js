@@ -516,10 +516,33 @@
      * @param {number} areaSqm - 实际面积（m²）
      * @returns {number} 单价（RMB/m²），找不到返回 0
      */
+    /**
+     * 查询 SKU 单价 — 支持双源 (Phase 3)
+     * 分销商已导入批发价时，返回 wholesale price B；否则返回供货商原价 A
+     */
     function lookupUnitPrice(skuKey, areaSqm) {
         var sku = zbSKUCatalog[skuKey];
         if (!sku) return 0;
         var billedArea = Math.max(areaSqm, sku.minArea || zbBusinessParams.minBillableArea);
+
+        // Phase 3 双源: 分销商优先使用已导入的批发价 B
+        var N = window.Nestopia;
+        if (N && N.tenant && N.tenant.isDistributor && N.tenant.isDistributor()) {
+            var dpModule = N.modules && N.modules.distributorPricing;
+            if (dpModule && dpModule.getWholesalePriceTiers) {
+                var wTiers = dpModule.getWholesalePriceTiers(skuKey);
+                if (wTiers && wTiers.length > 0) {
+                    // 从批发价 tiers 中按面积匹配
+                    for (var j = 0; j < wTiers.length; j++) {
+                        var maxA = wTiers[j].maxArea === 9999 ? Infinity : (wTiers[j].maxArea || Infinity);
+                        if (billedArea <= maxA) return wTiers[j].wholesalePrice;
+                    }
+                    return wTiers[wTiers.length - 1].wholesalePrice;
+                }
+            }
+        }
+
+        // 默认: 供货商原价 A
         var tiers = sku.priceTiers;
         for (var i = 0; i < tiers.length; i++) {
             if (billedArea <= tiers[i].maxArea) return tiers[i].price;

@@ -185,10 +185,10 @@
 
             // ── Stats ──
             '<div class="grid grid-cols-4 gap-4 mb-6">' +
-                _renderStatCard('Total SKUs', totalSKUs, 'fas fa-box', 'blue') +
-                _renderStatCard('Published', publishedCount, 'fas fa-check-circle', 'green') +
-                _renderStatCard('Hidden', hiddenCount, 'fas fa-eye-slash', 'amber') +
-                _renderStatCard('Unpublished', unpublishedCount, 'fas fa-minus-circle', 'gray') +
+                _renderStatCard('Total SKUs', totalSKUs, 'fas fa-box', 'blue', 'Total number of SKUs managed on the platform') +
+                _renderStatCard('Published', publishedCount, 'fas fa-check-circle', 'green', 'SKUs visible to the selected distributor — they can see and quote these products') +
+                _renderStatCard('Hidden', hiddenCount, 'fas fa-eye-slash', 'amber', 'SKUs previously published but now hidden — distributor cannot see them until re-published') +
+                _renderStatCard('Unpublished', unpublishedCount, 'fas fa-minus-circle', 'gray', 'SKUs not yet published to the selected distributor — use "Publish Selected" to make them available') +
             '</div>' +
 
             // ── Filter Bar ──
@@ -821,6 +821,8 @@
                     is_visible: true,
                     hidden_reason: null,
                     hidden_at: null,
+                    import_status: 'pending',
+                    imported_at: null,
                     published_at: new Date().toISOString(),
                     synced_at: new Date().toISOString()
                 });
@@ -836,6 +838,8 @@
                     is_visible: true,
                     hidden_reason: null,
                     hidden_at: null,
+                    import_status: 'pending',
+                    imported_at: null,
                     published_at: new Date().toISOString(),
                     synced_at: new Date().toISOString()
                 });
