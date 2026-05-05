@@ -406,7 +406,7 @@
                     _renderOvPricingTiers(sku, skuKey) +
                     _renderOvDriveSystems(sku) +
                     // ★ Quotation Formula Parameters 已移至 Nestopia-CHN 平台层管理
-                    _renderOvLifecycleSection() +
+                    // ★ Lifecycle/Files/Actions 暂时隐藏（商业原因）
                 '</div></div>';
         }
 
