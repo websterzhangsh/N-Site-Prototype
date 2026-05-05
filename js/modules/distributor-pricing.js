@@ -182,62 +182,77 @@
         var blindsItems = _state.pendingItems.filter(function(r) { return r.product_type === 'blinds'; });
         var driveItems = _state.pendingItems.filter(function(r) { return r.product_type === 'drive'; });
 
-        var html = '<div class="flex-1 overflow-y-auto px-6 py-4" style="max-height:50vh;">';
+        var html = '<div class="flex-1 overflow-y-auto px-6 py-4" style="max-height:55vh;">';
 
         // Blinds section
         if (blindsItems.length > 0) {
-            html += '<div class="mb-4">' +
-                '<h3 class="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">' +
+            html += '<div class="mb-5">' +
+                '<h3 class="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">' +
                     '<i class="fas fa-blinds text-blue-500"></i> Zip Blinds SKU Pricing (' + blindsItems.length + ')' +
                 '</h3>' +
-                '<table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">' +
-                    '<thead class="bg-gray-50"><tr>' +
-                        '<th class="px-3 py-2 text-left font-medium text-gray-600">SKU</th>' +
-                        '<th class="px-3 py-2 text-left font-medium text-gray-600">Series</th>' +
-                        '<th class="px-3 py-2 text-right font-medium text-gray-600">Wholesale Price (B)</th>' +
-                        '<th class="px-3 py-2 text-center font-medium text-gray-600">Tiers</th>' +
-                    '</tr></thead><tbody>';
+                '<div class="space-y-2">';
 
             blindsItems.forEach(function(item) {
                 var sku = skuCat[item.sku_key] || {};
-                var series = (item.sku_key || '').replace(/[AB]-\d+$/, '');
                 var tiers = item.price_tiers || [];
-                var firstPrice = tiers.length > 0 ? tiers[0].wholesalePrice : '—';
+                var seriesMatch = (item.sku_key || '').match(/^(WR\d+)/);
+                var series = seriesMatch ? seriesMatch[1] : '';
+                var minArea = sku.minArea || 3;
 
-                html += '<tr class="border-t border-gray-100 hover:bg-blue-50/30">' +
-                    '<td class="px-3 py-2 font-mono text-xs font-medium text-gray-900">' + _escHtml(item.sku_key) + '</td>' +
-                    '<td class="px-3 py-2 text-gray-600">' + series + '</td>' +
-                    '<td class="px-3 py-2 text-right font-mono font-medium text-gray-900">' + firstPrice + '</td>' +
-                    '<td class="px-3 py-2 text-center text-gray-500">' + tiers.length + ' tier(s)</td>' +
-                '</tr>';
+                html += '<div class="border border-gray-200 rounded-lg p-3 hover:border-blue-300 hover:bg-blue-50/20 transition">' +
+                    '<div class="flex items-center justify-between mb-2">' +
+                        '<div class="flex items-center gap-2">' +
+                            '<span class="font-mono text-xs font-bold text-gray-900 bg-gray-100 px-2 py-0.5 rounded">' + _escHtml(item.sku_key) + '</span>' +
+                            (series ? '<span class="text-[10px] text-gray-400 uppercase">' + series + '</span>' : '') +
+                        '</div>' +
+                        '<span class="text-[10px] text-blue-500 font-medium">' + tiers.length + ' tier' + (tiers.length > 1 ? 's' : '') + '</span>' +
+                    '</div>' +
+                    '<div class="flex flex-wrap gap-1.5">';
+
+                tiers.forEach(function(t, i) {
+                    var maxA = t.maxArea === 9999 ? Infinity : (t.maxArea || Infinity);
+                    var areaLabel;
+                    if (maxA === Infinity) {
+                        areaLabel = '>' + (i > 0 ? tiers[i-1].maxArea : minArea) + ' m\u00b2';
+                    } else {
+                        areaLabel = '\u2264' + t.maxArea + ' m\u00b2';
+                    }
+                    html += '<div class="inline-flex items-center gap-1.5 bg-blue-50 border border-blue-100 rounded-md px-2.5 py-1">' +
+                        '<span class="text-[11px] text-gray-600">' + areaLabel + '</span>' +
+                        '<span class="text-[11px] font-bold text-blue-700">\u00a5' + t.wholesalePrice + '</span>' +
+                    '</div>';
+                });
+
+                html += '</div></div>';
             });
 
-            html += '</tbody></table></div>';
+            html += '</div></div>';
         }
 
         // Drive section
         if (driveItems.length > 0) {
             html += '<div class="mb-4">' +
-                '<h3 class="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">' +
+                '<h3 class="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">' +
                     '<i class="fas fa-cog text-amber-500"></i> Drive Systems (' + driveItems.length + ')' +
                 '</h3>' +
-                '<table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">' +
-                    '<thead class="bg-gray-50"><tr>' +
-                        '<th class="px-3 py-2 text-left font-medium text-gray-600">Drive</th>' +
-                        '<th class="px-3 py-2 text-right font-medium text-gray-600">Wholesale Price (B)</th>' +
-                    '</tr></thead><tbody>';
+                '<div class="grid grid-cols-2 gap-2">';
 
             driveItems.forEach(function(item) {
+                var drive = driveCat[item.sku_key] || {};
+                var driveName = drive.name || item.sku_key;
                 var tiers = item.price_tiers || [];
-                var price = tiers.length > 0 ? tiers[0].wholesalePrice : '—';
+                var price = tiers.length > 0 ? tiers[0].wholesalePrice : '\u2014';
 
-                html += '<tr class="border-t border-gray-100 hover:bg-amber-50/30">' +
-                    '<td class="px-3 py-2 font-mono text-xs font-medium text-gray-900">' + _escHtml(item.sku_key) + '</td>' +
-                    '<td class="px-3 py-2 text-right font-mono font-medium text-gray-900">' + price + '</td>' +
-                '</tr>';
+                html += '<div class="flex items-center justify-between border border-gray-200 rounded-lg px-3 py-2.5 hover:border-amber-300 hover:bg-amber-50/20 transition">' +
+                    '<div class="flex items-center gap-2 min-w-0">' +
+                        '<i class="fas fa-cog text-gray-400 text-xs flex-shrink-0"></i>' +
+                        '<span class="text-xs font-medium text-gray-800 truncate">' + _escHtml(driveName) + '</span>' +
+                    '</div>' +
+                    '<span class="text-xs font-bold text-amber-700 flex-shrink-0">\u00a5' + price + '/set</span>' +
+                '</div>';
             });
 
-            html += '</tbody></table></div>';
+            html += '</div></div>';
         }
 
         html += '</div>';
