@@ -674,7 +674,7 @@
                 var errMsg = results.find(function(r) { return r.error; }).error.message;
                 _showToast('Save error: ' + errMsg, 'error');
             } else {
-                _showToast(editedKeys.length + ' margin factor(s) saved', 'success');
+                _showToast('Saved successfully — ' + editedKeys.length + ' item(s) updated', 'success');
                 _state.editedRows = {};
                 // 清除缓存并重新加载
                 if (N.data && N.data.pricing && N.data.pricing.clearWholesalePricingCache) {
