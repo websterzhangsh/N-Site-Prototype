@@ -62,6 +62,13 @@
             if (pageName === 'knowledge-base') {
                 if (typeof renderKBQuickRefPanel === 'function') renderKBQuickRefPanel();
             }
+
+            // Wholesale Pricing: 初始化平台批发定价模块 (仅 nestopia-chn)
+            if (pageName === 'wholesale-pricing') {
+                if (N.modules && N.modules.wholesalePricing && N.modules.wholesalePricing.init) {
+                    N.modules.wholesalePricing.init();
+                }
+            }
         },
 
         navigateToProject: function(projectId) {

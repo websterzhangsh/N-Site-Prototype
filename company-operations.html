@@ -634,6 +634,14 @@
                 </div>
 
                 <div class="nav-section" style="flex-shrink:0;">
+                    <div class="nav-section-title">Platform</div>
+                    <a href="#" class="nav-item" data-page="wholesale-pricing" id="nav-wholesale-pricing" style="display:none;">
+                        <i class="fas fa-tags"></i>
+                        <span>Wholesale Pricing</span>
+                    </a>
+                </div>
+
+                <div class="nav-section" style="flex-shrink:0;">
                     <div class="nav-section-title">Settings</div>
                     <a href="#" class="nav-item" data-page="team">
                         <i class="fas fa-user-cog"></i>
@@ -2739,6 +2747,16 @@
                 </div>
 
                 <!-- ===== Products Management Page ===== -->
+                <div class="page-content" id="page-wholesale-pricing">
+                    <!-- Wholesale Pricing content rendered by wholesale-pricing.js -->
+                    <div class="flex items-center justify-center py-20">
+                        <div class="text-center">
+                            <i class="fas fa-spinner fa-spin text-3xl text-blue-500 mb-3"></i>
+                            <p class="text-gray-500">Initializing wholesale pricing module...</p>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="page-content" id="page-products">
                     <!-- Products Header -->
                     <div class="flex items-center justify-between mb-6">
@@ -4394,10 +4412,10 @@
     <script src="js/core/auth.js?v=securityFix1"></script>
     <script src="js/core/tenant.js?v=priceFix2"></script>
     <script src="js/core/i18n.js?v=priceFix2"></script>
-    <script src="js/core/router.js?v=priceFix2"></script>
+    <script src="js/core/router.js?v=wpV1"></script>
     <!-- 3. 数据层 (Phase 1) -->
     <script src="js/data/i18n-dict.js?v=priceFix2"></script>
-    <script src="js/data/pricing-data.js?v=priceFix2"></script>
+    <script src="js/data/pricing-data.js?v=wpV1"></script>
     <script src="js/data/product-catalog.js?v=tdzFix2"></script>
     <script src="js/data/step-config.js?v=priceFix2"></script>
     <script src="js/data/intake-fields.js?v=priceFix2"></script>
@@ -4410,6 +4428,7 @@
     <script src="js/modules/customers.js?v=priceFix2"></script>
     <script src="js/modules/knowledge-base.js?v=priceFix2"></script>
     <script src="js/modules/products.js?v=noParams1"></script>
+    <script src="js/modules/wholesale-pricing.js?v=wpV1"></script>
     <script src="js/modules/overview.js?v=noParams1"></script>
     <script src="js/modules/projects.js?v=tenantFix1"></script>
     <script src="js/modules/workflow.js?v=priceFix2"></script>
@@ -7480,6 +7499,10 @@
                 renderSidebarProjects();
                 // v1.3.0: Load user-created projects from Supabase
                 loadProjectsFromDB();
+                // v2.0: Initialize Wholesale Pricing nav visibility (platform only)
+                if (Nestopia.modules && Nestopia.modules.wholesalePricing) {
+                    Nestopia.modules.wholesalePricing.init();
+                }
             }
         });
 

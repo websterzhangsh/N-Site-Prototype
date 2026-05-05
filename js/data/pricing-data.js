@@ -2,8 +2,9 @@
  * pricing-data.js — Nestopia 定价数据
  * 命名空间: Nestopia.data.pricing
  *
- * v3.0 — 基于供应商报价表 2026-H005（2026.3.12 更新版）的完整 SKU 目录。
+ * v3.1 — 基于供应商报价表 2026-H005（2026.3.12 更新版）的完整 SKU 目录。
  * 包含卷帘本体、驱动系统、业务参数（利润测算公式）三大模块。
+ * + 批发定价工具函数（多层定价链 Phase 1: calcWholesalePriceTiers, getMarginFactor 等）
  *
  * ⚠️ 本文件是所有定价面板（Product Info、Quotation、Consumer Quote）的唯一数据源。
  *    后续将支持租户级产品定价导入功能，届时此静态目录将迁移至 Supabase。
@@ -580,6 +581,156 @@
     }
 
     // ══════════════════════════════════════════════════════════
+    //  5b. 批发定价工具函数 (多层定价链 Phase 1)
+    //  基于 PRICING_CHAIN_ARCHITECTURE.md — B = A × (1+x)
+    // ══════════════════════════════════════════════════════════
+
+    /**
+     * 已加载的平台批发定价数据缓存 (从 Supabase platform_wholesale_pricing 加载)
+     * @type {Object.<string, {margin_factor_x: number, product_type: string, notes: string}>}
+     */
+    var _wholesalePricingCache = null;
+
+    /**
+     * 从 Supabase 加载平台批发定价数据到内存缓存
+     * 仅 Nestopia-CHN 管理员可调用（受 RLS 保护）
+     * @returns {Promise<Object>} 以 sku_key 为键的定价数据 Map
+     */
+    function loadWholesalePricing() {
+        if (_wholesalePricingCache) return Promise.resolve(_wholesalePricingCache);
+
+        var client = typeof NestopiaDB !== 'undefined' && NestopiaDB.getClient && NestopiaDB.getClient();
+        if (!client) {
+            console.warn('[Pricing] Supabase 客户端不可用，使用默认 x 值');
+            return Promise.resolve(_buildDefaultMarginMap());
+        }
+
+        return client
+            .from('platform_wholesale_pricing')
+            .select('sku_key, product_type, margin_factor_x, notes')
+            .eq('is_active', true)
+            .then(function(res) {
+                if (res.error) {
+                    console.warn('[Pricing] 加载批发定价失败:', res.error.message);
+                    return _buildDefaultMarginMap();
+                }
+                var map = {};
+                (res.data || []).forEach(function(row) {
+                    map[row.sku_key] = {
+                        margin_factor_x: parseFloat(row.margin_factor_x) || 0.40,
+                        product_type: row.product_type,
+                        notes: row.notes
+                    };
+                });
+                _wholesalePricingCache = map;
+                console.log('[Pricing] 批发定价数据已加载:', Object.keys(map).length, '条');
+                return map;
+            });
+    }
+
+    /**
+     * 构建默认的 margin factor 映射（Supabase 不可用时的降级方案）
+     * 默认值: WR100→0.35, WR110→0.38, WR120→0.40, Special→0.40, Drive motor→0.35, Drive manual→0.30
+     * @private
+     */
+    function _buildDefaultMarginMap() {
+        var map = {};
+        Object.keys(zbSKUCatalog).forEach(function(key) {
+            var sku = zbSKUCatalog[key];
+            var x = 0.40; // 默认值
+            if (sku.series === 'WR100') x = 0.35;
+            else if (sku.series === 'WR110') x = 0.38;
+            else if (sku.series === 'WR120') x = 0.40;
+            map[key] = { margin_factor_x: x, product_type: 'blinds', notes: 'default' };
+        });
+        Object.keys(zbDriveSystemCatalog).forEach(function(key) {
+            var drive = zbDriveSystemCatalog[key];
+            var x = (drive.type === 'motorized') ? 0.35 : 0.30;
+            map[key] = { margin_factor_x: x, product_type: 'drive', notes: 'default' };
+        });
+        _wholesalePricingCache = map;
+        return map;
+    }
+
+    /**
+     * 获取指定 SKU/Drive 的批发加价因子 x
+     * 如果缓存中不存在，返回基于系列的默认值
+     * @param {string} skuKey - SKU 或 Drive key
+     * @returns {number} margin factor x (如 0.40)
+     */
+    function getMarginFactor(skuKey) {
+        if (_wholesalePricingCache && _wholesalePricingCache[skuKey]) {
+            return _wholesalePricingCache[skuKey].margin_factor_x;
+        }
+        // 降级：根据系列推断默认值
+        var sku = zbSKUCatalog[skuKey];
+        if (sku) {
+            if (sku.series === 'WR100') return 0.35;
+            if (sku.series === 'WR110') return 0.38;
+            return 0.40;
+        }
+        var drive = zbDriveSystemCatalog[skuKey];
+        if (drive) {
+            return (drive.type === 'motorized') ? 0.35 : 0.30;
+        }
+        return 0.40; // 全局默认
+    }
+
+    /**
+     * 计算 SKU 的批发价区间 B = A × (1+x)
+     * @param {string} skuKey - SKU 标识符
+     * @param {number} [overrideX] - 可选：覆盖 x 值（用于预览）
+     * @returns {Array<{maxArea: number, supplierPrice: number, wholesalePrice: number}>|null}
+     */
+    function calcWholesalePriceTiers(skuKey, overrideX) {
+        var sku = zbSKUCatalog[skuKey];
+        if (!sku) return null;
+
+        var x = (overrideX !== undefined) ? overrideX : getMarginFactor(skuKey);
+        return sku.priceTiers.map(function(tier) {
+            return {
+                maxArea: tier.maxArea,
+                supplierPrice: tier.price,
+                wholesalePrice: Math.round(tier.price * (1 + x))
+            };
+        });
+    }
+
+    /**
+     * 计算驱动系统的批发价 B = A × (1+x)
+     * @param {string} driveKey - Drive 标识符
+     * @param {string} [skuKey] - 关联 SKU（可用于读取统一 x）
+     * @param {number} [overrideX] - 可选：覆盖 x 值
+     * @returns {{supplierPrice: number, wholesalePrice: number, marginX: number}|null}
+     */
+    function calcWholesaleDrivePrice(driveKey, skuKey, overrideX) {
+        var drive = zbDriveSystemCatalog[driveKey];
+        if (!drive) return null;
+
+        // 优先使用 drive 自身的 x，否则使用关联 SKU 的 x
+        var x;
+        if (overrideX !== undefined) {
+            x = overrideX;
+        } else {
+            x = getMarginFactor(driveKey);
+        }
+
+        return {
+            supplierPrice: drive.price,
+            wholesalePrice: Math.round(drive.price * (1 + x)),
+            marginX: x
+        };
+    }
+
+    /**
+     * 清除批发定价缓存（x 值变更后调用）
+     */
+    function clearWholesalePricingCache() {
+        _wholesalePricingCache = null;
+        console.log('[Pricing] 批发定价缓存已清除');
+    }
+
+    // ══════════════════════════════════════════════════════════
     //  6. 命名空间导出
     // ══════════════════════════════════════════════════════════
 
@@ -594,6 +745,13 @@
         lookupUnitPrice: lookupUnitPrice,
         calcOpeningCost: calcOpeningCost,
         calcAccessoryPrice: calcAccessoryPrice,
+
+        // 批发定价工具函数 (多层定价链)
+        loadWholesalePricing: loadWholesalePricing,
+        getMarginFactor: getMarginFactor,
+        calcWholesalePriceTiers: calcWholesalePriceTiers,
+        calcWholesaleDrivePrice: calcWholesaleDrivePrice,
+        clearWholesalePricingCache: clearWholesalePricingCache,
 
         // Legacy — 旧版数据结构保留向后兼容
         zbProductTiers: {
@@ -625,5 +783,5 @@
     window.zbHardwareCostPerUnit = N.data.pricing.zbHardwareCostPerUnit;
     window.zbAccessoryPresets    = zbAccessoryPresets;
 
-    console.log('[Nestopia] pricing-data.js v3.0 loaded — ' + Object.keys(zbSKUCatalog).length + ' SKUs');
+    console.log('[Nestopia] pricing-data.js v3.1 loaded — ' + Object.keys(zbSKUCatalog).length + ' SKUs, ' + Object.keys(zbDriveSystemCatalog).length + ' drives');
 })();
