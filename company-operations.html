@@ -4442,7 +4442,7 @@
     <script src="js/steps/step2-design.js?v=designFix6"></script>
     <script src="js/steps/step3-measurement.js?v=copyOpen1"></script>
     <script src="js/steps/zb-verification.js?v=priceFix2"></script>
-    <script src="js/steps/step4-quotation.js?v=rateFix1"></script>
+    <script src="js/steps/step4-quotation.js?v=hideParam1"></script>
     <!-- 8. 独立工具 (Phase 4) -->
     <script src="js/utils/quotation-editor.js?v=sgdOnly2"></script>
     <script src="js/utils/step-progress.js?v=priceFix2"></script>
@@ -7218,8 +7218,8 @@
                         <!-- Expandable Quotation Panel -->
                         <div id="step4QuotationPanel_${project.id}" class="hidden" style="animation: fadeInSlide 0.3s ease">
 
-                            <!-- Business Parameters (Collapsible) -->
-                            <div class="mb-4 p-3 bg-gray-50/50 rounded-lg border border-gray-100">
+                            <!-- Business Parameters (Collapsible) — 暂时隐藏，保留代码 -->
+                            <div class="mb-4 p-3 bg-gray-50/50 rounded-lg border border-gray-100 hidden">
                                 <div class="flex items-center justify-between mb-2 cursor-pointer" onclick="var el=document.getElementById('step4ParamsGrid_${project.id}');el.classList.toggle('hidden');var ic=this.querySelector('i.fa-chevron-down,i.fa-chevron-up');if(ic){ic.classList.toggle('fa-chevron-down');ic.classList.toggle('fa-chevron-up')}">
                                     <span class="text-[10px] font-semibold text-gray-600"><i class="fas fa-sliders-h text-orange-400 mr-1.5"></i>Business Parameters</span>
                                     <div class="flex items-center gap-2">
