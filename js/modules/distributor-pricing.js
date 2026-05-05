@@ -120,8 +120,8 @@
                 '</div>' +
             '</div>';
 
-        // 插入到 Company Overview 页面顶部
-        var overviewPage = document.getElementById('page-overview');
+        // 插入到 Company Overview (Dashboard) 页面顶部
+        var overviewPage = document.getElementById('page-dashboard');
         if (overviewPage) {
             overviewPage.insertBefore(banner, overviewPage.firstChild);
         }
