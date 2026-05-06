@@ -287,8 +287,10 @@
 
     // ── 列表视图辅助函数 ──
     function _renderOmeyaProductList(data) {
-        var sectionOrder = ['zb-standard', 'zb-outdoor', 'zb-special'];
+        var sectionOrder = ['sunroom', 'pergola', 'zb-standard', 'zb-outdoor', 'zb-special'];
         var sectionMeta = {
+            'sunroom':     { label: 'Sunroom', sublabel: 'Classic \u00b7 Smart \u00b7 Pro', icon: 'fa-sun', color: 'amber' },
+            'pergola':     { label: 'Pergola', sublabel: 'Basic \u00b7 Classic', icon: 'fa-warehouse', color: 'green' },
             'zb-standard': { label: 'WR100 / WR110 Series', sublabel: 'Standard & Gazebo', icon: 'fa-home', color: 'blue' },
             'zb-outdoor':  { label: 'WR120 Series', sublabel: 'Outdoor Heavy-duty', icon: 'fa-mountain-sun', color: 'green' },
             'zb-special':  { label: 'Special Series', sublabel: 'Hidden Rail \u00b7 Indoor \u00b7 Large Format', icon: 'fa-star', color: 'amber' }
@@ -879,7 +881,11 @@
         var statsDiv = card.querySelector('.flex.items-center.gap-3.mt-3');
         if (statsDiv) {
             var active = data.filter(function(p) { return p.status === 'Active'; }).length;
-            var cats = new Set(data.map(function(p) { return p.filterKey; })).size;
+            // zb-* 系列合并为一个 "blinds" 大类，统计 3 个产品分类
+            var cats = new Set(data.map(function(p) {
+                var k = p.filterKey || '';
+                return k.indexOf('zb-') === 0 ? 'blinds' : k;
+            })).size;
             statsDiv.innerHTML = '<span class="text-green-600 font-medium">' + active + ' Active</span><span class="text-gray-600 font-medium">' + cats + ' Categories</span>';
         }
     }
