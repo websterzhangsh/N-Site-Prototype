@@ -112,9 +112,9 @@
         return zbAccessoryPresets;
     }
     function getQuotTypeTitle(lang) {
-        if (quotProductType === 'sunroom') return lang === 'en' ? 'Sunroom Quotation' : '\u9633\u5149\u623f\u62a5\u4ef7\u5355 / Sunroom Quotation';
-        if (quotProductType === 'pergola') return lang === 'en' ? 'Pergola Quotation' : '\u51c9\u4ead\u62a5\u4ef7\u5355 / Pergola Quotation';
-        return lang === 'en' ? 'Zip Blinds Quotation' : '\u9632\u98ce\u5377\u5e18\u62a5\u4ef7\u5355 / Zip Blinds Quotation';
+        if (quotProductType === 'sunroom') return lang === 'en' ? 'Sunroom Quotation' : 'Sunroom Quotation / \u9633\u5149\u623f\u62a5\u4ef7\u5355';
+        if (quotProductType === 'pergola') return lang === 'en' ? 'Pergola Quotation' : 'Pergola Quotation / \u51c9\u4ead\u62a5\u4ef7\u5355';
+        return lang === 'en' ? 'Zip Blinds Quotation' : 'Zip Blinds Quotation / \u9632\u98ce\u5377\u5e18\u62a5\u4ef7\u5355';
     }
 
     function openQuotationEditor(projectId) {
@@ -782,10 +782,10 @@
         var fabricDesc = 'Polyester+PVC, 5% openness';
         // ★ 新加坡客户报价单 — 仅显示 SGD，不出现 RMB/汇率信息
         var remarks = [
-            '\u578b\u6750\u989c\u8272 ' + profileColor + '\uff1b\u9762\u6599 ' + fabric + ' ' + fabricDesc + ' / Profile: ' + profileColor + '; Fabric: ' + fabric + ' ' + fabricDesc,
-            '\u5305\u542b\u6d77\u5173\u8d39\u53ca\u7269\u6d41\u8fd0\u8f93\u7b49\u8d39\u7528 / Include customs duties, logistics, and shipping fees',
-            '\u8d28\u4fdd\uff1a\u94dd\u5408\u91d1\u578b\u6750\u5341\u5e74\uff0c\u7535\u673a\u4e09\u5e74\uff0c\u9632\u98ce\u5377\u5e18\u4e24\u5e74 / Warranty: Aluminum alloy 10 years, motor 3 years, zip blinds 2 years',
-            '\u4ed8\u6b3e\u6761\u4ef6\uff1a\u4e0b\u5355\u751f\u4ea7\u524d\u9700\u4ed850%\u5b9a\u91d1\uff0c\u53d1\u8d27\u524d\u4ed8\u6e05\u4f59\u6b3e / Payment: 50% deposit before production, balance before shipment'
+            'Profile: ' + profileColor + '; Fabric: ' + fabric + ' ' + fabricDesc + ' / \u578b\u6750\u989c\u8272 ' + profileColor + '\uff1b\u9762\u6599 ' + fabric + ' ' + fabricDesc,
+            'Include customs duties, logistics, and shipping fees / \u5305\u542b\u6d77\u5173\u8d39\u53ca\u7269\u6d41\u8fd0\u8f93\u7b49\u8d39\u7528',
+            'Warranty: Aluminum alloy 10 years, motor 3 years, zip blinds 2 years / \u8d28\u4fdd\uff1a\u94dd\u5408\u91d1\u5341\u5e74\uff0c\u7535\u673a\u4e09\u5e74\uff0c\u9632\u98ce\u5377\u5e18\u4e24\u5e74',
+            'Payment: 50% deposit before production, balance before shipment / \u4ed8\u6b3e\uff1a\u751f\u4ea7\u524d\u4ed850%\u5b9a\u91d1\uff0c\u53d1\u8d27\u524d\u4ed8\u6e05\u4f59\u6b3e'
         ];
         var remarksHtml = remarks.map(function(line, i) {
             return '<div style="margin-bottom:5px;font-size:11px;color:#374151;line-height:1.6;">' + (i + 1) + '. ' + line + '</div>';
@@ -801,10 +801,10 @@
     function _buildConsumerHTML(tenantCfg, logoPath, dateStr, client, csName, csPhone, project,
         blindsRows, motorRow, totalOpenings, grandForeign, foreignSymbol, curr, remarksHtml) {
         return '<!DOCTYPE html><html><head><meta charset="utf-8">' +
-            '<title>\u9632\u98ce\u5377\u5e18\u62a5\u4ef7\u5355 / Zip Blinds Quotation - ' + client + '</title>' +
+            '<title>Zip Blinds Quotation / \u9632\u98ce\u5377\u5e18\u62a5\u4ef7\u5355 - ' + client + '</title>' +
             '<style>' +
             '@page{size:A4;margin:15mm 12mm;}' +
-            'body{font-family:"Microsoft YaHei","Helvetica Neue",Arial,sans-serif;margin:0;padding:24px 32px;color:#111827;font-size:13px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}' +
+            'body{font-family:"Helvetica Neue",Arial,"Microsoft YaHei",sans-serif;margin:0;padding:24px 32px;color:#111827;font-size:13px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}' +
             'table{border-collapse:collapse;width:100%;}' +
             '.hdr{display:flex;align-items:center;gap:16px;margin-bottom:16px;padding-bottom:14px;border-bottom:3px solid #ea580c;}' +
             '.hdr img{width:56px;height:56px;object-fit:contain;border-radius:8px;}' +
@@ -828,30 +828,30 @@
             '<img src="' + logoPath + '" onerror="this.style.display=\'none\'">' +
             '<div class="hdr-t">' +
             '<div class="hdr-name">' + tenantCfg.name + '</div>' +
-            '<div class="hdr-sub">\u9632\u98ce\u5377\u5e18\u62a5\u4ef7\u5355 / Zip Blinds Quotation</div>' +
+            '<div class="hdr-sub">Zip Blinds Quotation / \u9632\u98ce\u5377\u5e18\u62a5\u4ef7\u5355</div>' +
             '</div>' +
-            '<div class="hdr-date">\u65e5\u671f / Date: ' + dateStr + '</div>' +
+            '<div class="hdr-date">Date / \u65e5\u671f: ' + dateStr + '</div>' +
             '</div>' +
 
             // Client info (2×2 grid matching reference)
             '<div class="info">' +
-            '<div><span class="l">\u5ba2\u6237\u59d3\u540d / Client: </span><span class="v">' + client + '</span></div>' +
-            '<div><span class="l">\u5ba2\u670d / CS Rep: </span><span class="v">' + csName + '</span></div>' +
-            '<div><span class="l">\u8054\u7cfb\u7535\u8bdd / Contact: </span><span class="v">' + (project.phone || project.customerPhone || '') + '</span></div>' +
+            '<div><span class="l">Client / \u5ba2\u6237\u59d3\u540d: </span><span class="v">' + client + '</span></div>' +
+            '<div><span class="l">CS Rep / \u5ba2\u670d: </span><span class="v">' + csName + '</span></div>' +
+            '<div><span class="l">Contact / \u8054\u7cfb\u7535\u8bdd: </span><span class="v">' + (project.phone || project.customerPhone || '') + '</span></div>' +
             '<div><span class="l">CS Contact: </span><span class="v">' + csPhone + '</span></div>' +
             '</div>' +
 
             // Section: Product Dimensions
-            '<div class="sec-title">\u4ea7\u54c1\u5c3a\u5bf8 / PRODUCT DIMENSIONS</div>' +
+            '<div class="sec-title">PRODUCT DIMENSIONS / \u4ea7\u54c1\u5c3a\u5bf8</div>' +
             '<table><thead>' +
             '<tr style="background:#f3f4f6;">' +
-            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:10px;color:#6b7280;width:32px;">\u5e8f\u53f7<br>No.</th>' +
-            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:left;font-size:10px;color:#6b7280;">\u54c1\u7c7b / Product</th>' +
-            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:10px;color:#6b7280;width:70px;">\u5bbd<br>Width(mm)</th>' +
-            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:10px;color:#6b7280;width:70px;">\u9ad8<br>Height(mm)</th>' +
-            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:10px;color:#6b7280;width:65px;">\u8ba1\u7b97\u9762\u79ef<br>Area(M\u00b2)</th>' +
-            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:10px;color:#6b7280;width:65px;">\u8ba1\u4ef7\u9762\u79ef<br>Priced(M\u00b2)</th>' +
-            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:10px;color:#6b7280;width:40px;">\u6570\u91cf<br>Qty</th>' +
+            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:10px;color:#6b7280;width:32px;">No.<br>\u5e8f\u53f7</th>' +
+            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:left;font-size:10px;color:#6b7280;">Product / \u54c1\u7c7b</th>' +
+            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:10px;color:#6b7280;width:70px;">Width(mm)<br>\u5bbd</th>' +
+            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:10px;color:#6b7280;width:70px;">Height(mm)<br>\u9ad8</th>' +
+            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:10px;color:#6b7280;width:65px;">Area(M\u00b2)<br>\u8ba1\u7b97\u9762\u79ef</th>' +
+            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:10px;color:#6b7280;width:65px;">Priced(M\u00b2)<br>\u8ba1\u4ef7\u9762\u79ef</th>' +
+            '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:10px;color:#6b7280;width:40px;">Qty<br>\u6570\u91cf</th>' +
             '</tr></thead><tbody>' +
 
             blindsRows +
@@ -859,7 +859,7 @@
 
             // Preferential Total Price row
             '<tr class="total-row">' +
-            '<td style="border:1px solid #d1d5db;padding:10px 12px;" colspan="6"><strong>\u4f18\u60e0\u603b\u4ef7 / Preferential Total Price (' + curr + ')</strong></td>' +
+            '<td style="border:1px solid #d1d5db;padding:10px 12px;" colspan="6"><strong>Preferential Total Price / \u4f18\u60e0\u603b\u4ef7 (' + curr + ')</strong></td>' +
             '<td class="amt" style="border:1px solid #d1d5db;padding:10px 12px;">' + foreignSymbol + Math.round(grandForeign).toLocaleString() + '</td>' +
             '</tr>' +
 
@@ -867,19 +867,19 @@
 
             // Remarks
             '<div class="rmk">' +
-            '<div class="rmk-t">\u7279\u6b8a\u8bf4\u660e / Special Remarks</div>' +
+            '<div class="rmk-t">Special Remarks / \u7279\u6b8a\u8bf4\u660e</div>' +
             remarksHtml + '</div>' +
 
             // Footer: Seller / Buyer
             '<div class="ftr">' +
-            '<div><strong>\u5356\u65b9 / Seller:</strong> ' + tenantCfg.name + '</div>' +
-            '<div><strong>\u4e70\u65b9 / Buyer:</strong> ' + client + '</div>' +
+            '<div><strong>Seller / \u5356\u65b9:</strong> ' + tenantCfg.name + '</div>' +
+            '<div><strong>Buyer / \u4e70\u65b9:</strong> ' + client + '</div>' +
             '</div>' +
 
             // Print button
             '<div class="no-print" style="text-align:center;margin-top:30px;">' +
             '<button onclick="window.print()" style="padding:10px 32px;background:#ea580c;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;">' +
-            '<i class="fas fa-print" style="margin-right:6px;"></i>\u6253\u5370 / Print / Save PDF</button></div>' +
+            '<i class="fas fa-print" style="margin-right:6px;"></i>Print / Save PDF</button></div>' +
 
             '</body></html>';
     }
