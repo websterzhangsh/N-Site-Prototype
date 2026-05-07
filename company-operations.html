@@ -4500,6 +4500,9 @@
             if (slug === 'nestopia-chn' && settingsUrl) settingsUrl.value = 'https://nestopia-chn.com';
         }
 
+        // ── 立即执行：应用租户 UI（Logo、名称、用户信息）──
+        loadDashboardData();
+
         // ===== Page Navigation (→ js/core/router.js) =====
 
         // ===== Per-Project Agent Panel Data (Compliance · CX Exec · Knowledge Builder) =====
@@ -5309,14 +5312,4 @@
                         refreshProjectFilesPanel(projectId);
                         return;
                     }
-                    var reader = new FileReader();
-                    reader.onload = function(e) {
-                        saveProjectFileLocal(projectId, {
-                            name: file.name, type: file.type, size: file.size,
-                            category: cat, thumbnailUrl: isImg ? e.target.result : null,
-                            url: e.target.result
-                        });
-                        refreshProjectFilesPanel(projectId);
-                    };
-                    reader.readAsDataURL(file);
-    
+       
