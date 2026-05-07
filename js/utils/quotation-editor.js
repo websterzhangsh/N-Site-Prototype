@@ -606,7 +606,7 @@
         var html = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + getQuotTypeTitle(lang) + ' - ' + client + '</title>' +
             '<style>' +
             '@page { size: A4; margin: 15mm 12mm; }' +
-            'body { font-family: ' + (lang === 'en' ? '"Helvetica Neue", Arial, sans-serif' : '"Microsoft YaHei", "Helvetica Neue", Arial, sans-serif') + '; margin: 0; padding: 24px 32px; color: #111827; font-size: 13px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }' +
+            'body { font-family: ' + (lang === 'en' ? '"Helvetica Neue", Arial, sans-serif' : '"Helvetica Neue", Arial, "Microsoft YaHei", sans-serif') + '; margin: 0; padding: 24px 32px; color: #111827; font-size: 13px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }' +
             'table { border-collapse: collapse; width: 100%; }' +
             '.header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 2px solid #1e40af; }' +
             '.header-logo { width: 60px; height: 60px; object-fit: contain; border-radius: 8px; }' +
