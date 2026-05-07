@@ -182,6 +182,8 @@
                     { key: 'surveyor', label: 'Installer / Measurer', type: 'text', icon: 'fa-user-tie', placeholder: 'e.g. Tom Baker (#583041)' },
                     { key: 'date', label: 'Measurement Date', type: 'date', icon: 'fa-calendar' },
                     { key: 'openings', label: 'Number of Openings', type: 'number', icon: 'fa-th-large', placeholder: 'e.g. 3', min: 1, step: 1, defaultValue: '1' },
+                    { key: 'elevator_max_length', label: 'Elevator Max Package Length (mm)', type: 'number', icon: 'fa-elevator', placeholder: 'e.g. 2900', min: 0, step: 1 },
+                    { key: 'stairway_max_length', label: 'Stairway Max Package Length (mm)', type: 'number', icon: 'fa-stairs', placeholder: 'e.g. 2900', min: 0, step: 1 },
                     { key: 'width_in', label: 'Width (inches)', type: 'number', icon: 'fa-arrows-alt-h', placeholder: 'e.g. 72', perOpening: true, min: 0.01, step: 'any' },
                     { key: 'height_in', label: 'Height (inches)', type: 'number', icon: 'fa-arrows-alt-v', placeholder: 'e.g. 96', perOpening: true, min: 0.01, step: 'any' },
                     { key: 'mounting', label: 'Mounting Type', type: 'select', icon: 'fa-wrench', perOpening: true, defaultValue: 'recessed', options: [
