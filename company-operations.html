@@ -85,11 +85,6 @@
         .sidebar-project-list {
             flex: 1; overflow-y: auto; padding: 4px 12px;
         }
-        .sidebar-project-list::-webkit-scrollbar { width: 6px; }
-        .sidebar-project-list::-webkit-scrollbar-track { background: #f3f4f6; border-radius: 3px; }
-        .sidebar-project-list::-webkit-scrollbar-thumb { background: #c5c8ce; border-radius: 3px; min-height: 40px; }
-        .sidebar-project-list::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
-        .sidebar-project-list { scrollbar-width: thin; scrollbar-color: #c5c8ce #f3f4f6; }
         .sidebar-project-item {
             display: flex; align-items: center; gap: 10px;
             padding: 10px 12px; border-radius: 8px; cursor: pointer;
@@ -4419,10 +4414,10 @@
     <script src="js/core/i18n.js?v=priceFix2"></script>
     <script src="js/core/router.js?v=priceFix2"></script>
     <!-- 3. 数据层 (Phase 1) -->
-    <script src="js/data/i18n-dict.js?v=priceFix2"></script>
+    <script src="js/data/i18n-dict.js?v=enFirst1"></script>
     <script src="js/data/pricing-data.js?v=wpV1"></script>
     <script src="js/data/product-catalog.js?v=tdzFix2"></script>
-    <script src="js/data/step-config.js?v=priceFix2"></script>
+    <script src="js/data/step-config.js?v=liftStair1"></script>
     <script src="js/data/intake-fields.js?v=priceFix2"></script>
     <script src="js/data/seed-projects.js?v=tenantFix1"></script>
     <!-- 4. 工具层 (Phase 3) -->
@@ -4435,7 +4430,7 @@
     <script src="js/modules/products.js?v=noParams1"></script>
     <script src="js/modules/wholesale-pricing.js?v=wpHistV1"></script>
     <script src="js/modules/distributor-pricing.js?v=ph3V1"></script>
-    <script src="js/modules/overview.js?v=ovSkuList2"></script>
+    <script src="js/modules/overview.js?v=ovFixSec2"></script>
     <script src="js/modules/projects.js?v=tenantFix1"></script>
     <script src="js/modules/workflow.js?v=priceFix2"></script>
     <!-- 6. Agent 模块 (Phase 4) -->
@@ -4447,9 +4442,9 @@
     <script src="js/steps/step2-design.js?v=designFix6"></script>
     <script src="js/steps/step3-measurement.js?v=copyOpen1"></script>
     <script src="js/steps/zb-verification.js?v=priceFix2"></script>
-    <script src="js/steps/step4-quotation.js?v=rateFix1"></script>
+    <script src="js/steps/step4-quotation.js?v=hideParam1"></script>
     <!-- 8. 独立工具 (Phase 4) -->
-    <script src="js/utils/quotation-editor.js?v=sgdOnly2"></script>
+    <script src="js/utils/quotation-editor.js?v=enFirst1"></script>
     <script src="js/utils/step-progress.js?v=priceFix2"></script>
     <script src="js/utils/chatbot.js?v=priceFix2"></script>
     <script>
@@ -4499,9 +4494,6 @@
             if (slug === 'omeya-sin' && settingsUrl) settingsUrl.value = 'https://omeya-sin.com';
             if (slug === 'nestopia-chn' && settingsUrl) settingsUrl.value = 'https://nestopia-chn.com';
         }
-
-        // ── 立即执行：应用租户 UI（Logo、名称、用户信息）──
-        loadDashboardData();
 
         // ===== Page Navigation (→ js/core/router.js) =====
 
@@ -5312,4 +5304,2421 @@
                         refreshProjectFilesPanel(projectId);
                         return;
                     }
-       
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        saveProjectFileLocal(projectId, {
+                            name: file.name, type: file.type, size: file.size,
+                            category: cat, thumbnailUrl: isImg ? e.target.result : null,
+                            url: e.target.result
+                        });
+                        refreshProjectFilesPanel(projectId);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // Handle file removal (Phase 2: Supabase + localStorage)
+        function handleRemoveProjectFile(projectId, fileId, storagePath) {
+            if (typeof NestopiaStorage !== 'undefined' && NestopiaDB.isConnected()) {
+                NestopiaStorage.removeProjectFile(projectId, fileId, storagePath || null)
+                    .then(function() { refreshProjectFilesPanel(projectId); });
+            } else {
+                removeProjectFileLocal(projectId, fileId);
+                refreshProjectFilesPanel(projectId);
+            }
+        }
+
+        // 项目文件预览 Lightbox — 支持图片/视频/文档
+        async function previewProjectFile(encodedUrl, encodedName, mimeType, storagePath, fileId) {
+            var url = decodeURIComponent(encodedUrl);
+            var name = decodeURIComponent(encodedName);
+
+            // 自动检测 mimeType — 当调用方传入空值时基于文件扩展名推断
+            if (!mimeType || mimeType === 'file') {
+                if (/\.(jpg|jpeg|png|gif|webp|bmp)$/i.test(name)) mimeType = 'image';
+                else if (/\.(mp4|mov|webm|avi)$/i.test(name)) mimeType = 'video';
+                else if (/\.pdf$/i.test(name)) mimeType = 'application/pdf';
+            }
+            // 如果没有 storagePath 但有 fileId，从 DB 回退查找 storage_path（兼容旧上传数据）
+            if (!storagePath && fileId && typeof NestopiaDB !== 'undefined' && NestopiaDB.isConnected()) {
+                try {
+                    var client = NestopiaDB.getClient();
+                    if (client) {
+                        var dbRes = await client.from('kb_documents').select('storage_path').eq('id', fileId).single();
+                        if (dbRes.data && dbRes.data.storage_path) storagePath = dbRes.data.storage_path;
+                    }
+                } catch(e) { /* silent */ }
+            }
+            // 只要有 storagePath，始终生成最新签名 URL（Private Bucket 必须签名访问）
+            if (storagePath) {
+                var freshUrl = await getProjectFileSignedUrl(storagePath);
+                if (freshUrl) url = freshUrl;
+            }
+            if (!url) {
+                showToast('File URL not available. Try refreshing the page.', 'error');
+                return;
+            }
+
+            var existing = document.getElementById('projectFilePreview');
+            if (existing) existing.remove();
+
+            var isImage = mimeType && (mimeType.startsWith('image') || /\.(jpg|jpeg|png|gif|webp|bmp)$/i.test(name));
+            var isVideo = mimeType && (mimeType.startsWith('video') || /\.(mp4|mov|webm|avi)$/i.test(name));
+            var isPdf = mimeType && (mimeType.includes('pdf') || /\.pdf$/i.test(name));
+
+            var contentHTML = '';
+            if (isImage) {
+                contentHTML = '<img src="' + url + '" class="max-w-full max-h-[75vh] rounded-lg shadow-lg object-contain" alt="' + name + '">';
+            } else if (isVideo) {
+                contentHTML = '<video src="' + url + '" controls autoplay class="max-w-full max-h-[75vh] rounded-lg shadow-lg" style="min-width:320px"></video>';
+            } else if (isPdf) {
+                contentHTML = '<iframe src="' + url + '" class="w-full rounded-lg shadow-lg" style="height:75vh;min-width:600px" frameborder="0"></iframe>';
+            } else {
+                contentHTML = '<div class="bg-white rounded-xl p-8 text-center shadow-lg">'
+                    + '<i class="fas fa-file text-gray-300 text-5xl mb-3"></i>'
+                    + '<div class="text-sm font-medium text-gray-700">' + name + '</div>'
+                    + '<a href="' + url + '" target="_blank" download class="mt-3 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition">'
+                    + '<i class="fas fa-download"></i> Download File</a></div>';
+            }
+
+            var overlay = document.createElement('div');
+            overlay.id = 'projectFilePreview';
+            overlay.className = 'fixed inset-0 bg-black/80 backdrop-blur-sm z-[400] flex flex-col items-center justify-center p-4';
+            overlay.onclick = function(e) { if (e.target === overlay) overlay.remove(); };
+            overlay.innerHTML = '<div class="flex items-center gap-3 mb-3" onclick="event.stopPropagation()">'
+                + '<div class="text-white/90 text-sm font-medium truncate max-w-md">' + name + '</div>'
+                + '<a href="' + url + '" target="_blank" download class="text-white/60 hover:text-white transition" title="Download"><i class="fas fa-download"></i></a>'
+                + '<a href="' + url + '" target="_blank" class="text-white/60 hover:text-white transition" title="Open in new tab"><i class="fas fa-external-link-alt"></i></a>'
+                + '<button onclick="var e=document.getElementById(&quot;projectFilePreview&quot;);if(e)e.remove()" class="text-white/60 hover:text-white transition ml-2" title="Close"><i class="fas fa-times text-lg"></i></button>'
+                + '</div>'
+                + '<div onclick="event.stopPropagation()">' + contentHTML + '</div>';
+            document.body.appendChild(overlay);
+        }
+
+        function refreshProjectFilesPanel(projectId) {
+            document.querySelectorAll('[data-project-files="' + projectId + '"]').forEach(function(el) {
+                el.innerHTML = renderProjectFilesHTML(projectId);
+            });
+        }
+
+        // KB Document Preview Modal
+        function previewKBDocument(docId) {
+            var doc = zbProductKB.find(function(d) { return d.id === docId; });
+            if (!doc) return;
+            var isVid = doc.type === 'video';
+            var cats = { specs: 'Product Specification', measurement: 'Measurement Guide', pricing: 'Pricing & Sales', installation: 'Installation & Training', compliance: 'Compliance' };
+            var catLabel = cats[doc.category] || doc.category;
+            var iconBg = doc.color.replace('text-', 'bg-').replace('-500', '-100');
+            var existing = document.getElementById('kb-preview-overlay');
+            if (existing) existing.remove();
+            var ov = document.createElement('div');
+            ov.id = 'kb-preview-overlay';
+            ov.className = 'fixed inset-0 bg-black/50 z-[300] flex items-center justify-center p-4';
+            ov.onclick = function(e) { if (e.target === ov) ov.remove(); };
+            var h = '<div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden" onclick="event.stopPropagation()">'
+                + '<div class="p-6">'
+                + '<div class="flex items-start gap-4 mb-4">'
+                + '<div class="w-12 h-12 ' + iconBg + ' rounded-xl flex items-center justify-center flex-shrink-0"><i class="fas ' + doc.icon + ' ' + doc.color + ' text-xl"></i></div>'
+                + '<div class="flex-1 min-w-0"><h3 class="text-sm font-bold text-gray-900 leading-tight">' + doc.title + '</h3>'
+                + '<div class="flex items-center gap-2 mt-1"><span class="text-[10px] px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 font-medium">' + catLabel + '</span>'
+                + '<span class="text-[10px] text-gray-400">' + doc.type.toUpperCase() + ' &middot; ' + doc.size + '</span></div></div>'
+                + '<button onclick="document.getElementById(\'kb-preview-overlay\').remove()" class="text-gray-400 hover:text-gray-600 transition"><i class="fas fa-times text-lg"></i></button></div>';
+            if (isVid) {
+                h += '<div class="bg-gray-900 rounded-xl p-8 flex flex-col items-center justify-center mb-4">'
+                    + '<i class="fas fa-play-circle text-white/40 text-5xl mb-3"></i>'
+                    + '<div class="text-white/70 text-sm font-medium">' + (doc.duration || '') + '</div>'
+                    + '<div class="text-white/40 text-[10px] mt-1">Video preview - Phase 2</div></div>';
+            } else {
+                h += '<div class="bg-gray-50 rounded-xl p-6 flex flex-col items-center justify-center mb-4 border border-gray-200 border-dashed">'
+                    + '<i class="fas fa-file-alt text-gray-300 text-4xl mb-2"></i>'
+                    + '<div class="text-gray-500 text-xs font-medium">Document Preview</div>'
+                    + '<div class="text-gray-400 text-[10px] mt-0.5">Full preview in Phase 2 (Supabase Storage)</div></div>';
+            }
+            h += '<div class="flex gap-2">'
+                + '<button class="flex-1 py-2.5 bg-gray-100 text-gray-500 rounded-xl text-xs font-semibold cursor-not-allowed" disabled><i class="fas fa-download mr-1.5"></i>Download (Phase 2)</button>'
+                + '<button onclick="document.getElementById(\'kb-preview-overlay\').remove()" class="flex-1 py-2.5 bg-gray-800 text-white rounded-xl text-xs font-semibold hover:bg-gray-900 transition"><i class="fas fa-check mr-1.5"></i>Got It</button>'
+                + '</div></div></div>';
+            ov.innerHTML = h;
+            document.body.appendChild(ov);
+        }
+
+
+        // Dummy per-project step status data
+        function getProjectStepStatus(project, stepNum, useConfig) {
+            // useConfig allows overriding the config (e.g., ZB_COMBINED_CONFIG)
+            const config = useConfig || STEP_DETAIL_CONFIG[stepNum];
+            const actionTotal = config ? config.coreActions.length : 6;
+            const deliverableTotal = config ? config.keyDeliverables.length : 3;
+
+            // 动态计算问卷完成模块数（取代硬编码值）
+            var _mData = getIntakeData(project.id);
+            var _qDynamic = 0;
+            if (_mData && _mData._modules) {
+                Object.keys(_mData._modules).forEach(function(k) {
+                    if (_mData._modules[k] === 'completed') _qDynamic++;
+                });
+            }
+
+            // Zip Blinds multi-step — derive progress from workflowStep vs stepNum
+            if (project.type === 'Zip Blinds' && ZB_STEP_CONFIGS[stepNum]) {
+                if (stepNum < project.workflowStep) {
+                    // Completed step
+                    return { actionsCompleted: actionTotal, actionTotal, deliverablesCompleted: deliverableTotal, deliverableTotal, questionnaireCompleted: 0, questionnaireTotal: 0, paymentStatus: 'paid' };
+                } else if (stepNum === project.workflowStep) {
+                    // Current active step — partially done
+                    return { actionsCompleted: 1, actionTotal, deliverablesCompleted: 0, deliverableTotal, questionnaireCompleted: 0, questionnaireTotal: 0, paymentStatus: 'pending' };
+                }
+                // Future step
+                return { actionsCompleted: 0, actionTotal, deliverablesCompleted: 0, deliverableTotal, questionnaireCompleted: 0, questionnaireTotal: 0, paymentStatus: 'not_started' };
+            }
+
+            // Simulate different completion states based on project progress
+            if (stepNum < project.workflowStep) {
+                // Completed step
+                return { actionsCompleted: actionTotal, actionTotal, deliverablesCompleted: deliverableTotal, deliverableTotal, questionnaireCompleted: 8, questionnaireTotal: 8, paymentStatus: 'paid', photosUploaded: 6, stylesSelected: 1, renderingsGenerated: 2 };
+            } else if (stepNum === project.workflowStep) {
+                // Current step - partially done
+                if (stepNum === 1) return { actionsCompleted: 3, actionTotal, deliverablesCompleted: 0, deliverableTotal, questionnaireCompleted: _qDynamic, questionnaireTotal: 8, paymentStatus: 'pending' };
+                if (stepNum === 2) return { actionsCompleted: 2, actionTotal, deliverablesCompleted: 0, deliverableTotal, questionnaireCompleted: 0, questionnaireTotal: 8, paymentStatus: 'pending', photosUploaded: 3, stylesSelected: 1, renderingsGenerated: 0 };
+                if (stepNum === 3) return { actionsCompleted: 4, actionTotal, deliverablesCompleted: 2, deliverableTotal, questionnaireCompleted: 0, questionnaireTotal: 8, paymentStatus: 'paid', measurementComplete: project.measurement ? true : false, obstaclesRecorded: project.measurement ? project.measurement.obstacles.length : 0 };
+                if (stepNum === 4) return { actionsCompleted: 3, actionTotal, deliverablesCompleted: 1, deliverableTotal, questionnaireCompleted: 0, questionnaireTotal: 8, paymentStatus: 'pending', quoteGenerated: false, contractSigned: false, depositCollected: false };
+                return { actionsCompleted: 2, actionTotal, deliverablesCompleted: 0, deliverableTotal, questionnaireCompleted: 0, questionnaireTotal: 8, paymentStatus: 'pending' };
+            }
+            return { actionsCompleted: 0, actionTotal, deliverablesCompleted: 0, deliverableTotal, questionnaireCompleted: 0, questionnaireTotal: 8, paymentStatus: 'not_started', photosUploaded: 0, stylesSelected: 0, renderingsGenerated: 0 };
+        }
+
+        let expandedStep = null;
+        let currentDetailProject = null;
+
+        // ===== Intake Form Modal & Module Configs =====
+        let intakeFormData = {};  // In-memory storage keyed by project_id
+        let intakeUploadedFiles = {}; // Simulated file references keyed by project_id
+
+        // ===== Pre-populated Demo Data for Chen Pergola Space (PRJ-004) =====
+        intakeFormData['PRJ-004'] = {
+            // A.1 Customer Basics
+            a1_client_name: 'Ms. Emily Chen',
+            a1_address_street: '456 Oak Dr',
+            a1_address_city: 'Frederick',
+            a1_address_state: 'MD',
+            a1_address_zip: '21701',
+            a1_phone: '(301) 555-0404',
+            a1_email: 'chen@email.com',
+            a1_preferred_contact: 'email',
+            a1_other_decision_makers: 'David Chen / Spouse',
+            // A.2 Project Overview
+            a2_usage_scenario: 'residential_house',
+            a2_install_location: 'patio_ground',
+            a2_primary_usage: ['dining', 'leisure', 'entertaining'],
+            a2_wall_connected: 'false',
+            a2_dimension_length_ft: '18',
+            a2_dimension_width_ft: '14',
+            a2_dimension_height_ft: '10',
+            a2_special_constraints: 'Large oak tree 6ft from planned area; underground sprinkler line on east side',
+            // A.3 Usage & Lifestyle
+            a3_usage_duration: 'three_season',
+            a3_household_size: '4',
+            a3_frequent_visitors: 'true',
+            a3_activities: ['dining', 'entertaining', 'reading'],
+            a3_functional_needs: ['shade_blinds', 'lighting', 'outdoor_kitchen'],
+            // A.4 Budget & Timeline
+            a4_budget_range: '10k_20k',
+            a4_ideal_start: '1_3_months',
+            a4_important_dates: 'Would like it ready for July 4th cookout',
+            // A.5 Community & HOA Compliance
+            a5_has_hoa: 'yes',
+            a5_hoa_name: 'Oak Grove Community HOA',
+            a5_hoa_design_guidelines: 'has_can_provide',
+            a5_setback_awareness: 'need_help',
+            // A.6 Style & Aesthetic Preferences
+            a6_style_preference: 'Modern minimalist pergola with clean lines; prefer open-air feel with retractable shade',
+            a6_color_preference: 'Dark bronze frame / charcoal gray canopy',
+            // A.7 Decision Process
+            a7_decision_maker: 'spouse_together',
+            a7_decision_timeline: '2_4_weeks',
+            // A.8 Additional Notes
+            a8_additional_notes: 'We entertain frequently in summer. Need enough shade coverage for 8-person dining table. Interested in integrated LED lighting.',
+            // Module completion tracking
+            _modules: { 'A.1': 'completed', 'A.2': 'completed', 'A.3': 'completed', 'A.4': 'completed', 'A.5': 'completed', 'A.6': 'completed', 'A.7': 'completed', 'A.8': 'completed' }
+        };
+
+        // Pre-populated Demo Data for Smith Premium Sunroom (PRJ-003) — Steps 1-5 (production)
+        intakeFormData['PRJ-003'] = {
+            // A.1 Customer Basics
+            a1_client_name: 'Mr. Smith',
+            a1_address_street: '8520 Fenton St',
+            a1_address_city: 'Silver Spring',
+            a1_address_state: 'MD',
+            a1_address_zip: '20910',
+            a1_phone: '(301) 555-0303',
+            a1_email: 'smith@email.com',
+            a1_preferred_contact: 'phone',
+            a1_other_decision_makers: '',
+            // A.2 Project Overview
+            a2_usage_scenario: 'residential_house',
+            a2_install_location: 'patio_ground',
+            a2_primary_usage: ['dining', 'leisure', 'reading'],
+            a2_wall_connected: 'true',
+            a2_dimension_length_ft: '24',
+            a2_dimension_width_ft: '16',
+            a2_dimension_height_ft: '10',
+            a2_special_constraints: 'Existing concrete patio slab; gas line runs along east wall',
+            // A.3 Usage & Lifestyle
+            a3_usage_duration: 'four_season',
+            a3_household_size: '3',
+            a3_frequent_visitors: 'true',
+            a3_activities: ['dining', 'reading', 'plants'],
+            a3_functional_needs: ['shade_blinds', 'lighting', 'heating'],
+            // A.4 Budget & Timeline
+            a4_budget_range: '30k_50k',
+            a4_ideal_start: 'within_1_month',
+            a4_important_dates: '',
+            // A.5 Community & HOA Compliance
+            a5_has_hoa: 'no',
+            a5_hoa_name: '',
+            a5_setback_awareness: 'aware',
+            // A.6 Style & Aesthetic Preferences
+            a6_style_preference: 'Premium enclosed sunroom with full glass panels; modern clean lines; retractable roof sections',
+            a6_color_preference: 'Black frame / clear polycarbonate panels',
+            // A.7 Decision Process
+            a7_decision_maker: 'self',
+            a7_decision_timeline: 'within_1_week',
+            // A.8 Additional Notes
+            a8_additional_notes: 'Want a fully enclosed four-season sunroom attached to the back of the house. Must accommodate existing patio furniture. Interested in motorized retractable roof.',
+            // Module completion tracking
+            _modules: { 'A.1': 'completed', 'A.2': 'completed', 'A.3': 'completed', 'A.4': 'completed', 'A.5': 'completed', 'A.6': 'completed', 'A.7': 'completed', 'A.8': 'completed' }
+        };
+
+        // Pre-populated Demo Data for Davis Pool Zip Blinds (PRJ-005)
+        intakeFormData['PRJ-005'] = {
+            a1_client_name: 'Mr. Davis',
+            a1_address_street: '789 Pool Ln',
+            a1_address_city: 'Phoenix',
+            a1_address_state: 'AZ',
+            a1_address_zip: '85001',
+            a1_phone: '(602) 555-0505',
+            a1_email: 'davis@email.com',
+            a1_preferred_contact: 'sms',
+            a1_other_decision_makers: 'Lisa Davis / Spouse',
+            a2_usage_scenario: 'residential_house',
+            a2_install_location: 'patio_ground',
+            a2_primary_usage: ['pool_enclosure', 'entertaining'],
+            a2_wall_connected: 'true',
+            a2_dimension_length_ft: '20',
+            a2_dimension_width_ft: '12',
+            a2_dimension_height_ft: '9',
+            a2_special_constraints: 'Pool area; needs wind and UV protection',
+            a3_usage_duration: 'three_season',
+            a3_household_size: '4',
+            a3_frequent_visitors: 'true',
+            a3_activities: ['swimming', 'entertaining', 'leisure'],
+            a3_functional_needs: ['shade_blinds', 'wind_protection'],
+            a4_budget_range: '5k_10k',
+            a4_ideal_start: '1_3_months',
+            a5_has_hoa: 'yes',
+            a5_hoa_name: 'Desert Ridge HOA',
+            a5_setback_awareness: 'need_help',
+            a6_style_preference: 'Modern zip blinds with motorized operation; mesh fabric for wind protection while maintaining pool views',
+            a6_color_preference: 'Charcoal frame / light gray mesh',
+            a7_decision_maker: 'spouse_together',
+            a7_decision_timeline: '2_4_weeks',
+            a8_additional_notes: 'Pool area needs protection from wind and sun. 4 openings around the patio cover, each about 2.4m wide × 2.0m drop.',
+            _modules: { 'A.1': 'completed', 'A.2': 'completed', 'A.3': 'completed', 'A.4': 'completed', 'A.5': 'completed', 'A.6': 'completed', 'A.7': 'completed', 'A.8': 'completed' }
+        };
+
+        // Pre-populated Demo Data for Johnson Residence Sunroom (PRJ-001) — Steps 1-3 complete
+        intakeFormData['PRJ-001'] = {
+            a1_client_name: 'Mr. Robert Johnson',
+            a1_address_street: '123 Sunshine Ave',
+            a1_address_city: 'Los Angeles',
+            a1_address_state: 'CA',
+            a1_address_zip: '90024',
+            a1_phone: '(310) 555-0101',
+            a1_email: 'johnson@email.com',
+            a1_preferred_contact: 'phone',
+            a2_usage_scenario: 'residential_house',
+            a2_install_location: 'patio_ground',
+            a2_primary_usage: ['leisure', 'dining', 'garden'],
+            a2_wall_connected: 'true',
+            a2_dimension_length_ft: '24',
+            a2_dimension_width_ft: '16',
+            a2_dimension_height_ft: '10',
+            a2_special_constraints: 'Roof overhang at 9ft on attachment wall; gas line runs along south side',
+            a3_usage_duration: 'year_round',
+            a3_household_size: '5',
+            a3_frequent_visitors: 'true',
+            a3_activities: ['reading', 'dining', 'gardening', 'entertaining'],
+            a3_functional_needs: ['motorized_windows', 'smart_control', 'lighting', 'hvac'],
+            a4_budget_range: '35k_50k',
+            a4_ideal_start: 'asap',
+            a5_has_hoa: 'yes',
+            a5_hoa_name: 'Westside Estates HOA',
+            a5_hoa_design_guidelines: 'has_can_provide',
+            a5_setback_awareness: 'aware',
+            a6_style_preference: 'Contemporary retractable sunroom with full-height glass panels; seamless indoor-outdoor transition',
+            a6_color_preference: 'White frame / clear glass',
+            a7_decision_maker: 'self',
+            a7_decision_timeline: '1_week',
+            _modules: { 'A.1': 'completed', 'A.2': 'completed', 'A.3': 'completed', 'A.4': 'completed', 'A.5': 'completed', 'A.6': 'completed', 'A.7': 'completed', 'A.8': 'completed' }
+        };
+
+        // Pre-populated Demo Data for Martinez ADU Project (PRJ-002) — at Step 2
+        intakeFormData['PRJ-002'] = {
+            a1_client_name: 'Ms. Sofia Martinez',
+            a1_address_street: '456 Oak Dr',
+            a1_address_city: 'San Francisco',
+            a1_address_state: 'CA',
+            a1_address_zip: '94110',
+            a1_phone: '(415) 555-0202',
+            a1_email: 'martinez@email.com',
+            a1_preferred_contact: 'video',
+            a2_usage_scenario: 'residential_house',
+            a2_install_location: 'patio_ground',
+            a2_primary_usage: ['study', 'leisure', 'kids_play'],
+            a2_wall_connected: 'false',
+            a2_dimension_length_ft: '30',
+            a2_dimension_width_ft: '20',
+            a2_dimension_height_ft: '12',
+            a2_special_constraints: 'Hillside lot with 8% slope; sewer easement on north boundary',
+            a3_usage_duration: 'year_round',
+            a3_household_size: '3',
+            a3_frequent_visitors: 'false',
+            a3_activities: ['reading', 'exercise'],
+            a3_functional_needs: ['smart_control', 'hvac', 'lighting'],
+            a4_budget_range: '75k_100k',
+            a4_ideal_start: '1_3_months',
+            a5_has_hoa: 'unsure',
+            a5_hoa_design_guidelines: 'unsure',
+            a5_setback_awareness: 'need_help',
+            a6_style_preference: 'Modern ADU studio — flat roof, large windows, energy efficient',
+            a6_color_preference: 'Natural wood cladding / matte black trim',
+            a7_decision_maker: 'self',
+            a7_decision_timeline: '2_4_weeks',
+            a8_additional_notes: 'Planning to use as home office + guest suite. Need proper insulation and HVAC.',
+            _modules: { 'A.1': 'completed', 'A.2': 'completed', 'A.3': 'completed', 'A.4': 'completed', 'A.5': 'completed', 'A.6': 'completed', 'A.7': 'completed', 'A.8': 'partial' }
+        };
+
+        // ===== Omeya-SIN: MX Zip Blinds =====
+        intakeFormData['OMY-001'] = {
+            a1_client_name: 'Miss Xu', a1_address_street: '88 Orchard Road, #12-01', a1_address_city: 'Singapore', a1_address_state: 'SG', a1_address_zip: '238839',
+            a1_phone: '+65 9123-4567', a1_email: 'miss.xu@email.com', a1_preferred_contact: 'phone', a1_other_decision_makers: '',
+            _modules: { 'A.1': 'completed', 'A.2': 'not_started', 'A.3': 'not_started', 'A.4': 'not_started', 'A.5': 'not_started', 'A.6': 'not_started', 'A.7': 'not_started', 'A.8': 'not_started' }
+        };
+        // ===== Nestopia-CHN: LZ Sunroom =====
+        intakeFormData['CHN-001'] = {
+            a1_client_name: 'Larry Zhang', a1_address_street: '1288 Nanjing West Rd', a1_address_city: 'Shanghai', a1_address_state: 'China', a1_address_zip: '200040',
+            a1_phone: '+86 138-0000-0001', a1_email: 'larry.zhang@email.com', a1_preferred_contact: 'phone', a1_other_decision_makers: '',
+            _modules: { 'A.1': 'completed', 'A.2': 'not_started', 'A.3': 'not_started', 'A.4': 'not_started', 'A.5': 'not_started', 'A.6': 'not_started', 'A.7': 'not_started', 'A.8': 'not_started' }
+        };
+        // ===== Nestopia-CHN: LZ Pergola =====
+        intakeFormData['CHN-002'] = {
+            a1_client_name: 'Larry Zhang', a1_address_street: '1288 Nanjing West Rd', a1_address_city: 'Shanghai', a1_address_state: 'China', a1_address_zip: '200040',
+            a1_phone: '+86 138-0000-0001', a1_email: 'larry.zhang@email.com', a1_preferred_contact: 'phone', a1_other_decision_makers: '',
+            _modules: { 'A.1': 'completed', 'A.2': 'not_started', 'A.3': 'not_started', 'A.4': 'not_started', 'A.5': 'not_started', 'A.6': 'not_started', 'A.7': 'not_started', 'A.8': 'not_started' }
+        };
+        // ===== Nestopia-CHN: LZ Zip Blinds =====
+        intakeFormData['CHN-003'] = {
+            a1_client_name: 'Larry Zhang', a1_address_street: '1288 Nanjing West Rd', a1_address_city: 'Shanghai', a1_address_state: 'China', a1_address_zip: '200040',
+            a1_phone: '+86 138-0000-0001', a1_email: 'larry.zhang@email.com', a1_preferred_contact: 'phone', a1_other_decision_makers: '',
+            _modules: { 'A.1': 'completed', 'A.2': 'not_started', 'A.3': 'not_started', 'A.4': 'not_started', 'A.5': 'not_started', 'A.6': 'not_started', 'A.7': 'not_started', 'A.8': 'not_started' }
+        };
+
+        // Intake 表单模块字段定义 (→ js/data/intake-fields.js)
+        const INTAKE_MODULE_FIELDS = Nestopia.data.intakeFields.INTAKE_MODULE_FIELDS;
+
+        function getIntakeData(projectId) {
+            if (!intakeFormData[projectId]) intakeFormData[projectId] = {};
+            return intakeFormData[projectId];
+        }
+        function getUploadedFiles(projectId) {
+            if (!intakeUploadedFiles[projectId]) intakeUploadedFiles[projectId] = {};
+            return intakeUploadedFiles[projectId];
+        }
+
+        // ── Supabase Intake Form 持久化 ──────────────────────────
+        var _intakeDbLoaded = {};  // 标记哪些项目已从 DB 加载
+
+        function loadIntakeFromDB(projectId) {
+            if (typeof NestopiaDB === 'undefined' || !NestopiaDB.isConnected()) return Promise.resolve(null);
+            return NestopiaDB.getClient()
+                .from('project_intake_data')
+                .select('form_data')
+                .eq('tenant_id', NestopiaDB.getTenantId())
+                .eq('project_key', projectId)
+                .maybeSingle()
+                .then(function(res) {
+                    if (res.error) { console.warn('[Intake] DB load error:', res.error.message); return null; }
+                    return (res.data && res.data.form_data) ? res.data.form_data : null;
+                })
+                .catch(function(err) { console.warn('[Intake] DB load failed:', err.message); return null; });
+        }
+
+        function saveIntakeToDB(projectId, data) {
+            if (typeof NestopiaDB === 'undefined' || !NestopiaDB.isConnected()) return Promise.resolve(false);
+            // 合并上传文件引用到 form_data
+            var dataClone = JSON.parse(JSON.stringify(data));
+            var uploadedFiles = getUploadedFiles(projectId);
+            if (uploadedFiles && Object.keys(uploadedFiles).length > 0) {
+                dataClone._uploadedFiles = JSON.parse(JSON.stringify(uploadedFiles));
+            }
+            var payload = {
+                tenant_id: NestopiaDB.getTenantId(),
+                project_key: projectId,
+                form_data: dataClone,
+                updated_at: new Date().toISOString()
+            };
+            return NestopiaDB.getClient()
+                .from('project_intake_data')
+                .upsert(payload, { onConflict: 'tenant_id,project_key' })
+                .then(function(res) {
+                    if (res.error) { console.warn('[Intake] DB save error:', res.error.message); return false; }
+                    console.log('[Intake] Saved to Supabase:', projectId);
+                    return true;
+                })
+                .catch(function(err) { console.warn('[Intake] DB save failed:', err.message); return false; });
+        }
+
+        function openIntakeModule(moduleKey, projectId) {
+            const config = INTAKE_MODULE_FIELDS[moduleKey];
+            if (!config) return;
+
+            // 如果还没从 Supabase 加载过，先加载再渲染
+            if (!_intakeDbLoaded[projectId] && typeof NestopiaDB !== 'undefined' && NestopiaDB.isConnected()) {
+                _intakeDbLoaded[projectId] = true;
+                loadIntakeFromDB(projectId).then(function(dbData) {
+                    if (dbData && typeof dbData === 'object') {
+                        var local = getIntakeData(projectId);
+                        // DB 数据合并到内存（DB 优先）
+                        Object.keys(dbData).forEach(function(k) {
+                            if (k === '_uploadedFiles') return;  // 单独处理
+                            local[k] = dbData[k];
+                        });
+                        // 恢复上传文件引用
+                        if (dbData._uploadedFiles && typeof dbData._uploadedFiles === 'object') {
+                            var localFiles = getUploadedFiles(projectId);
+                            Object.keys(dbData._uploadedFiles).forEach(function(fk) {
+                                if (!localFiles[fk] || localFiles[fk].length === 0) {
+                                    localFiles[fk] = dbData._uploadedFiles[fk];
+                                }
+                            });
+                            console.log('[Intake] Restored uploaded file refs from Supabase');
+                        }
+                        console.log('[Intake] Loaded from Supabase for', projectId);
+                    }
+                    _renderIntakeModal(moduleKey, projectId);
+                });
+                return;
+            }
+
+            _renderIntakeModal(moduleKey, projectId);
+        }
+
+        function _renderIntakeModal(moduleKey, projectId) {
+            const config = INTAKE_MODULE_FIELDS[moduleKey];
+            if (!config) return;
+            const data = getIntakeData(projectId);
+            const files = getUploadedFiles(projectId);
+
+            const fieldsHTML = config.fields.map(f => {
+                const val = data[f.key] || '';
+                const reqBadge = f.required ? '<span class="text-red-400 ml-1">*</span>' : '';
+                let inputHTML = '';
+                if (f.type === 'select') {
+                    inputHTML = `<select id="intake_${f.key}" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-300 focus:border-blue-400 bg-white">
+                        <option value="">-- Select --</option>
+                        ${f.options.map(o => `<option value="${o.value}" ${val === o.value ? 'selected' : ''}>${o.label}</option>`).join('')}
+                    </select>`;
+                } else if (f.type === 'multiselect') {
+                    const selectedVals = Array.isArray(val) ? val : (val ? [val] : []);
+                    inputHTML = `<div class="flex flex-wrap gap-2" id="intake_${f.key}">${f.options.map(o => {
+                        const checked = selectedVals.includes(o.value);
+                        return `<label class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs cursor-pointer transition ${checked ? 'bg-blue-50 border-blue-300 text-blue-700' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'}">
+                            <input type="checkbox" value="${o.value}" ${checked ? 'checked' : ''} class="hidden ms-check" data-field="${f.key}" onchange="toggleMultiSelect(this)">
+                            ${o.label}
+                        </label>`;
+                    }).join('')}</div>`;
+                } else if (f.type === 'textarea') {
+                    inputHTML = `<textarea id="intake_${f.key}" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-300 focus:border-blue-400 resize-none" rows="3" placeholder="${f.placeholder || ''}">${val}</textarea>`;
+                } else {
+                    inputHTML = `<input type="${f.type}" id="intake_${f.key}" value="${val}" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-300 focus:border-blue-400" placeholder="${f.placeholder || ''}">`;
+                }
+                return `<div class="space-y-1.5">
+                    <label class="text-xs font-medium text-gray-700">${f.label}${reqBadge}</label>
+                    ${inputHTML}
+                </div>`;
+            }).join('');
+
+            // File upload zones
+            let uploadsHTML = '';
+            if (config.uploads) {
+                uploadsHTML = `<div class="border-t border-gray-100 pt-4 mt-4">
+                    <div class="flex items-center gap-2 mb-3">
+                        <i class="fas fa-cloud-upload-alt text-gray-500 text-sm"></i>
+                        <span class="text-sm font-semibold text-gray-700">Document Uploads</span>
+                    </div>
+                    ${config.uploads.map(u => {
+                        const existingFiles = files[u.key] || [];
+                        const fileListHTML = existingFiles.length > 0 ? `
+                            <div class="mt-2 space-y-1">
+                                ${existingFiles.map((ef, fi) => {
+                                    var isImg = ef.type && ef.type.startsWith('image/');
+                                    var thumbSrc = ef.thumbnailUrl || ef.url || '';
+                                    var cloudBadge = ef.storageMode === 'supabase'
+                                        ? '<i class="fas fa-cloud text-green-400 text-[8px]" title="Cloud"></i>'
+                                        : '<i class="fas fa-hdd text-gray-300 text-[8px]" title="Local"></i>';
+                                    return `<div class="flex items-center gap-2 py-1.5 px-2 bg-green-50/80 rounded-lg text-xs text-green-700 group cursor-pointer hover:bg-green-100/80 transition" onclick="previewProjectFile('${encodeURIComponent(ef.url || '')}', '${encodeURIComponent(ef.name)}', '${ef.type || ''}', '${ef.storagePath || ''}', '${ef.fileId || ''}')">
+                                        ${isImg && thumbSrc
+                                            ? '<img src="' + thumbSrc + '" class="w-8 h-8 rounded object-cover flex-shrink-0 cursor-pointer" onclick="previewProjectFile(\'' + encodeURIComponent(thumbSrc) + '\', \'' + encodeURIComponent(ef.name) + '\', \'' + ef.type + '\', \'' + (ef.storagePath || '') + '\', \'' + (ef.fileId || '') + '\')">'
+                                            : '<i class="fas fa-file-check flex-shrink-0 cursor-pointer hover:text-blue-600 transition" onclick="previewProjectFile(\'' + encodeURIComponent(ef.url || '') + '\', \'' + encodeURIComponent(ef.name) + '\', \'' + (ef.type || '') + '\', \'' + (ef.storagePath || '') + '\', \'' + (ef.fileId || '') + '\')"></i>'}
+                                        <span class="flex-1 truncate">${ef.name}</span>
+                                        ${cloudBadge}
+                                        <button onclick="removeUploadedFile('${projectId}', '${u.key}', ${fi})" class="text-red-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition"><i class="fas fa-times"></i></button>
+                                    </div>`;
+                                }).join('')}
+                            </div>` : '';
+                        return `<div class="mb-3">
+                            <label class="text-xs font-medium text-gray-600 mb-1.5 block">${u.label}</label>
+                            <div class="border-2 border-dashed border-gray-200 rounded-lg p-4 text-center hover:border-blue-300 hover:bg-blue-50/30 transition cursor-pointer" onclick="document.getElementById('file_${u.key}').click()">
+                                <i class="fas ${u.icon} text-gray-300 text-2xl mb-2"></i>
+                                <p class="text-xs text-gray-400">${u.hint}</p>
+                                <p class="text-[10px] text-gray-300 mt-1">Click to browse or drag & drop</p>
+                                <input type="file" id="file_${u.key}" accept="${u.accept}" ${u.multiple ? 'multiple' : ''} class="hidden" onchange="handleIntakeFileUpload('${projectId}', '${u.key}', this)">
+                            </div>
+                            ${fileListHTML}
+                        </div>`;
+                    }).join('')}
+                </div>`;
+            }
+
+            // Build modal
+            const modal = document.createElement('div');
+            modal.id = 'intakeFormModal';
+            modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm';
+            modal.onclick = (e) => { if (e.target === modal) closeIntakeModal(); };
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[85vh] flex flex-col mx-4 animate-in" style="animation: modalIn 0.2s ease-out">
+                    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                        <div>
+                            <div class="text-sm font-bold text-gray-900">${moduleKey} — ${config.title}</div>
+                            <div class="text-xs text-gray-400 mt-0.5">Client Design Intake Questionnaire</div>
+                        </div>
+                        <button onclick="closeIntakeModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition">
+                            <i class="fas fa-times text-gray-500 text-sm"></i>
+                        </button>
+                    </div>
+                    <div class="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+                        ${fieldsHTML}
+                        ${uploadsHTML}
+                    </div>
+                    <div class="flex items-center justify-between px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-2xl">
+                        <button onclick="closeIntakeModal()" class="px-4 py-2 text-xs text-gray-500 hover:text-gray-700 transition">Cancel</button>
+                        <button onclick="saveIntakeModule('${moduleKey}', '${projectId}')" class="px-5 py-2 bg-gray-900 text-white text-xs font-medium rounded-lg hover:bg-gray-800 transition shadow-sm">
+                            <i class="fas fa-save mr-1.5"></i>Save Module
+                        </button>
+                    </div>
+                </div>`;
+            document.body.appendChild(modal);
+        }
+
+        function closeIntakeModal() {
+            const modal = document.getElementById('intakeFormModal');
+            if (modal) modal.remove();
+        }
+
+        function toggleMultiSelect(checkbox) {
+            const label = checkbox.closest('label');
+            if (checkbox.checked) {
+                label.classList.add('bg-blue-50', 'border-blue-300', 'text-blue-700');
+                label.classList.remove('bg-white', 'border-gray-200', 'text-gray-600');
+            } else {
+                label.classList.remove('bg-blue-50', 'border-blue-300', 'text-blue-700');
+                label.classList.add('bg-white', 'border-gray-200', 'text-gray-600');
+            }
+        }
+
+        function saveIntakeModule(moduleKey, projectId) {
+            const config = INTAKE_MODULE_FIELDS[moduleKey];
+            if (!config) return;
+            const data = getIntakeData(projectId);
+
+            config.fields.forEach(f => {
+                if (f.type === 'multiselect') {
+                    const checkboxes = document.querySelectorAll(`#intake_${f.key} input[type=checkbox]:checked`);
+                    data[f.key] = Array.from(checkboxes).map(cb => cb.value);
+                } else {
+                    const el = document.getElementById(`intake_${f.key}`);
+                    if (el) data[f.key] = el.value;
+                }
+            });
+
+            // Mark module as completed (simple check: all required fields filled)
+            const allRequiredFilled = config.fields.filter(f => f.required).every(f => {
+                const val = data[f.key];
+                return val && (Array.isArray(val) ? val.length > 0 : val.trim() !== '');
+            });
+
+            if (!data._modules) data._modules = {};
+            data._modules[moduleKey] = allRequiredFilled ? 'completed' : 'partial';
+
+            closeIntakeModal();
+
+            // 同步到 Supabase
+            saveIntakeToDB(projectId, data);
+
+            // A.1 Customer Basics: sync to project card & Supabase customers
+            if (moduleKey === 'A.1') {
+                syncA1ToProject(projectId, data);
+            }
+
+            // Re-render step detail if open
+            if (expandedStep && currentDetailProject) {
+                toggleStepDetail(expandedStep, window.currentDetailProject);
+                toggleStepDetail(expandedStep, window.currentDetailProject);
+            }
+        }
+
+        function handleIntakeFileUpload(projectId, uploadKey, input) {
+            var fileList = Array.from(input.files);
+            if (!fileList.length) return;
+            var localFiles = getUploadedFiles(projectId);
+            if (!localFiles[uploadKey]) localFiles[uploadKey] = [];
+            var useCloud = (typeof NestopiaStorage !== 'undefined' && typeof NestopiaDB !== 'undefined' && NestopiaDB.isConnected());
+
+            var pending = fileList.length;
+            function oneDone() {
+                pending--;
+                if (pending <= 0) {
+                    saveIntakeToDB(projectId, getIntakeData(projectId));
+                    refreshIntakeModal(projectId, uploadKey);
+                }
+            }
+
+            fileList.forEach(function(file) {
+                if (useCloud) {
+                    // Supabase Storage 上传
+                    NestopiaStorage.uploadProjectFile(projectId, file, { category: 'site-photos', description: 'Intake: ' + uploadKey })
+                        .then(function(record) {
+                            var entry = {
+                                name: file.name, size: file.size, type: file.type,
+                                uploadedAt: new Date().toISOString(),
+                                storageMode: 'supabase',
+                                storagePath: record.storagePath || null,
+                                fileId: record.id || null,
+                                url: null, thumbnailUrl: null
+                            };
+                            // 为图片生成签名 URL 作为缩略图
+                            if (file.type && file.type.startsWith('image/') && record.storagePath) {
+                                getProjectFileSignedUrl(record.storagePath).then(function(sUrl) {
+                                    entry.url = sUrl;
+                                    entry.thumbnailUrl = sUrl;
+                                    localFiles[uploadKey].push(entry);
+                                    oneDone();
+                                });
+                            } else {
+                                localFiles[uploadKey].push(entry);
+                                oneDone();
+                            }
+                        })
+                        .catch(function(err) {
+                            console.error('[IntakeUpload] Cloud upload failed:', err);
+                            localFiles[uploadKey].push({
+                                name: file.name, size: file.size, type: file.type,
+                                uploadedAt: new Date().toISOString(),
+                                storageMode: 'local', error: err.message
+                            });
+                            oneDone();
+                        });
+                } else {
+                    // localStorage 回退（仅元数据）
+                    localFiles[uploadKey].push({
+                        name: file.name, size: file.size, type: file.type,
+                        uploadedAt: new Date().toISOString(),
+                        storageMode: 'local'
+                    });
+                    oneDone();
+                }
+            });
+            // 清空 input 以便重复选择
+            input.value = '';
+        }
+
+        function refreshIntakeModal(projectId, uploadKey) {
+            for (var mk in INTAKE_MODULE_FIELDS) {
+                var mc = INTAKE_MODULE_FIELDS[mk];
+                if (mc.uploads && mc.uploads.some(function(u) { return u.key === uploadKey; })) {
+                    closeIntakeModal();
+                    openIntakeModule(mk, projectId);
+                    break;
+                }
+            }
+        }
+
+        function removeUploadedFile(projectId, uploadKey, fileIndex) {
+            var files = getUploadedFiles(projectId);
+            if (!files[uploadKey]) return;
+            var removed = files[uploadKey].splice(fileIndex, 1)[0];
+            // 如果是 Supabase 文件，也从 Storage 删除
+            if (removed && removed.storageMode === 'supabase' && removed.storagePath) {
+                if (typeof NestopiaStorage !== 'undefined' && NestopiaDB.isConnected()) {
+                    NestopiaStorage.removeProjectFile(projectId, removed.fileId || null, removed.storagePath)
+                        .catch(function(e) { console.warn('[IntakeUpload] Storage delete failed:', e); });
+                }
+            }
+            saveIntakeToDB(projectId, getIntakeData(projectId));
+            refreshIntakeModal(projectId, uploadKey);
+        }
+
+        function toggleStepDetail(stepNum, project) {
+            const container = document.getElementById('projStepDetail');
+            if (!container) return;
+
+            // null-safety: recover project from global if null
+            if (!project) {
+                project = window.currentDetailProject || null;
+            }
+            if (!project) {
+                console.error('[Nestopia] toggleStepDetail: project is null for step', stepNum);
+                container.classList.remove('hidden');
+                container.innerHTML = '<div class="p-8 text-center"><div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center mx-auto mb-3"><i class="fas fa-exclamation-triangle text-amber-400 text-lg"></i></div><p class="text-sm text-amber-600 font-medium">Project data not loaded</p><p class="text-xs text-gray-400 mt-1 max-w-md mx-auto">The project information has not been loaded yet. Please wait a moment and try again, or select the project from the sidebar.</p><button onclick="location.reload()" class="mt-3 px-4 py-1.5 bg-gray-900 text-white text-xs rounded-lg hover:bg-gray-700 transition">Reload Page</button></div>';
+                expandedStep = stepNum;
+                return;
+            }
+
+            if (expandedStep === stepNum) {
+                // Collapse
+                container.classList.add('hidden');
+                container.innerHTML = '';
+                expandedStep = null;
+                // Also hide Core Actions panel
+                var caPanel = document.getElementById('projCoreActionsPanel');
+                if (caPanel) { caPanel.classList.add('hidden'); caPanel.innerHTML = ''; }
+                return;
+            }
+
+            // Zip Blinds: combined workflow — skip step warnings, use ZB_COMBINED_CONFIG
+            const isZipBlinds = project && project.type === 'Zip Blinds';
+
+            if (isZipBlinds) {
+                if (stepNum === 4) {
+                    // "Order & Install" — placeholder
+                    container.classList.remove('hidden');
+                    container.innerHTML = `
+                        <div class="p-8 text-center">
+                            <div class="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-truck text-gray-400 text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-600 mb-2">Order & Install</h3>
+                            <p class="text-sm text-gray-400 max-w-md mx-auto">Order placement, production tracking, shipment, and on-site installation will be available in a future release.</p>
+                            <span class="inline-block mt-3 text-xs font-medium text-gray-400 bg-gray-100 px-3 py-1 rounded-full">Coming Soon</span>
+                        </div>`;
+                    expandedStep = stepNum;
+                    // Hide Core Actions panel for placeholder step
+                    var caP = document.getElementById('projCoreActionsPanel');
+                    if (caP) { caP.classList.add('hidden'); caP.innerHTML = ''; }
+                    container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    return;
+                }
+                // Steps 1-3: use ZB_STEP_CONFIGS
+                const zbConfig = ZB_STEP_CONFIGS[stepNum];
+                if (!zbConfig) return;
+                const zbStepDef = ZB_WORKFLOW_STEPS.find(s => s.step === stepNum);
+                const zbColor = zbStepDef ? zbStepDef.color : 'blue';
+                const zbStatus = getProjectStepStatus(project, stepNum, zbConfig);
+                container.classList.remove('hidden');
+                try {
+                    container.innerHTML = renderStepDetailHTML(zbConfig, zbStatus, stepNum, zbColor, project);
+                } catch (renderErr) {
+                    console.error('[Nestopia] renderStepDetailHTML failed for ZB step ' + stepNum + ':', renderErr);
+                    container.innerHTML = '<div class="p-6 text-center"><div class="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center mx-auto mb-3"><i class="fas fa-exclamation-triangle text-red-400 text-lg"></i></div><p class="text-sm text-red-600 font-medium">Failed to render Step ' + stepNum + '</p><p class="text-xs text-gray-400 mt-1">' + renderErr.message + '</p><button onclick="location.reload()" class="mt-3 px-4 py-1.5 bg-gray-900 text-white text-xs rounded-lg hover:bg-gray-700 transition">Reload Page</button></div>';
+                }
+                // ★ Step 3 (Verification): 自动从 Supabase 加载 measurement 数据并刷新 Initial Summary
+                // 解决模板同步渲染时 DB 数据尚未加载导致 'No initial measurement data' + 错误 opening 计数
+                if (stepNum === 3 && Nestopia.steps.step3 && Nestopia.steps.step3.ensureMeasurementLoaded) {
+                    Nestopia.steps.step3.ensureMeasurementLoaded(project.id).then(function() {
+                        var zv = Nestopia.steps.zbVerification;
+                        if (zv) {
+                            var verState = zv.getVerificationState(project.id);
+                            var latestInitial = zv.getInitialMeasurement(project.id);
+                            verState.initialData = JSON.parse(JSON.stringify(latestInitial));
+                            zv.rebuildVerificationContent(project.id);
+                        }
+                        if (window.updateInstallationSummary) {
+                            window.updateInstallationSummary(project.id);
+                        }
+                    });
+                }
+                // ★ Step 2 (Quotation): 自动从 Supabase 加载 measurement 数据并刷新报价摘要
+                // 解决模板同步渲染时 measurement DB 数据尚未加载导致 openings 数量回退为 1
+                if (stepNum === 2 && Nestopia.steps.step3 && Nestopia.steps.step3.ensureMeasurementLoaded) {
+                    // ★ 立即显示 skeleton 加载态，避免 "1 opening" 闪烁
+                    if (Nestopia.steps.step4 && Nestopia.steps.step4.showInheritedLoading) {
+                        Nestopia.steps.step4.showInheritedLoading(project.id);
+                    }
+                    Nestopia.steps.step3.ensureMeasurementLoaded(project.id).then(function() {
+                        if (Nestopia.steps.step4 && Nestopia.steps.step4.refreshInheritedMeasurement) {
+                            Nestopia.steps.step4.refreshInheritedMeasurement(project.id, true); // ★ forceRebuild — 强制从最新 measurement 数据重建 state
+                        }
+                    });
+                }
+                expandedStep = stepNum;
+                _populateCoreActionsPanel(zbConfig, zbStatus, stepNum, zbColor);
+                container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                return;
+            }
+
+            // Non-Zip Blinds: original 6-step workflow with warnings
+            // Warn if user tries to open a step ahead of the current active step
+            if (project && stepNum > project.workflowStep) {
+                const stepNames = ['', 'Intent', 'AI Design', 'Measurement', 'Quotation', 'Production', 'Installation'];
+                const currentStepName = stepNames[project.workflowStep] || 'Step ' + project.workflowStep;
+                const targetStepName = stepNames[stepNum] || 'Step ' + stepNum;
+                if (!confirm(
+                    '⚠️ Current active step is Step ' + project.workflowStep + ' (' + currentStepName + ').\n\n' +
+                    'You are attempting to view Step ' + stepNum + ' (' + targetStepName + '), which is ahead of the current progress.\n\n' +
+                    'Actions in this step may be misleading as the required actions in earlier steps are not fully executed and/or deliverables are not fully obtained.\n\n' +
+                    'Do you still want to proceed?'
+                )) {
+                    return;
+                }
+            }
+
+            // Warn if user tries to re-open a completed step
+            if (project && stepNum < project.workflowStep) {
+                const stepNames = ['', 'Intent', 'AI Design', 'Measurement', 'Quotation', 'Production', 'Installation'];
+                const targetStepName = stepNames[stepNum] || 'Step ' + stepNum;
+                if (!confirm(
+                    '⚠️ Step ' + stepNum + ' (' + targetStepName + ') has already been completed.\n\n' +
+                    'Re-initiating actions in this step may override earlier actions and/or deliverables already obtained, and may generate subsequent unavoidable costs.\n\n' +
+                    'Do you still want to proceed?'
+                )) {
+                    return;
+                }
+            }
+
+            const config = STEP_DETAIL_CONFIG[stepNum];
+            if (!config) {
+                // Steps 2-6 not yet configured
+                container.classList.remove('hidden');
+                container.innerHTML = `
+                    <div class="p-6 text-center text-gray-400">
+                        <i class="fas fa-tools text-2xl mb-2"></i>
+                        <p class="text-sm">Step ${stepNum} details coming soon...</p>
+                    </div>`;
+                expandedStep = stepNum;
+                return;
+            }
+
+            const status = getProjectStepStatus(project, stepNum);
+            const stepColors = ['blue', 'indigo', 'purple', 'orange', 'yellow', 'green'];
+            const color = stepColors[stepNum - 1];
+
+            container.classList.remove('hidden');
+            try {
+                container.innerHTML = renderStepDetailHTML(config, status, stepNum, color, project);
+            } catch (renderErr) {
+                console.error('[Nestopia] renderStepDetailHTML failed for step ' + stepNum + ':', renderErr);
+                container.innerHTML = '<div class="p-8 text-center"><div class="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center mx-auto mb-3"><i class="fas fa-exclamation-triangle text-red-400 text-lg"></i></div><p class="text-sm text-red-600 font-medium">Failed to render Step ' + stepNum + '</p><p class="text-xs text-gray-400 mt-1 max-w-md mx-auto">' + renderErr.message + '</p><button onclick="location.reload()" class="mt-3 px-4 py-1.5 bg-gray-900 text-white text-xs rounded-lg hover:bg-gray-700 transition">Reload Page</button></div>';
+            }
+            expandedStep = stepNum;
+            _populateCoreActionsPanel(config, status, stepNum, color);
+
+            // Smooth scroll to detail
+            container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // v1.3.0: Populate external Core Actions + Key Deliverables panel
+        function _populateCoreActionsPanel(config, status, stepNum, color) {
+            var caPanel = document.getElementById('projCoreActionsPanel');
+            if (!caPanel) return;
+
+            // Build actions HTML
+            var actionsHTML = (config.coreActions || []).map(function(a, i) {
+                var done = i < status.actionsCompleted;
+                return '<div class="flex items-start gap-2 py-1.5 ' + (i > 0 ? 'border-t border-gray-50' : '') + '">' +
+                    '<div class="w-5 h-5 rounded-full flex items-center justify-center mt-0.5 flex-shrink-0 ' +
+                    (done ? 'bg-green-100' : 'bg-gray-100') + '">' +
+                    '<i class="fas ' + (done ? 'fa-check text-green-600' : 'fa-circle text-gray-300') + ' text-[8px]"></i></div>' +
+                    '<div><div class="text-xs font-medium text-gray-800">' + a.label + '</div>' +
+                    '<div class="text-[10px] text-gray-400 mt-0.5">' + a.desc + '</div></div></div>';
+            }).join('');
+
+            // Build deliverables HTML
+            var deliverablesHTML = (config.keyDeliverables || []).map(function(d, i) {
+                var done = i < status.deliverablesCompleted;
+                return '<div class="flex items-start gap-2 py-1.5 ' + (i > 0 ? 'border-t border-gray-50' : '') + '">' +
+                    '<div class="w-5 h-5 rounded-full flex items-center justify-center mt-0.5 flex-shrink-0 ' +
+                    (done ? 'bg-green-100' : 'bg-gray-100') + '">' +
+                    '<i class="fas ' + (done ? 'fa-check text-green-600' : 'fa-circle text-gray-300') + ' text-[8px]"></i></div>' +
+                    '<div><div class="text-xs font-medium text-gray-800">' + (d.icon ? '<i class="fas ' + d.icon + ' text-gray-400 mr-1.5"></i>' : '') + d.label + '</div>' +
+                    '<div class="text-[10px] text-gray-400 mt-0.5">' + d.desc + '</div></div></div>';
+            }).join('');
+
+            caPanel.innerHTML = '<div class="bg-white rounded-xl border border-gray-200 overflow-hidden">' +
+                '<div class="grid grid-cols-1 lg:grid-cols-2 gap-0 divide-y lg:divide-y-0 lg:divide-x divide-gray-100">' +
+                '<div class="p-4"><div class="flex items-center justify-between mb-3">' +
+                '<div class="flex items-center gap-2"><i class="fas fa-tasks text-' + color + '-500 text-sm"></i>' +
+                '<span class="text-sm font-semibold text-gray-700">Core Actions</span></div>' +
+                '<span class="text-xs text-gray-500">' + status.actionsCompleted + '/' + status.actionTotal + '</span></div>' +
+                actionsHTML + '</div>' +
+                '<div class="p-4"><div class="flex items-center justify-between mb-3">' +
+                '<div class="flex items-center gap-2"><i class="fas fa-file-alt text-' + color + '-500 text-sm"></i>' +
+                '<span class="text-sm font-semibold text-gray-700">Key Deliverables</span></div>' +
+                '<span class="text-xs text-gray-500">' + status.deliverablesCompleted + '/' + status.deliverableTotal + '</span></div>' +
+                deliverablesHTML + '</div>' +
+                '</div></div>';
+            caPanel.classList.remove('hidden');
+        }
+
+        function renderStepDetailHTML(config, status, stepNum, color, project) {
+            const isCompleted = stepNum < project.workflowStep;
+            const isCurrent = stepNum === project.workflowStep;
+
+            // Core Actions
+            const actionsHTML = config.coreActions.map((a, i) => {
+                const done = i < status.actionsCompleted;
+                return `
+                    <div class="flex items-start gap-3 py-2.5 ${i < config.coreActions.length - 1 ? 'border-b border-gray-50' : ''}">
+                        <div class="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${done ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400'}">
+                            <i class="fas ${done ? 'fa-check' : a.icon} text-[10px]"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="text-sm font-medium ${done ? 'text-gray-900' : 'text-gray-600'}">${a.label}</div>
+                            <div class="text-xs text-gray-400 mt-0.5">${a.desc}</div>
+                        </div>
+                        <span class="text-[10px] px-1.5 py-0.5 rounded ${done ? 'bg-green-50 text-green-600' : 'bg-gray-50 text-gray-400'}">${done ? 'Completed' : 'Pending'}</span>
+                    </div>`;
+            }).join('');
+
+            // Key Deliverables
+            const deliverablesHTML = config.keyDeliverables.map((d, i) => {
+                const done = i < status.deliverablesCompleted;
+                return `
+                    <div class="flex items-center gap-3 py-2.5 ${i < config.keyDeliverables.length - 1 ? 'border-b border-gray-50' : ''}">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${done ? 'bg-green-50 text-green-600' : 'bg-gray-50 text-gray-400'}">
+                            <i class="fas ${d.icon} text-sm"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="text-sm font-medium ${done ? 'text-gray-900' : 'text-gray-600'}">${d.label}</div>
+                            <div class="text-xs text-gray-400">${d.desc}</div>
+                        </div>
+                        ${d.required ? '<span class="text-[10px] text-red-400 bg-red-50 px-1.5 py-0.5 rounded">Required</span>' : '<span class="text-[10px] text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded">Optional</span>'}
+                        <div class="w-6 h-6 rounded-full flex items-center justify-center ${done ? 'bg-green-500 text-white' : 'border-2 border-gray-200'}">
+                            ${done ? '<i class="fas fa-check text-[10px]"></i>' : ''}
+                        </div>
+                    </div>`;
+            }).join('');
+
+            // Questionnaire Progress (Step 1 specific)
+            const qPct = Math.round((status.questionnaireCompleted / status.questionnaireTotal) * 100);
+            const questionnaireHTML = config.questionnaire ? `
+                <div class="bg-white rounded-lg border border-gray-100 p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-clipboard-list text-${color}-500 text-sm"></i>
+                            <span class="text-sm font-semibold text-gray-700">Client Design Intake Form</span>
+                        </div>
+                        <span class="text-xs text-gray-500">${status.questionnaireCompleted}/${status.questionnaireTotal} modules</span>
+                    </div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="flex-1 bg-gray-100 rounded-full h-2">
+                            <div class="bg-${color}-500 rounded-full h-2 transition-all" style="width:${qPct}%"></div>
+                        </div>
+                        <span class="text-xs font-medium text-gray-500">${qPct}%</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                        ${config.questionnaire.map((q, i) => {
+                            const qDone = i < status.questionnaireCompleted;
+                            const moduleData = getIntakeData(project.id);
+                            const modStatus = moduleData._modules && moduleData._modules[q.module];
+                            const hasData = modStatus === 'completed' || modStatus === 'partial';
+                            const displayDone = qDone || modStatus === 'completed';
+                            const displayPartial = !displayDone && modStatus === 'partial';
+                            return `<div class="flex items-center gap-2 py-1.5 px-2 rounded cursor-pointer transition hover:bg-blue-50 ${displayDone ? 'bg-green-50/50' : displayPartial ? 'bg-amber-50/50' : ''}" onclick="openIntakeModule('${q.module}', '${project.id}')">
+                                <i class="fas ${displayDone ? 'fa-check-circle text-green-500' : displayPartial ? 'fa-circle-half-stroke text-amber-400' : 'fa-circle text-gray-300'} text-xs"></i>
+                                <span class="text-xs ${displayDone ? 'text-gray-700' : 'text-gray-400'} flex-1"><span class="font-medium">${q.module}</span> ${q.name}</span>
+                                ${q.required ? '' : '<span class="text-[9px] text-gray-300">Optional</span>'}
+                                <i class="fas fa-chevron-right text-gray-300 text-[9px]"></i>
+                            </div>`;
+                        }).join('')}
+                    </div>
+                </div>` : '';
+
+            // AI Designer Panel (Step 2 specific) — inline expandable
+            const aiDesignerHTML = config.aiDesigner ? (() => { try {
+                const inherited = config.aiDesigner.inheritFields;
+                const moduleData = getIntakeData(project.id);
+                const allStyles = config.aiDesigner.styleOptions;
+                // Filter styles by project type using catalog prefix mapping
+                const typePrefixMap = { 'Sunroom': 'sr-', 'Pergola': 'pg-', 'Zip Blinds': 'zb-', 'ADU': 'adu-' };
+                const prefix = typePrefixMap[project.type] || 'sr-';
+                const styles = allStyles.filter(s => s.value.startsWith(prefix));
+
+                // Build inherited data summary
+                const VALUE_LABELS = {
+                    'patio_ground': 'Patio (Ground Level)', 'terrace_upper': 'Terrace (Upper Floor)',
+                    'raised_platform': 'Raised Platform', 'rooftop': 'Rooftop',
+                    'commercial_space': 'Commercial Space',
+                    'true': 'Yes (Attached)', 'false': 'No (Freestanding)',
+                    'yes': 'Yes', 'no': 'No', 'unsure': 'Not Sure',
+                    'residential_house': 'Residential (House)', 'residential_apartment': 'Residential (Apartment)',
+                    'phone': 'Phone', 'sms': 'SMS', 'email': 'Email', 'video': 'Video Call'
+                };
+                const inheritedRows = inherited.map(f => {
+                    let val = '—';
+                    if (f.source === 'project.type') {
+                        val = project.type || '—';
+                    } else if (f.field && moduleData) {
+                        const fields = f.field.split(',');
+                        const vals = fields.map(fk => moduleData[fk]).filter(Boolean);
+                        if (vals.length > 0) {
+                            if (fields.length > 1 && fields[0].includes('dimension')) {
+                                val = vals.join(' × ') + ' ft';
+                            } else {
+                                val = vals.map(v => VALUE_LABELS[v] || v).join(', ');
+                            }
+                        }
+                    }
+                    return `<div class="flex items-center justify-between py-1.5 ${f !== inherited[inherited.length - 1] ? 'border-b border-gray-50' : ''}">
+                        <span class="text-xs text-gray-500">${f.label}</span>
+                        <span class="text-xs font-medium text-gray-700">${val}</span>
+                    </div>`;
+                }).join('');
+
+                // Build product cards from productCatalog (filtered by project type) — using productIcons
+                const gridCols = styles.length <= 2 ? 'grid-cols-2' : 'grid-cols-3';
+                const _catalog = (typeof window.productCatalog !== 'undefined') ? window.productCatalog : null;
+                const _icons = (typeof window.productIcons !== 'undefined') ? window.productIcons : null;
+                const productCards = styles.map(s => {
+                    const prod = (_catalog && _catalog[s.value]) || null;
+                    const iconSrc = (_icons && _icons[s.value]) || '';
+                    const priceRange = prod && prod.price && prod.price.tiers && prod.price.tiers.length > 0 ? (prod.price.mode === 'strategy' ? ('$' + prod.price.tiers[0].retail[0] + '-' + prod.price.tiers[0].retail[1] + '/' + prod.price.unit) : ('$' + prod.price.tiers[0].retail[0] + '-' + prod.price.tiers[0].retail[1] + '/' + prod.price.unit)) : '';
+                    return `<div class="step2-product-card flex flex-col items-center gap-1 p-2.5 rounded-lg border border-gray-100 hover:border-indigo-300 hover:bg-indigo-50/30 cursor-pointer transition" data-catalog-id="${s.value}" onclick="Nestopia.steps.step2.selectStep2Product('${project.id}', '${s.value}', this)">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-gray-50">
+                            ${iconSrc ? '<img src="' + iconSrc + '" alt="' + s.label + '" class="w-8 h-8 object-contain">' : '<i class="fas ' + s.icon + ' text-sm text-gray-400"></i>'}
+                        </div>
+                        <span class="text-[10px] font-semibold text-gray-600 text-center leading-tight">${s.label}</span>
+                        ${s.sub ? '<span class="text-[8px] text-gray-400 text-center leading-tight">' + s.sub + '</span>' : ''}
+                        ${priceRange ? '<span class="text-[8px] text-indigo-500 font-medium">' + priceRange + '</span>' : ''}
+                    </div>`;
+                }).join('');
+
+                return `
+                <div class="bg-white rounded-lg border border-gray-100 p-4">
+                    <!-- Section Title + Launch Button -->
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 bg-indigo-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-magic text-indigo-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <span class="text-sm font-semibold text-gray-700">AI Designer</span>
+                                <span class="text-[10px] text-indigo-500 ml-2 font-medium">Concept Phase</span>
+                            </div>
+                        </div>
+                        <button id="step2LaunchBtn_${project.id}" onclick="Nestopia.steps.step2.toggleStep2Designer('${project.id}')" class="px-3 py-1.5 bg-indigo-600 text-white text-xs font-semibold rounded-lg hover:bg-indigo-700 transition flex items-center gap-1.5 shadow-sm">
+                            <i class="fas fa-rocket text-[10px]"></i> Launch Designer
+                        </button>
+                    </div>
+
+                    <!-- Inherited Data from Step 1 -->
+                    <div class="mb-4 p-3 bg-blue-50/50 rounded-lg border border-blue-100">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fas fa-arrow-right text-blue-500 text-[10px]"></i>
+                            <span class="text-xs font-semibold text-blue-700">Inherited from Step 1 — Intake Data</span>
+                            <span class="text-[9px] text-blue-400 ml-auto">Auto-populated from questionnaire</span>
+                        </div>
+                        ${inheritedRows}
+                    </div>
+
+                    <!-- Expandable AI Designer Panel (hidden by default) -->
+                    <div id="step2DesignerPanel_${project.id}" class="hidden" style="animation: fadeInSlide 0.3s ease">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                            <!-- Left Column: Yard Photos + Product Selection + Prompt + Generate -->
+                            <div class="space-y-5">
+                                <!-- Photo Upload: Backyard + Product Reference (Sunroom/Pergola) -->
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-xs font-semibold text-gray-700"><i class="fas fa-camera text-indigo-400 mr-1.5"></i>Upload Photos</span>
+                                        <span id="step2PhotoCount_${project.id}" class="text-[10px] text-gray-400">0 uploaded</span>
+                                    </div>
+                                    <div class="flex gap-3">
+                                        <!-- Slot 0: Backyard Photo (always visible) -->
+                                        <div class="flex-1">
+                                            <div class="text-[10px] font-medium text-gray-500 mb-1"><i class="fas fa-home text-indigo-400 mr-1"></i>Backyard Photo</div>
+                                            <div id="step2PhotoSlot0_${project.id}" class="border-2 border-dashed border-gray-200 bg-gray-50/50 rounded-xl text-center cursor-pointer hover:border-indigo-300 hover:bg-indigo-50/40 transition aspect-[4/3] flex items-center justify-center relative overflow-hidden" onclick="Nestopia.steps.step2.triggerStep2PhotoUpload('${project.id}', 0)">
+                                                <div class="step2-photo-placeholder"><i class="fas fa-cloud-upload-alt text-2xl text-gray-300 mb-1"></i><p class="text-[10px] text-gray-400">Upload backyard</p></div>
+                                                <img class="step2-photo-img absolute inset-0 w-full h-full object-cover hidden rounded-xl">
+                                                <button class="step2-photo-remove absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full text-[9px] hidden hover:bg-red-600 z-10" onclick="event.stopPropagation(); Nestopia.steps.step2.clearStep2Photo('${project.id}', 0)"><i class="fas fa-times"></i></button>
+                                            </div>
+                                        </div>
+                                        ${(project.type === 'Sunroom' || project.type === 'Pergola') ? `
+                                        <!-- Product Reference Photo (Sunroom/Pergola only, uploaded by tech sales) -->
+                                        <div class="flex-1">
+                                            <div class="text-[10px] font-medium text-gray-500 mb-1"><i class="fas fa-cubes text-purple-400 mr-1"></i>Product Reference <span class="text-purple-400">(by Tech Sales)</span></div>
+                                            <div id="step2ProductRefSlot_${project.id}" class="border-2 border-dashed border-purple-200 bg-purple-50/30 rounded-xl text-center cursor-pointer hover:border-purple-400 hover:bg-purple-50/60 transition aspect-[4/3] flex items-center justify-center relative overflow-hidden" onclick="Nestopia.steps.step2.triggerProductRefUpload('${project.id}')">
+                                                <div class="step2-photo-placeholder"><i class="fas fa-cloud-upload-alt text-2xl text-purple-300 mb-1"></i><p class="text-[10px] text-purple-400">Upload product photo</p><p class="text-[9px] text-purple-300 mt-0.5">Used as foreground for AI</p></div>
+                                                <img class="step2-photo-img absolute inset-0 w-full h-full object-cover hidden rounded-xl">
+                                                <button class="step2-photo-remove absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full text-[9px] hidden hover:bg-red-600 z-10" onclick="event.stopPropagation(); Nestopia.steps.step2.clearProductRefPhoto('${project.id}')"><i class="fas fa-times"></i></button>
+                                            </div>
+                                        </div>
+                                        ` : ''}
+                                    </div>
+                                    <p class="text-[10px] text-gray-400 mt-1.5"><i class="fas fa-lightbulb text-amber-400 mr-1"></i>${(project.type === 'Sunroom' || project.type === 'Pergola') ? 'Upload a backyard photo and a product reference photo. Both are used for AI rendering.' : 'Upload a backyard photo. It will be used as the background for AI rendering.'}</p>
+                                </div>
+
+                                <!-- Product Selection -->
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-xs font-semibold text-gray-700"><i class="fas fa-th-large text-indigo-400 mr-1.5"></i>Select Product</span>
+                                        <span id="step2ProductLabel_${project.id}" class="text-[10px] text-gray-400">None selected</span>
+                                    </div>
+                                    <div class="grid ${gridCols} gap-2">
+                                        ${productCards}
+                                    </div>
+                                </div>
+
+                                <!-- Design Prompt (optional, 800 char limit) -->
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-xs font-semibold text-gray-700"><i class="fas fa-comment-dots text-indigo-400 mr-1.5"></i>Design Instructions <span class="text-gray-400 font-normal">(optional)</span></span>
+                                        <span id="step2CharCount_${project.id}" class="text-[10px] text-gray-400">0/800</span>
+                                    </div>
+                                    <textarea id="step2PromptInput_${project.id}" maxlength="800" rows="3" oninput="updateStep2CharCount('${project.id}')" class="w-full text-xs border border-gray-200 rounded-lg p-2.5 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 transition" placeholder="e.g. Place the sunroom along the back wall, keep the patio furniture visible, match the house roofline..."></textarea>
+                                </div>
+
+                                <!-- Generate Button -->
+                                <button id="step2GenerateBtn_${project.id}" onclick="Nestopia.steps.step2.generateStep2Design('${project.id}')" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl font-semibold text-sm hover:from-indigo-700 hover:to-violet-700 transition shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed" disabled>
+                                    <i class="fas fa-wand-magic-sparkles"></i> Generate Design
+                                </button>
+                            </div>
+
+                            <!-- Right Column: Concept Rendering + Post-gen Actions + Stats -->
+                            <div class="space-y-4">
+                                <!-- Rendering Preview -->
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-xs font-semibold text-gray-700"><i class="fas fa-images text-indigo-400 mr-1.5"></i>Concept Rendering</span>
+                                        <span id="step2RenderStatus_${project.id}" class="px-2 py-0.5 bg-gray-100 text-gray-500 text-[10px] font-medium rounded-full">Select a product and click Generate</span>
+                                    </div>
+                                    <div class="relative rounded-xl overflow-hidden border border-gray-200 bg-gray-50 aspect-[4/3] flex items-center justify-center">
+                                        <div id="step2RenderPlaceholder_${project.id}" class="text-center p-4">
+                                            <i class="fas fa-image text-4xl text-gray-200 mb-2"></i>
+                                            <p class="text-xs text-gray-400">AI will blend the product into your yard photo</p>
+                                        </div>
+                                        <div id="step2RenderResult_${project.id}" class="absolute inset-0 hidden">
+                                            <img id="step2RenderImg_${project.id}" src="" alt="AI Rendering" class="w-full h-full object-cover">
+                                            <div class="absolute top-3 left-3 px-2 py-1 bg-indigo-600 text-white text-[10px] font-bold rounded-full"><i class="fas fa-wand-magic-sparkles mr-1"></i>AI Generated</div>
+                                        </div>
+                                        <div id="step2RenderLoading_${project.id}" class="absolute inset-0 bg-gray-900/80 flex flex-col items-center justify-center hidden">
+                                            <div class="w-12 h-12 border-3 border-indigo-500 border-t-transparent rounded-full animate-spin mb-3"></div>
+                                            <p id="step2LoadingText_${project.id}" class="text-white text-sm font-medium">Generating...</p>
+                                            <p id="step2LoadingElapsed_${project.id}" class="text-gray-400 text-[10px] mt-1">Connecting to AI model...</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Post-Generation Actions (hidden until generated) -->
+                                <div id="step2PostGenActions_${project.id}" class="hidden space-y-3">
+                                    <!-- Save + Refine buttons -->
+                                    <div class="flex gap-2">
+                                        <button onclick="Nestopia.steps.step2.downloadStep2Design('${project.id}')" class="flex-1 py-2 bg-green-600 text-white rounded-lg text-xs font-semibold hover:bg-green-700 transition flex items-center justify-center gap-1.5">
+                                            <i class="fas fa-download text-[10px]"></i> Save Design
+                                        </button>
+                                        <button onclick="Nestopia.steps.step2.openStep2IterateDialog('${project.id}')" id="step2IterateBtn_${project.id}" class="flex-1 py-2 bg-violet-600 text-white rounded-lg text-xs font-semibold hover:bg-violet-700 transition flex items-center justify-center gap-1.5">
+                                            <i class="fas fa-redo text-[10px]"></i> Refine (<span id="step2IterRemaining_${project.id}">2</span> left)
+                                        </button>
+                                    </div>
+                                    <!-- Iteration refinement prompt panel -->
+                                    <div id="step2IteratePanel_${project.id}" class="hidden p-3 bg-violet-50 rounded-lg border border-violet-200">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="text-xs font-semibold text-violet-700"><i class="fas fa-edit mr-1"></i>Refinement Instructions</span>
+                                            <span id="step2IterCharCount_${project.id}" class="text-[10px] text-violet-400">0/800</span>
+                                        </div>
+                                        <textarea id="step2IterPromptInput_${project.id}" maxlength="800" rows="2" oninput="updateStep2IterCharCount('${project.id}')" class="w-full text-xs border border-violet-200 rounded-lg p-2 resize-none focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-400 transition" placeholder="e.g. Move the sunroom 2 feet to the left, change roof angle to match house..."></textarea>
+                                        <div class="flex gap-2 mt-2">
+                                            <button onclick="Nestopia.steps.step2.executeStep2Iterate('${project.id}')" class="flex-1 py-2 bg-violet-600 text-white rounded-lg text-xs font-semibold hover:bg-violet-700 transition flex items-center justify-center gap-1.5">
+                                                <i class="fas fa-wand-magic-sparkles text-[10px]"></i> Apply Refinement
+                                            </button>
+                                            <button onclick="document.getElementById('step2IteratePanel_${project.id}').classList.add('hidden')" class="px-3 py-2 text-violet-600 border border-violet-200 rounded-lg text-xs font-medium hover:bg-violet-50 transition">Cancel</button>
+                                        </div>
+                                        <div id="step2IterLoading_${project.id}" class="hidden flex items-center gap-2 mt-2">
+                                            <div class="w-4 h-4 border-2 border-violet-500 border-t-transparent rounded-full animate-spin"></div>
+                                            <span id="step2IterLoadingText_${project.id}" class="text-[10px] text-violet-600">Refining...</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Quick Stats Row -->
+                                <div class="grid grid-cols-4 gap-2">
+                                    <div class="bg-gray-50 rounded-lg border border-gray-100 p-3 text-center">
+                                        <div id="step2StatControl_${project.id}" class="text-sm font-bold text-gray-900">—</div>
+                                        <div class="text-[10px] text-gray-500">Control</div>
+                                    </div>
+                                    <div class="bg-gray-50 rounded-lg border border-gray-100 p-3 text-center">
+                                        <div id="step2StatPrice_${project.id}" class="text-sm font-bold text-indigo-600">—</div>
+                                        <div class="text-[10px] text-gray-500">$/sqft</div>
+                                    </div>
+                                    <div class="bg-gray-50 rounded-lg border border-gray-100 p-3 text-center">
+                                        <div id="step2StatLead_${project.id}" class="text-sm font-bold text-gray-900">—</div>
+                                        <div class="text-[10px] text-gray-500">Lead Time</div>
+                                    </div>
+                                    <div class="bg-gray-50 rounded-lg border border-gray-100 p-3 text-center">
+                                        <div id="step2StatSeries_${project.id}" class="text-sm font-bold text-gray-900">—</div>
+                                        <div class="text-[10px] text-gray-500">Series</div>
+                                    </div>
+                                </div>
+
+                                <!-- Compliance Check -->
+                                <div class="p-3 bg-green-50/50 rounded-lg border border-green-100">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-xs font-semibold text-green-700"><i class="fas fa-shield-alt text-green-500 mr-1.5"></i>Compliance Check</span>
+                                        <span class="text-[10px] text-green-600 font-medium">3/4 Passed</span>
+                                    </div>
+                                    <div class="space-y-1">
+                                        <div class="flex items-center gap-2 text-[10px]"><i class="fas fa-check-circle text-green-500"></i><span class="text-gray-600">Setback Requirements</span><span class="ml-auto text-green-600 font-medium">OK</span></div>
+                                        <div class="flex items-center gap-2 text-[10px]"><i class="fas fa-check-circle text-green-500"></i><span class="text-gray-600">Height Limit (15 ft max)</span><span class="ml-auto text-green-600 font-medium">OK</span></div>
+                                        <div class="flex items-center gap-2 text-[10px]"><i class="fas fa-check-circle text-green-500"></i><span class="text-gray-600">Lot Coverage</span><span class="ml-auto text-green-600 font-medium">OK</span></div>
+                                        <div class="flex items-center gap-2 text-[10px]"><i class="fas fa-exclamation-triangle text-amber-500"></i><span class="text-gray-600">HOA Review</span><span class="ml-auto text-amber-600 font-medium">Pending</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            } catch(_aiErr) {
+                console.error('[Nestopia] aiDesigner panel render error:', _aiErr);
+                return '<div class="mt-4 p-4 bg-red-50 rounded-lg border border-red-200"><div class="flex items-center gap-2 mb-2"><i class="fas fa-bug text-red-400 text-sm"></i><span class="text-sm font-semibold text-red-700">AI Designer Panel Error</span></div><p class="text-xs text-red-600">' + (_aiErr.message || 'Unknown error') + '</p><p class="text-[10px] text-gray-400 mt-1">Other panels remain functional. Try reloading.</p></div>';
+            } })() : '';
+
+            // Measurement Panel (Step 3 specific) — inline expandable
+            const measurementPanelHTML = config.measurementPanel ? (() => {
+                const mpConfig = config.measurementPanel;
+                const moduleData = getIntakeData(project.id);
+                const mData = project.measurement || {};
+                const step3State = getStep3State(project.id);
+                const isZipBlinds = project.type === 'Zip Blinds';
+                const activeFields = isZipBlinds && mpConfig.zipBlindsFields ? mpConfig.zipBlindsFields : mpConfig.measurementFields;
+                const activeObstacles = isZipBlinds && mpConfig.zipBlindsObstacles ? mpConfig.zipBlindsObstacles : mpConfig.obstacleTypes;
+
+                // Value label lookups
+                const VALUE_LABELS = {
+                    'patio_ground': 'Patio (Ground Level)', 'terrace_upper': 'Terrace (Upper Floor)',
+                    'raised_platform': 'Raised Platform', 'rooftop': 'Rooftop',
+                    'true': 'Yes (Attached)', 'false': 'No (Freestanding)',
+                    'yes': 'Yes', 'no': 'No', 'unsure': 'Not Sure'
+                };
+
+                // Build inherited data from Steps 1-2
+                const inheritedRows = mpConfig.inheritFields.map(f => {
+                    let val = '—';
+                    if (f.source === 'project.type') {
+                        val = project.type || '—';
+                    } else if (f.field && moduleData) {
+                        const fields = f.field.split(',');
+                        const vals = fields.map(fk => moduleData[fk]).filter(Boolean);
+                        if (vals.length > 0) {
+                            if (fields.length > 1 && fields[0].includes('dimension')) {
+                                val = vals.join(' × ') + ' ft';
+                            } else {
+                                val = vals.map(v => VALUE_LABELS[v] || v).join(', ');
+                            }
+                        }
+                    }
+                    return `<div class="flex items-center justify-between py-1.5 ${f !== mpConfig.inheritFields[mpConfig.inheritFields.length - 1] ? 'border-b border-gray-50' : ''}">
+                        <span class="text-xs text-gray-500">${f.label}</span>
+                        <span class="text-xs font-medium text-gray-700 max-w-[60%] text-right">${val}</span>
+                    </div>`;
+                }).join('');
+
+                // Build measurement form fields — split common vs per-opening (ZB only)
+                const commonFields = isZipBlinds ? activeFields.filter(mf => !mf.perOpening) : activeFields;
+                const perOpeningFieldDefs = isZipBlinds ? activeFields.filter(mf => mf.perOpening) : [];
+
+                function _renderMF(mf, fieldKey, savedVal, projId, extraOC) {
+                    const cls = 'w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-purple-200 focus:border-purple-400';
+                    if (mf.type === 'select') {
+                        return `<select id="step3_${fieldKey}_${projId}" class="${cls} bg-white" onchange="updateStep3Field('${projId}', '${fieldKey}', this.value)${extraOC}">
+                            <option value="">-- Select --</option>
+                            ${mf.options.map(o => `<option value="${o.value}" ${(savedVal || mf.defaultValue || '') === o.value ? 'selected' : ''} ${o.disabled ? 'disabled style="color:#aaa"' : ''}>${o.label}${o.disabled ? ' (Coming Soon)' : ''}</option>`).join('')}
+                        </select>`;
+                    } else if (mf.type === 'date') {
+                        return `<input type="date" id="step3_${fieldKey}_${projId}" value="${savedVal}" class="${cls}" onchange="updateStep3Field('${projId}', '${fieldKey}', this.value)${extraOC}">`;
+                    } else if (mf.type === 'image_upload') {
+                        const hasImg = savedVal && savedVal.startsWith('data:');
+                        const rmBtn = hasImg ? `<button onclick="event.stopPropagation(); removeFabricSample('${projId}', '${fieldKey}')" class="fabric-sample-remove-btn absolute top-1 right-1 w-4 h-4 bg-red-500 text-white rounded-full text-[8px] flex items-center justify-center hover:bg-red-600"><i class="fas fa-times"></i></button>` : '';
+                        return `<div id="step3_${fieldKey}_${projId}_wrap" class="relative border-2 border-dashed border-gray-200 rounded-lg p-2 text-center cursor-pointer hover:border-purple-300 hover:bg-purple-50/20 transition" onclick="document.getElementById('step3_${fieldKey}_${projId}_input').click()">
+                            <input type="file" id="step3_${fieldKey}_${projId}_input" accept="${mf.accept || 'image/*'}" class="hidden" onchange="handleFabricSampleUpload('${projId}', '${fieldKey}', this)">
+                            <div id="step3_${fieldKey}_${projId}_placeholder" class="${hasImg ? 'hidden ' : ''}py-1">
+                                <i class="fas fa-cloud-upload-alt text-gray-300 text-base"></i>
+                                <p class="text-[10px] text-gray-400 mt-0.5">Click to upload sample</p>
+                            </div>
+                            <img id="step3_${fieldKey}_${projId}_preview" class="${hasImg ? '' : 'hidden '}max-h-16 mx-auto rounded" src="${hasImg ? savedVal : ''}" alt="Sample">
+                            ${rmBtn}
+                        </div>`;
+                    } else {
+                        return `<input type="${mf.type}" id="step3_${fieldKey}_${projId}" value="${savedVal}" class="${cls}" placeholder="${mf.placeholder || ''}" ${mf.min !== undefined ? 'min="'+mf.min+'"' : ''} ${mf.step !== undefined ? 'step="'+mf.step+'"' : ''} onchange="updateStep3Field('${projId}', '${fieldKey}', this.value)${extraOC}">`;
+                    }
+                }
+                function _renderMFWrap(mf, fieldKey, savedVal, projId, extraOC) {
+                    const spanCls = mf.colSpan === 2 ? ' col-span-2' : '';
+                    return `<div class="space-y-1${spanCls}">
+                        <label class="text-[10px] font-medium text-gray-500 flex items-center gap-1.5">
+                            <i class="fas ${mf.icon} text-purple-400"></i>${mf.label}
+                        </label>
+                        ${_renderMF(mf, fieldKey, savedVal, projId, extraOC)}
+                    </div>`;
+                }
+
+                const fieldRows = commonFields.map(mf => {
+                    const savedVal = step3State.measurementData[mf.key] || (mData[mf.key] !== undefined ? String(mData[mf.key]) : '') || mf.defaultValue || '';
+                    // ★ 将默认值写入 state（确保 Installation Summary 等功能可读取）
+                    if (!step3State.measurementData[mf.key] && mf.defaultValue) {
+                        step3State.measurementData[mf.key] = mf.defaultValue;
+                    }
+                    const extraOC = (mf.key === 'openings') ? "; rebuildZBOpeningSections('" + project.id + "')" : '';
+                    return _renderMFWrap(mf, mf.key, savedVal, project.id, extraOC);
+                }).join('');
+
+                // Per-opening subsections (ZB only)
+                const numOpenings = isZipBlinds ? (parseInt(step3State.measurementData['openings'] || (mData['openings'] !== undefined ? String(mData['openings']) : '1')) || 1) : 0;
+                let openingSectionsHTML = '';
+                for (let oi = 1; oi <= numOpenings; oi++) {
+                    const openingRows = perOpeningFieldDefs.map(mf => {
+                        const perKey = 'opening_' + oi + '_' + mf.key;
+                        const savedVal = step3State.measurementData[perKey] || (mData[perKey] !== undefined ? String(mData[perKey]) : '') || '';
+                        // ★ 将 per-opening 默认值写入 state（确保 Installation Summary 可读取）
+                        if (!savedVal && mf.type === 'select' && mf.defaultValue) {
+                            step3State.measurementData[perKey] = mf.defaultValue;
+                        }
+                        return _renderMFWrap(mf, perKey, savedVal, project.id, '');
+                    }).join('');
+                    openingSectionsHTML += `<div class="mt-3 p-3 bg-indigo-50/30 rounded-lg border border-indigo-100">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-5 h-5 bg-indigo-100 rounded flex items-center justify-center">
+                                <span class="text-[10px] font-bold text-indigo-600">${oi}</span>
+                            </div>
+                            <span class="text-xs font-semibold text-indigo-700">Opening #${oi}</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2.5">${openingRows}</div>
+                    </div>`;
+                }
+
+                // Obstacle list
+                const obstacles = step3State.obstacles.length > 0 ? step3State.obstacles : (mData.obstacles || []);
+                const obstacleItems = obstacles.map((obs, i) => {
+                    const obsObj = typeof obs === 'string' ? { type: 'other', location: obs, notes: '' } : obs;
+                    const typeInfo = activeObstacles.find(t => t.value === obsObj.type) || { icon: 'fa-exclamation-circle', label: obsObj.type || 'Unknown' };
+                    return `<div class="flex items-center gap-2 py-1.5 px-2 bg-amber-50/50 rounded-lg border border-amber-100">
+                        <i class="fas ${typeInfo.icon} text-amber-500 text-xs"></i>
+                        <span class="text-xs text-gray-700 flex-1">${obsObj.location || typeInfo.label}${obsObj.notes ? ' — ' + obsObj.notes : ''}</span>
+                        <button onclick="Nestopia.steps.step3.removeStep3Obstacle('${project.id}', ${i})" class="text-red-400 hover:text-red-600 text-xs"><i class="fas fa-times"></i></button>
+                    </div>`;
+                }).join('');
+
+                // Design enablement matrix (product-type-aware)
+                const designMatrix = isZipBlinds ? [
+                    { label: 'Product Visualization', desc: 'Blind renderings', icon: 'fa-images', status: step3State.designMatrix.renderings },
+                    { label: 'Installation Plan', desc: 'Mount & wiring', icon: 'fa-map-marked-alt', status: step3State.designMatrix.sitePlan },
+                    { label: 'Fabric Sample Spec', desc: 'Color & material', icon: 'fa-palette', status: step3State.designMatrix.interiorLayout },
+                    { label: 'Motor & Control Spec', desc: 'Automation config', icon: 'fa-cog', status: step3State.designMatrix.elevations }
+                ] : [
+                    { label: 'Photorealistic Renderings', desc: '5–8 angles', icon: 'fa-images', status: step3State.designMatrix.renderings },
+                    { label: 'Site Plan', desc: 'Dimensioned layout', icon: 'fa-map-marked-alt', status: step3State.designMatrix.sitePlan },
+                    { label: 'Interior Layout', desc: 'Furniture & zones', icon: 'fa-th-large', status: step3State.designMatrix.interiorLayout },
+                    { label: 'Elevation Drawings', desc: 'All sides', icon: 'fa-building', status: step3State.designMatrix.elevations },
+                    { label: 'Before-After Animation', desc: 'Dynamic visual', icon: 'fa-film', status: step3State.designMatrix.animation },
+                    { label: 'Structural Calc', desc: 'Load analysis', icon: 'fa-calculator', status: step3State.designMatrix.structural },
+                    { label: 'Foundation Guide', desc: 'Type & approach', icon: 'fa-layer-group', status: step3State.designMatrix.foundation },
+                    { label: 'Compliance Guide', desc: 'Permit checklist', icon: 'fa-file-contract', status: step3State.designMatrix.compliance }
+                ];
+                const matrixItems = designMatrix.map(dm => {
+                    const stCls = dm.status === 'done' ? 'bg-green-50 border-green-200 text-green-700' : dm.status === 'in_progress' ? 'bg-purple-50 border-purple-200 text-purple-700' : 'bg-gray-50 border-gray-200 text-gray-400';
+                    const stIcon = dm.status === 'done' ? 'fa-check-circle text-green-500' : dm.status === 'in_progress' ? 'fa-spinner fa-spin text-purple-500' : 'fa-circle text-gray-300';
+                    const stLabel = dm.status === 'done' ? 'Complete' : dm.status === 'in_progress' ? 'In Progress' : 'Pending';
+                    return `<div class="flex items-center gap-2.5 p-2 rounded-lg border ${stCls}">
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center ${dm.status === 'done' ? 'bg-green-100' : dm.status === 'in_progress' ? 'bg-purple-100' : 'bg-gray-100'}">
+                            <i class="fas ${dm.icon} text-xs"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="text-[11px] font-semibold leading-tight">${dm.label}</div>
+                            <div class="text-[9px] opacity-70">${dm.desc}</div>
+                        </div>
+                        <i class="fas ${stIcon} text-xs"></i>
+                    </div>`;
+                }).join('');
+                const matrixDone = designMatrix.filter(d => d.status === 'done').length;
+
+                return `
+                <div class="bg-white rounded-lg border border-gray-100 p-4">
+                    <!-- Section Title + Toggle Button -->
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-ruler-combined text-purple-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <span class="text-sm font-semibold text-gray-700">${isZipBlinds ? 'Site Measurement & Blind Sizing' : 'Precision Measurement & Design'}</span>
+                                <span class="text-[10px] text-purple-500 ml-2 font-medium">${isZipBlinds ? 'Opening Specs' : 'Detailed Phase'}</span>
+                            </div>
+                        </div>
+                        <button id="step3LaunchBtn_${project.id}" onclick="Nestopia.steps.step3.toggleStep3Panel('${project.id}')" class="px-3 py-1.5 bg-purple-600 text-white text-xs font-semibold rounded-lg hover:bg-purple-700 transition flex items-center gap-1.5 shadow-sm">
+                            <i class="fas fa-clipboard-check text-[10px]"></i> Open Measurement
+                        </button>
+                    </div>
+
+                    <!-- Inherited Data from Steps 1-2 (tenant-configurable) -->
+                    ${(typeof getDisplaySetting === 'function' && getDisplaySetting('showInheritedMeasurementData')) ? `
+                    <div class="mb-4 p-3 bg-purple-50/50 rounded-lg border border-purple-100">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fas fa-arrow-right text-purple-500 text-[10px]"></i>
+                            <span class="text-xs font-semibold text-purple-700">Inherited from Steps 1–2</span>
+                            <span class="text-[9px] text-purple-400 ml-auto">Auto-populated from intake & design</span>
+                        </div>
+                        ${inheritedRows}
+                    </div>` : ''}
+
+                    <!-- Expandable Measurement Panel (hidden by default) -->
+                    <div id="step3MeasurementPanel_${project.id}" class="hidden" style="animation: fadeInSlide 0.3s ease">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                            <!-- Left Column: Measurement Data Form -->
+                            <div class="space-y-5">
+                                <!-- Measurement Scheduling -->
+                                <div class="p-3 bg-blue-50/50 rounded-lg border border-blue-100">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-xs font-semibold text-blue-700"><i class="fas fa-calendar-check text-blue-500 mr-1.5"></i>Measurement Appointment</span>
+                                        <span id="step3ApptStatus_${project.id}" class="text-[10px] font-medium ${step3State.appointmentScheduled ? 'text-green-600' : 'text-amber-600'}">${step3State.appointmentScheduled ? '✓ Scheduled' : '⏳ Not Scheduled'}</span>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <div class="space-y-1">
+                                            <label class="text-[10px] text-gray-500">Preferred Date</label>
+                                            <input type="date" id="step3ApptDate_${project.id}" value="${step3State.appointmentDate || ''}" class="w-full px-2 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-200" onchange="updateStep3Field('${project.id}', '_apptDate', this.value)">
+                                        </div>
+                                        <div class="space-y-1">
+                                            <label class="text-[10px] text-gray-500">Time Slot</label>
+                                            <select id="step3ApptTime_${project.id}" class="w-full px-2 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-200" onchange="updateStep3Field('${project.id}', '_apptTime', this.value)">
+                                                <option value="">-- Select --</option>
+                                                <option value="morning" ${step3State.appointmentTime === 'morning' ? 'selected' : ''}>Morning (8–12)</option>
+                                                <option value="afternoon" ${step3State.appointmentTime === 'afternoon' ? 'selected' : ''}>Afternoon (12–5)</option>
+                                                <option value="evening" ${step3State.appointmentTime === 'evening' ? 'selected' : ''}>Evening (5–7)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <button onclick="Nestopia.steps.step3.scheduleStep3Appointment('${project.id}')" class="mt-2 w-full py-1.5 text-xs font-medium rounded-lg transition ${step3State.appointmentScheduled ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-blue-600 text-white hover:bg-blue-700'}">
+                                        ${step3State.appointmentScheduled ? '<i class="fas fa-check mr-1"></i>Appointment Confirmed' : '<i class="fas fa-paper-plane mr-1"></i>Schedule Measurement'}
+                                    </button>
+                                </div>
+
+                                <!-- Measurement Data Input -->
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-xs font-semibold text-gray-700"><i class="fas ${isZipBlinds ? 'fa-window-maximize' : 'fa-ruler-combined'} text-purple-400 mr-1.5"></i>${isZipBlinds ? 'Opening & Product Specs' : 'Measurement Data'}</span>
+                                        <div class="flex items-center gap-2">
+                                            ${isZipBlinds ? `<div class="inline-flex items-center bg-gray-100 rounded-lg p-0.5 text-[10px] font-semibold">
+                                                <button id="unitBtnInch_meas_${project.id}" onclick="toggleZBUnit('${project.id}')" class="px-2.5 py-1 rounded-md transition-all bg-purple-600 text-white shadow-sm">in</button>
+                                                <button id="unitBtnMM_meas_${project.id}" onclick="toggleZBUnit('${project.id}')" class="px-2.5 py-1 rounded-md transition-all text-gray-500 hover:text-gray-700">mm</button>
+                                            </div>` : ''}
+                                            <button onclick="Nestopia.steps.step3.saveStep3Measurement('${project.id}')" class="text-[10px] text-purple-600 font-medium hover:text-purple-800 transition"><i class="fas fa-save mr-1"></i>Save</button>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-2.5">
+                                        ${fieldRows}
+                                    </div>
+                                    <div id="zbOpeningSections_${project.id}">
+                                        ${openingSectionsHTML}
+                                    </div>
+                                </div>
+
+                                <!-- Obstacles -->
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-xs font-semibold text-gray-700"><i class="fas fa-map-marker-alt text-amber-500 mr-1.5"></i>Obstacles & Utilities</span>
+                                        <span class="text-[10px] text-gray-400">${obstacles.length} recorded</span>
+                                    </div>
+                                    <div class="space-y-1.5 mb-2" id="step3ObstacleList_${project.id}">
+                                        ${obstacleItems || '<div class="text-xs text-gray-400 text-center py-3">No obstacles recorded yet</div>'}
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <select id="step3ObstacleType_${project.id}" class="flex-1 px-2 py-1.5 border border-gray-200 rounded-lg text-xs">
+                                            <option value="">Type...</option>
+                                            ${activeObstacles.map(o => `<option value="${o.value}">${o.label}</option>`).join('')}
+                                        </select>
+                                        <input type="text" id="step3ObstacleLocation_${project.id}" class="flex-1 px-2 py-1.5 border border-gray-200 rounded-lg text-xs" placeholder="Location & notes...">
+                                        <button onclick="Nestopia.steps.step3.addStep3Obstacle('${project.id}')" class="px-2.5 py-1.5 bg-amber-500 text-white rounded-lg text-xs font-medium hover:bg-amber-600 transition"><i class="fas fa-plus"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Column: Compliance + Design Matrix + Structural Summary -->
+                            <div class="space-y-4">
+                                <!-- Design Enablement Matrix -->
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-xs font-semibold text-gray-700"><i class="fas fa-drafting-compass text-purple-400 mr-1.5"></i>Design Enablement Matrix</span>
+                                        <span class="text-[10px] text-gray-400">${matrixDone}/${designMatrix.length} complete</span>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-1.5">
+                                        ${matrixItems}
+                                    </div>
+                                </div>
+
+                                <!-- Structural Assessment Summary (structural products only) -->
+                                ${isZipBlinds ? `
+                                <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-xs font-semibold text-gray-700"><i class="fas fa-clipboard-list text-gray-500 mr-1.5"></i>Installation Summary</span>
+                                        <span class="text-[10px] font-medium ${step3State.measurementComplete ? 'text-green-600' : 'text-gray-400'}">${step3State.measurementComplete ? '✓ Ready' : '○ Pending'}</span>
+                                    </div>
+                                    <div id="installSummaryContent_${project.id}" class="space-y-1.5">
+                                        ${(() => {
+                                            const md = step3State.measurementData;
+                                            const numO = parseInt(md.openings || '1') || 1;
+                                            const fmt = v => v ? v.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) : '';
+                                            function agg(field) {
+                                                const vals = [];
+                                                for (let i = 1; i <= numO; i++) { const v = md['opening_' + i + '_' + field]; if (v) vals.push(v); }
+                                                if (!vals.length) return '—';
+                                                const u = [...new Set(vals)];
+                                                return u.length === 1 ? fmt(u[0]) : 'Mixed (' + u.length + ' types)';
+                                            }
+                                            const fabricSummary = (() => {
+                                                const entries = [];
+                                                for (let i = 1; i <= numO; i++) {
+                                                    const c = md['opening_' + i + '_fabric_color'] || '';
+                                                    const o = md['opening_' + i + '_fabric_openness'] || '';
+                                                    if (c || o) entries.push((c || '?') + ', ' + (o || '?'));
+                                                }
+                                                if (!entries.length) return '—';
+                                                const u = [...new Set(entries)];
+                                                return u.length === 1 ? u[0] : 'Mixed (' + u.length + ' types)';
+                                            })();
+                                            const row = (icon, label, val) => `<div class="flex items-center justify-between text-[10px]"><span class="text-gray-500"><i class="fas ${icon} text-gray-400 mr-1 w-3 text-center"></i>${label}</span><span class="font-medium text-gray-700">${val}</span></div>`;
+                                            return row('fa-th-large', 'Total Openings', (md.openings || '—') + ' units')
+                                                + row('fa-wrench', 'Mounting Type', agg('mounting'))
+                                                + row('fa-palette', 'Frame Color', fmt(md.frame_color || '') || '\u2014')
+                                                + row('fa-cog', 'Motor Type', agg('motor'))
+                                                + row('fa-scroll', 'Fabric', fabricSummary);
+                                        })()}
+                                    </div>
+                                </div>
+                                ` : `
+                                <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-xs font-semibold text-gray-700"><i class="fas fa-building text-gray-500 mr-1.5"></i>Structural Assessment</span>
+                                        <span id="step3StructuralStatus_${project.id}" class="text-[10px] font-medium ${step3State.structuralAssessment.status === 'adequate' ? 'text-green-600' : step3State.structuralAssessment.status === 'needs_review' ? 'text-amber-600' : 'text-gray-400'}">${step3State.structuralAssessment.status === 'adequate' ? '✓ Adequate' : step3State.structuralAssessment.status === 'needs_review' ? '⚠ Needs Review' : '○ Pending'}</span>
+                                    </div>
+                                    <div class="space-y-1.5">
+                                        <div class="flex items-center justify-between text-[10px]">
+                                            <span class="text-gray-500">Foundation</span>
+                                            <span class="font-medium text-gray-700">${step3State.structuralAssessment.foundation || '—'}</span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-[10px]">
+                                            <span class="text-gray-500">Wall Bearing</span>
+                                            <span class="font-medium text-gray-700">${step3State.structuralAssessment.wallBearing || '—'}</span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-[10px]">
+                                            <span class="text-gray-500">Connection Points</span>
+                                            <span class="font-medium text-gray-700">${step3State.structuralAssessment.connectionPoints || '—'}</span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-[10px]">
+                                            <span class="text-gray-500">Load Capacity</span>
+                                            <span class="font-medium text-gray-700">${step3State.structuralAssessment.loadCapacity || '—'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                `}
+
+                                ${isZipBlinds ? '<div data-project-files="' + project.id + '" class="mt-3">' + renderProjectFilesHTML(project.id) + '</div>' : ''}
+
+                                <!-- Generate Design / Order Button — 暂时隐藏（占位模拟，待接入真实 API 后恢复）
+                                <button id="step3GenerateDesignBtn_${project.id}" onclick="Nestopia.steps.step3.generateStep3DetailedDesign('${project.id}')" class="w-full py-3 bg-gradient-to-r from-purple-600 to-violet-600 text-white rounded-xl font-semibold text-sm hover:from-purple-700 hover:to-violet-700 transition shadow-lg shadow-purple-500/25 flex items-center justify-center gap-2 ${step3State.measurementComplete ? '' : 'opacity-40 cursor-not-allowed'}" ${step3State.measurementComplete ? '' : 'disabled'}>
+                                    <i class="fas ${isZipBlinds ? 'fa-check-double' : 'fa-drafting-compass'}"></i> ${isZipBlinds ? 'Generate Installation Package' : 'Generate Detailed Design Package'}
+                                </button>
+                                <p class="text-[10px] text-gray-400 text-center -mt-2"><i class="fas fa-info-circle mr-1"></i>${isZipBlinds ? 'Complete opening specs to generate installation package' : 'Complete measurement data to enable design generation'}</p>
+                                -->
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            })() : '';
+
+            // Verification Panel (ZB Step 3 specific) — cross-check initial vs verified measurements
+            const verificationPanelHTML = config.verificationPanel ? (() => {
+                try {
+                const step3State = getStep3State(project.id);
+                const initialData = step3State.measurementData;
+                const numOpenings = parseInt(initialData.openings || '1') || 1;
+                const mpConfig = STEP_DETAIL_CONFIG[3].measurementPanel;
+                const perFieldDefs = mpConfig.zipBlindsFields.filter(mf => mf.perOpening && mf.type !== 'image_upload');
+                const verState = Nestopia.steps.zbVerification.getVerificationState(project.id);
+
+                const cls = 'w-full px-2 py-1.5 border border-gray-200 rounded-lg text-xs text-center focus:ring-2 focus:ring-purple-200 focus:border-purple-400';
+
+                // Check if Step 1 has measurement data
+                const hasInitialData = Boolean(initialData.opening_1_width_in || initialData.opening_1_height_in);
+
+                // Build initial measurement summary (always visible)
+                let initialSummaryRows = '';
+                if (hasInitialData) {
+                    for (let i = 1; i <= numOpenings; i++) {
+                        const w = initialData['opening_' + i + '_width_in'] || '\u2014';
+                        const h = initialData['opening_' + i + '_height_in'] || '\u2014';
+                        const m = initialData['opening_' + i + '_mounting'] || '';
+                        const mLabel = m ? m.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) : '\u2014';
+                        initialSummaryRows += `
+                            <div class="flex items-center gap-3 text-[10px]">
+                                <span class="w-4 h-4 bg-purple-100 rounded flex items-center justify-center text-[9px] font-bold text-purple-600">${i}</span>
+                                <span class="text-gray-600">${w}" \u00d7 ${h}"</span>
+                                <span class="text-purple-600 font-medium">${mLabel}</span>
+                            </div>`;
+                    }
+                } else {
+                    initialSummaryRows = '<div class="text-xs text-gray-400 text-center py-2"><i class="fas fa-info-circle mr-1"></i>No initial measurement data from Step 1 yet</div>';
+                }
+
+                // Build per-opening comparison sections
+                let openingComparisonHTML = '';
+                for (let oi = 1; oi <= numOpenings; oi++) {
+                    let rows = perFieldDefs.map(mf => {
+                        const perKey = 'opening_' + oi + '_' + mf.key;
+                        const initialVal = initialData[perKey] || '';
+                        const verifiedVal = verState.verifiedData[perKey] || '';
+
+                        // Initial value display
+                        let initialDisplay = '\u2014';
+                        if (initialVal) {
+                            if (mf.type === 'select') {
+                                const opt = mf.options.find(o => o.value === initialVal);
+                                initialDisplay = opt ? opt.label : initialVal;
+                            } else {
+                                if (mf.key === 'width_in' || mf.key === 'height_in') {
+                                    initialDisplay = `<span id="vinit_${perKey}_${project.id}">${initialVal}"</span>`;
+                                } else {
+                                    initialDisplay = initialVal;
+                                }
+                            }
+                        }
+
+                        // Verified field input
+                        let verifiedInput;
+                        if (mf.type === 'select') {
+                            verifiedInput = `<select id="zv_${perKey}_${project.id}" class="${cls} bg-white" onchange="updateVerificationField('${project.id}', '${perKey}', this.value)">
+                                <option value="">--</option>
+                                ${mf.options.map(o => `<option value="${o.value}" ${verifiedVal === o.value ? 'selected' : ''} ${o.disabled ? 'disabled style="color:#aaa"' : ''}>${o.label}${o.disabled ? ' (Coming Soon)' : ''}</option>`).join('')}
+                            </select>`;
+                        } else {
+                            verifiedInput = `<input type="${mf.type}" id="zv_${perKey}_${project.id}" value="${verifiedVal}" class="${cls}" placeholder="${initialVal || mf.placeholder || ''}" ${mf.min !== undefined ? 'min="' + mf.min + '"' : ''} ${mf.step !== undefined ? 'step="' + mf.step + '"' : ''} onchange="updateVerificationField('${project.id}', '${perKey}', this.value)">`;
+                        }
+
+                        return `<tr class="border-t border-gray-100">
+                            <td class="py-2 text-[11px] text-gray-600 pr-2" ${(mf.key === 'width_in' || mf.key === 'height_in') ? 'data-unit-label="' + (mf.key === 'width_in' ? 'Width' : 'Height') + '"' : ''}><i class="fas ${mf.icon} text-purple-400 text-[9px] mr-1"></i>${mf.label}</td>
+                            <td class="py-2 text-center text-[11px] text-gray-700 font-medium px-1">${initialDisplay}</td>
+                            <td class="py-2 text-center px-1" style="min-width:80px">${verifiedInput}</td>
+                            <td class="py-2 text-center px-1" id="vdelta_${perKey}_${project.id}"><span class="text-gray-300 text-[10px]">\u2014</span></td>
+                        </tr>`;
+                    }).join('');
+
+                    openingComparisonHTML += `
+                    <div class="mt-3 p-3 bg-indigo-50/30 rounded-lg border border-indigo-100">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-5 h-5 bg-indigo-100 rounded flex items-center justify-center">
+                                <span class="text-[10px] font-bold text-indigo-600">${oi}</span>
+                            </div>
+                            <span class="text-xs font-semibold text-indigo-700">Opening #${oi}</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="text-[9px] text-gray-400 uppercase tracking-wider">
+                                        <th class="text-left py-1 font-medium w-[28%]">Field</th>
+                                        <th class="text-center py-1 font-medium w-[22%]">Initial</th>
+                                        <th class="text-center py-1 font-medium w-[28%]">Verified</th>
+                                        <th class="text-center py-1 font-medium w-[22%]">Delta</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${rows}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>`;
+                }
+
+                return `
+                <div class="bg-white rounded-lg border border-gray-100 p-4">
+                    <!-- Header -->
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-check-double text-purple-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <span class="text-sm font-semibold text-gray-700">Measurement Verification</span>
+                                <span class="text-[10px] text-purple-500 ml-2 font-medium">Cross-check & Confirm</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="inline-flex items-center bg-gray-100 rounded-lg p-0.5 text-[10px] font-semibold">
+                                <button id="unitBtnInch_verif_${project.id}" onclick="toggleZBUnit('${project.id}')" class="px-2.5 py-1 rounded-md transition-all bg-purple-600 text-white shadow-sm">in</button>
+                                <button id="unitBtnMM_verif_${project.id}" onclick="toggleZBUnit('${project.id}')" class="px-2.5 py-1 rounded-md transition-all text-gray-500 hover:text-gray-700">mm</button>
+                            </div>
+                            <button id="zbVerifToggleBtn_${project.id}" onclick="toggleVerificationPanel('${project.id}')" class="px-3 py-1.5 bg-purple-600 text-white text-xs font-semibold rounded-lg hover:bg-purple-700 transition flex items-center gap-1.5 shadow-sm">
+                                <i class="fas fa-check-double text-[10px]"></i> Open Verification
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Initial Measurement Summary (always visible) -->
+                    <div class="mb-4 p-3 bg-purple-50/50 rounded-lg border border-purple-100">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fas fa-ruler-combined text-purple-500 text-[10px]"></i>
+                            <span class="text-xs font-semibold text-purple-700">Initial Measurement (Step 1)</span>
+                            <span id="zbVerifOpeningCount_${project.id}" class="text-[9px] bg-purple-100 text-purple-600 px-1.5 py-0.5 rounded-full font-medium">${numOpenings} opening${numOpenings > 1 ? 's' : ''}</span>
+                        </div>
+                        <div id="zbVerifInitSummary_${project.id}" class="space-y-1.5">
+                            ${initialSummaryRows}
+                        </div>
+                    </div>
+
+                    <!-- Expandable Verification Panel -->
+                    <div id="zbVerifPanel_${project.id}" class="hidden" style="animation: fadeInSlide 0.3s ease">
+                        <!-- Verifier Info -->
+                        <div class="mb-4 p-3 bg-blue-50/50 rounded-lg border border-blue-100">
+                            <div class="flex items-center gap-2 mb-2">
+                                <i class="fas fa-user-check text-blue-500 text-[10px]"></i>
+                                <span class="text-xs font-semibold text-blue-700">Verification Details</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div class="space-y-1">
+                                    <label class="text-[10px] text-gray-500">Verifier / Inspector</label>
+                                    <input type="text" id="zv_verifierName_${project.id}" value="${verState.verifierName}" class="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-200 focus:border-blue-400" placeholder="e.g. Tom Baker (#583041)" onchange="updateVerificationField('${project.id}', '_verifierName', this.value)">
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="text-[10px] text-gray-500">Verification Date</label>
+                                    <input type="date" id="zv_verificationDate_${project.id}" value="${verState.verificationDate}" class="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-200 focus:border-blue-400" onchange="updateVerificationField('${project.id}', '_verificationDate', this.value)">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tolerance Legend -->
+                        <div class="mb-3 flex items-center gap-4 text-[9px] text-gray-400">
+                            <span><i class="fas fa-check-circle text-green-500 mr-0.5"></i> Within 3mm (0.12”)</span>
+                            <span><i class="fas fa-exclamation-triangle text-amber-500 mr-0.5"></i> 3–5mm (0.12”–0.20”)</span>
+                            <span><i class="fas fa-times-circle text-red-500 mr-0.5"></i> &gt; 5mm (0.20”)</span>
+                        </div>
+
+                        <!-- Per-Opening Comparison Tables -->
+                        <div id="zbVerifOpenings_${project.id}">${openingComparisonHTML}</div>
+
+                        <!-- Verification Summary -->
+                        <div class="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                            <div class="flex items-center gap-2 mb-2">
+                                <i class="fas fa-clipboard-check text-gray-500 text-[10px]"></i>
+                                <span class="text-xs font-semibold text-gray-700">Verification Summary</span>
+                            </div>
+                            <div id="zbVerifSummary_${project.id}" class="space-y-0.5">
+                                <div class="flex items-center justify-between text-[10px] py-1">
+                                    <span class="text-gray-500">Openings Verified</span>
+                                    <span class="font-medium text-gray-400">0 / ${numOpenings}</span>
+                                </div>
+                                <div class="flex items-center justify-between text-[10px] py-1">
+                                    <span class="text-gray-500">Discrepancies Found</span>
+                                    <span class="font-medium text-gray-400">\u2014</span>
+                                </div>
+                                <div class="flex items-center justify-between text-[10px] py-1">
+                                    <span class="text-gray-500">Status</span>
+                                    <span class="font-medium text-gray-400">\u25CB In Progress</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons Row -->
+                        <div class="mt-4 flex gap-2">
+                            <button id="zbVerifySaveBtn_${project.id}" onclick="saveZBVerification('${project.id}')" class="flex-1 py-3 bg-gradient-to-r from-purple-600 to-violet-600 text-white rounded-xl font-semibold text-sm hover:from-purple-700 hover:to-violet-700 transition shadow-lg shadow-purple-500/25 flex items-center justify-center gap-2 opacity-40 cursor-not-allowed" disabled>
+                                <i class="fas fa-save"></i> Save Verified Measurements
+                            </button>
+                            <button id="zbFinalQuoteBtn_${project.id}" onclick="generateFinalQuotation('${project.id}')" class="flex-1 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl font-semibold text-sm hover:from-emerald-700 hover:to-teal-700 transition shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 opacity-40 cursor-not-allowed" disabled>
+                                <i class="fas fa-file-invoice-dollar"></i> Final Quotation
+                            </button>
+                        </div>
+                        <p class="text-[10px] text-gray-400 text-center mt-1"><i class="fas fa-info-circle mr-1"></i>Verify all opening dimensions and enter verifier details to save</p>
+
+                        <!-- Final Quotation Comparison Panel (dynamically populated) -->
+                        <div id="zbFinalQuotation_${project.id}" class="hidden mt-4"></div>
+                    </div>
+                </div>`;
+                } catch (verPanelErr) {
+                    console.error('[Nestopia] Verification panel render error:', verPanelErr);
+                    return '<div class="bg-red-50 border border-red-200 rounded-lg p-4 mt-4 text-center"><i class="fas fa-exclamation-triangle text-red-400 mr-2"></i><span class="text-xs text-red-600">Verification panel failed to load: ' + verPanelErr.message + '</span></div>';
+                }
+            })() : '';
+
+            // Quotation Panel (Step 4 specific) — pricing calculator + quote generation
+            const quotationPanelHTML = config.quotationPanel ? (() => {
+                const mData = project.measurement || {};
+                const step4State = getStep4State(project.id);
+                const isZB = project.type === 'Zip Blinds';
+                const isSR = project.type === 'Sunroom';
+                const isPG = project.type === 'Pergola';
+
+                // ---- Zip Blinds pricing panel (v3.0 Profit Calculation Engine) ----
+                if (isZB) {
+                    const cs = step4State.costSummary;
+                    const bp = step4State.businessParams || {};
+                    const currOptions = ['SGD', 'RMB', 'USD'];
+
+                    return `
+                    <div class="bg-white rounded-lg border border-gray-100 p-4">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 bg-orange-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-calculator text-orange-600 text-sm"></i>
+                                </div>
+                                <div>
+                                    <span class="text-sm font-semibold text-gray-700">Profit Calculation Engine</span>
+                                    <span class="text-[10px] text-orange-500 ml-2 font-medium">v3.0</span>
+                                </div>
+                            </div>
+                            <button id="step4LaunchBtn_${project.id}" onclick="Nestopia.steps.step4.togglePanel('${project.id}')" class="px-3 py-1.5 bg-orange-600 text-white text-xs font-semibold rounded-lg hover:bg-orange-700 transition flex items-center gap-1.5 shadow-sm">
+                                <i class="fas fa-calculator text-[10px]"></i> Open Quotation
+                            </button>
+                        </div>
+
+                        <!-- Inherited from Measurement -->
+                        <div id="step4InheritedSummary_${project.id}" class="mb-4 p-3 bg-orange-50/50 rounded-lg border border-orange-100">
+                            <div class="flex items-center gap-2 mb-2">
+                                <i class="fas fa-arrow-right text-orange-500 text-[10px]"></i>
+                                <span class="text-xs font-semibold text-orange-700">Inherited from Measurement</span>
+                                <span class="text-[9px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full font-medium">${step4State.quantity} opening${step4State.quantity > 1 ? 's' : ''}</span>
+                            </div>
+                            ${step4State.openings && step4State.openings.length > 1 ? `
+                            <div class="space-y-1.5">
+                                ${step4State.openings.map((op, idx) => `
+                                <div class="flex items-center gap-3 text-[10px]">
+                                    <span class="w-4 h-4 bg-indigo-100 rounded flex items-center justify-center text-[9px] font-bold text-indigo-600">${idx + 1}</span>
+                                    <span class="text-gray-600">${op.widthIn}" \u00d7 ${op.heightIn}"</span>
+                                    <span class="text-gray-500">${op.widthMM}mm \u00d7 ${op.heightMM}mm</span>
+                                    <span class="text-orange-600 font-semibold">${op.area.toFixed(2)} m\u00b2</span>
+                                    <span class="text-[9px] text-gray-400 ml-auto">${op.sku}</span>
+                                </div>`).join('')}
+                                <div class="border-t border-orange-200 pt-1.5 mt-1 flex items-center gap-3 text-[10px]">
+                                    <span class="w-4 h-4"></span>
+                                    <span class="text-gray-700 font-semibold">Total Area</span>
+                                    <span class="text-orange-700 font-bold">${step4State.totalArea.toFixed(2)} m\u00b2</span>
+                                </div>
+                            </div>` : `
+                            <div class="grid grid-cols-4 gap-3 text-center">
+                                <div><div class="text-[10px] text-gray-500">Openings</div><div class="text-sm font-bold text-gray-800">${step4State.quantity}</div></div>
+                                <div><div class="text-[10px] text-gray-500">Width</div><div class="text-sm font-bold text-gray-800">${step4State.openings ? step4State.openings[0].widthIn : '72'}"</div></div>
+                                <div><div class="text-[10px] text-gray-500">Height</div><div class="text-sm font-bold text-gray-800">${step4State.openings ? step4State.openings[0].heightIn : '96'}"</div></div>
+                                <div><div class="text-[10px] text-gray-500">Area</div><div class="text-sm font-bold text-orange-600">${step4State.unitArea ? step4State.unitArea.toFixed(2) : '0.00'} m\u00b2</div></div>
+                            </div>`}
+                        </div>
+
+                        <!-- Expandable Quotation Panel -->
+                        <div id="step4QuotationPanel_${project.id}" class="hidden" style="animation: fadeInSlide 0.3s ease">
+
+                            <!-- Business Parameters (Collapsible) — 暂时隐藏，保留代码 -->
+                            <div class="mb-4 p-3 bg-gray-50/50 rounded-lg border border-gray-100 hidden">
+                                <div class="flex items-center justify-between mb-2 cursor-pointer" onclick="var el=document.getElementById('step4ParamsGrid_${project.id}');el.classList.toggle('hidden');var ic=this.querySelector('i.fa-chevron-down,i.fa-chevron-up');if(ic){ic.classList.toggle('fa-chevron-down');ic.classList.toggle('fa-chevron-up')}">
+                                    <span class="text-[10px] font-semibold text-gray-600"><i class="fas fa-sliders-h text-orange-400 mr-1.5"></i>Business Parameters</span>
+                                    <div class="flex items-center gap-2">
+                                        <button onclick="event.stopPropagation();Nestopia.steps.step4.resetParams('${project.id}')" class="text-[9px] text-gray-400 hover:text-orange-600" title="Reset to defaults"><i class="fas fa-undo"></i></button>
+                                        <i class="fas fa-chevron-down text-[9px] text-gray-400 transition"></i>
+                                    </div>
+                                </div>
+                                <div id="step4ParamsGrid_${project.id}" class="grid grid-cols-3 gap-x-3 gap-y-2 hidden">
+                                    <div>
+                                        <label class="text-[9px] text-gray-400 block mb-0.5">Supplier Disc.</label>
+                                        <input id="step4ParamDisc_${project.id}" type="number" step="0.01" min="0" max="1" value="${bp.supplierDiscountRate || 0.9}" class="w-full px-2 py-1 border border-gray-200 rounded text-[10px] bg-white focus:ring-1 focus:ring-orange-300" onchange="Nestopia.steps.step4.updateParam('${project.id}','supplierDiscountRate',this.value)">
+                                    </div>
+                                    <div>
+                                        <label class="text-[9px] text-gray-400 block mb-0.5">Shipping Rate</label>
+                                        <input id="step4ParamShip_${project.id}" type="number" step="0.01" min="0" max="1" value="${bp.shippingCostRate || 0.30}" class="w-full px-2 py-1 border border-gray-200 rounded text-[10px] bg-white focus:ring-1 focus:ring-orange-300" onchange="Nestopia.steps.step4.updateParam('${project.id}','shippingCostRate',this.value)">
+                                    </div>
+                                    <div>
+                                        <label class="text-[9px] text-gray-400 block mb-0.5">Install \u00a5/m\u00b2</label>
+                                        <input id="step4ParamInstall_${project.id}" type="number" step="1" min="0" value="${bp.installationFeePerSqm || 191}" class="w-full px-2 py-1 border border-gray-200 rounded text-[10px] bg-white focus:ring-1 focus:ring-orange-300" onchange="Nestopia.steps.step4.updateParam('${project.id}','installationFeePerSqm',this.value)">
+                                    </div>
+                                    <div>
+                                        <label class="text-[9px] text-gray-400 block mb-0.5">Market Markup</label>
+                                        <input id="step4ParamMarkup_${project.id}" type="number" step="0.01" min="1" value="${bp.marketMarkup || 2.92}" class="w-full px-2 py-1 border border-gray-200 rounded text-[10px] bg-white focus:ring-1 focus:ring-orange-300" onchange="Nestopia.steps.step4.updateParam('${project.id}','marketMarkup',this.value)">
+                                    </div>
+                                    <div>
+                                        <label class="text-[9px] text-gray-400 block mb-0.5">Pref. Discount</label>
+                                        <input id="step4ParamPref_${project.id}" type="number" step="0.01" min="0" max="1" value="${bp.preferentialDiscount || 0.50}" class="w-full px-2 py-1 border border-gray-200 rounded text-[10px] bg-white focus:ring-1 focus:ring-orange-300" onchange="Nestopia.steps.step4.updateParam('${project.id}','preferentialDiscount',this.value)">
+                                    </div>
+                                    <div>
+                                        <label class="text-[9px] text-gray-400 block mb-0.5">Accessory +%</label>
+                                        <input id="step4ParamAcc_${project.id}" type="number" step="0.01" min="0" value="${bp.accessoryMarkupRate || 0.13}" class="w-full px-2 py-1 border border-gray-200 rounded text-[10px] bg-white focus:ring-1 focus:ring-orange-300" onchange="Nestopia.steps.step4.updateParam('${project.id}','accessoryMarkupRate',this.value)">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Per-Opening Details (dynamically rendered by refreshStep4Panel) -->
+                            <div id="step4OpeningsBody_${project.id}" class="mb-4">
+                                <div class="text-center text-[10px] text-gray-400 py-4"><i class="fas fa-spinner fa-spin mr-1"></i>Calculating...</div>
+                            </div>
+
+                            <!-- Summary (dynamically rendered) -->
+                            <div id="step4SummaryBody_${project.id}" class="mb-3"></div>
+
+                            <!-- Profit Bar (dynamically rendered) -->
+                            <div id="step4ProfitBar_${project.id}" class="mb-3"></div>
+
+                            <!-- Currency & Exchange Rate -->
+                            <div class="grid grid-cols-2 gap-2 mb-3">
+                                <div class="space-y-0.5">
+                                    <label class="text-[9px] text-gray-400 block"><i class="fas fa-coins text-orange-400 mr-1"></i>Display Currency</label>
+                                    <select id="step4Currency_${project.id}" class="w-full px-2 py-1.5 border border-gray-200 rounded-lg text-xs bg-white focus:ring-1 focus:ring-orange-300" onchange="updateStep4Config('${project.id}')">
+                                        ${currOptions.map(c => '<option value="' + c + '"' + (step4State.currency === c ? ' selected' : '') + '>' + (c === 'RMB' ? 'RMB (\u00a5)' : c === 'USD' ? 'USD ($)' : 'SGD (S$)') + '</option>').join('')}
+                                    </select>
+                                </div>
+                                <div class="space-y-0.5">
+                                    <label class="text-[9px] text-gray-400 block"><i class="fas fa-exchange-alt text-orange-400 mr-1"></i>Exchange Rate</label>
+                                    <input id="step4ExRate_${project.id}" type="number" step="0.0001" min="0.01" value="${step4State.exchangeRate}" class="w-full px-2 py-1.5 border border-gray-200 rounded-lg text-xs bg-white focus:ring-1 focus:ring-orange-300" onchange="updateStep4Config('${project.id}')" ${step4State.currency === 'RMB' ? 'disabled' : ''}>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="flex gap-2 mt-3">
+                                <button onclick="Nestopia.steps.step4.calculatePricing('${project.id}')" class="px-3 py-2 bg-gray-100 text-gray-600 rounded-lg text-xs font-medium hover:bg-gray-200 transition flex items-center gap-1.5">
+                                    <i class="fas fa-sync-alt text-[10px]"></i> Recalculate
+                                </button>
+                                <button onclick="Nestopia.utils.quotEditor.openQuotationEditor('${project.id}')" class="flex-1 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold text-xs hover:from-blue-700 hover:to-blue-800 transition shadow-md flex items-center justify-center gap-1.5">
+                                    <i class="fas fa-file-invoice-dollar"></i> Generate Quotation
+                                </button>
+                            </div>
+                        </div>
+                    </div>`;
+                }
+
+                // ---- Sunroom / Pergola pricing panel ----
+                const prodLabel = isSR ? 'Sunroom' : 'Pergola';
+                const baseTiers = isSR
+                    ? [{ id: 'standard', label: 'Standard', from: '$85/sqft' }, { id: 'premium', label: 'Premium', from: '$120/sqft', popular: true }, { id: 'luxury', label: 'Luxury', from: '$165/sqft' }]
+                    : [{ id: 'classic', label: 'Classic', from: '$45/sqft' }, { id: 'modern', label: 'Modern', from: '$62/sqft', popular: true }, { id: 'premium', label: 'Premium', from: '$85/sqft' }];
+                const tierCardsSP = baseTiers.map(t => {
+                    const sel = step4State.productTier === t.id;
+                    return `<div onclick="Nestopia.steps.step4.selectTier('${project.id}','${t.id}')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center relative ${sel ? 'border-orange-500 bg-orange-50 shadow-sm' : 'border-gray-200 hover:border-orange-300 bg-white'}">
+                        ${t.popular ? '<div class="absolute -top-2 left-1/2 -translate-x-1/2 text-[8px] font-bold bg-orange-500 text-white px-2 py-0.5 rounded-full">POPULAR</div>' : ''}
+                        <div class="text-[10px] font-bold text-gray-800">${t.label}</div>
+                        <div class="text-xs font-semibold ${sel ? 'text-orange-600' : 'text-gray-600'} mt-1">${t.from}</div>
+                    </div>`;
+                }).join('');
+
+                const dimLabel = mData.dims || ((mData.length_ft || '—') + "' × " + (mData.width_ft || '—') + "' × " + (mData.height_ft || '—') + "'");
+                const areaFt = step4State.areaSqft;
+                const cs = step4State.costSummary;
+
+                return `
+                <div class="bg-white rounded-lg border border-gray-100 p-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 bg-orange-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-calculator text-orange-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <span class="text-sm font-semibold text-gray-700">Pricing & Quotation Engine</span>
+                                <span class="text-[10px] text-orange-500 ml-2 font-medium">${prodLabel} Estimator</span>
+                            </div>
+                        </div>
+                        <button id="step4LaunchBtn_${project.id}" onclick="Nestopia.steps.step4.togglePanel('${project.id}')" class="px-3 py-1.5 bg-orange-600 text-white text-xs font-semibold rounded-lg hover:bg-orange-700 transition flex items-center gap-1.5 shadow-sm">
+                            <i class="fas fa-calculator text-[10px]"></i> Open Quotation
+                        </button>
+                    </div>
+
+                    <div id="step4InheritedSummary_${project.id}" class="mb-4 p-3 bg-orange-50/50 rounded-lg border border-orange-100">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fas fa-arrow-right text-orange-500 text-[10px]"></i>
+                            <span class="text-xs font-semibold text-orange-700">Inherited from Measurement</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-3 text-center">
+                            <div><div class="text-[10px] text-gray-500">Dimensions</div><div class="text-sm font-bold text-gray-800">${dimLabel}</div></div>
+                            <div><div class="text-[10px] text-gray-500">Area</div><div class="text-sm font-bold text-orange-600">${areaFt} sqft</div></div>
+                            <div><div class="text-[10px] text-gray-500">Product</div><div class="text-sm font-bold text-gray-800">${prodLabel}</div></div>
+                        </div>
+                    </div>
+
+                    <div id="step4QuotationPanel_${project.id}" class="hidden" style="animation: fadeInSlide 0.3s ease">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                            <div class="space-y-4">
+                                <div>
+                                    <span class="text-xs font-semibold text-gray-700 mb-2 block"><i class="fas fa-layer-group text-orange-400 mr-1.5"></i>Product Tier</span>
+                                    <div class="grid grid-cols-3 gap-2" id="step4TierCards_${project.id}">${tierCardsSP}</div>
+                                </div>
+                                ${isSR ? `
+                                <div class="space-y-1">
+                                    <label class="text-[10px] font-medium text-gray-500"><i class="fas fa-window-maximize text-orange-400 mr-1"></i>Glass Upgrade</label>
+                                    <select id="step4Glass_${project.id}" class="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs" onchange="updateStep4Config('${project.id}')">
+                                        <option value="standard" ${step4State.glassType === 'standard' ? 'selected' : ''}>Standard Glass (Included)</option>
+                                        <option value="lowE" ${step4State.glassType === 'lowE' ? 'selected' : ''}>Low-E Glass (+$12/sqft)</option>
+                                        <option value="triplePane" ${step4State.glassType === 'triplePane' ? 'selected' : ''}>Triple Pane (+$28/sqft)</option>
+                                    </select>
+                                </div>` : `
+                                <div class="space-y-1">
+                                    <label class="text-[10px] font-medium text-gray-500"><i class="fas fa-sliders-h text-orange-400 mr-1"></i>Louver System</label>
+                                    <select id="step4Louver_${project.id}" class="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs" onchange="updateStep4Config('${project.id}')">
+                                        <option value="fixed" ${step4State.louverType === 'fixed' ? 'selected' : ''}>Fixed Louvers (Included)</option>
+                                        <option value="adjustable" ${step4State.louverType === 'adjustable' ? 'selected' : ''}>Adjustable (+$18/sqft)</option>
+                                        <option value="motorized" ${step4State.louverType === 'motorized' ? 'selected' : ''}>Motorized (+$35/sqft)</option>
+                                    </select>
+                                </div>`}
+                            </div>
+                            <div class="space-y-4">
+                                <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-xs font-semibold text-gray-700"><i class="fas fa-receipt text-orange-500 mr-1.5"></i>Cost Breakdown</span>
+                                        <button onclick="Nestopia.steps.step4.calculatePricing('${project.id}')" class="text-[10px] text-orange-600 font-medium hover:text-orange-800"><i class="fas fa-sync-alt mr-1"></i>Recalculate</button>
+                                    </div>
+                                    <div class="space-y-1.5" id="step4CostBreakdown_${project.id}">
+                                        <div class="flex justify-between text-[10px]"><span class="text-gray-600">Materials (${cs.tierName})</span><span class="font-medium text-gray-800">$${cs.materialCost}</span></div>
+                                        ${cs.upgradeCost > 0 ? `<div class="flex justify-between text-[10px]"><span class="text-gray-600">${isSR ? 'Glass Upgrade' : 'Louver Upgrade'}</span><span class="font-medium text-amber-600">+$${cs.upgradeCost}</span></div>` : ''}
+                                        <div class="flex justify-between text-[10px]"><span class="text-gray-600">Labor</span><span class="font-medium text-gray-800">$${cs.laborCost}</span></div>
+                                        <div class="flex justify-between text-[10px]"><span class="text-gray-600">Equipment</span><span class="font-medium text-gray-800">$${cs.equipmentCost}</span></div>
+                                        <div class="flex justify-between text-[10px]"><span class="text-gray-600">Permits</span><span class="font-medium text-gray-800">$${cs.permitCost}</span></div>
+                                        <div class="border-t border-gray-300 pt-1.5 mt-1.5 flex justify-between text-xs"><span class="font-bold text-gray-800">Total Cost (COGS)</span><span class="font-bold text-orange-600">$${cs.totalCost}</span></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="text-xs font-semibold text-gray-700 mb-2 block"><i class="fas fa-tags text-orange-400 mr-1.5"></i>Smart Quote Options</span>
+                                    <div class="grid grid-cols-3 gap-2" id="step4QuoteCards_${project.id}">
+                                        <div onclick="Nestopia.steps.step4.selectQuote('${project.id}','conservative')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center ${step4State.selectedQuote === 'conservative' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-blue-300'}">
+                                            <div class="text-[9px] text-gray-500">Conservative</div>
+                                            <div class="text-sm font-bold">${'$' + cs.quoteConservative}</div>
+                                            <div class="text-[9px] text-gray-400">10% margin</div>
+                                        </div>
+                                        <div onclick="Nestopia.steps.step4.selectQuote('${project.id}','recommended')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center relative ${step4State.selectedQuote === 'recommended' ? 'border-orange-500 bg-orange-50 shadow-sm' : 'border-gray-200 hover:border-orange-300'}">
+                                            <div class="absolute -top-2 left-1/2 -translate-x-1/2 text-[8px] font-bold bg-orange-500 text-white px-2 py-0.5 rounded-full">BEST</div>
+                                            <div class="text-[9px] text-gray-500">Recommended</div>
+                                            <div class="text-sm font-bold">${'$' + cs.quoteRecommended}</div>
+                                            <div class="text-[9px] text-gray-400">18% margin</div>
+                                        </div>
+                                        <div onclick="Nestopia.steps.step4.selectQuote('${project.id}','premium')" class="cursor-pointer p-2.5 rounded-lg border-2 transition text-center ${step4State.selectedQuote === 'premium' ? 'border-emerald-500 bg-emerald-50' : 'border-gray-200 hover:border-blue-300'}">
+                                            <div class="text-[9px] text-gray-500">Premium</div>
+                                            <div class="text-sm font-bold">${'$' + cs.quotePremium}</div>
+                                            <div class="text-[9px] text-gray-400">35% margin</div>
+                                        </div>                                    </div>
+                                </div>
+                                <div id="step4ProfitBar_${project.id}" class="p-3 rounded-lg border ${cs.marginPct >= 15 ? 'bg-green-50/50 border-green-200' : 'bg-amber-50/50 border-amber-200'}">
+                                    <div class="flex items-center justify-between text-[10px] mb-1.5">
+                                        <span class="font-semibold ${cs.marginPct >= 15 ? 'text-green-700' : 'text-amber-700'}"><i class="fas fa-chart-line mr-1"></i>Profit Analysis</span>
+                                        <span class="font-bold">${cs.marginPct}% margin</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex-1 bg-gray-200 rounded-full h-2"><div class="h-2 rounded-full ${cs.marginPct >= 15 ? 'bg-green-500' : 'bg-amber-500'}" style="width:${Math.min(cs.marginPct * 2.5, 100)}%"></div></div>
+                                        <span class="text-[10px] font-bold ${cs.marginPct >= 15 ? 'text-green-700' : 'text-amber-700'}">$${cs.profit} net</span>
+                                    </div>
+                                </div>
+                                <button onclick="Nestopia.utils.quotEditor.openQuotationEditor('${project.id}')" class="w-full py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold text-xs hover:from-blue-700 hover:to-blue-800 transition shadow-md flex items-center justify-center gap-1.5"><i class="fas fa-file-invoice-dollar"></i> Generate Quotation</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            })() : '';
+
+
+
+            // Agent Support
+            const agentHTML = config.agentSupport ? config.agentSupport.map(a => `
+                <div class="flex items-center gap-2 py-1.5">
+                    <div class="w-6 h-6 bg-gray-900 text-white rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-robot text-[9px]"></i>
+                    </div>
+                    <span class="text-xs font-medium text-gray-700">${a.agent}</span>
+                    <span class="text-xs text-gray-400">— ${a.ability}</span>
+                </div>
+            `).join('') : '';
+
+            return `
+                <div class="p-5 bg-gray-50/30">
+                    <!-- Step Header -->
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 bg-${color}-100 rounded-lg flex items-center justify-center">
+                                <span class="text-sm font-bold text-${color}-700">${stepNum}</span>
+                            </div>
+                            <div>
+                                <div class="text-sm font-bold text-gray-900">Step ${stepNum}: ${config.name}</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+
+                            <button onclick="toggleStepDetail(${stepNum}, window.currentDetailProject)" class="w-7 h-7 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50">
+                                <i class="fas fa-times text-gray-400 text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    ${questionnaireHTML ? `<div class="mt-4">${questionnaireHTML}</div>` : ''}
+
+                    ${aiDesignerHTML ? `<div class="mt-4">${aiDesignerHTML}</div>` : ''}
+
+                    ${measurementPanelHTML ? `<div class="mt-4">${measurementPanelHTML}</div>` : ''}
+
+                    ${verificationPanelHTML ? `<div class="mt-4">${verificationPanelHTML}</div>` : ''}
+
+                    ${quotationPanelHTML ? `<div class="mt-4">${quotationPanelHTML}</div>` : ''}
+
+                    ${agentHTML ? `
+                    <div class="mt-4 bg-white rounded-lg border border-gray-100 p-4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fas fa-robot text-gray-500 text-sm"></i>
+                            <span class="text-sm font-semibold text-gray-700">AI Agent Collaboration</span>
+                        </div>
+                        ${agentHTML}
+                    </div>` : ''}
+                </div>`;
+        }
+
+        // ===== Step 2: AI Design (→ js/steps/step2-design.js) =====
+        // ===== Step 3: Measurement (→ js/steps/step3-measurement.js) =====
+        // ===== Step 4: Quotation (→ js/steps/step4-quotation.js) =====
+        // ===== Projects: Create + Master-Detail (→ js/modules/projects.js) =====
+
+        // ===== Initialize =====
+        function initAIDesignerPage() { /* placeholder – AI Designer module pending */ }
+        document.addEventListener('DOMContentLoaded', function() {
+            if (checkAuth()) {
+                loadDashboardData();
+                initCompanyOverview();
+                initNewProjectsPage();
+                initAIDesignerPage();
+                initPricingAgentPage();
+                initCompliancePage();
+                initCSAgentPage();
+                initProductsPage();
+                initOrdersPage();
+                initCustomersPage();
+                initKnowledgeBase();
+                initProjectsPage();
+                syncAllA1OnLoad();
+                initTeamPage();
+                initSettingsPage();
+                initB2BChatbot();
+                // v1.2.0: Initialize sidebar project list
+                renderSidebarProjects();
+                // v1.3.0: Load user-created projects from Supabase
+                loadProjectsFromDB();
+                // v2.0: Initialize Wholesale Pricing nav visibility (platform only)
+                if (Nestopia.modules && Nestopia.modules.wholesalePricing) {
+                    Nestopia.modules.wholesalePricing.init();
+                }
+                // Phase 3: 分销商定价通知 + 导入
+                if (Nestopia.modules && Nestopia.modules.distributorPricing && Nestopia.modules.distributorPricing.init) {
+                    Nestopia.modules.distributorPricing.init();
+                }
+            }
+        });
+
+
+
+        // ===== Projects Management: 6-Step Workflow (→ js/modules/workflow.js) =====
+
+        // ===== Quotation Editor (→ js/utils/quotation-editor.js) =====
+        // ===== Projects Management: Risk & Issues (→ js/modules/projects.js + js/utils/helpers.js) =====
+
+        // ===== Team Management =====
+        function getTeamData() {
+            const slug = getCurrentTenantSlug();
+            if (slug === 'omeya-sin') return [
+                { id: 'TM-101', name: 'Amy Tan', role: 'Admin', email: 'amy@omeya-sin.com', phone: '+65 9111-0001', projects: 1, performance: 4.9, status: 'active', avatar: 'AT' },
+                { id: 'TM-102', name: 'Kevin Lim', role: 'Sales', email: 'kevin@omeya-sin.com', phone: '+65 9111-0002', projects: 1, performance: 4.7, status: 'active', avatar: 'KL' },
+                { id: 'TM-103', name: 'Rachel Ng', role: 'Installer', email: 'rachel@omeya-sin.com', phone: '+65 9111-0003', projects: 0, performance: 4.8, status: 'active', avatar: 'RN' }
+            ];
+            if (slug === 'nestopia-chn') return [
+                { id: 'TM-201', name: 'Wei Zhang', role: 'Admin', email: 'wei@nestopia-chn.com', phone: '+86 138-0001-0001', projects: 3, performance: 4.9, status: 'active', avatar: 'WZ' },
+                { id: 'TM-202', name: 'Lin Chen', role: 'Sales', email: 'lin@nestopia-chn.com', phone: '+86 138-0001-0002', projects: 3, performance: 4.8, status: 'active', avatar: 'LC' },
+                { id: 'TM-203', name: 'Hong Li', role: 'Designer', email: 'hong@nestopia-chn.com', phone: '+86 138-0001-0003', projects: 2, performance: 4.7, status: 'active', avatar: 'HL' },
+                { id: 'TM-204', name: 'Jian Wang', role: 'Installer', email: 'jian@nestopia-chn.com', phone: '+86 138-0001-0004', projects: 1, performance: 4.6, status: 'active', avatar: 'JW' }
+            ];
+            return [
+                { id: 'TM-001', name: 'John Smith', role: 'Admin', email: 'john@greenscape.com', phone: '415-555-0101', projects: 8, performance: 4.9, status: 'active', avatar: 'JS' },
+                { id: 'TM-002', name: 'Emily Davis', role: 'Sales', email: 'emily@greenscape.com', phone: '415-555-0102', projects: 12, performance: 4.8, status: 'active', avatar: 'ED' },
+                { id: 'TM-003', name: 'Mike Johnson', role: 'Designer', email: 'mike@greenscape.com', phone: '415-555-0103', projects: 6, performance: 4.7, status: 'active', avatar: 'MJ' },
+                { id: 'TM-004', name: 'Sarah Wilson', role: 'Installer', email: 'sarah@greenscape.com', phone: '415-555-0104', projects: 5, performance: 4.9, status: 'active', avatar: 'SW' },
+                { id: 'TM-005', name: 'David Chen', role: 'Sales', email: 'david@greenscape.com', phone: '415-555-0105', projects: 9, performance: 4.6, status: 'active', avatar: 'DC' },
+                { id: 'TM-006', name: 'Lisa Anderson', role: 'Designer', email: 'lisa@greenscape.com', phone: '415-555-0106', projects: 4, performance: 4.8, status: 'away', avatar: 'LA' },
+                { id: 'TM-007', name: 'Robert Taylor', role: 'Installer', email: 'robert@greenscape.com', phone: '415-555-0107', projects: 7, performance: 4.5, status: 'active', avatar: 'RT' },
+                { id: 'TM-008', name: 'Jennifer Martinez', role: 'Admin', email: 'jennifer@greenscape.com', phone: '415-555-0108', projects: 3, performance: 4.9, status: 'active', avatar: 'JM' }
+            ];
+        }
+        const teamDummyData = getTeamData();
+
+        function renderTeamTable() {
+            const tbody = document.getElementById('teamMembersTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = teamDummyData.map(member => `
+                <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
+                    <td class="py-3 px-4"><div class="flex items-center gap-3"><div class="w-8 h-8 bg-gray-900 text-white rounded-full flex items-center justify-center text-sm font-medium">${member.avatar}</div><div><div class="font-medium text-gray-900">${member.name}</div></div></div></td>
+                    <td class="py-3 px-4"><span class="px-2 py-0.5 bg-gray-100 text-gray-700 rounded-full text-xs font-medium">${member.role}</span></td>
+                    <td class="py-3 px-4 text-sm text-gray-700">${member.email}</td>
+                    <td class="py-3 px-4 text-sm text-gray-700">${member.phone}</td>
+                    <td class="py-3 px-4 text-sm text-gray-900 font-medium">${member.projects}</td>
+                    <td class="py-3 px-4"><div class="flex items-center gap-1"><i class="fas fa-star text-yellow-400 text-xs"></i><span class="text-sm font-medium text-gray-900">${member.performance}</span></div></td>
+                    <td class="py-3 px-4"><span class="px-2 py-0.5 ${member.status === 'active' ? 'bg-green-50 text-green-700' : 'bg-yellow-50 text-yellow-700'} rounded-full text-xs font-medium">${member.status === 'active' ? 'Active' : 'Away'}</span></td>
+                    <td class="py-3 px-4"><button class="text-gray-400 hover:text-gray-600 transition" onclick="viewMember('${member.id}')"><i class="fas fa-ellipsis-v"></i></button></td>
+                </tr>
+            `).join('');
+        }
+
+        function viewMember(id) {
+            const member = teamDummyData.find(m => m.id === id);
+            if (member) {
+                alert(`Team Member: ${member.name}\n\nRole: ${member.role}\nEmail: ${member.email}\nPhone: ${member.phone}\nProjects: ${member.projects}\nPerformance: ${member.performance}/5.0\nStatus: ${member.status}\n\n(Member detail modal will be implemented with backend integration)`);
+            }
+        }
+
+        function openAddMemberModal() {
+            alert('Add Member modal will be implemented here with:\n- Name and email\n- Role assignment\n- Phone number\n- Initial permissions\n\nThis will be a full modal dialog for adding new team members.');
+        }
+
+        function initTeamPage() {
+            renderTeamTable();
+            // Update team stats dynamically
+            var totalEl = document.getElementById('teamTotalMembers');
+            if (totalEl) totalEl.textContent = teamDummyData.length;
+        }
+
+        function initSettingsPage() {
+            // Initialize Display Preferences toggles from saved state
+            var inheritToggle = document.getElementById('toggleInheritedMeasurement');
+            if (inheritToggle && typeof getDisplaySetting === 'function') {
+                inheritToggle.checked = getDisplaySetting('showInheritedMeasurementData');
+            }
+
+            // Settings tab switching
+            document.querySelectorAll('.settings-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.dataset.tab;
+                    
+                    // Update tab styles
+                    document.querySelectorAll('.settings-tab').forEach(t => {
+                        t.classList.remove('border-gray-900', 'text-gray-900');
+                        t.classList.add('border-transparent', 'text-gray-500');
+                    });
+                    this.classList.remove('border-transparent', 'text-gray-500');
+                    this.classList.add('border-gray-900', 'text-gray-900');
+                    
+                    // Show/hide content
+                    document.querySelectorAll('.settings-content').forEach(c => {
+                        c.classList.add('hidden');
+                    });
+                    document.getElementById(`content-${tabName}`).classList.remove('hidden');
+                });
+            });
+        }
+
+        // ===== B2B Chatbot (→ js/utils/chatbot.js) =====
+    </script>
+
+    <!-- ===== Quotation Editor Modal (top-level, accessible from any page) ===== -->
+    <div id="quotationModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-[200] flex items-start justify-center pt-6 overflow-y-auto">
+        <div class="bg-white rounded-2xl w-full max-w-5xl mx-4 mb-8 shadow-2xl">
+            <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                <div class="flex items-center gap-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2"><i class="fas fa-file-invoice-dollar text-blue-600"></i> <span id="quotModalTitleText">Zip Blinds Quotation</span></h2>
+                        <p class="text-sm text-gray-500 mt-1" id="quotProjectRef"></p>
+                    </div>
+                    <div class="relative">
+                        <button onclick="Nestopia.utils.quotEditor.toggleQuotLoadDropdown()" class="px-3 py-1.5 text-xs font-medium border border-gray-300 rounded-lg hover:bg-gray-50 transition flex items-center gap-1.5 text-gray-600">
+                            <i class="fas fa-history"></i> Load Saved
+                            <span id="quotSavedCount" class="inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold bg-blue-100 text-blue-700 rounded-full" style="display:none">0</span>
+                        </button>
+                        <div id="quotLoadDropdown" class="hidden absolute left-0 top-full mt-1 w-72 bg-white rounded-xl shadow-xl border border-gray-200 z-50 max-h-64 overflow-y-auto">
+                            <div class="px-4 py-2 border-b border-gray-100 text-xs font-semibold text-gray-400 uppercase">Saved Quotations</div>
+                            <div id="quotLoadDropdownList"><div class="px-4 py-3 text-sm text-gray-400 text-center">No saved quotations</div></div>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="Nestopia.utils.quotEditor.closeQuotationEditor()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition"><i class="fas fa-times text-gray-500"></i></button>
+            </div>
+            <div class="p-6 space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div><label id="quotLabelClient" class="block text-xs font-semibold text-gray-500 uppercase mb-1">Client</label><input type="text" id="quotClientName" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
+                    <div><label id="quotLabelContact" class="block text-xs font-semibold text-gray-500 uppercase mb-1">Contact</label><input type="text" id="quotClientPhone" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
+                    <div><label id="quotLabelCS" class="block text-xs font-semibold text-gray-500 uppercase mb-1">Customer Service</label><input type="text" id="quotCSRep" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div><label id="quotLabelProfileColor" class="block text-xs font-semibold text-gray-500 uppercase mb-1">Profile Color</label><input type="text" id="quotProfileColor" value="Coffee" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
+                    <div><label id="quotLabelFabric" class="block text-xs font-semibold text-gray-500 uppercase mb-1">Fabric</label><input type="text" id="quotFabric" value="Polyester+PVC, 5% openness" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
+                    <div><label id="quotLabelFabricColor" class="block text-xs font-semibold text-gray-500 uppercase mb-1">Fabric Color / Code</label><input type="text" id="quotFabricColor" placeholder="e.g. NP33054060SP" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label id="quotLabelProductItems" class="text-xs font-semibold text-gray-500 uppercase">Product Items</label>
+                        <button onclick="Nestopia.utils.quotEditor.addQuotLineItem()" class="px-3 py-1.5 text-xs font-medium bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition flex items-center gap-1"><i class="fas fa-plus"></i> <span id="quotBtnAddRow">Add Row</span></button>
+                    </div>
+                    <div class="border border-gray-200 rounded-xl overflow-x-auto">
+                        <table class="w-full text-sm"><thead><tr class="bg-gray-50 text-gray-600 text-xs uppercase">
+                            <th class="py-2.5 px-3 text-left w-8">#</th>
+                            <th id="quotThProduct" class="py-2.5 px-3 text-left min-w-[180px]">Product</th>
+                            <th id="quotThWidth" class="py-2.5 px-3 text-center w-20">Width(mm)</th>
+                            <th id="quotThHeight" class="py-2.5 px-3 text-center w-20">Height(mm)</th>
+                            <th id="quotThArea" class="py-2.5 px-3 text-center w-20">Area(m²)</th>
+                            <th id="quotThUnitPrice" class="py-2.5 px-3 text-center w-24">Unit Price(¥/m²)</th>
+                            <th id="quotThQty" class="py-2.5 px-3 text-center w-16">Qty</th>
+                            <th id="quotThAmount" class="py-2.5 px-3 text-right w-24">Amount(¥)</th>
+                            <th class="py-2.5 px-3 w-10"></th>
+                        </tr></thead><tbody id="quotLineItems"></tbody></table>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label id="quotLabelAccessories" class="text-xs font-semibold text-gray-500 uppercase">Accessories</label>
+                        <button onclick="Nestopia.utils.quotEditor.addQuotAccessory()" class="px-3 py-1.5 text-xs font-medium bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition flex items-center gap-1"><i class="fas fa-plus"></i> <span id="quotBtnAddAccessory">Add Accessory</span></button>
+                    </div>
+                    <div class="border border-gray-200 rounded-xl overflow-x-auto">
+                        <table class="w-full text-sm"><thead><tr class="bg-gray-50 text-gray-600 text-xs uppercase">
+                            <th class="py-2.5 px-3 text-left w-8">#</th>
+                            <th id="quotThAccItem" class="py-2.5 px-3 text-left">Item</th>
+                            <th id="quotThAccSpec" class="py-2.5 px-3 text-center w-20">Spec</th>
+                            <th id="quotThAccUnitPrice" class="py-2.5 px-3 text-center w-24">Unit Price(¥)</th>
+                            <th id="quotThAccQty" class="py-2.5 px-3 text-center w-16">Qty</th>
+                            <th id="quotThAccAmount" class="py-2.5 px-3 text-right w-24">Amount(¥)</th>
+                            <th class="py-2.5 px-3 w-10"></th>
+                        </tr></thead><tbody id="quotAccessories"></tbody></table>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-3">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div><label id="quotLabelCurrency" class="block text-xs font-semibold text-gray-500 uppercase mb-1">Currency</label>
+                                <select id="quotCurrency" onchange="updateQuotTotals()" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400">
+                                    <option value="RMB">RMB (¥)</option><option value="SGD">SGD (S$)</option><option value="USD">USD ($)</option>
+                                </select></div>
+                            <div><label id="quotLabelExchangeRate" class="block text-xs font-semibold text-gray-500 uppercase mb-1">Exchange Rate</label>
+                                <input type="number" id="quotExchangeRate" value="5.3937" step="0.0001" onchange="updateQuotTotals()" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
+                        </div>
+                        <div><label id="quotLabelRemarks" class="block text-xs font-semibold text-gray-500 uppercase mb-1">Remarks</label>
+                            <textarea id="quotRemarks" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400">1. Include customs duties, logistics, and shipping fees
+2. Warranty: Aluminum alloy 10 years, motor 3 years, zip blinds 2 years
+3. Payment: 50% deposit before production, balance before shipment</textarea></div>
+                    </div>
+                    <div class="bg-gray-50 rounded-xl p-5 space-y-3">
+                        <h4 id="quotLabelSummary" class="text-sm font-semibold text-gray-700">Quotation Summary</h4>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between"><span id="quotLabelSubProducts" class="text-gray-500">Product Subtotal:</span><span class="font-medium" id="quotSubProducts">¥0.00</span></div>
+                            <div class="flex justify-between"><span id="quotLabelSubAccessories" class="text-gray-500">Accessory Subtotal:</span><span class="font-medium" id="quotSubAccessories">¥0.00</span></div>
+                            <div class="border-t border-gray-200 pt-2 flex justify-between text-base"><span id="quotLabelTotalRMB" class="font-semibold text-gray-700">Total Price (RMB):</span><span class="font-bold text-gray-900 text-lg" id="quotTotalRMB">¥0.00</span></div>
+                            <div class="flex justify-between text-base" id="quotForeignRow"><span class="font-semibold text-gray-700"><span id="quotLabelTotalForeign">Total Price</span> (<span id="quotForeignLabel">SGD</span>):</span><span class="font-bold text-blue-600 text-lg" id="quotTotalForeign">S$0.00</span></div>
+                        </div>
+                        <div><label id="quotLabelDiscount" class="block text-xs font-semibold text-gray-500 uppercase mb-1">Discount (%)</label>
+                            <input type="number" id="quotDiscount" value="0" min="0" max="100" step="1" onchange="updateQuotTotals()" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-400"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
+                <div id="quotFooterNote" class="text-sm text-gray-500">Quotation will open as a printable HTML page</div>
+                <div class="flex items-center gap-3">
+                    <button onclick="Nestopia.utils.quotEditor.closeQuotationEditor()" class="px-4 py-2.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-100 transition">Cancel</button>
+                    <button onclick="Nestopia.utils.quotEditor.saveQuotation()" class="px-5 py-2.5 text-sm bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition font-medium flex items-center gap-2"><i class="fas fa-save"></i> Save</button>
+                    <button onclick="Nestopia.utils.quotEditor.generateConsumerQuotation()" class="px-6 py-2.5 text-sm bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 transition font-medium flex items-center gap-2"><i class="fas fa-file-export"></i> Consumer Quote</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

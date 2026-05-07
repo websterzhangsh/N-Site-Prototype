@@ -339,5 +339,11 @@
         ZB_WORKFLOW_STEPS: ZB_WORKFLOW_STEPS
     };
 
+    // ── 全局别名桥接（projects.js 等模块直接引用）──
+    window.ZB_WORKFLOW_STEPS = ZB_WORKFLOW_STEPS;
+    window.STEP_DETAIL_CONFIG = STEP_DETAIL_CONFIG;
+    window.ZB_STEP_CONFIGS = ZB_STEP_CONFIGS;
+    window.ZB_COMBINED_CONFIG = ZB_COMBINED_CONFIG;
+
     console.log('[Nestopia] step-config.js loaded');
 })();
