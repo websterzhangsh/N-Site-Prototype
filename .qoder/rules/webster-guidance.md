@@ -114,6 +114,7 @@ trigger: always_on
 - `docs/Webster's_guidance_to_Qoder.md` — 原始指导文件
 - `docs/Product Features and Selling Points.md` — 产品卖点
 - `docs/DATA_AI_STRATEGY.md` — 数据与 AI 策略
+- `docs/PRICING_ARCHITECTURE.md` — 定价架构与 SKU 价格生命周期（统领性定价文档）
 - `docs/STORAGE_STRATEGY.md` — 存储策略（Supabase + Cloudflare R2）
 - `docs/KB_STORAGE_DESIGN.md` — KB 存储架构细节
 - `docs/ZB_KB_KNOWLEDGE_AGENT_DESIGN.md` — Zip Blinds KB & Knowledge Agent 设计
