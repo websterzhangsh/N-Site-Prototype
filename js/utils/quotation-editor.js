@@ -23,6 +23,7 @@
     // ===== Quotation Editor =====
     var quotLineItemsData = [];
     var quotAccessoriesData = [];
+    var quotOtherItemsData = [];
     var quotCurrentProjectId = null;
     var quotProjectTenantSlug = '';   // ★ 项目级租户 slug — 报价单品牌跟随项目而非会话
 
@@ -228,8 +229,10 @@
             quotLineItemsData = [{ product: getQuotProductNames()[0], width: 3000, height: 2500, unitPrice: getQuotPriceLookup()[getQuotProductNames()[0]].defaultPrice, qty: 1 }];
             quotAccessoriesData = [];
         }
+        quotOtherItemsData = [];
         renderQuotLineItems();
         renderQuotAccessories();
+        renderQuotOtherItems();
         updateQuotTotals();
 
         // Close project detail modal if open, then show quotation editor
@@ -259,6 +262,10 @@
             'quotThQty':'thQty','quotThAmount':'thAmount','quotLabelAccessories':'labelAccessories',
             'quotBtnAddAccessory':'btnAddAccessory','quotThAccItem':'thAccItem','quotThAccSpec':'thAccSpec',
             'quotThAccUnitPrice':'thAccUnitPrice','quotThAccQty':'thAccQty','quotThAccAmount':'thAccAmount',
+            'quotLabelOtherItems':'labelOtherItems','quotBtnAddOtherItem':'btnAddOtherItem',
+            'quotThOtherItem':'thOtherItem','quotThOtherSpec':'thOtherSpec',
+            'quotThOtherUnitPrice':'thOtherUnitPrice','quotThOtherQty':'thOtherQty','quotThOtherAmount':'thOtherAmount',
+            'quotLabelSubOtherItems':'labelSubOtherItems',
             'quotLabelCurrency':'labelCurrency','quotLabelExchangeRate':'labelExchangeRate',
             'quotLabelRemarks':'labelRemarks','quotLabelSummary':'labelSummary',
             'quotLabelSubProducts':'labelSubProducts','quotLabelSubAccessories':'labelSubAccessories',
@@ -326,7 +333,8 @@
             discount: parseFloat(document.getElementById('quotDiscount').value) || 0,
             remarks: document.getElementById('quotRemarks').value,
             lineItems: JSON.parse(JSON.stringify(quotLineItemsData)),
-            accessories: JSON.parse(JSON.stringify(quotAccessoriesData))
+            accessories: JSON.parse(JSON.stringify(quotAccessoriesData)),
+            otherItems: JSON.parse(JSON.stringify(quotOtherItemsData))
         };
         var list = getAllSavedQuotations(quotCurrentProjectId);
         list.unshift(quotation);
@@ -363,8 +371,10 @@
         document.getElementById('quotRemarks').value = q.remarks || '';
         quotLineItemsData = q.lineItems ? JSON.parse(JSON.stringify(q.lineItems)) : [];
         quotAccessoriesData = q.accessories ? JSON.parse(JSON.stringify(q.accessories)) : [];
+        quotOtherItemsData = q.otherItems ? JSON.parse(JSON.stringify(q.otherItems)) : [];
         renderQuotLineItems();
         renderQuotAccessories();
+        renderQuotOtherItems();
         updateQuotTotals();
         showToast('Loaded: ' + q.id, 'success');
     }
@@ -399,6 +409,7 @@
             var total = 0;
             if (q.lineItems) q.lineItems.forEach(function(li) { total += (li.width * li.height / 1000000) * li.unitPrice * li.qty; });
             if (q.accessories) q.accessories.forEach(function(a) { total += a.unitPrice * a.qty; });
+            if (q.otherItems) q.otherItems.forEach(function(o) { total += o.unitPrice * o.qty; });
             total = total * (1 - (q.discount || 0) / 100);
             html += '<div class="flex items-center justify-between px-4 py-2.5 hover:bg-blue-50 transition group">' +
                 '<button onclick="Nestopia.utils.quotEditor.loadQuotation(\'' + q.id + '\'); Nestopia.utils.quotEditor.toggleQuotLoadDropdown();" class="flex-1 text-left">' +
@@ -439,6 +450,34 @@
         quotAccessoriesData.splice(idx, 1);
         renderQuotAccessories();
         updateQuotTotals();
+    }
+
+    function addQuotOtherItem() {
+        quotOtherItemsData.push({ name: '', spec: '', unitPrice: 0, qty: 1 });
+        renderQuotOtherItems();
+        updateQuotTotals();
+    }
+
+    function removeQuotOtherItem(idx) {
+        quotOtherItemsData.splice(idx, 1);
+        renderQuotOtherItems();
+        updateQuotTotals();
+    }
+
+    function renderQuotOtherItems() {
+        var tbody = document.getElementById('quotOtherItems');
+        if (!tbody) return;
+        tbody.innerHTML = quotOtherItemsData.map(function(item, i) {
+            var amount = item.unitPrice * item.qty;
+            return '<tr class="border-t border-gray-100 hover:bg-green-50/30">' +
+                '<td class="py-2 px-3 text-gray-400 text-xs">' + (i + 1) + '</td>' +
+                '<td class="py-2 px-3"><input type="text" value="' + (item.name || '') + '" onchange="quotOtherItemsData[' + i + '].name=this.value;" class="w-full px-2 py-1.5 border border-gray-200 rounded text-xs focus:ring-1 focus:ring-green-400" placeholder="e.g. Post, Bracket..."></td>' +
+                '<td class="py-2 px-3"><input type="text" value="' + (item.spec || '') + '" onchange="quotOtherItemsData[' + i + '].spec=this.value;" class="w-full px-2 py-1.5 border border-gray-200 rounded text-xs text-center focus:ring-1 focus:ring-green-400" placeholder="Spec"></td>' +
+                '<td class="py-2 px-3"><input type="number" value="' + item.unitPrice + '" step="1" onchange="quotOtherItemsData[' + i + '].unitPrice=Number(this.value);renderQuotOtherItems();updateQuotTotals();" class="w-full px-2 py-1.5 border border-gray-200 rounded text-xs text-center focus:ring-1 focus:ring-green-400"></td>' +
+                '<td class="py-2 px-3"><input type="number" value="' + item.qty + '" min="1" onchange="quotOtherItemsData[' + i + '].qty=Number(this.value);renderQuotOtherItems();updateQuotTotals();" class="w-full px-2 py-1.5 border border-gray-200 rounded text-xs text-center focus:ring-1 focus:ring-green-400"></td>' +
+                '<td class="py-2 px-3 text-right text-xs font-semibold text-gray-900">' + amount.toFixed(2) + '</td>' +
+                '<td class="py-2 px-3"><button onclick="Nestopia.utils.quotEditor.removeQuotOtherItem(' + i + ')" class="text-red-400 hover:text-red-600 transition"><i class="fas fa-trash-alt text-xs"></i></button></td></tr>';
+        }).join('');
     }
 
     function calcArea(w, h) { return (w * h) / 1000000; }
@@ -489,12 +528,16 @@
         });
         var accTotal = 0;
         quotAccessoriesData.forEach(function(item) { accTotal += item.unitPrice * item.qty; });
+        var otherTotal = 0;
+        quotOtherItemsData.forEach(function(item) { otherTotal += item.unitPrice * item.qty; });
 
         var discount = Number(document.getElementById('quotDiscount').value) || 0;
-        var grandRMB = (prodTotal + accTotal) * (1 - discount / 100);
+        var grandRMB = (prodTotal + accTotal + otherTotal) * (1 - discount / 100);
 
         document.getElementById('quotSubProducts').textContent = '\u00a5' + prodTotal.toFixed(2);
         document.getElementById('quotSubAccessories').textContent = '\u00a5' + accTotal.toFixed(2);
+        var otherSubEl = document.getElementById('quotSubOtherItems');
+        if (otherSubEl) otherSubEl.textContent = '\u00a5' + otherTotal.toFixed(2);
         document.getElementById('quotTotalRMB').textContent = '\u00a5' + grandRMB.toFixed(2);
 
         var currency = document.getElementById('quotCurrency').value;
@@ -560,13 +603,26 @@
                 '<td style="border:1px solid #d1d5db;padding:8px 10px;text-align:right;font-weight:600;">' + amount.toFixed(2) + '</td></tr>';
         }).join('');
 
-        var grandRMB = (prodTotal + accTotal) * (1 - discount / 100);
+        // Build other items rows
+        var otherTotal = 0;
+        var otherRowsHtml = quotOtherItemsData.map(function(item, i) {
+            var amount = item.unitPrice * item.qty;
+            otherTotal += amount;
+            return '<tr>' +
+                '<td style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;color:#6b7280;">' + (quotLineItemsData.length + quotAccessoriesData.length + i + 1) + '</td>' +
+                '<td style="border:1px solid #d1d5db;padding:8px 10px;font-weight:500;" colspan="4">' + (item.name || 'Item') + (item.spec ? ' (' + item.spec + ')' : '') + '</td>' +
+                '<td style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;">' + item.unitPrice.toFixed(2) + '</td>' +
+                '<td style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;">' + item.qty + '</td>' +
+                '<td style="border:1px solid #d1d5db;padding:8px 10px;text-align:right;font-weight:600;">' + amount.toFixed(2) + '</td></tr>';
+        }).join('');
+
+        var grandRMB = (prodTotal + accTotal + otherTotal) * (1 - discount / 100);
         var foreignSymbol = currency === 'SGD' ? 'S$' : '$';
         var foreignAmount = currency !== 'RMB' ? grandRMB / rate : 0;
 
         // Subtotal row
         var subtotalHtml = '';
-        if (accRowsHtml) {
+        if (accRowsHtml || otherRowsHtml) {
             subtotalHtml = '<tr style="background:#f9fafb;">' +
                 '<td style="border:1px solid #d1d5db;padding:8px 10px;" colspan="7"><strong>' + t('printSubtotal') + '</strong></td>' +
                 '<td style="border:1px solid #d1d5db;padding:8px 10px;text-align:right;font-weight:600;">\u00a5' + prodTotal.toFixed(2) + '</td></tr>';
@@ -655,7 +711,7 @@
             '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:11px;color:#6b7280;width:80px;">' + t('printThUnitPrice') + '</th>' +
             '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:center;font-size:11px;color:#6b7280;width:50px;">' + t('printThQty') + '</th>' +
             '<th style="border:1px solid #d1d5db;padding:8px 10px;text-align:right;font-size:11px;color:#6b7280;width:90px;">' + t('printThAmount') + '</th></tr></thead><tbody>' +
-            prodRowsHtml + subtotalHtml + accRowsHtml + totalRowsHtml +
+            prodRowsHtml + subtotalHtml + accRowsHtml + otherRowsHtml + totalRowsHtml +
             '</tbody></table>' +
 
             // Remarks
@@ -912,6 +968,7 @@
     N.utils.quotEditor = {
         quotLineItemsData: quotLineItemsData,
         quotAccessoriesData: quotAccessoriesData,
+        quotOtherItemsData: quotOtherItemsData,
         quotCurrentProjectId: quotCurrentProjectId,
         zbPriceLookup: zbPriceLookup,
         zbProductNames: zbProductNames,
@@ -941,9 +998,12 @@
         removeQuotLineItem: removeQuotLineItem,
         addQuotAccessory: addQuotAccessory,
         removeQuotAccessory: removeQuotAccessory,
+        addQuotOtherItem: addQuotOtherItem,
+        removeQuotOtherItem: removeQuotOtherItem,
         calcArea: calcArea,
         renderQuotLineItems: renderQuotLineItems,
         renderQuotAccessories: renderQuotAccessories,
+        renderQuotOtherItems: renderQuotOtherItems,
         updateQuotTotals: updateQuotTotals,
         previewQuotation: previewQuotation,
         generateConsumerQuotation: generateConsumerQuotation
@@ -952,6 +1012,7 @@
     // ===== Global Aliases (backward compatibility) =====
     window.quotLineItemsData = quotLineItemsData;
     window.quotAccessoriesData = quotAccessoriesData;
+    window.quotOtherItemsData = quotOtherItemsData;
     window.quotCurrentProjectId = quotCurrentProjectId;
     window.zbPriceLookup = zbPriceLookup;
     window.zbProductNames = zbProductNames;
@@ -981,9 +1042,12 @@
     window.removeQuotLineItem = removeQuotLineItem;
     window.addQuotAccessory = addQuotAccessory;
     window.removeQuotAccessory = removeQuotAccessory;
+    window.addQuotOtherItem = addQuotOtherItem;
+    window.removeQuotOtherItem = removeQuotOtherItem;
     window.calcArea = calcArea;
     window.renderQuotLineItems = renderQuotLineItems;
     window.renderQuotAccessories = renderQuotAccessories;
+    window.renderQuotOtherItems = renderQuotOtherItems;
     window.updateQuotTotals = updateQuotTotals;
     window.previewQuotation = previewQuotation;
     window.generateConsumerQuotation = generateConsumerQuotation;

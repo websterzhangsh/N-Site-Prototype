@@ -7681,6 +7681,23 @@
                         </tr></thead><tbody id="quotAccessories"></tbody></table>
                     </div>
                 </div>
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label id="quotLabelOtherItems" class="text-xs font-semibold text-gray-500 uppercase">Other Items</label>
+                        <button onclick="Nestopia.utils.quotEditor.addQuotOtherItem()" class="px-3 py-1.5 text-xs font-medium bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition flex items-center gap-1"><i class="fas fa-plus"></i> <span id="quotBtnAddOtherItem">Add Item</span></button>
+                    </div>
+                    <div class="border border-gray-200 rounded-xl overflow-x-auto">
+                        <table class="w-full text-sm"><thead><tr class="bg-gray-50 text-gray-600 text-xs uppercase">
+                            <th class="py-2.5 px-3 text-left w-8">#</th>
+                            <th id="quotThOtherItem" class="py-2.5 px-3 text-left">Item</th>
+                            <th id="quotThOtherSpec" class="py-2.5 px-3 text-center w-20">Spec</th>
+                            <th id="quotThOtherUnitPrice" class="py-2.5 px-3 text-center w-24">Unit Price(¥)</th>
+                            <th id="quotThOtherQty" class="py-2.5 px-3 text-center w-16">Qty</th>
+                            <th id="quotThOtherAmount" class="py-2.5 px-3 text-right w-24">Amount(¥)</th>
+                            <th class="py-2.5 px-3 w-10"></th>
+                        </tr></thead><tbody id="quotOtherItems"></tbody></table>
+                    </div>
+                </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="space-y-3">
                         <div class="grid grid-cols-2 gap-3">
@@ -7701,6 +7718,7 @@
                         <div class="space-y-2 text-sm">
                             <div class="flex justify-between"><span id="quotLabelSubProducts" class="text-gray-500">Product Subtotal:</span><span class="font-medium" id="quotSubProducts">¥0.00</span></div>
                             <div class="flex justify-between"><span id="quotLabelSubAccessories" class="text-gray-500">Accessory Subtotal:</span><span class="font-medium" id="quotSubAccessories">¥0.00</span></div>
+                            <div class="flex justify-between"><span id="quotLabelSubOtherItems" class="text-gray-500">Other Items Subtotal:</span><span class="font-medium" id="quotSubOtherItems">¥0.00</span></div>
                             <div class="border-t border-gray-200 pt-2 flex justify-between text-base"><span id="quotLabelTotalRMB" class="font-semibold text-gray-700">Total Price (RMB):</span><span class="font-bold text-gray-900 text-lg" id="quotTotalRMB">¥0.00</span></div>
                             <div class="flex justify-between text-base" id="quotForeignRow"><span class="font-semibold text-gray-700"><span id="quotLabelTotalForeign">Total Price</span> (<span id="quotForeignLabel">SGD</span>):</span><span class="font-bold text-blue-600 text-lg" id="quotTotalForeign">S$0.00</span></div>
                         </div>
