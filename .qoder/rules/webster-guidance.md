@@ -85,7 +85,22 @@ trigger: always_on
 - **禁止在渲染函数内使用裸 IIFE** — `(() => { ... })()` 模式必须替换为命名函数调用
 - 新增 render 函数必须 ≤ 50 行（超过则拆分子函数）
 
-### 7. 外部模块依赖 readiness 检查
+### 8. 文件完整性守卫（防截断）
+- **关键文件（`company-operations.html`）禁止在编辑后丢失行数超过 10%**
+- 每次编辑该文件时，**必须验证以下三点**：
+  1. 文件末尾包含 `</html>` 闭合标签
+  2. 行数未低于基线的 90%（基线存储在 `.git/html-baseline-lines`）
+  3. 包含关键标记：`DOMContentLoaded`、`</script>`、`</body>`、`loadDashboardData`、`renderSidebarProjects`
+- **pre-commit hook 自动强制执行**（纯 bash，零依赖），安装方式：
+  ```bash
+  cp scripts/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+  ```
+- **反例（2026-05-07 回归）**: Edit 工具写入时意外截断文件 7724→5324 行，
+  丢失 DOMContentLoaded 初始化链 + `</script></body></html>` 闭合标签，
+  导致所有租户全面崩溃（Logo 不加载、项目消失、Workflow 空白）
+- **Qoder 行为规则**: 编辑 `company-operations.html` 后，**必须使用 `tail -5` 验证文件末尾包含 `</html>`**
+
+### 9. 外部模块依赖 readiness 检查
 - 渲染函数中访问 `productCatalog`、`productIcons`、`Nestopia.steps.*` 等外部模块时，**必须判空后再使用**
 - 反例：`productCatalog[s.value]` — 如果 `productCatalog` 未初始化（JS 加载顺序问题），直接抛 TypeError
 - 正例：

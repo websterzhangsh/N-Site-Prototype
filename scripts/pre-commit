@@ -1,7 +1,8 @@
 #!/bin/bash
 # ── pre-commit hook ──────────────────────────────────────
-# 在 git commit 之前自动验证 company-operations.html 中所有
-# <script> 块的 JavaScript 语法，防止语法错误导致页面瘫痪。
+# 两道防线:
+#   1. 文件完整性守卫 — 防止关键文件被截断（纯 bash，零依赖）
+#   2. JavaScript 语法验证 — 防止语法错误（需要 Node.js）
 #
 # 安装:
 #   cp scripts/pre-commit .git/hooks/pre-commit
@@ -14,32 +15,98 @@
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 TARGET="company-operations.html"
 
-# 只在 company-operations.html 有变更时检查
-if ! git diff --cached --name-only | grep -q "^${TARGET}$"; then
-    exit 0
-fi
+# =============================================================
+# 防线 1: 文件完整性守卫（ALWAYS ON — 零依赖）
+# 防止关键文件被意外截断。检测条件:
+#   a) 文件必须以 </html> 结尾
+#   b) 行数不得低于基线的 90%
+#   c) 必须包含关键标记（DOMContentLoaded、</script>、</body>）
+# =============================================================
+if git diff --cached --name-only | grep -q "^${TARGET}$"; then
+    echo ""
+    echo "🛡️  pre-commit: 文件完整性守卫 — 检查 ${TARGET}..."
 
-echo ""
-echo "🔍 pre-commit: 检查 ${TARGET} JavaScript 语法..."
-echo ""
+    # 使用暂存区版本（即将提交的版本），而非工作区版本
+    STAGED_CONTENT="$(git show ":${TARGET}" 2>/dev/null)"
+    if [ -z "$STAGED_CONTENT" ]; then
+        echo "   ⚠️  无法读取暂存区文件，跳过完整性检查"
+    else
+        STAGED_LINES=$(echo "$STAGED_CONTENT" | wc -l | tr -d ' ')
 
-# 运行验证脚本
-python3 "${REPO_ROOT}/scripts/validate-js-syntax.py" "${TARGET}"
-EXIT_CODE=$?
+        # ── 检查 a: 文件末尾必须包含 </html> ──
+        LAST_NON_EMPTY=$(echo "$STAGED_CONTENT" | sed '/^[[:space:]]*$/d' | tail -1)
+        if ! echo "$LAST_NON_EMPTY" | grep -q "</html>"; then
+            echo ""
+            echo "🚫 BLOCKED: ${TARGET} 末尾缺少 </html> 标签！"
+            echo "   文件可能被截断。当前行数: ${STAGED_LINES}"
+            echo "   最后一行内容: ${LAST_NON_EMPTY:0:80}"
+            echo ""
+            echo "   如果确认无误: git commit --no-verify"
+            exit 1
+        fi
 
-if [ $EXIT_CODE -eq 2 ]; then
-    # Node.js 不可用 — 警告但不阻止
+        # ── 检查 b: 行数不得低于基线的 90% ──
+        # 基线: 记录上次成功的行数（存储在 .git/html-baseline-lines）
+        BASELINE_FILE="${REPO_ROOT}/.git/html-baseline-lines"
+        if [ -f "$BASELINE_FILE" ]; then
+            BASELINE=$(cat "$BASELINE_FILE")
+            THRESHOLD=$(( BASELINE * 90 / 100 ))
+            if [ "$STAGED_LINES" -lt "$THRESHOLD" ]; then
+                echo ""
+                echo "🚫 BLOCKED: ${TARGET} 行数异常减少！"
+                echo "   基线: ${BASELINE} 行 → 当前: ${STAGED_LINES} 行（减少 $(( BASELINE - STAGED_LINES )) 行）"
+                echo "   阈值: 不得低于 ${THRESHOLD} 行（基线的 90%）"
+                echo ""
+                echo "   如果是合法大规模重构: git commit --no-verify"
+                echo "   然后运行: echo ${STAGED_LINES} > ${BASELINE_FILE}"
+                exit 1
+            fi
+        fi
+
+        # ── 检查 c: 关键标记必须存在 ──
+        MISSING_MARKERS=""
+        for MARKER in "DOMContentLoaded" "</script>" "</body>" "loadDashboardData" "renderSidebarProjects"; do
+            if ! echo "$STAGED_CONTENT" | grep -q "$MARKER"; then
+                MISSING_MARKERS="${MISSING_MARKERS}  - ${MARKER}\n"
+            fi
+        done
+        if [ -n "$MISSING_MARKERS" ]; then
+            echo ""
+            echo "🚫 BLOCKED: ${TARGET} 缺少关键标记！"
+            echo -e "   以下标记在文件中未找到:\n${MISSING_MARKERS}"
+            echo "   文件可能被截断或损坏。"
+            echo ""
+            echo "   如果确认无误: git commit --no-verify"
+            exit 1
+        fi
+
+        # ── 所有检查通过 — 更新基线 ──
+        echo "$STAGED_LINES" > "$BASELINE_FILE"
+        echo "   ✅ 完整性检查通过（${STAGED_LINES} 行，含 </html>，关键标记完整）"
+    fi
+
+    # ─────────────────────────────────────────────────────
+    # 防线 2: JavaScript 语法验证（需要 Node.js）
+    # ─────────────────────────────────────────────────────
     echo ""
-    echo "⚠️  语法检查跳过（Node.js 不可用）"
-    echo "   建议安装 Node.js 以启用完整的语法验证。"
+    echo "🔍 pre-commit: 检查 ${TARGET} JavaScript 语法..."
     echo ""
-    exit 0
-elif [ $EXIT_CODE -ne 0 ]; then
-    echo ""
-    echo "🚫 commit 被阻止 — 请修复语法错误后重试"
-    echo "   紧急跳过: git commit --no-verify"
-    echo ""
-    exit 1
+
+    python3 "${REPO_ROOT}/scripts/validate-js-syntax.py" "${TARGET}"
+    EXIT_CODE=$?
+
+    if [ $EXIT_CODE -eq 2 ]; then
+        echo ""
+        echo "⚠️  语法检查跳过（Node.js 不可用）"
+        echo "   建议安装 Node.js 以启用完整的语法验证。"
+        echo ""
+    elif [ $EXIT_CODE -ne 0 ]; then
+        echo ""
+        echo "🚫 commit 被阻止 — 请修复语法错误后重试"
+        echo "   紧急跳过: git commit --no-verify"
+        echo ""
+        exit 1
+    fi
 fi
 
 exit 0
