@@ -229,7 +229,7 @@
             quotLineItemsData = [{ product: getQuotProductNames()[0], width: 3000, height: 2500, unitPrice: getQuotPriceLookup()[getQuotProductNames()[0]].defaultPrice, qty: 1 }];
             quotAccessoriesData = [];
         }
-        quotOtherItemsData = [];
+        quotOtherItemsData.length = 0;
         renderQuotLineItems();
         renderQuotAccessories();
         renderQuotOtherItems();
@@ -371,7 +371,7 @@
         document.getElementById('quotRemarks').value = q.remarks || '';
         quotLineItemsData = q.lineItems ? JSON.parse(JSON.stringify(q.lineItems)) : [];
         quotAccessoriesData = q.accessories ? JSON.parse(JSON.stringify(q.accessories)) : [];
-        quotOtherItemsData = q.otherItems ? JSON.parse(JSON.stringify(q.otherItems)) : [];
+        quotOtherItemsData.length = 0; Array.prototype.push.apply(quotOtherItemsData, q.otherItems ? JSON.parse(JSON.stringify(q.otherItems)) : []);
         renderQuotLineItems();
         renderQuotAccessories();
         renderQuotOtherItems();
