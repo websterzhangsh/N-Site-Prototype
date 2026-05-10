@@ -827,8 +827,23 @@
             '</tr>';
         }
 
+        // ── Other Items 行 ──
+        var otherItemsRows = '';
+        var otherItemsTotal = 0;
+        var otherStartIdx = totalOpenings + (motorRow ? 2 : 1);
+        quotOtherItemsData.forEach(function(item, i) {
+            var amount = item.unitPrice * item.qty;
+            otherItemsTotal += amount;
+            otherItemsRows += '<tr>' +
+                '<td style="border:1px solid #d1d5db;padding:8px 12px;text-align:center;color:#6b7280;font-size:12px;">' + (otherStartIdx + i) + '</td>' +
+                '<td style="border:1px solid #d1d5db;padding:8px 12px;font-size:12px;" colspan="5">' + (item.name || 'Item') + (item.spec ? ' (' + item.spec + ')' : '') + '</td>' +
+                '<td style="border:1px solid #d1d5db;padding:8px 12px;text-align:center;font-size:12px;">' + item.qty + '</td>' +
+            '</tr>';
+        });
+
+
         // ── 总价（仅显示外币总价）──
-        var grandRMB = cs.grandTotalPref || ((cs.totalPref || 0) + (cs.totalDriveSell || 0));
+        var grandRMB = (cs.grandTotalPref || ((cs.totalPref || 0) + (cs.totalDriveSell || 0))) + otherItemsTotal;
         var grandForeign = grandRMB / rate;
         var foreignSymbol = curr === 'SGD' ? 'S$' : '$';
 
@@ -849,13 +864,13 @@
 
         // ── 构建 HTML ──
         var html = _buildConsumerHTML(tenantCfg, logoPath, dateStr, client, csName, csPhone, project,
-            blindsRows, motorRow, totalOpenings, grandForeign, foreignSymbol, curr, remarksHtml);
+            blindsRows, motorRow, otherItemsRows, totalOpenings, grandForeign, foreignSymbol, curr, remarksHtml);
 
         _openConsumerQuotWindow(html);
     }
 
     function _buildConsumerHTML(tenantCfg, logoPath, dateStr, client, csName, csPhone, project,
-        blindsRows, motorRow, totalOpenings, grandForeign, foreignSymbol, curr, remarksHtml) {
+        blindsRows, motorRow, otherItemsRows, totalOpenings, grandForeign, foreignSymbol, curr, remarksHtml) {
         return '<!DOCTYPE html><html><head><meta charset="utf-8">' +
             '<title>Zip Blinds Quotation / \u9632\u98ce\u5377\u5e18\u62a5\u4ef7\u5355 - ' + client + '</title>' +
             '<style>' +
@@ -912,6 +927,7 @@
 
             blindsRows +
             motorRow +
+            otherItemsRows +
 
             // Preferential Total Price row
             '<tr class="total-row">' +
