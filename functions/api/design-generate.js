@@ -11,7 +11,7 @@ const MODEL_PRIORITY = [
   'qwen-image-edit-plus'
 ];
 
-// 优化后的提示词
+// 优化后的提示词 — Sunroom/Pergola 默认
 const DEFAULT_PROMPT = `请将第二张图片中的阳光房（sunroom/glass conservatory）融合到第一张图片的后院场景中。
 
 核心要求：
@@ -27,6 +27,22 @@ const DEFAULT_PROMPT = `请将第二张图片中的阳光房（sunroom/glass con
 - 阳光房不能放在草坪中央或离主建筑太远
 - 不能破坏原有后院的整体布局
 - 不能简化或修改阳光房的细节`;
+
+// Zip Blinds 专用提示词 — 3 图流程（场景 + 红线标记 + 产品参考）
+const ZB_DEFAULT_PROMPT = `请参考第三张图片的防风卷帘（Zip Blinds）效果，和第二张照片中的红色线框位置示意，给第一张照片也安装相同款式的防风卷帘。
+
+核心要求：
+1. 【产品匹配】必须完整保留第三张参考图中卷帘的颜色、透光率、框架样式，不得修改
+2. 【位置准确】卷帘必须安装在第二张照片中红色线框标记的确切位置
+3. 【比例正确】卷帘尺寸必须与红色线框标记的洞口尺寸匹配，保持合理比例
+4. 【透视一致】卷帘的透视角度必须与第一张照片的场景保持一致
+5. 【自然融合】添加自然光照、阴影效果，使卷帘看起来像是真实安装的
+
+禁止事项：
+- 不能改变原始场景的构图和角度
+- 不能修改卷帘的颜色和样式
+- 不能改变建筑物的原有外观
+- 请按照原始照片的角度输出实景融合效果图，比例不做调整`;
 
 // CORS 头
 const corsHeaders = {
@@ -140,7 +156,7 @@ export async function onRequestPost(context) {
     );
   }
 
-  const { background_image, foreground_image, reference_image, prompt, is_iteration } = body;
+  const { background_image, foreground_image, reference_image, prompt, is_iteration, design_type } = body;
 
   // 验证必要参数
   if (is_iteration) {
@@ -174,7 +190,12 @@ export async function onRequestPost(context) {
     editPrompt = `请对这张图片进行编辑修改，具体要求如下：${prompt}。请确保按照要求做出明显的修改，不要保持原样不变。`;
     console.log('Iteration prompt (enhanced):', editPrompt);
   } else {
-    editPrompt = prompt || DEFAULT_PROMPT;
+    // 根据 design_type 选择默认提示词
+    const defaultForType = (design_type === 'zip_blinds') ? ZB_DEFAULT_PROMPT : DEFAULT_PROMPT;
+    editPrompt = prompt || defaultForType;
+    if (design_type === 'zip_blinds') {
+      console.log('Using Zip Blinds prompt');
+    }
   }
 
   // 创建 SSE 流

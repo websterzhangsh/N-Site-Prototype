@@ -355,10 +355,15 @@
         var btn = document.getElementById('step2GenerateBtn_' + projectId);
         if (!btn) return;
         var state = getStep2State(projectId);
-        // Require at least main photo (slot 0) and a product selected
         var hasMainPhoto = !!state.photos[0];
-        // Sunroom/Pergola: also require product reference photo (tech sales upload)
         var project = allProjectsData.find(function(p) { return p.id === projectId; });
+
+        // Zip Blinds: require all 3 photos (scene + marked + product ref) — no product catalog selection needed
+        if (project && project.type === 'Zip Blinds') {
+            btn.disabled = !(hasMainPhoto && state.photos[1] && state.photos[2]);
+            return;
+        }
+        // Sunroom/Pergola: require main photo + product selected + product reference photo
         var needsRefPhoto = project && (project.type === 'Sunroom' || project.type === 'Pergola');
         if (needsRefPhoto) {
             btn.disabled = !(hasMainPhoto && state.selectedProduct && state.productRefPhoto);
@@ -496,32 +501,49 @@
 
         try {
             var state = getStep2State(projectId);
-
-            // ★ 有意义的 guard check — 告知用户缺什么
-            if (!state || !state.photos[0]) {
-                showToast('Please upload a backyard photo first', 'error');
-                if (btn) btn.disabled = false;
-                return;
-            }
-            if (!state.selectedProduct) {
-                showToast('Please select a product first', 'error');
-                if (btn) btn.disabled = false;
-                return;
-            }
-            var product = _resolveProduct(state.selectedProduct);
-            if (!product) {
-                showToast('Selected product not found in catalog', 'error');
-                if (btn) btn.disabled = false;
-                return;
-            }
-
-            // Sunroom/Pergola: 检查产品参考图
             var project = allProjectsData.find(function(p) { return p.id === projectId; });
-            var needsRefPhoto = project && (project.type === 'Sunroom' || project.type === 'Pergola');
-            if (needsRefPhoto && !state.productRefPhoto) {
-                showToast('Please upload a product reference photo for Sunroom/Pergola', 'error');
+            var isZipBlinds = project && project.type === 'Zip Blinds';
+
+            // ★ 有意义的 guard check — 告知用户缺什么（ZB vs 其他路径分开校验）
+            if (!state || !state.photos[0]) {
+                showToast(isZipBlinds ? 'Please upload the original scene photo (Photo 1)' : 'Please upload a backyard photo first', 'error');
                 if (btn) btn.disabled = false;
                 return;
+            }
+
+            if (isZipBlinds) {
+                // Zip Blinds: 需要 3 张照片，不需要产品目录选择
+                if (!state.photos[1]) {
+                    showToast('Please upload the marked opening photo (Photo 2) with red line markings', 'error');
+                    if (btn) btn.disabled = false;
+                    return;
+                }
+                if (!state.photos[2]) {
+                    showToast('Please upload the product reference photo (Photo 3)', 'error');
+                    if (btn) btn.disabled = false;
+                    return;
+                }
+            } else {
+                // 非 ZB: 需要产品目录选择
+                if (!state.selectedProduct) {
+                    showToast('Please select a product first', 'error');
+                    if (btn) btn.disabled = false;
+                    return;
+                }
+                var product = _resolveProduct(state.selectedProduct);
+                if (!product) {
+                    showToast('Selected product not found in catalog', 'error');
+                    if (btn) btn.disabled = false;
+                    return;
+                }
+
+                // Sunroom/Pergola: 检查产品参考图
+                var needsRefPhoto = project && (project.type === 'Sunroom' || project.type === 'Pergola');
+                if (needsRefPhoto && !state.productRefPhoto) {
+                    showToast('Please upload a product reference photo for Sunroom/Pergola', 'error');
+                    if (btn) btn.disabled = false;
+                    return;
+                }
             }
 
             // ★ 确认 streamDesignGenerate 可用
@@ -566,13 +588,9 @@
                 _step2Generating = false;
             }
 
-            function _sendGenRequest(foregroundBase64) {
-                var body = {
-                    background_image: state.photos[0],
-                    foreground_image: foregroundBase64,
-                    is_iteration: false
-                };
-                if (promptText) body.prompt = promptText;
+            // ★ 通用流式生成调用 — 接受完整 body 对象
+            function _doGenerate(body) {
+                if (promptText && !body.prompt) body.prompt = promptText;
 
                 streamDesignGenerate(body, {
                     onProgress: function(elapsed) {
@@ -626,9 +644,23 @@
                 });
             }
 
-            if (needsRefPhoto && state.productRefPhoto) {
+            // ★ 按项目类型分支构建请求 body
+            if (isZipBlinds) {
+                // Zip Blinds: 发送全部 3 张照片 + design_type 标记
+                _doGenerate({
+                    background_image: state.photos[0],   // 原始场景照片
+                    foreground_image: state.photos[1],    // 红线标记洞口照片
+                    reference_image: state.photos[2],     // 产品参考图（卷帘样式/颜色）
+                    design_type: 'zip_blinds',
+                    is_iteration: false
+                });
+            } else if (needsRefPhoto && state.productRefPhoto) {
                 // Sunroom/Pergola: use the manually uploaded product reference photo
-                _sendGenRequest(state.productRefPhoto);
+                _doGenerate({
+                    background_image: state.photos[0],
+                    foreground_image: state.productRefPhoto,
+                    is_iteration: false
+                });
             } else {
                 // Other product types: fetch pre-stored catalog image as base64
                 fetchImageAsBase64(product.image, function(productBase64) {
@@ -639,7 +671,11 @@
                         if (btn) btn.disabled = false;
                         return;
                     }
-                    _sendGenRequest(productBase64);
+                    _doGenerate({
+                        background_image: state.photos[0],
+                        foreground_image: productBase64,
+                        is_iteration: false
+                    });
                 });
             }
         } catch (err) {
