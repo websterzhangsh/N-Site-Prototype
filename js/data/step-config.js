@@ -277,8 +277,22 @@
                 { id: 'd2', label: 'Product Configuration', desc: 'Tier, fabric, drive system selections', icon: 'fa-sliders-h', required: true }
             ],
             measurementPanel: STEP_DETAIL_CONFIG[3].measurementPanel,
+            aiDesigner: {
+                inheritFields: [
+                    { key: 'project_type', label: 'Product Type', source: 'project.type' },
+                    { key: 'location', label: 'Install Location', source: 'A.2', field: 'a2_install_location' },
+                    { key: 'style_pref', label: 'Style Preference', source: 'A.6', field: 'a6_style_preference' },
+                    { key: 'color_pref', label: 'Color Preference', source: 'A.6', field: 'a6_color_preference' }
+                ],
+                photoUpload: { label: 'Site & Product Reference Photos', hint: '3-image workflow: scene photo, marked openings, product reference', accept: 'image/*', multiple: true, maxFiles: 3 },
+                styleOptions: [
+                    { value: 'zb-manual', label: 'Standard', icon: 'fa-wind', sub: 'Manual' },
+                    { value: 'zb-motorized', label: 'Motorized', icon: 'fa-bolt', sub: 'Electric Motor' }
+                ]
+            },
             agentSupport: [
-                { agent: 'Knowledge Base', ability: 'OMEYA measurement SOP, product specs, measurement guides' }
+                { agent: 'Knowledge Base', ability: 'OMEYA measurement SOP, product specs, measurement guides' },
+                { agent: 'AI Designer', ability: '3-image concept rendering: scene + marked openings + product reference → photorealistic visualization' }
             ]
         },
         2: {
