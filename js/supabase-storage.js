@@ -227,9 +227,14 @@
                 .select('*')
                 .eq('scope', 'project')
                 .eq('project_id', projectId)
-                .eq('is_deleted', false)
-                .eq('is_latest', true)
-                .order('created_at', { ascending: false });
+                .eq('is_deleted', false);
+
+            // 默认只查 is_latest=true；传入 includeAllVersions 时查全部版本
+            if (!filters || !filters.includeAllVersions) {
+                query = query.eq('is_latest', true);
+            }
+
+            query = query.order('created_at', { ascending: false });
 
             if (filters) {
                 if (filters.category) query = query.eq('category', filters.category);
@@ -257,7 +262,10 @@
                         uploadedAt: row.created_at,
                         storageMode: 'supabase',
                         storagePath: row.storage_path,
-                        tags: row.tags || []
+                        tags: row.tags || [],
+                        version: row.version || 1,
+                        isLatest: row.is_latest !== false,
+                        mediaMetadata: row.media_metadata || {}
                     };
                 });
             }).catch(function(err) {

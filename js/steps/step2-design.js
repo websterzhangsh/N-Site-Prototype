@@ -131,7 +131,8 @@
                 generated: false,
                 lastResultImage: null,
                 currentIteration: 0,
-                maxIterations: 2
+                maxIterations: 2,
+                designHistory: []        // 已保存的设计版本（从 kb_documents 加载）
             };
         }
         return step2DesignerState[projectId];
@@ -178,6 +179,8 @@
             btn.innerHTML = '<i class="fas fa-chevron-up text-[10px]"></i> Collapse';
             btn.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
             btn.classList.add('bg-gray-500', 'hover:bg-gray-600');
+            // 加载设计历史到 Gallery
+            loadDesignHistory(projectId);
         } else {
             panel.classList.add('hidden');
             btn.innerHTML = '<i class="fas fa-rocket text-[10px]"></i> Launch Designer';
@@ -384,6 +387,231 @@
             document.body.removeChild(link);
             showToast('Design image saved!', 'success');
         }
+    }
+
+    // ===== Design History — 版本控制 + Supabase Storage =====
+
+    /**
+     * base64 data URL → File 对象（用于上传到 Supabase Storage）
+     */
+    function base64ToFile(dataUrl, filename) {
+        var parts = dataUrl.split(',');
+        var mimeMatch = parts[0].match(/:(.*?);/);
+        var mimeType = mimeMatch ? mimeMatch[1] : 'image/png';
+        var bstr = atob(parts[1]);
+        var u8arr = new Uint8Array(bstr.length);
+        for (var i = 0; i < bstr.length; i++) u8arr[i] = bstr.charCodeAt(i);
+        return new File([new Blob([u8arr], { type: mimeType })], filename, { type: mimeType });
+    }
+
+    /**
+     * UUID 格式校验
+     */
+    function _isValidUUID(str) {
+        return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
+    }
+
+    /**
+     * 保存当前设计到 Supabase Storage + kb_documents
+     */
+    function saveDesignToStorage(projectId) {
+        var state = getStep2State(projectId);
+        if (!state || !state.lastResultImage) {
+            showToast('No design generated yet', 'warning');
+            return;
+        }
+        if (typeof NestopiaDB === 'undefined' || !NestopiaDB.isConnected()) {
+            showToast('Cloud storage not connected — please try again later', 'warning');
+            return;
+        }
+        if (!_isValidUUID(projectId)) {
+            showToast('Design history requires a synced project (UUID)', 'warning');
+            return;
+        }
+
+        var tenantId = NestopiaDB.getTenantId();
+        var client = NestopiaDB.getClient();
+        var bucket = 'kb-project-files';
+
+        // 获取当前项目信息
+        var project = (typeof allProjectsData !== 'undefined' && Array.isArray(allProjectsData))
+            ? allProjectsData.find(function(p) { return p.id === projectId; })
+            : null;
+        var designType = (project && project.type === 'Zip Blinds') ? 'zip_blinds' : 'sunroom';
+
+        // 显示保存中状态
+        showToast('Saving design to history...', 'info');
+
+        // Step 1: 查询当前最高版本号
+        client.from('kb_documents')
+            .select('id, version, is_latest')
+            .eq('scope', 'project')
+            .eq('project_id', projectId)
+            .eq('category', 'designs')
+            .eq('is_deleted', false)
+            .order('version', { ascending: false })
+            .limit(1)
+            .then(function(res) {
+                var maxVersion = 0;
+                var oldLatestId = null;
+                if (!res.error && res.data && res.data.length > 0) {
+                    maxVersion = res.data[0].version || 0;
+                    if (res.data[0].is_latest) oldLatestId = res.data[0].id;
+                }
+                var newVersion = maxVersion + 1;
+
+                // Step 2: 将旧 latest 标记为 false
+                var updatePromise = oldLatestId
+                    ? client.from('kb_documents').update({ is_latest: false }).eq('id', oldLatestId)
+                    : Promise.resolve({ error: null });
+
+                return updatePromise.then(function() {
+                    // Step 3: 上传文件到 Storage
+                    var ts = Date.now();
+                    var filename = 'design-v' + newVersion + '-' + ts + '.png';
+                    var storagePath = tenantId + '/' + projectId + '/designs/' + filename;
+                    var file = base64ToFile(state.lastResultImage, filename);
+
+                    return client.storage.from(bucket).upload(storagePath, file, {
+                        contentType: 'image/png',
+                        upsert: false
+                    }).then(function(uploadRes) {
+                        if (uploadRes.error) throw new Error('Upload failed: ' + uploadRes.error.message);
+
+                        // 获取公开 URL
+                        var urlRes = client.storage.from(bucket).getPublicUrl(storagePath);
+                        var fileUrl = (urlRes && urlRes.data) ? urlRes.data.publicUrl : '';
+
+                        // Step 4: 写入 kb_documents 元数据
+                        var promptEl = document.getElementById('step2PromptInput_' + projectId);
+                        var promptText = (promptEl && promptEl.value) ? promptEl.value.trim() : '';
+                        var styles = designerSelectedStyles[projectId] || [];
+
+                        return client.from('kb_documents').insert({
+                            tenant_id: tenantId,
+                            scope: 'project',
+                            project_id: projectId,
+                            product_line: designType === 'zip_blinds' ? 'zip-blinds' : 'sunroom',
+                            category: 'designs',
+                            name: 'AI Design v' + newVersion,
+                            description: promptText || ('AI generated design version ' + newVersion),
+                            file_url: fileUrl,
+                            file_type: 'png',
+                            file_size_bytes: file.size,
+                            mime_type: 'image/png',
+                            storage_path: storagePath,
+                            media_metadata: {
+                                design_type: designType,
+                                prompt_used: promptText || null,
+                                model_used: 'qwen-image-edit-max',
+                                input_photos_count: state.photos.filter(function(p) { return !!p; }).length,
+                                selected_product: state.selectedProduct || null,
+                                selected_styles: styles,
+                                iteration_count: state.currentIteration || 0,
+                                saved_at: new Date().toISOString()
+                            },
+                            status: 'uploaded',
+                            ai_agents: ['designer'],
+                            tags: ['ai-generated', designType],
+                            auto_generated: true,
+                            version: newVersion,
+                            is_latest: true
+                        }).select().single();
+                    });
+                }).then(function(insertRes) {
+                    if (insertRes && insertRes.error) throw new Error('DB insert failed: ' + insertRes.error.message);
+                    showToast('Design v' + newVersion + ' saved to history!', 'success');
+                    // 刷新 Gallery
+                    loadDesignHistory(projectId);
+                });
+            })
+            .catch(function(err) {
+                console.error('[Designer] saveDesignToStorage error:', err);
+                showToast('Failed to save design: ' + (err.message || 'Unknown error'), 'error');
+            });
+    }
+
+    /**
+     * 从 Supabase 加载设计历史版本
+     */
+    function loadDesignHistory(projectId) {
+        var state = getStep2State(projectId);
+        if (!_isValidUUID(projectId) || typeof NestopiaDB === 'undefined' || !NestopiaDB.isConnected()) {
+            state.designHistory = [];
+            renderDesignHistoryGallery(projectId);
+            return;
+        }
+        var KBDocuments = (typeof NestopiaStorage !== 'undefined' && NestopiaStorage.documents)
+            ? NestopiaStorage.documents : null;
+        if (!KBDocuments || !KBDocuments.getProjectFiles) {
+            state.designHistory = [];
+            renderDesignHistoryGallery(projectId);
+            return;
+        }
+        KBDocuments.getProjectFiles(projectId, { category: 'designs', includeAllVersions: true })
+            .then(function(files) {
+                state.designHistory = (files || []).sort(function(a, b) {
+                    return (b.version || 0) - (a.version || 0);
+                });
+                renderDesignHistoryGallery(projectId);
+            })
+            .catch(function(err) {
+                console.warn('[Designer] loadDesignHistory error:', err.message);
+                state.designHistory = [];
+                renderDesignHistoryGallery(projectId);
+            });
+    }
+
+    /**
+     * 渲染设计历史 Gallery（水平滚动缩略图条）
+     */
+    function renderDesignHistoryGallery(projectId) {
+        var container = document.getElementById('step2HistoryGallery_' + projectId);
+        var countEl = document.getElementById('step2HistoryCount_' + projectId);
+        if (!container) return;
+
+        var state = getStep2State(projectId);
+        var history = state.designHistory || [];
+
+        if (countEl) countEl.textContent = history.length > 0 ? (history.length + ' version' + (history.length > 1 ? 's' : '')) : '';
+
+        if (history.length === 0) {
+            container.innerHTML = '<div class="text-[10px] text-gray-400 italic py-4 w-full text-center">No saved designs yet</div>';
+            return;
+        }
+
+        var html = '';
+        history.forEach(function(item) {
+            var v = item.version || 1;
+            var date = item.uploadedAt ? new Date(item.uploadedAt) : new Date();
+            var dateStr = (date.getMonth() + 1) + '/' + date.getDate();
+            var isLatest = item.isLatest;
+            var ringClass = isLatest ? 'ring-2 ring-indigo-400' : 'ring-1 ring-gray-200';
+            var url = item.url || '';
+            var safeUrl = url.replace(/'/g, "\\'");
+
+            html += '<div class="flex-shrink-0 cursor-pointer group relative ' + ringClass + ' rounded-lg overflow-hidden" '
+                + 'style="width:72px;height:54px;" '
+                + 'onclick="Nestopia.steps.step2.viewDesignVersion(\'' + projectId + '\',\'' + safeUrl + '\',' + v + ')" '
+                + 'title="Version ' + v + ' — ' + dateStr + '">'
+                + '<img src="' + url + '" alt="v' + v + '" class="w-full h-full object-cover" loading="lazy">'
+                + '<div class="absolute top-0.5 left-0.5 px-1 py-0.5 bg-indigo-600/90 text-white text-[8px] font-bold rounded">v' + v + '</div>'
+                + '<div class="absolute bottom-0 inset-x-0 bg-black/50 text-white text-[8px] text-center py-0.5">' + dateStr + '</div>'
+                + '</div>';
+        });
+        container.innerHTML = html;
+    }
+
+    /**
+     * 切换主预览到历史版本
+     */
+    function viewDesignVersion(projectId, fileUrl, version) {
+        if (!fileUrl) return;
+        var resultDiv = document.getElementById('step2RenderResult_' + projectId);
+        if (resultDiv) resultDiv.classList.remove('hidden');
+        var img = document.getElementById('step2RenderImg_' + projectId);
+        if (img) img.src = fileUrl;
+        showToast('Viewing design v' + version, 'info');
     }
 
     // --- Iteration / Refinement (max 2 additional rounds) ---
@@ -713,7 +941,12 @@
         downloadStep2Design: downloadStep2Design,
         openStep2IterateDialog: openStep2IterateDialog,
         executeStep2Iterate: executeStep2Iterate,
-        generateStep2Design: generateStep2Design
+        generateStep2Design: generateStep2Design,
+        // Design History
+        saveDesignToStorage: saveDesignToStorage,
+        loadDesignHistory: loadDesignHistory,
+        renderDesignHistoryGallery: renderDesignHistoryGallery,
+        viewDesignVersion: viewDesignVersion
     };
 
     // ===== 全局别名（保持向后兼容） =====
@@ -740,4 +973,9 @@
     window.openStep2IterateDialog = openStep2IterateDialog;
     window.executeStep2Iterate = executeStep2Iterate;
     window.generateStep2Design = generateStep2Design;
+    // Design History
+    window.saveDesignToStorage = saveDesignToStorage;
+    window.loadDesignHistory = loadDesignHistory;
+    window.renderDesignHistoryGallery = renderDesignHistoryGallery;
+    window.viewDesignVersion = viewDesignVersion;
 })();
