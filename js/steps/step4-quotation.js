@@ -828,13 +828,15 @@
                             '<select class="w-full px-2 py-1 border border-gray-200 rounded text-[10px] bg-white focus:ring-1 focus:ring-orange-300 focus:border-orange-300" onchange="Nestopia.steps.step4.selectOpeningDrive(\'' + projectId + '\',' + ci + ',this.value)">' + driveOpts + '</select>' +
                         '</div>' +
                     '</div>' +
-                    // Cost summary row
+                    // Cost summary row — 仅 Nestopia-CHN 租户可见
+                    ((_step4TenantSlug === 'nestopia-chn') ? (
                     '<div class="grid grid-cols-4 gap-1 text-center">' +
                         '<div><div class="text-[8px] text-gray-400">COGS</div><div class="text-[10px] font-semibold text-gray-600">' + fmtRMB(poc.totalCOGS) + '</div></div>' +
                         '<div><div class="text-[8px] text-gray-400">Market</div><div class="text-[10px] font-semibold text-gray-600">' + fmtRMB(poc.totalMarket) + '</div></div>' +
                         '<div><div class="text-[8px] text-gray-400">Sell</div><div class="text-[10px] font-bold text-orange-600">' + fmtRMB(poc.totalPref) + '</div></div>' +
                         '<div><div class="text-[8px] text-gray-400">Drive</div><div class="text-[10px] font-semibold text-gray-600">' + fmtRMB(poc.driveSell) + '</div></div>' +
-                    '</div>' +
+                    '</div>'
+                    ) : '') +
 //                     // Unit price detail (collapsible small text)
 //                     '<div class="mt-1.5 pt-1.5 border-t border-gray-100 text-[9px] text-gray-400 flex flex-wrap gap-x-3">' +
 //                         '<span>Supplier: \u00a5' + poc.supplierUnit + '/m\u00b2</span>' +
