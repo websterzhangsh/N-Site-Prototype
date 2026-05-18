@@ -303,6 +303,7 @@
         };
         return {
             id:         row.project_number,
+            uuid:       row.id,
             name:       row.title || 'Untitled',
             customer:   row.client_name || 'Unknown',
             customerEmail:   row.client_email || '',

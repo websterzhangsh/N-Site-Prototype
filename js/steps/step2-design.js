@@ -424,7 +424,13 @@
             showToast('Cloud storage not connected — please try again later', 'warning');
             return;
         }
-        if (!_isValidUUID(projectId)) {
+
+        // 获取当前项目信息（allProjectsData 中 id=项目编号，uuid=数据库 UUID）
+        var project = (typeof allProjectsData !== 'undefined' && Array.isArray(allProjectsData))
+            ? allProjectsData.find(function(p) { return p.id === projectId; })
+            : null;
+        var dbId = (project && project.uuid) ? project.uuid : projectId;
+        if (!_isValidUUID(dbId)) {
             showToast('Design history requires a synced project (UUID)', 'warning');
             return;
         }
@@ -433,10 +439,6 @@
         var client = NestopiaDB.getClient();
         var bucket = 'kb-project-files';
 
-        // 获取当前项目信息
-        var project = (typeof allProjectsData !== 'undefined' && Array.isArray(allProjectsData))
-            ? allProjectsData.find(function(p) { return p.id === projectId; })
-            : null;
         var designType = (project && project.type === 'Zip Blinds') ? 'zip_blinds' : 'sunroom';
 
         // 显示保存中状态
@@ -446,7 +448,7 @@
         client.from('kb_documents')
             .select('id, version, is_latest')
             .eq('scope', 'project')
-            .eq('project_id', projectId)
+            .eq('project_id', dbId)
             .eq('category', 'designs')
             .eq('is_deleted', false)
             .order('version', { ascending: false })
@@ -469,7 +471,7 @@
                     // Step 3: 上传文件到 Storage
                     var ts = Date.now();
                     var filename = 'design-v' + newVersion + '-' + ts + '.png';
-                    var storagePath = tenantId + '/' + projectId + '/designs/' + filename;
+                    var storagePath = tenantId + '/' + dbId + '/designs/' + filename;
                     var file = base64ToFile(state.lastResultImage, filename);
 
                     return client.storage.from(bucket).upload(storagePath, file, {
@@ -490,7 +492,7 @@
                         return client.from('kb_documents').insert({
                             tenant_id: tenantId,
                             scope: 'project',
-                            project_id: projectId,
+                            project_id: dbId,
                             product_line: designType === 'zip_blinds' ? 'zip-blinds' : 'sunroom',
                             category: 'designs',
                             name: 'AI Design v' + newVersion,
@@ -536,7 +538,11 @@
      */
     function loadDesignHistory(projectId) {
         var state = getStep2State(projectId);
-        if (!_isValidUUID(projectId) || typeof NestopiaDB === 'undefined' || !NestopiaDB.isConnected()) {
+        var project = (typeof allProjectsData !== 'undefined' && Array.isArray(allProjectsData))
+            ? allProjectsData.find(function(p) { return p.id === projectId; })
+            : null;
+        var dbId = (project && project.uuid) ? project.uuid : projectId;
+        if (!_isValidUUID(dbId) || typeof NestopiaDB === 'undefined' || !NestopiaDB.isConnected()) {
             state.designHistory = [];
             renderDesignHistoryGallery(projectId);
             return;
@@ -548,7 +554,7 @@
             renderDesignHistoryGallery(projectId);
             return;
         }
-        KBDocuments.getProjectFiles(projectId, { category: 'designs', includeAllVersions: true })
+        KBDocuments.getProjectFiles(dbId, { category: 'designs', includeAllVersions: true })
             .then(function(files) {
                 state.designHistory = (files || []).sort(function(a, b) {
                     return (b.version || 0) - (a.version || 0);
