@@ -454,52 +454,73 @@
                     : Promise.resolve();
 
                 loadMeas.then(function() {
-                    delete step4QuotationState[projectId];
-                    getStep4State(projectId);
-                    if (typeof NestopiaDB !== 'undefined' && NestopiaDB.isConnected()) {
-                        return loadStep4FromDB(projectId);
+                    try {
+                        delete step4QuotationState[projectId];
+                        getStep4State(projectId);
+                        if (typeof NestopiaDB !== 'undefined' && NestopiaDB.isConnected()) {
+                            return loadStep4FromDB(projectId);
+                        }
+                        return null;
+                    } catch (syncErr) {
+                        console.error('[Quotation] Sync error during measurement load:', syncErr);
+                        return Promise.reject(syncErr);
                     }
-                    return null;
                 }).then(function(dbData) {
-                    if (dbData && dbData.step4State && typeof dbData.step4State === 'object') {
-                        var state = getStep4State(projectId);
-                        var s4 = dbData.step4State;
-                        if (s4.selectedSKU) state.selectedSKU = s4.selectedSKU;
-                        if (s4.selectedQuote) state.selectedQuote = s4.selectedQuote;
-                        if (s4.discount !== undefined) state.discount = s4.discount;
-                        if (s4.currency) state.currency = s4.currency;
-                        if (s4.exchangeRate) state.exchangeRate = s4.exchangeRate;
-                        // ★ 数据一致性：RMB 汇率固定为 1
-                        if (state.currency === 'RMB') state.exchangeRate = 1;
-                        // v3.0 fields
-                        if (s4.businessParams && typeof s4.businessParams === 'object') {
-                            state.businessParams = s4.businessParams;
-                        }
-                        if (s4.openingSKUs && state.openings) {
-                            for (var i = 0; i < Math.min(s4.openingSKUs.length, state.openings.length); i++) {
-                                if (zbSKUCatalog[s4.openingSKUs[i]]) {
-                                    state.openings[i].sku = s4.openingSKUs[i];
+                    try {
+                        if (dbData && dbData.step4State && typeof dbData.step4State === 'object') {
+                            var state = getStep4State(projectId);
+                            var s4 = dbData.step4State;
+                            if (s4.selectedSKU) state.selectedSKU = s4.selectedSKU;
+                            if (s4.selectedQuote) state.selectedQuote = s4.selectedQuote;
+                            if (s4.discount !== undefined) state.discount = s4.discount;
+                            if (s4.currency) state.currency = s4.currency;
+                            if (s4.exchangeRate) state.exchangeRate = s4.exchangeRate;
+                            // ★ 数据一致性：RMB 汇率固定为 1
+                            if (state.currency === 'RMB') state.exchangeRate = 1;
+                            // v3.0 fields
+                            if (s4.businessParams && typeof s4.businessParams === 'object') {
+                                state.businessParams = s4.businessParams;
+                            }
+                            if (s4.openingSKUs && state.openings) {
+                                for (var i = 0; i < Math.min(s4.openingSKUs.length, state.openings.length); i++) {
+                                    if (zbSKUCatalog[s4.openingSKUs[i]]) {
+                                        state.openings[i].sku = s4.openingSKUs[i];
+                                    }
                                 }
                             }
-                        }
-                        if (s4.openingDrives && state.openings) {
-                            for (var i = 0; i < Math.min(s4.openingDrives.length, state.openings.length); i++) {
-                                if (zbDriveSystemCatalog[s4.openingDrives[i]]) {
-                                    state.openings[i].driveSystem = s4.openingDrives[i];
+                            if (s4.openingDrives && state.openings) {
+                                for (var i = 0; i < Math.min(s4.openingDrives.length, state.openings.length); i++) {
+                                    if (zbDriveSystemCatalog[s4.openingDrives[i]]) {
+                                        state.openings[i].driveSystem = s4.openingDrives[i];
+                                    }
                                 }
                             }
-                        }
-                        // Legacy
-                        if (s4.productTier) state.productTier = s4.productTier;
-                        if (s4.glassType) state.glassType = s4.glassType;
-                        if (s4.louverType) state.louverType = s4.louverType;
+                            // Legacy
+                            if (s4.productTier) state.productTier = s4.productTier;
+                            if (s4.glassType) state.glassType = s4.glassType;
+                            if (s4.louverType) state.louverType = s4.louverType;
 
-                        var proj = allProjectsData.find(function(p) { return p.id === projectId; });
-                        state.costSummary = calcStep4Cost(proj, state);
-                        console.log('[Quotation] Step4 state loaded from Supabase for', projectId);
+                            var proj = allProjectsData.find(function(p) { return p.id === projectId; });
+                            state.costSummary = calcStep4Cost(proj, state);
+                            console.log('[Quotation] Step4 state loaded from Supabase for', projectId);
+                        }
+                        refreshStep4Panel(projectId);
+                        refreshInheritedMeasurement(projectId);
+                    } catch (renderErr) {
+                        console.error('[Quotation] Render error after DB load:', renderErr);
+                        hidePanelLoading(projectId);
+                        var _el = document.getElementById('step4InheritedSummary_' + projectId);
+                        if (_el) {
+                            _el.innerHTML = '<div class="p-3 bg-red-50 rounded-lg border border-red-200"><div class="flex items-center gap-2 mb-1"><i class="fas fa-exclamation-triangle text-red-500 text-xs"></i><span class="text-xs font-semibold text-red-700">Quotation Load Error</span></div><p class="text-[10px] text-red-600">' + (renderErr.message || 'Unknown error') + '</p><button onclick="Nestopia.steps.step4.togglePanel(\'' + projectId + '\')" class="mt-2 px-2 py-1 bg-red-100 text-red-700 text-[10px] rounded hover:bg-red-200 transition">Reload</button></div>';
+                        }
                     }
-                    refreshStep4Panel(projectId);
-                    refreshInheritedMeasurement(projectId);
+                }).catch(function(err) {
+                    console.error('[Quotation] Failed to load quotation data:', err);
+                    hidePanelLoading(projectId);
+                    var _el = document.getElementById('step4InheritedSummary_' + projectId);
+                    if (_el) {
+                        _el.innerHTML = '<div class="p-3 bg-red-50 rounded-lg border border-red-200"><div class="flex items-center gap-2 mb-1"><i class="fas fa-exclamation-triangle text-red-500 text-xs"></i><span class="text-xs font-semibold text-red-700">Quotation Load Error</span></div><p class="text-[10px] text-red-600">' + (err && err.message ? err.message : 'Failed to load data') + '</p><button onclick="Nestopia.steps.step4.togglePanel(\'' + projectId + '\')" class="mt-2 px-2 py-1 bg-red-100 text-red-700 text-[10px] rounded hover:bg-red-200 transition">Reload</button></div>';
+                    }
                 });
             } else {
                 // ★ DB 已加载过，但模板可能因导航被重新渲染 — 从内存 state 刷新 DOM
@@ -761,6 +782,9 @@
     }
 
     function _refreshZBPanel(projectId, state, cs, curr, rate, showForeign) {
+        // 租户 slug 用于控制 Per-Opening 价格明细可见性
+        var _step4TenantSlug = (typeof getCurrentTenantSlug === 'function') ? getCurrentTenantSlug() : 'default';
+
         // ── 0. Sync currency & rate inputs ──
         var currEl = document.getElementById('step4Currency_' + projectId);
         var rateEl = document.getElementById('step4ExRate_' + projectId);
@@ -1017,74 +1041,86 @@
     // ══════════════════════════════════════════════════════════
 
     function refreshInheritedMeasurement(projectId, forceRebuild) {
-        // ★ forceRebuild: 异步加载 measurement 完成后，强制从最新数据重建 state
-        //    解决：模板同步渲染时 step3 DB 数据未到 → state 缓存了 1 opening → 刷新时仍读旧缓存
-        if (forceRebuild && step4QuotationState[projectId]) {
-            // 保留用户已编辑的报价参数（discount / currency / businessParams）
-            var old = step4QuotationState[projectId];
-            var saved = {
-                currency: old.currency,
-                exchangeRate: old.exchangeRate,
-                discount: old.discount,
-                productTier: old.productTier,
-                businessParams: old.businessParams
-            };
-            delete step4QuotationState[projectId];
-            var rebuilt = getStep4State(projectId);
-            // 恢复报价参数
-            rebuilt.currency = saved.currency;
-            rebuilt.exchangeRate = saved.exchangeRate;
-            rebuilt.discount = saved.discount;
-            rebuilt.productTier = saved.productTier;
-            if (saved.businessParams) rebuilt.businessParams = saved.businessParams;
-            var proj = allProjectsData.find(function(p) { return p.id === projectId; });
-            rebuilt.costSummary = calcStep4Cost(proj, rebuilt);
-        }
-        var state = step4QuotationState[projectId];
-        if (!state) {
-            state = getStep4State(projectId);
-        }
-        var summaryEl = document.getElementById('step4InheritedSummary_' + projectId);
-        if (!summaryEl) return;
+        try {
+            // ★ forceRebuild: 异步加载 measurement 完成后，强制从最新数据重建 state
+            //    解决：模板同步渲染时 step3 DB 数据未到 → state 缓存了 1 opening → 刷新时仍读旧缓存
+            if (forceRebuild && step4QuotationState[projectId]) {
+                // 保留用户已编辑的报价参数（discount / currency / businessParams）
+                var old = step4QuotationState[projectId];
+                var saved = {
+                    currency: old.currency,
+                    exchangeRate: old.exchangeRate,
+                    discount: old.discount,
+                    productTier: old.productTier,
+                    businessParams: old.businessParams
+                };
+                delete step4QuotationState[projectId];
+                var rebuilt = getStep4State(projectId);
+                // 恢复报价参数
+                rebuilt.currency = saved.currency;
+                rebuilt.exchangeRate = saved.exchangeRate;
+                rebuilt.discount = saved.discount;
+                rebuilt.productTier = saved.productTier;
+                if (saved.businessParams) rebuilt.businessParams = saved.businessParams;
+                var proj = allProjectsData.find(function(p) { return p.id === projectId; });
+                rebuilt.costSummary = calcStep4Cost(proj, rebuilt);
+            }
+            var state = step4QuotationState[projectId];
+            if (!state) {
+                state = getStep4State(projectId);
+            }
+            var summaryEl = document.getElementById('step4InheritedSummary_' + projectId);
+            if (!summaryEl) {
+                hidePanelLoading(projectId);
+                return;
+            }
 
-        var badge = '<div class="flex items-center gap-2 mb-2">' +
-            '<i class="fas fa-arrow-right text-orange-500 text-[10px]"></i>' +
-            '<span class="text-xs font-semibold text-orange-700">Inherited from Measurement</span>' +
-            '<span class="text-[9px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full font-medium">' +
-                state.quantity + ' opening' + (state.quantity > 1 ? 's' : '') +
-            '</span></div>';
+            var badge = '<div class="flex items-center gap-2 mb-2">' +
+                '<i class="fas fa-arrow-right text-orange-500 text-[10px]"></i>' +
+                '<span class="text-xs font-semibold text-orange-700">Inherited from Measurement</span>' +
+                '<span class="text-[9px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full font-medium">' +
+                    state.quantity + ' opening' + (state.quantity > 1 ? 's' : '') +
+                '</span></div>';
 
-        var body = '';
-        if (state.openings && state.openings.length > 1) {
-            body = '<div class="space-y-1.5">';
-            for (var i = 0; i < state.openings.length; i++) {
-                var op = state.openings[i];
-                body += '<div class="flex items-center gap-3 text-[10px]">' +
-                    '<span class="w-4 h-4 bg-indigo-100 rounded flex items-center justify-center text-[9px] font-bold text-indigo-600">' + (i + 1) + '</span>' +
-                    '<span class="text-gray-600">' + op.widthIn + '" \u00d7 ' + op.heightIn + '"</span>' +
-                    '<span class="text-gray-500">' + op.widthMM + 'mm \u00d7 ' + op.heightMM + 'mm</span>' +
-                    '<span class="text-orange-600 font-semibold">' + op.area.toFixed(2) + ' m\u00b2</span>' +
-                    '<span class="text-[9px] text-gray-400 ml-auto">' + op.sku + '</span>' +
+            var body = '';
+            if (state.openings && state.openings.length > 1) {
+                body = '<div class="space-y-1.5">';
+                for (var i = 0; i < state.openings.length; i++) {
+                    var op = state.openings[i];
+                    body += '<div class="flex items-center gap-3 text-[10px]">' +
+                        '<span class="w-4 h-4 bg-indigo-100 rounded flex items-center justify-center text-[9px] font-bold text-indigo-600">' + (i + 1) + '</span>' +
+                        '<span class="text-gray-600">' + op.widthIn + '" \u00d7 ' + op.heightIn + '"</span>' +
+                        '<span class="text-gray-500">' + op.widthMM + 'mm \u00d7 ' + op.heightMM + 'mm</span>' +
+                        '<span class="text-orange-600 font-semibold">' + op.area.toFixed(2) + ' m\u00b2</span>' +
+                        '<span class="text-[9px] text-gray-400 ml-auto">' + op.sku + '</span>' +
+                    '</div>';
+                }
+                body += '<div class="border-t border-orange-200 pt-1.5 mt-1 flex items-center gap-3 text-[10px]">' +
+                    '<span class="w-4 h-4"></span>' +
+                    '<span class="text-gray-700 font-semibold">Total Area</span>' +
+                    '<span class="text-orange-700 font-bold">' + state.totalArea.toFixed(2) + ' m\u00b2</span>' +
+                '</div></div>';
+            } else {
+                var first = state.openings ? state.openings[0] : null;
+                body = '<div class="grid grid-cols-4 gap-3 text-center">' +
+                    '<div><div class="text-[10px] text-gray-500">Openings</div><div class="text-sm font-bold text-gray-800">' + state.quantity + '</div></div>' +
+                    '<div><div class="text-[10px] text-gray-500">Width</div><div class="text-sm font-bold text-gray-800">' + (first ? first.widthIn : '72') + '"</div></div>' +
+                    '<div><div class="text-[10px] text-gray-500">Height</div><div class="text-sm font-bold text-gray-800">' + (first ? first.heightIn : '96') + '"</div></div>' +
+                    '<div><div class="text-[10px] text-gray-500">Area</div><div class="text-sm font-bold text-orange-600">' + (state.unitArea ? state.unitArea.toFixed(2) : '0.00') + ' m\u00b2</div></div>' +
                 '</div>';
             }
-            body += '<div class="border-t border-orange-200 pt-1.5 mt-1 flex items-center gap-3 text-[10px]">' +
-                '<span class="w-4 h-4"></span>' +
-                '<span class="text-gray-700 font-semibold">Total Area</span>' +
-                '<span class="text-orange-700 font-bold">' + state.totalArea.toFixed(2) + ' m\u00b2</span>' +
-            '</div></div>';
-        } else {
-            var first = state.openings ? state.openings[0] : null;
-            body = '<div class="grid grid-cols-4 gap-3 text-center">' +
-                '<div><div class="text-[10px] text-gray-500">Openings</div><div class="text-sm font-bold text-gray-800">' + state.quantity + '</div></div>' +
-                '<div><div class="text-[10px] text-gray-500">Width</div><div class="text-sm font-bold text-gray-800">' + (first ? first.widthIn : '72') + '"</div></div>' +
-                '<div><div class="text-[10px] text-gray-500">Height</div><div class="text-sm font-bold text-gray-800">' + (first ? first.heightIn : '96') + '"</div></div>' +
-                '<div><div class="text-[10px] text-gray-500">Area</div><div class="text-sm font-bold text-orange-600">' + (state.unitArea ? state.unitArea.toFixed(2) : '0.00') + ' m\u00b2</div></div>' +
-            '</div>';
-        }
 
-        summaryEl.innerHTML = badge + body;
-        hidePanelLoading(projectId);
-        console.log('[Quotation] Inherited measurement refreshed:', state.quantity, 'openings');
+            summaryEl.innerHTML = badge + body;
+            hidePanelLoading(projectId);
+            console.log('[Quotation] Inherited measurement refreshed:', state.quantity, 'openings');
+        } catch (err) {
+            console.error('[Quotation] refreshInheritedMeasurement failed:', err);
+            hidePanelLoading(projectId);
+            var _summaryEl = document.getElementById('step4InheritedSummary_' + projectId);
+            if (_summaryEl) {
+                _summaryEl.innerHTML = '<div class="p-3 bg-red-50 rounded-lg border border-red-200"><div class="flex items-center gap-2 mb-1"><i class="fas fa-exclamation-triangle text-red-500 text-xs"></i><span class="text-xs font-semibold text-red-700">Measurement Refresh Error</span></div><p class="text-[10px] text-red-600">' + (err.message || 'Unknown error') + '</p><button onclick="Nestopia.steps.step4.togglePanel(\'' + projectId + '\')" class="mt-2 px-2 py-1 bg-red-100 text-red-700 text-[10px] rounded hover:bg-red-200 transition">Reload</button></div>';
+            }
+        }
     }
 
     // ══════════════════════════════════════════════════════════

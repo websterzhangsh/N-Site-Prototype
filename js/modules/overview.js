@@ -759,7 +759,7 @@
             '<div class="p-5 space-y-5">' +
                 _renderOvEditBasicFields(sku) +
                 _renderOvEditPricingTiers(sku) +
-                _renderOvEditQuotationParams() +
+                ((_ovTenantSlug === 'nestopia-chn') ? _renderOvEditQuotationParams() : '') +
             '</div></div>';
     }
 
