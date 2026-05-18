@@ -11,6 +11,8 @@
     // ===== Company Overview: Toggle Detail Sections =====
     let activeOverviewSection = null;
     var _ovSelectedProduct = null; // 当前 Overview 详情面板选中的产品
+    // 租户 slug — 控制 Quotation Formula Parameters 可见性
+    var _ovTenantSlug = (typeof getCurrentTenantSlug === 'function') ? getCurrentTenantSlug() : 'default';
 
     function toggleOverviewSection(section) {
         const allSections = document.querySelectorAll('.overview-detail-section');
@@ -407,8 +409,9 @@
                     _renderOvDetailHeader(sku, p, skuKey) +
                     _renderOvPricingTiers(sku, skuKey) +
                     _renderOvDriveSystems(sku) +
-                    // ★ Quotation Formula Parameters 已移至 Nestopia-CHN 平台层管理
-                    // ★ Lifecycle/Files/Actions 暂时隐藏（商业原因）
+                    // Quotation Formula Parameters — 仅 Nestopia-CHN 可见
+                    ((_ovTenantSlug === 'nestopia-chn') ? _renderOvQuotationParams() : '') +
+                    _renderOvLifecycleSection() +
                 '</div></div>';
         }
 
