@@ -1,6 +1,6 @@
 # Nestopia 产品开发路线图与交付计划
 
-> **版本**: 1.1.0  
+> **版本**: 1.2.0  
 > **创建日期**: 2026-05-18  
 > **最后更新**: 2026-05-18 (Week 20)  
 > **状态**: 活跃 — 每周更新  
@@ -75,8 +75,8 @@
 
 | # | 事项 | 优先级 | 目标 | 验收标准 |
 |---|------|--------|------|---------|
-| D.1 | **视觉分析集成** | P0 | 集成 Qwen-VL 自动场景分析 | 上传照片自动返回场景描述 + 推荐安装位置 |
-| D.2 | **提示词模板库** | P0 | 按产品×场景的标准化提示词 | 3 种产品 × 3 种场景 = 9 个模板 |
+| D.1 | **提示词模板库** | P0 | 按产品×场景的标准化提示词 | 3 种产品 × 3 种场景 = 9 个模板 |
+| D.2 | **LLM Image Edit 能力深化** | P0 | 继续完善 AI Designer 图像融合质量 | 3 个产品线融合效果达到 Demo 级 |
 | D.3 | **融合质量提升** | P1 | 评估 ComfyUI / DALL-E 3 / SDXL | 10 张对比测试图 + 评分报告 |
 | D.4 | **设计 A/B 对比视图** | P1 | 左右滑动比较不同设计方案 | 任意两版可并排比较 |
 
@@ -86,7 +86,7 @@
 |---|------|--------|------|---------|
 | Q.1 | **设计+报价联动** | P0 | Step 2 设计结果 → 自动跳转 Step 4 报价 | 一键生成完整方案报价 |
 | Q.2 | **方案 PDF 导出** | P1 | 效果图 + 报价明细 + 产品规格合并导出 | 单页 PDF 方案 |
-| Q.3 | **3 个 Demo 案例** | P1 | Sunroom / Pergola / Zip Blinds 各一个 | 合作伙伴 demo ≤ 15 分钟 |
+| Q.3 | **B2B Demo 流程** | P1 | 3 个高质量案例跑通完整流程 | 合作伙伴 demo ≤ 15 分钟 |
 
 ### 🟡 2026-07 — Customer Service Agent + Compliance Agent
 
@@ -107,40 +107,55 @@
 | P.2 | **Top 3 州规则库** | P1 | 马里兰 / 弗吉尼亚 / DC 建筑规范 | 3 州常见合规规则结构化入库 |
 | P.3 | **合规报告生成** | P1 | 自动生成许可证申请所需文档清单 | 清单 PDF（含所需材料 + 费用估算） |
 
-### 🔵 2026-08 及之后（暂不细化）
+### 🔵 2026-08 — 规模化准备
 
-| 方向 | 描述 |
-|------|------|
-| **订单管理** | 报价 → 确认 → 订单 → 状态跟踪 |
-| **合同生成** | 基于确认报价单自动生成合同 PDF |
-| **业务闭环** | CRM 基础、飞书集成、数据分析 Dashboard |
-| **规模化** | 新租户 Onboarding、移动端优化、AI 测量 V1 |
+| # | 事项 | 优先级 | 目标 | 验收标准 |
+|---|------|--------|------|---------|
+| 8.1 | **新租户 Onboarding 自动化** | P0 | 新分销商自助注册 + 产品线配置 | < 1 小时完成新租户上线 |
+| 8.2 | **数据分析 Dashboard** | P1 | 关键运营指标（报价量/转化率/GMV） | Dashboard 页可视化 |
+| 8.3 | **移动端优化** | P1 | 核心流程移动端可操作 | Step 1-4 手机端可完成 |
+| 8.4 | **AI 测量 V1** | P2 | 照片 → 初步尺寸估算（±15%） | 基于 Qwen-VL 的基础估算 |
+
+### 🟣 2026-09 — 视觉分析 + 业务闭环
+
+| # | 事项 | 优先级 | 目标 | 验收标准 |
+|---|------|--------|------|---------|
+| 9.1 | **AI Designer 视觉分析** | P0 | 集成 Qwen-VL 自动场景分析 | 上传照片自动返回场景描述 + 推荐安装位置 |
+| 9.2 | **订单管理基础** | P1 | 报价 → 确认 → 订单 → 状态跟踪 | 完整 Quote-to-Order 流程 |
+| 9.3 | **合同生成** | P1 | 基于确认报价单自动生成合同 PDF | 含条款、签名位、有效期 |
+| 9.4 | **客户管理增强** | P2 | CRM 基础（联系人、跟进记录、标签） | 客户 360° 视图页面 |
+| 9.5 | **飞书/Lark 集成** | P2 | 项目状态变更通知 → 飞书群 | 核心流程事件自动推送 |
 
 ---
 
-## 三、Weekly Update 模板
+## 三、双周 Update 模板
 
-> 每周日/周一更新本节。格式固定，方便快速扫描。
+> 每两周（双周）更新一次。格式固定，方便快速扫描。
 
 ---
 
-### Week 20 (2026-05-12 → 2026-05-18) — 本周
+### Sprint W19-W20 (2026-05-05 → 2026-05-18)
 
 #### 📋 路线图变更
-- 新增本文档 `DEVELOPMENT_ROADMAP.md`，建立月度交付计划与周报机制
-- 6 月计划从原 `NEXT_2_MONTHS_PLAN.md` Sprint 1-2 细化而来，增加了 AI Designer 视觉分析的可执行验收标准
+- 新增本文档 `DEVELOPMENT_ROADMAP.md`，建立月度交付计划与双周报机制
+- 6 月计划聚焦 Agent-First：AI Designer → Quotation → Customer Service → Compliance
+- 视觉分析(Qwen-VL)推迟至 9 月，6 月专注 LLM Image Edit 能力深化 + 提示词模板库
 
-#### ✅ Done（本周完成）
+#### ✅ Done（本双周完成）
 | 事项 | 关键细节 |
 |------|---------|
 | ZB AI Designer 3-Image 流程 | 新增 Zip Blinds 专用设计师面板（背景+前景+产品叠加） `c1a8568` |
 | AI Designer Inherited Data | Step 1 Intake 数据自动填入 Step 2 设计参数 `573c3c2` |
 | 设计历史版本控制 | 生成图保存到 Supabase Storage + 历史 Gallery + 版本管理 `9d33e5d` |
+| Save to History UUID 修复 | normalizeProjectFromDB 增加 uuid 字段 `ac46876` |
 | 租户级定价参数管控 | Quotation Formula Parameters 仅 Nestopia-CHN 可见可编辑 `fa96903` |
 | Per-Opening 成本明细隐藏 | COGS/Market/Sell/Drive 行对非 CHN 租户不可见 `c4f7d5e` |
+| 定价架构文档 | PRICING_ARCHITECTURE.md — SKU 价格生命周期统领文档 `ae1760a` |
+| Other Items 报价区块 | 报价编辑器新增 Other Items `c556ecb` |
 | Agent 平台规划对比文档 | LZ 方案 vs Nestopia 现状详细对比分析 `5332a87` |
+| 路线图 v1.1 | Agent-First 聚焦版 + 双周更新机制 `0479596` |
 
-#### 🔜 To Be Done（下周计划）
+#### 🔜 To Be Done（下双周计划 W21-W22）
 | 事项 | 优先级 | 预期产出 |
 |------|--------|---------|
 | Supabase Auth Edge Functions 部署 | P0 | `auth-login` + `auth-middleware` 部署到 Supabase Cloud |
@@ -149,19 +164,7 @@
 
 ---
 
-### Week 19 (2026-05-05 → 2026-05-11)
-
-#### ✅ Done
-| 事项 | 关键细节 |
-|------|---------|
-| Other Items 报价区块 | 报价编辑器新增 Other Items（自定义行项） `c556ecb` |
-| 定价架构文档 | PRICING_ARCHITECTURE.md — SKU 价格生命周期统领文档 `ae1760a` |
-| Consumer Quotation Bug 修复 | Other Items 显示 + unitPrice 联动 `21b8daa` `10b91b3` |
-| 文件完整性守卫修复 | 修复 company-operations.html 截断导致的重大回归 `868a823` |
-
----
-
-### Week 18 (2026-04-28 → 2026-05-04)
+### Sprint W17-W18 (2026-04-21 → 2026-05-04)
 
 #### ✅ Done
 | 事项 | 关键细节 |
@@ -170,14 +173,8 @@
 | 跨租户安全修复 | 3 层防护修复（路由 + 查询 + 渲染） `ece2630` |
 | Qwen 模型优先级更新 | flash 首选 + 清理旧模型 `7928012` |
 | 报价单品牌动态化 | 跟随项目 tenant_slug，Omeya 显示 Omeya logo `680c2cc` |
-
----
-
-### Week 17 (2026-04-21 → 2026-04-27)
-
-#### ✅ Done
-| 事项 | 关键细节 |
-|------|---------|
+| 文件完整性守卫修复 | 修复 company-operations.html 截断导致的重大回归 `868a823` |
+| Consumer Quotation Bug 修复 | Other Items 显示 + unitPrice 联动 `21b8daa` `10b91b3` |
 | 飞书集成设计文档 | LARK_INTEGRATION_DESIGN.md — 28.4KB 完整设计 |
 | B2B Operations UX 设计 | B2B_Operations_UX_Design.md — 67.4KB 综合设计稿 |
 | 定价策略分析 | Pricing_Strategy_Analysis.md — 26.2KB |
@@ -185,7 +182,7 @@
 
 ---
 
-### Week 16 (2026-04-14 → 2026-04-20)
+### Sprint W15-W16 (2026-04-07 → 2026-04-20)
 
 #### ✅ Done
 | 事项 | 关键细节 |
@@ -243,4 +240,5 @@
 
 | 版本 | 日期 | 变更内容 |
 |------|------|---------|
+| 1.1.0 | 2026-05-18 | 压缩 6-7 月为 Agent-First 聚焦版：AI Designer → Quotation → Customer Service → Compliance |
 | 1.0.0 | 2026-05-18 | 初版 — 建立月度交付全景 + 路线图 + 周报机制 |
