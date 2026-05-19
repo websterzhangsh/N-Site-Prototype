@@ -501,6 +501,8 @@
                 checkVerificationComplete(projectId);
                 console.log('[Verification] Loaded from Supabase for', projectId);
             }
+        }).catch(function(err) {
+            console.error('[Verification] Failed to load verification data:', err);
         });
     }
 

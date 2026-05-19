@@ -4439,12 +4439,12 @@
     <script src="js/agents/compliance.js?v=priceFix2"></script>
     <script src="js/agents/customer-service.js?v=priceFix2"></script>
     <!-- 7. Step 实现 (Phase 4) -->
-    <script src="js/steps/step2-design.js?v=designFix7"></script>
+    <script src="js/steps/step2-design.js?v=designFix8"></script>
     <script src="js/steps/step3-measurement.js?v=copyOpen1"></script>
-    <script src="js/steps/zb-verification.js?v=priceFix2"></script>
+    <script src="js/steps/zb-verification.js?v=verifFix1"></script>
     <script src="js/steps/step4-quotation.js?v=hideParam1"></script>
     <!-- 8. 独立工具 (Phase 4) -->
-    <script src="js/utils/quotation-editor.js?v=enFirst1"></script>
+    <script src="js/utils/quotation-editor.js?v=quotFix1"></script>
     <script src="js/utils/step-progress.js?v=priceFix2"></script>
     <script src="js/utils/chatbot.js?v=priceFix2"></script>
     <script>
@@ -6146,6 +6146,8 @@
                         if (window.updateInstallationSummary) {
                             window.updateInstallationSummary(project.id);
                         }
+                    }).catch(function(err) {
+                        console.error('[Nestopia] Step 3 ensureMeasurementLoaded failed:', err);
                     });
                 }
                 // ★ Step 2 (Quotation): 自动从 Supabase 加载 measurement 数据并刷新报价摘要
@@ -6158,6 +6160,11 @@
                     Nestopia.steps.step3.ensureMeasurementLoaded(project.id).then(function() {
                         if (Nestopia.steps.step4 && Nestopia.steps.step4.refreshInheritedMeasurement) {
                             Nestopia.steps.step4.refreshInheritedMeasurement(project.id, true); // ★ forceRebuild — 强制从最新 measurement 数据重建 state
+                        }
+                    }).catch(function(err) {
+                        console.error('[Nestopia] Step 2 ensureMeasurementLoaded failed:', err);
+                        if (Nestopia.steps.step4 && Nestopia.steps.step4.hidePanelLoading) {
+                            Nestopia.steps.step4.hidePanelLoading(project.id);
                         }
                     });
                 }

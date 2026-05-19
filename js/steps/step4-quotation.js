@@ -1041,86 +1041,74 @@
     // ══════════════════════════════════════════════════════════
 
     function refreshInheritedMeasurement(projectId, forceRebuild) {
-        try {
-            // ★ forceRebuild: 异步加载 measurement 完成后，强制从最新数据重建 state
-            //    解决：模板同步渲染时 step3 DB 数据未到 → state 缓存了 1 opening → 刷新时仍读旧缓存
-            if (forceRebuild && step4QuotationState[projectId]) {
-                // 保留用户已编辑的报价参数（discount / currency / businessParams）
-                var old = step4QuotationState[projectId];
-                var saved = {
-                    currency: old.currency,
-                    exchangeRate: old.exchangeRate,
-                    discount: old.discount,
-                    productTier: old.productTier,
-                    businessParams: old.businessParams
-                };
-                delete step4QuotationState[projectId];
-                var rebuilt = getStep4State(projectId);
-                // 恢复报价参数
-                rebuilt.currency = saved.currency;
-                rebuilt.exchangeRate = saved.exchangeRate;
-                rebuilt.discount = saved.discount;
-                rebuilt.productTier = saved.productTier;
-                if (saved.businessParams) rebuilt.businessParams = saved.businessParams;
-                var proj = allProjectsData.find(function(p) { return p.id === projectId; });
-                rebuilt.costSummary = calcStep4Cost(proj, rebuilt);
-            }
-            var state = step4QuotationState[projectId];
-            if (!state) {
-                state = getStep4State(projectId);
-            }
-            var summaryEl = document.getElementById('step4InheritedSummary_' + projectId);
-            if (!summaryEl) {
-                hidePanelLoading(projectId);
-                return;
-            }
+        // ★ forceRebuild: 异步加载 measurement 完成后，强制从最新数据重建 state
+        //    解决：模板同步渲染时 step3 DB 数据未到 → state 缓存了 1 opening → 刷新时仍读旧缓存
+        if (forceRebuild && step4QuotationState[projectId]) {
+            // 保留用户已编辑的报价参数（discount / currency / businessParams）
+            var old = step4QuotationState[projectId];
+            var saved = {
+                currency: old.currency,
+                exchangeRate: old.exchangeRate,
+                discount: old.discount,
+                productTier: old.productTier,
+                businessParams: old.businessParams
+            };
+            delete step4QuotationState[projectId];
+            var rebuilt = getStep4State(projectId);
+            // 恢复报价参数
+            rebuilt.currency = saved.currency;
+            rebuilt.exchangeRate = saved.exchangeRate;
+            rebuilt.discount = saved.discount;
+            rebuilt.productTier = saved.productTier;
+            if (saved.businessParams) rebuilt.businessParams = saved.businessParams;
+            var proj = allProjectsData.find(function(p) { return p.id === projectId; });
+            rebuilt.costSummary = calcStep4Cost(proj, rebuilt);
+        }
+        var state = step4QuotationState[projectId];
+        if (!state) {
+            state = getStep4State(projectId);
+        }
+        var summaryEl = document.getElementById('step4InheritedSummary_' + projectId);
+        if (!summaryEl) return;
 
-            var badge = '<div class="flex items-center gap-2 mb-2">' +
-                '<i class="fas fa-arrow-right text-orange-500 text-[10px]"></i>' +
-                '<span class="text-xs font-semibold text-orange-700">Inherited from Measurement</span>' +
-                '<span class="text-[9px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full font-medium">' +
-                    state.quantity + ' opening' + (state.quantity > 1 ? 's' : '') +
-                '</span></div>';
+        var badge = '<div class="flex items-center gap-2 mb-2">' +
+            '<i class="fas fa-arrow-right text-orange-500 text-[10px]"></i>' +
+            '<span class="text-xs font-semibold text-orange-700">Inherited from Measurement</span>' +
+            '<span class="text-[9px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full font-medium">' +
+                state.quantity + ' opening' + (state.quantity > 1 ? 's' : '') +
+            '</span></div>';
 
-            var body = '';
-            if (state.openings && state.openings.length > 1) {
-                body = '<div class="space-y-1.5">';
-                for (var i = 0; i < state.openings.length; i++) {
-                    var op = state.openings[i];
-                    body += '<div class="flex items-center gap-3 text-[10px]">' +
-                        '<span class="w-4 h-4 bg-indigo-100 rounded flex items-center justify-center text-[9px] font-bold text-indigo-600">' + (i + 1) + '</span>' +
-                        '<span class="text-gray-600">' + op.widthIn + '" \u00d7 ' + op.heightIn + '"</span>' +
-                        '<span class="text-gray-500">' + op.widthMM + 'mm \u00d7 ' + op.heightMM + 'mm</span>' +
-                        '<span class="text-orange-600 font-semibold">' + op.area.toFixed(2) + ' m\u00b2</span>' +
-                        '<span class="text-[9px] text-gray-400 ml-auto">' + op.sku + '</span>' +
-                    '</div>';
-                }
-                body += '<div class="border-t border-orange-200 pt-1.5 mt-1 flex items-center gap-3 text-[10px]">' +
-                    '<span class="w-4 h-4"></span>' +
-                    '<span class="text-gray-700 font-semibold">Total Area</span>' +
-                    '<span class="text-orange-700 font-bold">' + state.totalArea.toFixed(2) + ' m\u00b2</span>' +
-                '</div></div>';
-            } else {
-                var first = state.openings ? state.openings[0] : null;
-                body = '<div class="grid grid-cols-4 gap-3 text-center">' +
-                    '<div><div class="text-[10px] text-gray-500">Openings</div><div class="text-sm font-bold text-gray-800">' + state.quantity + '</div></div>' +
-                    '<div><div class="text-[10px] text-gray-500">Width</div><div class="text-sm font-bold text-gray-800">' + (first ? first.widthIn : '72') + '"</div></div>' +
-                    '<div><div class="text-[10px] text-gray-500">Height</div><div class="text-sm font-bold text-gray-800">' + (first ? first.heightIn : '96') + '"</div></div>' +
-                    '<div><div class="text-[10px] text-gray-500">Area</div><div class="text-sm font-bold text-orange-600">' + (state.unitArea ? state.unitArea.toFixed(2) : '0.00') + ' m\u00b2</div></div>' +
+        var body = '';
+        if (state.openings && state.openings.length > 1) {
+            body = '<div class="space-y-1.5">';
+            for (var i = 0; i < state.openings.length; i++) {
+                var op = state.openings[i];
+                body += '<div class="flex items-center gap-3 text-[10px]">' +
+                    '<span class="w-4 h-4 bg-indigo-100 rounded flex items-center justify-center text-[9px] font-bold text-indigo-600">' + (i + 1) + '</span>' +
+                    '<span class="text-gray-600">' + op.widthIn + '" \u00d7 ' + op.heightIn + '"</span>' +
+                    '<span class="text-gray-500">' + op.widthMM + 'mm \u00d7 ' + op.heightMM + 'mm</span>' +
+                    '<span class="text-orange-600 font-semibold">' + op.area.toFixed(2) + ' m\u00b2</span>' +
+                    '<span class="text-[9px] text-gray-400 ml-auto">' + op.sku + '</span>' +
                 '</div>';
             }
-
-            summaryEl.innerHTML = badge + body;
-            hidePanelLoading(projectId);
-            console.log('[Quotation] Inherited measurement refreshed:', state.quantity, 'openings');
-        } catch (err) {
-            console.error('[Quotation] refreshInheritedMeasurement failed:', err);
-            hidePanelLoading(projectId);
-            var _summaryEl = document.getElementById('step4InheritedSummary_' + projectId);
-            if (_summaryEl) {
-                _summaryEl.innerHTML = '<div class="p-3 bg-red-50 rounded-lg border border-red-200"><div class="flex items-center gap-2 mb-1"><i class="fas fa-exclamation-triangle text-red-500 text-xs"></i><span class="text-xs font-semibold text-red-700">Measurement Refresh Error</span></div><p class="text-[10px] text-red-600">' + (err.message || 'Unknown error') + '</p><button onclick="Nestopia.steps.step4.togglePanel(\'' + projectId + '\')" class="mt-2 px-2 py-1 bg-red-100 text-red-700 text-[10px] rounded hover:bg-red-200 transition">Reload</button></div>';
-            }
+            body += '<div class="border-t border-orange-200 pt-1.5 mt-1 flex items-center gap-3 text-[10px]">' +
+                '<span class="w-4 h-4"></span>' +
+                '<span class="text-gray-700 font-semibold">Total Area</span>' +
+                '<span class="text-orange-700 font-bold">' + state.totalArea.toFixed(2) + ' m\u00b2</span>' +
+            '</div></div>';
+        } else {
+            var first = state.openings ? state.openings[0] : null;
+            body = '<div class="grid grid-cols-4 gap-3 text-center">' +
+                '<div><div class="text-[10px] text-gray-500">Openings</div><div class="text-sm font-bold text-gray-800">' + state.quantity + '</div></div>' +
+                '<div><div class="text-[10px] text-gray-500">Width</div><div class="text-sm font-bold text-gray-800">' + (first ? first.widthIn : '72') + '"</div></div>' +
+                '<div><div class="text-[10px] text-gray-500">Height</div><div class="text-sm font-bold text-gray-800">' + (first ? first.heightIn : '96') + '"</div></div>' +
+                '<div><div class="text-[10px] text-gray-500">Area</div><div class="text-sm font-bold text-orange-600">' + (state.unitArea ? state.unitArea.toFixed(2) : '0.00') + ' m\u00b2</div></div>' +
+            '</div>';
         }
+
+        summaryEl.innerHTML = badge + body;
+        hidePanelLoading(projectId);
+        console.log('[Quotation] Inherited measurement refreshed:', state.quantity, 'openings');
     }
 
     // ══════════════════════════════════════════════════════════

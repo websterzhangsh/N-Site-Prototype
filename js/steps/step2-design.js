@@ -173,6 +173,8 @@
                             toggleStepDetail(expandedStep, currentDetailProject);
                         }
                     }
+                }).catch(function(err) {
+                    console.error('[Designer] Failed to load designer data:', err);
                 });
             }
             panel.classList.remove('hidden');

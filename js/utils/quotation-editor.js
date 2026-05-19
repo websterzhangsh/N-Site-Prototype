@@ -310,6 +310,8 @@
                         console.log('[Quotation] Synced', dbData.savedQuotations.length, 'quotations from Supabase');
                         refreshQuotLoadDropdown(projectId);
                     }
+                }).catch(function(err) {
+                    console.error('[Quotation] Failed to sync saved quotations:', err);
                 });
             }
             return localList;
