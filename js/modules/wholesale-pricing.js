@@ -52,6 +52,7 @@
         _showNavItem();
         if (_state.initialized) return;
         _state.initialized = true;
+        _loadParamsFromStorage();
         loadData();
     }
 
@@ -193,6 +194,9 @@
                 _renderStatCard('Hidden', hiddenCount, 'fas fa-eye-slash', 'amber', 'SKUs previously published but now hidden — distributor cannot see them until re-published') +
                 _renderStatCard('Unpublished', unpublishedCount, 'fas fa-minus-circle', 'gray', 'SKUs not yet published to the selected distributor — use "Publish Selected" to make them available') +
             '</div>' +
+
+            // ── Quotation Formula Parameters ──
+            _renderQuotationParamsSection() +
 
             // ── Filter Bar ──
             '<div class="bg-white rounded-xl border border-gray-200 p-4 mb-4">' +
@@ -1379,10 +1383,6 @@
         _wpStartEditParams: _wpStartEditParams,
         _wpSaveParams: _wpSaveParams,
         _wpCancelEditParams: _wpCancelEditParams
-    };
-
-    console.log('[Nestopia] wholesale-pricing.js loaded');
-})();
     };
 
     console.log('[Nestopia] wholesale-pricing.js loaded');
