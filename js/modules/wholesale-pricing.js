@@ -31,7 +31,8 @@
         loading: false,
         initialized: false,
         historyData: [],           // 发布历史日志
-        historyLoaded: false       // 历史是否已加载
+        historyLoaded: false,      // 历史是否已加载
+        paramsEditing: false       // 报价公式参数是否处于编辑模式
     };
 
     // ══════════════════════════════════════════════════════════
@@ -399,6 +400,172 @@
                 '</div>' +
             '</div>' +
         '</div>';
+    }
+
+    // ══════════════════════════════════════════════════════════
+    //  2b. 报价公式参数卡片
+    // ══════════════════════════════════════════════════════════
+
+    /**
+     * 渲染报价公式参数区域（只读 / 编辑双模式）
+     * 6 个参数来自 window.zbBusinessParams
+     */
+    function _renderQuotationParamsSection() {
+        var biz = window.zbBusinessParams || {};
+        if (_state.paramsEditing) {
+            return _renderQuotationParamsEdit(biz);
+        }
+        return _renderQuotationParamsReadonly(biz);
+    }
+
+    function _renderQuotationParamsReadonly(biz) {
+        return '<div class="bg-white rounded-xl border border-gray-200 mb-4">' +
+            '<div class="px-4 py-3 bg-gray-50 border-b border-gray-200 flex items-center justify-between">' +
+                '<h3 class="font-semibold text-gray-800 flex items-center gap-2">' +
+                    '<i class="fas fa-calculator text-blue-600"></i> Quotation Formula Parameters' +
+                '</h3>' +
+                '<button onclick="Nestopia.modules.wholesalePricing._wpStartEditParams()" ' +
+                    'class="px-3 py-1.5 text-xs bg-white border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 hover:border-gray-400 transition flex items-center gap-1.5">' +
+                    '<i class="fas fa-pen text-[10px]"></i> Edit' +
+                '</button>' +
+            '</div>' +
+            '<div class="p-4">' +
+                '<div class="grid grid-cols-2 lg:grid-cols-3 gap-3">' +
+                    _renderParamReadField('Supplier Discount', (biz.supplierDiscountRate || 0.9) + ' off', 'Discount rate applied to supplier list price') +
+                    _renderParamReadField('Shipping & Customs', ((biz.shippingCostRate || 0.3) * 100).toFixed(0) + '%', 'Shipping & customs as % of discounted total') +
+                    _renderParamReadField('Installation Fee', '\u00a5' + (biz.installationFeePerSqm || 191) + '/m\u00b2', 'Installation fee per square meter') +
+                    _renderParamReadField('Market Markup', '\u00d7' + (biz.marketMarkup || 2.92), 'Market price multiplier on total cost') +
+                    _renderParamReadField('Default Discount', ((biz.preferentialDiscount || 0.5) * 100).toFixed(0) + '%', 'Default discount off market price') +
+                    _renderParamReadField('Accessory Markup', '+' + ((biz.accessoryMarkupRate || 0.13) * 100).toFixed(0) + '%', 'Markup rate on motor/accessory prices') +
+                '</div>' +
+            '</div>' +
+        '</div>';
+    }
+
+    function _renderParamReadField(label, value, tooltip) {
+        return '<div class="bg-gray-50 rounded-lg p-3 border border-gray-100 group relative">' +
+            '<label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium block mb-1">' + label + '</label>' +
+            '<div class="text-sm font-bold text-gray-900">' + value + '</div>' +
+            (tooltip ? '<div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg ' +
+                'opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap pointer-events-none z-50 shadow-lg">' +
+                '<span>' + _escHtml(tooltip) + '</span>' +
+                '<div class="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-gray-900"></div>' +
+            '</div>' : '') +
+        '</div>';
+    }
+
+    function _renderQuotationParamsEdit(biz) {
+        return '<div class="bg-white rounded-xl border border-blue-300 mb-4">' +
+            '<div class="px-4 py-3 bg-blue-50/50 border-b border-blue-200 flex items-center justify-between">' +
+                '<h3 class="font-semibold text-blue-800 flex items-center gap-2">' +
+                    '<i class="fas fa-calculator text-blue-500"></i> Editing Quotation Formula Parameters' +
+                '</h3>' +
+                '<div class="flex gap-2">' +
+                    '<button onclick="Nestopia.modules.wholesalePricing._wpSaveParams()" ' +
+                        'class="px-4 py-1.5 text-xs bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium flex items-center gap-1.5">' +
+                        '<i class="fas fa-check"></i> Save' +
+                    '</button>' +
+                    '<button onclick="Nestopia.modules.wholesalePricing._wpCancelEditParams()" ' +
+                        'class="px-3 py-1.5 text-xs text-gray-600 hover:bg-gray-100 rounded-lg transition">' +
+                        'Cancel' +
+                    '</button>' +
+                '</div>' +
+            '</div>' +
+            '<div class="p-4">' +
+                '<div class="grid grid-cols-2 lg:grid-cols-3 gap-3">' +
+                    _renderParamEditField('Supplier Discount', 'wpParam_supplierDiscount', biz.supplierDiscountRate || 0.9, 'number', 'e.g. 0.9') +
+                    _renderParamEditField('Shipping & Customs (%)', 'wpParam_shipping', ((biz.shippingCostRate || 0.3) * 100).toFixed(1), 'number', 'e.g. 30') +
+                    _renderParamEditField('Installation (\u00a5/m\u00b2)', 'wpParam_installation', biz.installationFeePerSqm || 191, 'number', 'e.g. 191') +
+                    _renderParamEditField('Market Markup (\u00d7)', 'wpParam_markup', biz.marketMarkup || 2.92, 'number', 'e.g. 2.92') +
+                    _renderParamEditField('Default Discount (%)', 'wpParam_discount', ((biz.preferentialDiscount || 0.5) * 100).toFixed(1), 'number', 'e.g. 50') +
+                    _renderParamEditField('Accessory Markup (%)', 'wpParam_accessory', ((biz.accessoryMarkupRate || 0.13) * 100).toFixed(1), 'number', 'e.g. 13') +
+                '</div>' +
+                '<p class="text-[11px] text-gray-400 mt-3"><i class="fas fa-info-circle mr-1"></i>Changes are saved to session and persist in localStorage. Percentages are stored as decimals internally.</p>' +
+            '</div>' +
+        '</div>';
+    }
+
+    function _renderParamEditField(label, id, value, type, placeholder) {
+        return '<div>' +
+            '<label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium block mb-1">' + label + '</label>' +
+            '<input id="' + id + '" type="' + (type || 'text') + '" value="' + value + '" placeholder="' + (placeholder || '') + '" ' +
+                'class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" step="any">' +
+        '</div>';
+    }
+
+    /**
+     * 进入参数编辑模式
+     */
+    function _wpStartEditParams() {
+        _state.paramsEditing = true;
+        _renderPage();
+    }
+
+    /**
+     * 取消参数编辑
+     */
+    function _wpCancelEditParams() {
+        _state.paramsEditing = false;
+        _renderPage();
+    }
+
+    /**
+     * 保存参数编辑 — 更新 window.zbBusinessParams + localStorage
+     */
+    function _wpSaveParams() {
+        var biz = window.zbBusinessParams;
+        if (!biz) return;
+
+        var _v = function(id) { var el = document.getElementById(id); return el ? parseFloat(el.value) : null; };
+        var v;
+
+        v = _v('wpParam_supplierDiscount');  if (v !== null && v > 0) biz.supplierDiscountRate = v;
+        v = _v('wpParam_shipping');           if (v !== null && v >= 0) biz.shippingCostRate = v / 100;
+        v = _v('wpParam_installation');       if (v !== null && v >= 0) biz.installationFeePerSqm = v;
+        v = _v('wpParam_markup');             if (v !== null && v > 0) biz.marketMarkup = v;
+        v = _v('wpParam_discount');           if (v !== null && v >= 0) biz.preferentialDiscount = v / 100;
+        v = _v('wpParam_accessory');          if (v !== null && v >= 0) biz.accessoryMarkupRate = v / 100;
+
+        // 持久化到 localStorage
+        try {
+            var toSave = {
+                supplierDiscountRate: biz.supplierDiscountRate,
+                shippingCostRate: biz.shippingCostRate,
+                installationFeePerSqm: biz.installationFeePerSqm,
+                marketMarkup: biz.marketMarkup,
+                preferentialDiscount: biz.preferentialDiscount,
+                accessoryMarkupRate: biz.accessoryMarkupRate
+            };
+            localStorage.setItem('nestopia_zbBusinessParams', JSON.stringify(toSave));
+        } catch (e) {
+            console.warn('[WholesalePricing] localStorage save failed:', e);
+        }
+
+        _state.paramsEditing = false;
+        _showToast('Quotation parameters updated', 'success');
+        _renderPage();
+    }
+
+    /**
+     * 从 localStorage 恢复参数（如有）
+     */
+    function _loadParamsFromStorage() {
+        try {
+            var stored = localStorage.getItem('nestopia_zbBusinessParams');
+            if (!stored) return;
+            var saved = JSON.parse(stored);
+            var biz = window.zbBusinessParams;
+            if (!biz) return;
+            var keys = ['supplierDiscountRate', 'shippingCostRate', 'installationFeePerSqm', 'marketMarkup', 'preferentialDiscount', 'accessoryMarkupRate'];
+            keys.forEach(function(k) {
+                if (saved[k] !== undefined && typeof saved[k] === 'number' && !isNaN(saved[k])) {
+                    biz[k] = saved[k];
+                }
+            });
+            console.log('[WholesalePricing] Restored params from localStorage');
+        } catch (e) {
+            console.warn('[WholesalePricing] localStorage restore failed:', e);
+        }
     }
 
     function _renderLoading() {
@@ -1208,7 +1375,14 @@
         _onDistributorChange: _onDistributorChange,
         _onMarginChange: _onMarginChange,
         _onSelectSKU: _onSelectSKU,
-        _onSelectAll: _onSelectAll
+        _onSelectAll: _onSelectAll,
+        _wpStartEditParams: _wpStartEditParams,
+        _wpSaveParams: _wpSaveParams,
+        _wpCancelEditParams: _wpCancelEditParams
+    };
+
+    console.log('[Nestopia] wholesale-pricing.js loaded');
+})();
     };
 
     console.log('[Nestopia] wholesale-pricing.js loaded');
